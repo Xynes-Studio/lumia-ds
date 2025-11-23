@@ -60,7 +60,7 @@ A framework-aware, Next.js-first design system published as an independent NPM p
 
 - Tailwind configuration requirements (at a high level)
 - Global styles and tokens
-- Wrapping the app with any required providers
+- Wrap the app with `ThemeProvider` from `@lumia/theme`, passing a `ThemeTokens` object (for example `defaultTheme` from `@lumia/tokens`) so CSS variables land on `document.documentElement`
 - Environment assumptions (SSR/CSR, Next.js app/router notes)
 
 ### 4.3. First Integration Checklist
