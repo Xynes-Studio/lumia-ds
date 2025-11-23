@@ -91,6 +91,7 @@ describe('@lumia/tokens', () => {
             expect(cssVars[`--color-primary-${stop}`]).toEqual(expect.any(String));
         });
         expect(cssVars['--color-primary']).toBe(defaultTheme.colors.primary);
+        expect(cssVars['--color-secondary']).toBe(defaultTheme.colors.secondary);
         expect(cssVars['--color-bg']).toBe(defaultTheme.colors.background);
         expect(cssVars['--color-fg']).toBe(defaultTheme.colors.foreground);
         expect(cssVars['--color-border']).toBe(defaultTheme.colors.border);

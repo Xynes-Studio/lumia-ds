@@ -94,6 +94,7 @@ export const themeToCSSVars = (theme: ThemeTokens): Record<string, string> => {
     });
 
     cssVars['--color-primary'] = primaryScale[500];
+    cssVars['--color-secondary'] = theme.colors.secondary;
     cssVars['--color-bg'] = theme.colors.background;
     cssVars['--color-fg'] = theme.colors.foreground;
     cssVars['--color-border'] = theme.colors.border;

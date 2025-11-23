@@ -26,3 +26,19 @@ return (
     </div>
 );
 ```
+
+## Tailwind preset/config helper
+
+Expose Lumia tokens to Tailwind using the exported preset or config factory:
+
+```js
+// tailwind.config.js
+import { createLumiaTailwindConfig, lumiaTailwindPreset } from '@lumia/theme';
+
+export default {
+    // Option A: preset
+    presets: [lumiaTailwindPreset],
+    // Option B: spread the generated config
+    ...createLumiaTailwindConfig(),
+};
+```
