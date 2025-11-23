@@ -1,4 +1,20 @@
 import type { FC, ReactNode } from 'react';
+export type {
+  CardProps,
+  CardHeaderProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardContentProps,
+  CardFooterProps,
+} from './card';
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from './card';
 export type { ButtonProps } from './button';
 export { Button, buttonStyles } from './button';
 export type { CheckboxProps } from './checkbox';

@@ -7,6 +7,12 @@ Lumia design-system React components, wrapping shadcn primitives and themed via 
 ```tsx
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Checkbox,
   Input,
   Radio,
@@ -34,6 +40,21 @@ export function Example() {
         invalid
         hint="Please add more detail"
       />
+
+      <Card className="max-w-md">
+        <CardHeader>
+          <CardTitle>Billing overview</CardTitle>
+          <CardDescription>Quick stats for this month</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-foreground">
+            Balance: <strong>$1,240.00</strong>
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button size="sm">View statement</Button>
+        </CardFooter>
+      </Card>
 
       <Checkbox label="Subscribe to updates" hint="Get release news via email" />
 
