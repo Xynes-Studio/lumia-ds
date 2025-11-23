@@ -3,7 +3,7 @@
   "private": true,
   "description": "Lumia UI design-system library monorepo",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "pnpm -r --if-present test -- --coverage",
     "lint": "eslint .",
     "type-check": "tsc --build",
     "build": "pnpm -r build"

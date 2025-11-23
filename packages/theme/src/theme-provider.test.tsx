@@ -1,8 +1,9 @@
-import { act } from 'react';
+import { act, useEffect, useLayoutEffect } from 'react';
 import { describe, it, expect } from 'vitest';
 import { createRoot } from 'react-dom/client';
 import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
-import { ThemeProvider } from './theme-provider';
+import { ThemeProvider } from './index';
+import { applyCssVarsToTarget, getIsomorphicLayoutEffect } from './theme-provider';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -57,5 +58,26 @@ describe('ThemeProvider', () => {
         expect(target.style.getPropertyValue('--color-primary')).toBe('hotpink');
         expect(target.style.getPropertyValue('--color-bg')).toBe('');
         document.body.removeChild(host);
+    });
+
+    it('falls back to useEffect when window is undefined', () => {
+        const originalWindow = (globalThis as Record<string, unknown>).window;
+        // @ts-expect-error test override
+        delete (globalThis as Record<string, unknown>).window;
+
+        expect(getIsomorphicLayoutEffect()).toBe(useEffect);
+
+        (globalThis as Record<string, unknown>).window = originalWindow;
+    });
+
+    it('no-ops when document is unavailable', () => {
+        const cssVars = themeToCSSVars(defaultTheme);
+        const originalDocument = (globalThis as Record<string, unknown>).document;
+        // @ts-expect-error test override
+        delete (globalThis as Record<string, unknown>).document;
+
+        expect(applyCssVarsToTarget(undefined, cssVars)).toBeUndefined();
+
+        (globalThis as Record<string, unknown>).document = originalDocument;
     });
 });

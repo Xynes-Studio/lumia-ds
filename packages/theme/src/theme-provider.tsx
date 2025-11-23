@@ -13,35 +13,43 @@ export type ThemeProviderProps = PropsWithChildren<{
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-const resolveTarget = (target?: ThemeTarget) => {
+export const getIsomorphicLayoutEffect = () =>
+    typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+export const resolveTarget = (target?: ThemeTarget) => {
     if (target) return target;
     if (typeof document === 'undefined') return null;
     return document.documentElement;
 };
 
+export const applyCssVarsToTarget = (target: ThemeTarget, cssVars: Record<string, string>) => {
+    const element = resolveTarget(target);
+    if (!element) return;
+
+    const previousValues = new Map<string, string>();
+
+    Object.entries(cssVars).forEach(([name, value]) => {
+        previousValues.set(name, element.style.getPropertyValue(name));
+        element.style.setProperty(name, value);
+    });
+
+    return () => {
+        previousValues.forEach((existingValue, name) => {
+            if (existingValue) {
+                element.style.setProperty(name, existingValue);
+            } else {
+                element.style.removeProperty(name);
+            }
+        });
+    };
+};
+
 export const ThemeProvider = ({ theme, target, children }: ThemeProviderProps) => {
     const cssVars = useMemo(() => themeToCSSVars(theme), [theme]);
+    const useIsomorphicLayoutEffect = getIsomorphicLayoutEffect();
 
     useIsomorphicLayoutEffect(() => {
-        const element = resolveTarget(target);
-        if (!element) return;
-
-        const previousValues = new Map<string, string>();
-
-        Object.entries(cssVars).forEach(([name, value]) => {
-            previousValues.set(name, element.style.getPropertyValue(name));
-            element.style.setProperty(name, value);
-        });
-
-        return () => {
-            previousValues.forEach((existingValue, name) => {
-                if (existingValue) {
-                    element.style.setProperty(name, existingValue);
-                } else {
-                    element.style.removeProperty(name);
-                }
-            });
-        };
+        return applyCssVarsToTarget(target, cssVars);
     }, [cssVars, target]);
 
     return <>{children}</>;
