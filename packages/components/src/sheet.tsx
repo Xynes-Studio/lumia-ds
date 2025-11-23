@@ -1,10 +1,14 @@
-import type { ComponentPropsWithoutRef, ElementRef, RefObject } from 'react';
+import type {
+  ComponentPropsWithoutRef,
+  ElementRef,
+  MutableRefObject,
+} from 'react';
 import { createContext, forwardRef, useContext, useRef } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from './utils';
 
 type SheetInternalContextValue = {
-  triggerRef: RefObject<HTMLElement>;
+  triggerRef: MutableRefObject<HTMLElement | null>;
   closeOnOverlayClick: boolean;
 };
 
@@ -35,9 +39,7 @@ export const Sheet = ({
   const triggerRef = useRef<HTMLElement | null>(null);
 
   return (
-    <SheetInternalContext.Provider
-      value={{ triggerRef, closeOnOverlayClick }}
-    >
+    <SheetInternalContext.Provider value={{ triggerRef, closeOnOverlayClick }}>
       <DialogPrimitive.Root
         {...props}
         onOpenChange={(nextOpen) => {
@@ -111,8 +113,7 @@ export type SheetContentProps = DialogPrimitive.DialogContentProps & {
 const sideClasses: Record<SheetSide, string> = {
   right:
     'right-0 top-0 h-full w-[min(90vw,26rem)] translate-x-full data-[state=open]:translate-x-0 rounded-l-lg',
-  left:
-    'left-0 top-0 h-full w-[min(90vw,26rem)] -translate-x-full data-[state=open]:translate-x-0 rounded-r-lg',
+  left: 'left-0 top-0 h-full w-[min(90vw,26rem)] -translate-x-full data-[state=open]:translate-x-0 rounded-r-lg',
   top: 'left-1/2 top-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-full data-[state=open]:translate-y-0 rounded-b-lg',
   bottom:
     'left-1/2 bottom-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 translate-y-full data-[state=open]:translate-y-0 rounded-t-lg',

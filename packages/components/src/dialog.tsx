@@ -1,4 +1,8 @@
-import type { ComponentPropsWithoutRef, ElementRef, RefObject } from 'react';
+import type {
+  ComponentPropsWithoutRef,
+  ElementRef,
+  MutableRefObject,
+} from 'react';
 import { createContext, forwardRef, useContext, useRef } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from './utils';
@@ -6,9 +10,8 @@ import { cn } from './utils';
 export type DialogProps = DialogPrimitive.DialogProps;
 export type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
 
-const DialogInternalContext = createContext<RefObject<HTMLElement> | null>(
-  null,
-);
+const DialogInternalContext =
+  createContext<MutableRefObject<HTMLElement | null> | null>(null);
 
 const useDialogInternalContext = (component: string) => {
   const context = useContext(DialogInternalContext);
