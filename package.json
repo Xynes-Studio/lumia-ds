@@ -1,0 +1,15 @@
+{
+  "name": "lumia-ds-monorepo",
+  "private": true,
+  "description": "Lumia UI design-system library monorepo",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.23.0"
+}
