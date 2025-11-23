@@ -117,3 +117,5 @@ export const defaultTheme: ThemeTokens = {
 };
 
 export const tokens = defaultTheme;
+
+export { themeToCSSVars } from './theme-to-css-vars';
