@@ -245,7 +245,7 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
     } = useTabsContext('TabsTrigger');
 
     const triggerRef = useRef<HTMLButtonElement | null>(null);
-    useImperativeHandle(ref, () => triggerRef.current);
+    useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement);
 
     useEffect(() => {
       return () => unregisterTrigger(value);

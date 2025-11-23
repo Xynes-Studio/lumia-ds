@@ -25,7 +25,9 @@ export const FiltersDrawer = () => (
     <SheetContent side="right">
       <SheetHeader>
         <SheetTitle>Filters</SheetTitle>
-        <SheetDescription>Adjust list results without leaving the page.</SheetDescription>
+        <SheetDescription>
+          Adjust list results without leaving the page.
+        </SheetDescription>
       </SheetHeader>
       <div className="space-y-4 text-sm leading-6 text-foreground/90">
         <div className="space-y-2">
