@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { email, maxLength, minLength, regex, required } from './index';
+import { z } from 'zod';
+import { email, maxLength, minLength, regex, required, zodRule } from './index';
 import type { ValidationContext, ValidationRule } from './index';
 
 describe('@lumia/forms', () => {
@@ -119,6 +120,21 @@ describe('@lumia/forms', () => {
       expect(rule.validate('foo')).toBe(true);
       expect(rule.validate('foo foo')).toBe(true);
       expect(rule.validate('bar')).toBe(false);
+    });
+  });
+
+  describe('zodRule', () => {
+    it('passes when schema validation succeeds and uses default message', () => {
+      const rule = zodRule(z.string().min(3));
+      expect(rule.message).toBe('Invalid value.');
+      expect(rule.validate('hello')).toBe(true);
+    });
+
+    it('fails when schema validation fails and respects custom message', () => {
+      const rule = zodRule(z.number().positive(), 'Value must be positive');
+      expect(rule.message).toBe('Value must be positive');
+      expect(rule.validate(-1)).toBe(false);
+      expect(rule.validate(10)).toBe(true);
     });
   });
 });

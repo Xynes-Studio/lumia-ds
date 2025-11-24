@@ -1,3 +1,5 @@
+import type { ZodTypeAny } from 'zod';
+
 /**
  * Extra form data provided to validators for cross-field checks.
  */
@@ -24,7 +26,10 @@ const DEFAULT_MESSAGES = {
   maxLength: (len: number) => `Must be at most ${len} characters.`,
   email: 'Enter a valid email address.',
   regex: 'Value does not match the required pattern.',
+  zod: 'Invalid value.',
 };
+
+type ZodInput<T extends ZodTypeAny> = T['_input'];
 
 const hasLength = (value: unknown): value is { length: number } =>
   value !== null &&
@@ -84,4 +89,13 @@ export const regex = (
     pattern.lastIndex = 0;
     return pattern.test(value);
   },
+});
+
+export const zodRule = <TSchema extends ZodTypeAny>(
+  schema: TSchema,
+  message = DEFAULT_MESSAGES.zod,
+): ValidationRule<ZodInput<TSchema>> => ({
+  name: 'zod',
+  message,
+  validate: (value) => schema.safeParse(value).success,
 });

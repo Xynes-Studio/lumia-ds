@@ -32,7 +32,9 @@ import {
     maxLength,
     email,
     regex,
+    zodRule,
 } from '@lumia/forms';
+import { z } from 'zod';
 
 // All helpers accept an optional custom message
 const mustHaveName = required();
@@ -40,6 +42,7 @@ const atLeast3Chars = minLength(3);
 const upTo10Chars = maxLength(10);
 const mustBeEmail = email();
 const postalCodePattern = regex(/^[A-Z]{3}\\d{2}$/);
+const mustMatchSchema = zodRule(z.object({ name: z.string().min(1) }));
 ```
 
 - `required(message?)`: fails for `null`, `undefined`, trimmed empty strings, or empty arrays.
@@ -47,3 +50,4 @@ const postalCodePattern = regex(/^[A-Z]{3}\\d{2}$/);
 - `maxLength(len, message?)`: passes when `value.length <= len`.
 - `email(message?)`: basic email format check.
 - `regex(pattern, message?)`: runs `pattern.test` on string values (stateful regexes are reset per call).
+- `zodRule(schema, message?)`: uses `schema.safeParse(value)`; returns `false` when parsing fails and reports the provided message or `"Invalid value."` by default.
