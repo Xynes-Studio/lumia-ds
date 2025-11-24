@@ -51,3 +51,25 @@ const mustMatchSchema = zodRule(z.object({ name: z.string().min(1) }));
 - `email(message?)`: basic email format check.
 - `regex(pattern, message?)`: runs `pattern.test` on string values (stateful regexes are reset per call).
 - `zodRule(schema, message?)`: uses `schema.safeParse(value)`; returns `false` when parsing fails and reports the provided message or `"Invalid value."` by default.
+
+## ValidatedInput
+
+`ValidatedInput` wraps the DS `Input` component and runs a list of `ValidationRule`s on change/blur, showing the first failing rule's message as the error hint.
+
+```tsx
+import { ValidatedInput, required, minLength } from '@lumia/forms';
+
+const rules = [required('Name is required'), minLength(3, 'Too short')];
+
+<ValidatedInput
+    value={name}
+    onChange={setName}
+    rules={rules}
+    placeholder="Full name"
+    hint="Enter your full legal name"
+/>;
+```
+
+- Props: `value: string`, `onChange(value: string)`, optional `rules?: ValidationRule[]`, plus all pass-through DS `Input` props except `value`, `onChange`, `invalid`, and `hint`.
+- When any rule fails, `invalid` is set on the underlying `Input` and the failing rule message is shown in place of the hint.
+- When all rules pass, the hint (if provided) is restored and `invalid` is cleared.
