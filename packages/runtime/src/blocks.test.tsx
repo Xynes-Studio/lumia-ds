@@ -1,7 +1,10 @@
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it } from 'vitest';
-import { DetailBlock, ListBlock } from './blocks';
+import { Simulate } from 'react-dom/test-utils';
+import { describe, expect, it, vi } from 'vitest';
+import { required } from '@lumia/forms';
+import { DetailBlock, FormBlock, ListBlock } from './blocks';
+import type { ResourceConfig } from './index';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
@@ -135,6 +138,136 @@ describe('DetailBlock', () => {
     });
 
     expect(host.textContent).toContain('Nothing to show');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+});
+
+describe('FormBlock', () => {
+  type MemberForm = { name: string; role: string };
+
+  it('renders fields and validates using form rules', async () => {
+    const handleSubmit = vi.fn();
+    const resource: ResourceConfig<MemberForm> = {
+      id: 'members',
+      fields: [
+        {
+          name: 'name',
+          label: 'Name',
+          validation: [required('Name is required')],
+        },
+        {
+          name: 'role',
+          label: 'Role',
+          kind: 'select',
+          options: [
+            { label: 'Select a role', value: '' },
+            { label: 'Admin', value: 'admin' },
+          ],
+          validation: [required('Role is required')],
+        },
+      ],
+    };
+
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <FormBlock
+          title="Invite"
+          resource={resource}
+          mode="create"
+          onSubmit={handleSubmit}
+        />,
+      );
+    });
+
+    const form = host.querySelector('form') as HTMLFormElement;
+    const nameInput = host.querySelector(
+      '[data-field-name="name"] input',
+    ) as HTMLInputElement;
+    const roleSelect = host.querySelector(
+      '[data-field-name="role"] select',
+    ) as HTMLSelectElement;
+
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(
+      host.querySelector('[data-field-name="name"] p')?.textContent,
+    ).toContain('Name is required');
+    expect(roleSelect.getAttribute('aria-invalid')).toBe('true');
+
+    await act(async () => {
+      nameInput.value = 'Nova';
+      Simulate.change(nameInput, { target: { value: 'Nova' } });
+      roleSelect.value = 'admin';
+      Simulate.change(roleSelect, { target: { value: 'admin' } });
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(handleSubmit).toHaveBeenCalledWith(
+      { name: 'Nova', role: 'admin' },
+      expect.anything(),
+    );
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('prefills defaults and submits via resource data fetcher', async () => {
+    const update = vi.fn();
+    const resource: ResourceConfig<{ name: string }> = {
+      id: 'profile',
+      fields: [{ name: 'name', label: 'Name' }],
+      dataFetcher: { update },
+    };
+
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <FormBlock
+          title="Edit"
+          resource={resource}
+          mode="update"
+          initialValues={{ name: 'Existing Name' }}
+        />,
+      );
+    });
+
+    const form = host.querySelector('form') as HTMLFormElement;
+    const nameInput = host.querySelector('input') as HTMLInputElement;
+    const submitButton = host.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+
+    expect(nameInput.value).toBe('Existing Name');
+    expect(submitButton.textContent).toContain('Update');
+
+    await act(async () => {
+      Simulate.change(nameInput, { target: { value: 'Updated Name' } });
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(update).toHaveBeenCalledWith(
+      { name: 'Updated Name' },
+      expect.anything(),
+    );
 
     await act(async () => root.unmount());
     host.remove();
