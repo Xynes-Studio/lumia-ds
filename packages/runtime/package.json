@@ -1,0 +1,22 @@
+{
+    "name": "@lumia/runtime",
+    "version": "0.0.0",
+    "description": "Runtime schema definitions for Lumia page rendering",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch"
+    },
+    "devDependencies": {
+        "tsup": "^8.5.1"
+    }
+}

@@ -35,6 +35,7 @@ A framework-aware, Next.js-first design system published as an independent NPM p
 - High-level folder structure inside the package:
   - `@lumia/tokens` — design tokens and token utilities
   - `@lumia/theme` — React ThemeProvider to apply token CSS variables
+  - `@lumia/runtime` — runtime schemas for pages/blocks/resources
   - `@lumia/components` — React components (currently a `Hello` placeholder to validate build/test harness)
 - Naming conventions for components, hooks, and utilities
 - Separation of:
