@@ -61,3 +61,13 @@ export type ResourceConfig = {
   id: string;
   pages?: ResourcePageRefs;
 };
+
+export { DetailBlock, ListBlock } from './blocks';
+export type {
+  DetailBlockConfig,
+  DetailBlockField,
+  DetailBlockProps,
+  ListBlockColumn,
+  ListBlockConfig,
+  ListBlockProps,
+} from './blocks';
