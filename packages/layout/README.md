@@ -4,6 +4,7 @@ Layout primitives for admin-style shells. Components are placeholders and will b
 
 ## Components
 
+- `AdminShell` – ready-to-use admin layout with responsive sidebar
 - `LayoutShell` – top-level vertical shell container
 - `LayoutHeader` – sticky-style header area
 - `LayoutBody` – flex wrapper for sidebar + main
@@ -37,6 +38,23 @@ export function AdminLayout() {
             </LayoutBody>
             <LayoutFooter>Footer</LayoutFooter>
         </LayoutShell>
+    );
+}
+```
+
+`AdminShell` composes the primitives for you when you just need a header + sidebar + content scaffold:
+
+```tsx
+import { AdminShell } from '@lumia/layout';
+
+export function AdminLayout() {
+    return (
+        <AdminShell
+            header={<div>Header</div>}
+            sidebar={<div>Sidebar nav</div>}
+        >
+            <p>Your routed content</p>
+        </AdminShell>
     );
 }
 ```
