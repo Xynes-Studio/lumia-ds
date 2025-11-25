@@ -1,3 +1,6 @@
+import type { FieldValues } from '@lumia/forms';
+import type { FieldConfig, FormDataFetcher } from './blocks';
+
 /**
  * UI primitives the runtime renderer understands.
  */
@@ -57,16 +60,24 @@ export type ResourcePageRefs = {
 /**
  * Resource configuration that links back to page definitions.
  */
-export type ResourceConfig = {
+export type ResourceConfig<TFieldValues extends FieldValues = FieldValues> = {
   id: string;
   pages?: ResourcePageRefs;
+  fields?: FieldConfig<TFieldValues>[];
+  dataFetcher?: FormDataFetcher<TFieldValues>;
 };
 
-export { DetailBlock, ListBlock } from './blocks';
+export { DetailBlock, FormBlock, ListBlock } from './blocks';
 export type {
   DetailBlockConfig,
   DetailBlockField,
   DetailBlockProps,
+  FieldConfig,
+  FieldOption,
+  FormBlockConfig,
+  FormBlockProps,
+  FormDataFetcher,
+  FormFieldKind,
   ListBlockColumn,
   ListBlockConfig,
   ListBlockProps,

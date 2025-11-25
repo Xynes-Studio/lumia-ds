@@ -1,13 +1,30 @@
 import type { ReactNode } from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useMemo } from 'react';
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  Checkbox,
+  Select,
+  Textarea,
   type CardProps,
 } from '@lumia/components';
+import {
+  Controller,
+  LumiaForm,
+  useForm,
+  ValidatedInput,
+  type FieldValues,
+  type SubmitHandler,
+  type UseFormProps,
+  type UseControllerProps,
+  type UseFormReturn,
+  type ValidationRule,
+} from '@lumia/forms';
+import type { ResourceConfig } from './index';
 
 type Alignment = 'start' | 'center' | 'end';
 
@@ -68,6 +85,78 @@ const formatDefaultValue = (value: unknown): ReactNode => {
   }
 
   return String(value);
+};
+
+export type FormFieldKind = 'text' | 'textarea' | 'select' | 'checkbox';
+
+export type FieldOption = { label: string; value: string };
+
+export type FieldConfig<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends keyof TFieldValues & string = keyof TFieldValues & string,
+> = {
+  name: TFieldName;
+  label: string;
+  kind?: FormFieldKind;
+  placeholder?: string;
+  hint?: string;
+  defaultValue?: TFieldValues[TFieldName];
+  options?: FieldOption[];
+  validation?: ValidationRule<TFieldValues[TFieldName], TFieldValues>[];
+  disabled?: boolean;
+};
+
+export type FormDataFetcher<TFieldValues extends FieldValues = FieldValues> = {
+  create?: SubmitHandler<TFieldValues>;
+  update?: SubmitHandler<TFieldValues>;
+};
+
+const buildDefaultValues = <TFieldValues extends FieldValues>(
+  fields: FieldConfig<TFieldValues>[],
+  initialValues?: Partial<TFieldValues>,
+) => {
+  const defaults: Partial<TFieldValues> = {};
+
+  fields.forEach((field) => {
+    if (field.defaultValue !== undefined) {
+      defaults[field.name] = field.defaultValue;
+    }
+  });
+
+  return {
+    ...defaults,
+    ...(initialValues ?? {}),
+  } satisfies Partial<TFieldValues>;
+};
+
+const buildValidationRules = <
+  TFieldValues extends FieldValues,
+  TValue = unknown,
+>(
+  rules: ValidationRule<TValue, TFieldValues>[] | undefined,
+  methods: UseFormReturn<TFieldValues>,
+): UseControllerProps<TFieldValues>['rules'] => {
+  if (!rules?.length) return undefined;
+
+  const validators = rules.reduce<
+    Record<
+      string,
+      (value: unknown) => boolean | string | Promise<boolean | string>
+    >
+  >((acc, rule) => {
+    acc[rule.name] = async (value) => {
+      const context = methods.getValues();
+      const isValid = await rule.validate(
+        value as TValue,
+        context as unknown as TFieldValues,
+      );
+
+      return isValid || rule.message;
+    };
+    return acc;
+  }, {});
+
+  return { validate: validators };
 };
 
 export type ListBlockColumn = {
@@ -200,6 +289,254 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
               </tbody>
             </table>
           </div>
+        </CardContent>
+      </Card>
+    );
+  },
+);
+
+export type FormBlockProps<TFieldValues extends FieldValues = FieldValues> =
+  CardProps & {
+    title?: string;
+    description?: string;
+    resource: ResourceConfig<TFieldValues>;
+    mode: 'create' | 'update';
+    initialValues?: Partial<TFieldValues>;
+    submitLabel?: string;
+    emptyMessage?: string;
+    dataFetcher?: FormDataFetcher<TFieldValues>;
+    onSubmit?: SubmitHandler<TFieldValues>;
+  };
+
+export type FormBlockConfig<TFieldValues extends FieldValues = FieldValues> =
+  Pick<
+    FormBlockProps<TFieldValues>,
+    | 'title'
+    | 'description'
+    | 'resource'
+    | 'mode'
+    | 'initialValues'
+    | 'submitLabel'
+    | 'emptyMessage'
+  >;
+
+export const FormBlock = forwardRef<HTMLDivElement, FormBlockProps>(
+  function FormBlock(
+    {
+      title,
+      description,
+      resource,
+      mode,
+      initialValues,
+      submitLabel,
+      emptyMessage = 'No fields configured',
+      dataFetcher,
+      onSubmit,
+      className,
+      ...props
+    },
+    ref,
+  ) {
+    const fields = resource.fields ?? [];
+    const defaults = useMemo(
+      () => buildDefaultValues(fields, initialValues),
+      [fields, initialValues],
+    );
+    const methods = useForm({
+      defaultValues: defaults as UseFormProps['defaultValues'],
+    });
+
+    useEffect(() => {
+      methods.reset(defaults as UseFormProps['defaultValues']);
+    }, [defaults, methods]);
+
+    const headerPresent = Boolean(title || description);
+    const resolvedSubmit =
+      onSubmit ?? dataFetcher?.[mode] ?? resource.dataFetcher?.[mode];
+    const resolvedSubmitLabel =
+      submitLabel ?? (mode === 'create' ? 'Create' : 'Update');
+
+    const handleSubmit: SubmitHandler = async (values, event) => {
+      if (resolvedSubmit) {
+        await resolvedSubmit(values, event);
+      }
+    };
+
+    const renderField = (fieldConfig: FieldConfig) => {
+      const fieldId = `${resource.id}-${fieldConfig.name}`;
+      const controllerRules = buildValidationRules(
+        fieldConfig.validation,
+        methods,
+      );
+
+      if (fieldConfig.kind === 'select') {
+        return (
+          <div
+            key={fieldConfig.name}
+            data-field-name={fieldConfig.name}
+            className="flex flex-col gap-2"
+          >
+            <Controller
+              name={fieldConfig.name}
+              control={methods.control}
+              rules={controllerRules}
+              render={({ field, fieldState }) => (
+                <Select
+                  {...field}
+                  ref={field.ref}
+                  id={fieldId}
+                  value={field.value ?? ''}
+                  onChange={(event) => field.onChange(event.target.value)}
+                  label={fieldConfig.label}
+                  placeholder={fieldConfig.placeholder}
+                  hint={fieldState.error?.message ?? fieldConfig.hint}
+                  invalid={Boolean(fieldState.error)}
+                  disabled={fieldConfig.disabled}
+                >
+                  {fieldConfig.options?.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            />
+          </div>
+        );
+      }
+
+      if (fieldConfig.kind === 'textarea') {
+        return (
+          <div
+            key={fieldConfig.name}
+            data-field-name={fieldConfig.name}
+            className="flex flex-col gap-2"
+          >
+            <label
+              htmlFor={fieldId}
+              className="text-sm font-medium text-foreground"
+            >
+              {fieldConfig.label}
+            </label>
+            <Controller
+              name={fieldConfig.name}
+              control={methods.control}
+              rules={controllerRules}
+              render={({ field, fieldState }) => (
+                <Textarea
+                  {...field}
+                  ref={field.ref}
+                  id={fieldId}
+                  value={field.value ?? ''}
+                  onChange={(event) => field.onChange(event.target.value)}
+                  placeholder={fieldConfig.placeholder}
+                  hint={fieldState.error?.message ?? fieldConfig.hint}
+                  invalid={Boolean(fieldState.error)}
+                  disabled={fieldConfig.disabled}
+                />
+              )}
+            />
+          </div>
+        );
+      }
+
+      if (fieldConfig.kind === 'checkbox') {
+        return (
+          <div
+            key={fieldConfig.name}
+            data-field-name={fieldConfig.name}
+            className="flex flex-col gap-2"
+          >
+            <Controller
+              name={fieldConfig.name}
+              control={methods.control}
+              rules={controllerRules}
+              render={({ field, fieldState }) => (
+                <Checkbox
+                  {...field}
+                  ref={field.ref}
+                  id={fieldId}
+                  checked={Boolean(field.value)}
+                  onChange={(event) => field.onChange(event.target.checked)}
+                  label={fieldConfig.label}
+                  hint={fieldState.error?.message ?? fieldConfig.hint}
+                  invalid={Boolean(fieldState.error)}
+                  disabled={fieldConfig.disabled}
+                />
+              )}
+            />
+          </div>
+        );
+      }
+
+      return (
+        <div
+          key={fieldConfig.name}
+          data-field-name={fieldConfig.name}
+          className="flex flex-col gap-2"
+        >
+          <label
+            htmlFor={fieldId}
+            className="text-sm font-medium text-foreground"
+          >
+            {fieldConfig.label}
+          </label>
+          <Controller
+            name={fieldConfig.name}
+            control={methods.control}
+            rules={controllerRules}
+            render={({ field, fieldState }) => (
+              <ValidatedInput
+                {...field}
+                ref={field.ref}
+                id={fieldId}
+                value={(field.value ?? '') as string}
+                onChange={(nextValue) => field.onChange(nextValue)}
+                onBlur={field.onBlur}
+                placeholder={fieldConfig.placeholder}
+                hint={fieldConfig.hint}
+                errorMessage={fieldState.error?.message}
+                rules={fieldConfig.validation}
+                disabled={fieldConfig.disabled}
+              />
+            )}
+          />
+        </div>
+      );
+    };
+
+    return (
+      <Card
+        ref={ref}
+        className={cx('bg-background text-foreground', className)}
+        {...props}
+      >
+        {headerPresent && (
+          <CardHeader>
+            {title ? (
+              <CardTitle>{title}</CardTitle>
+            ) : (
+              <span className="sr-only">Form block</span>
+            )}
+            {description && <CardDescription>{description}</CardDescription>}
+          </CardHeader>
+        )}
+
+        <CardContent>
+          {fields.length === 0 ? (
+            <p className="text-sm text-muted">{emptyMessage}</p>
+          ) : (
+            <LumiaForm methods={methods} onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 gap-4">
+                  {fields.map((field) => renderField(field))}
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit">{resolvedSubmitLabel}</Button>
+                </div>
+              </div>
+            </LumiaForm>
+          )}
         </CardContent>
       </Card>
     );
