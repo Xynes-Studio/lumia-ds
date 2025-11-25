@@ -7,3 +7,4 @@ export * from './card';
 export * from './tabs';
 export * from './dialog';
 export * from './sheet';
+export * from './flex';

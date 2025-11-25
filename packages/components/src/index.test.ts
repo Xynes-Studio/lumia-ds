@@ -63,6 +63,8 @@ import {
   type TabsListProps,
   type TabsProps,
   type TabsTriggerProps,
+  Flex,
+  type FlexProps,
 } from './index';
 
 describe('components index barrel', () => {
@@ -102,6 +104,8 @@ describe('components index barrel', () => {
     expect(SheetTitle).toBeDefined();
     expect(SheetDescription).toBeDefined();
     expect(SheetFooter).toBeDefined();
+
+    expect(Flex).toBeDefined();
   });
 
   it('provides consumer friendly prop types', () => {
@@ -183,6 +187,8 @@ describe('components index barrel', () => {
     expectTypeOf<SheetFooterProps>().toMatchTypeOf<
       ComponentProps<typeof SheetFooter>
     >();
+
+    expectTypeOf<FlexProps>().toMatchTypeOf<ComponentProps<typeof Flex>>();
   });
 
   it('mirrors the external package entrypoint', () => {
@@ -217,5 +223,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.SheetTitleProps>().toEqualTypeOf<SheetTitleProps>();
     expectTypeOf<ExternalApi.SheetDescriptionProps>().toEqualTypeOf<SheetDescriptionProps>();
     expectTypeOf<ExternalApi.SheetFooterProps>().toEqualTypeOf<SheetFooterProps>();
+
+    expectTypeOf<ExternalApi.Flex>().toEqualTypeOf<typeof Flex>();
+    expectTypeOf<ExternalApi.FlexProps>().toEqualTypeOf<FlexProps>();
   });
 });

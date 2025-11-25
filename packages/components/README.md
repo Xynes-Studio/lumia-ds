@@ -36,11 +36,12 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
+  Flex,
 } from '@lumia/components';
 
 export function Example() {
   return (
-    <div className="flex flex-col gap-4">
+    <Flex direction="col" gap="md">
       <Button variant="primary" size="md">
         Click
       </Button>
@@ -146,7 +147,15 @@ export function Example() {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-    </div>
+
+      <Flex as="section" direction="row" align="center" justify="between" gap="sm">
+        <p className="text-sm text-muted">Flex layout primitive</p>
+        <div className="flex items-center gap-2">
+          <span className="text-xs uppercase text-muted">Direction</span>
+          <code className="rounded bg-muted px-2 py-1 text-xs">row</code>
+        </div>
+      </Flex>
+    </Flex>
   );
 }
 ```
