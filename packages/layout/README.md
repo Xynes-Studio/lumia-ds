@@ -1,6 +1,12 @@
 # @lumia/layout
 
-Layout primitives for admin-style shells. Components are placeholders and will be iterated in follow-up tickets.
+Layout primitives for admin-style shells. Components will iterate in follow-up tickets.
+
+## Install
+
+```bash
+pnpm add @lumia/layout @lumia/components
+```
 
 ## Components
 
@@ -15,7 +21,7 @@ Layout primitives for admin-style shells. Components are placeholders and will b
 - `StackLayout` – detail-style layout with top actions and stacked content
 - `DrawerLayout` – controlled overlay drawer container for secondary flows
 
-All layout primitives now compose the shared `Flex` component, so prefer tweaking layout via props (`direction`, `align`, `justify`, etc.) instead of adding raw `flex-*` class strings.
+All layout primitives compose the shared `Flex` component, so prefer tweaking via props (`direction`, `align`, `justify`, etc.) instead of raw `flex-*` strings.
 
 ## Usage
 

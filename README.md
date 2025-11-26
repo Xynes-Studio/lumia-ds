@@ -1,181 +1,58 @@
 # Lumia UI Design System
 
-A framework-aware, Next.js-first design system published as an independent NPM package for use across multiple admin and internal tools. This is the Lumia UI design-system library.
+React/Next.js-first design system for admin and internal tools, published as independent NPM packages.
 
-> **Note:** This README is a structural skeleton. Fill in details as features are implemented.
+## Packages at a glance
 
----
+- `@lumia/tokens` – typed theme tokens and helpers
+- `@lumia/theme` – `ThemeProvider` and Tailwind preset
+- `@lumia/components` – React primitives (buttons, inputs, overlays, tabs, layout helpers)
+- `@lumia/forms` – validation rules and React Hook Form wiring
+- `@lumia/layout` – admin shells, stack layout, drawer layout
+- `@lumia/runtime` – schemas and renderer for resource-driven pages
+- `@lumia/icons` – icon registry and generated SVG React components
 
-## 1. Overview
+## Quick start (consumer app)
 
-- Short description of the design system
-- Intended consumers (admin apps, internal tools, public dashboards)
-- High-level feature list (components, validation layer, layouts, dynamic route renderer)
+```bash
+pnpm add @lumia/tokens @lumia/theme @lumia/components @lumia/forms @lumia/layout @lumia/runtime @lumia/icons react-hook-form
+pnpm add -D tailwindcss postcss autoprefixer
+```
 
----
+```js
+// tailwind.config.cjs
+const { lumiaTailwindPreset } = require('@lumia/theme');
 
-## 2. Goals & Principles
+module.exports = {
+  presets: [lumiaTailwindPreset],
+  content: ['./app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+};
+```
 
-- Primary goals of the design system
-- Design and UX principles (consistency, accessibility, performance, etc.)
-- Non-goals and explicit scope boundaries
+```tsx
+// app/layout.tsx or src/App.tsx
+import { ThemeProvider } from '@lumia/theme';
+import { defaultTheme } from '@lumia/tokens';
 
----
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>;
+}
+```
 
-## 3. Architecture
+## Docs and guides
 
-### 3.1. Tech Stack
+- Storybook usage: `docs/storybook.md`
+- Icon import workflow: `docs/icon-import.md`
+- Runtime schemas: `docs/runtime-schemas.md`
+- Admin app consumption guide: `docs/admin-app-consumption.md`
 
-- Core technologies used (React, TypeScript, Tailwind, shadcn, etc.)
-- Supported React/Next.js versions
-- Peer dependency expectations
+## Development
 
-### 3.2. Package Structure
+- Install deps: `pnpm install`
+- Run Storybook: `STORYBOOK_DISABLE_TELEMETRY=1 pnpm storybook`
+- Build packages: `pnpm -r build`
 
-- High-level folder structure inside the package:
-  - `@lumia/tokens` — design tokens and token utilities
-  - `@lumia/theme` — React ThemeProvider to apply token CSS variables
-  - `@lumia/runtime` — runtime schemas for pages/blocks/resources
-  - `@lumia/components` — React components (currently a `Hello` placeholder to validate build/test harness)
-  - `@lumia/icons` — in-memory icon registry that maps string IDs to SVG React components
-- Naming conventions for components, hooks, and utilities
-- Separation of:
-  - Core components
-  - Form/validation layer
-  - Layouts
-  - Router utilities
-  - Theme and tokens
+## Resource scaffolding CLI
 
-### 3.3. Consumption Model
-
-- How this package is meant to be consumed in other apps
-- Responsibilities of the consuming app vs the design system
-- Constraints (for example: assumes Tailwind is present, assumes React 18, etc.)
-
----
-
-## 4. Getting Started (Consumer App)
-
-### 4.1. Installation
-
-- NPM/Yarn/PNPM install commands
-- Required peer dependencies
-
-### 4.2. Minimal Setup Steps
-
-- Tailwind configuration requirements (at a high level)
-- Global styles and tokens
-- Wrap the app with `ThemeProvider` from `@lumia/theme`, passing a `ThemeTokens` object (for example `defaultTheme` from `@lumia/tokens`) so CSS variables land on `document.documentElement`
-- Environment assumptions (SSR/CSR, Next.js app/router notes)
-
-### 4.3. First Integration Checklist
-
-- Verify Tailwind + tokens loaded correctly
-- Render a basic page using design system primitives
-- Confirm dark/light theme (if applicable)
-
----
-
-## 5. Core Building Blocks
-
-### 5.1. Component Library
-
-- Types of components provided (buttons, inputs, overlays, navigation, feedback, etc.)
-- Naming and usage conventions
-- Guidelines for when to extend vs when to wrap at app level
-
-### 5.2. Form & Validation Layer
-
-- Concept of validation configuration per field
-- Passing validation arrays into components
-- Shared validation rules and utilities
-- How error states and messages are surfaced
-
-### 5.3. Layout System
-
-- Available layout primitives (app shell, auth shell, minimal shell, etc.)
-- Composition pattern (header, sidebar, content, page header, sections)
-- How layouts relate to routing and navigation
-
-### 5.4. Dynamic Route Renderer
-
-- Route definition shape (id, path, layout, nav metadata, permission codes)
-- How the renderer chooses layouts and builds navigation
-- Integration points with RBAC/permissions (high level)
-- Extensibility / customization points
-
----
-
-## 6. Design Tokens & Theming
-
-- Color system overview
-- Typography scale and usage guidelines
-- Spacing, radii, elevation tokens
-- Theming model (light/dark or multi-theme support)
-- How apps can override or extend tokens safely
-
----
-
-## 7. Usage Patterns & Best Practices
-
-- Recommended approach for building new screens
-- Guidelines for consistent forms and error handling
-- Accessibility expectations and patterns
-- Performance considerations (lazy loading, tree-shaking expectations)
-- Versioning and handling breaking changes in consuming apps
-
----
-
-## 8. Internal Development Guide (For Contributors)
-
-### 8.1. Local Development
-
-- How to run story/docs app (if any)
-- How to link this package to a test consumer app
-
-### 8.2. Code Standards
-
-- Linting and formatting rules
-- TypeScript strictness expectations
-- Testing approach (unit, visual, or snapshot tests)
-
-### 8.3. Adding New Components
-
-- Steps to scaffold a new component
-- Requirements before merging (docs, stories, tests)
-- API design checklist (props, naming, accessibility)
-
-### 8.4. Release & Publishing Process
-
-- Versioning strategy (semver rules)
-- Changelog requirements
-- Publishing steps to NPM and tagging in Git
-
-### 8.5. Resource Scaffolding CLI
-
-- Generate a new resource config with `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`.
-- The command creates `src/resources/<resource-name>.resource.ts` in the current working directory with a `defineResource` template; fill in pages, fields, and data fetchers, then run type-check/build to confirm it compiles.
-
----
-
-## 9. Roadmap
-
-- Short-term planned components and utilities
-- Future improvements (better docs, theming, integrations)
-- Ideas under consideration but not yet committed
-
----
-
-## 10. FAQ
-
-- Common questions from consumer apps
-- Troubleshooting known issues (build, styles, theming)
-- Where to ask for help or request features
-
----
-
-## 11. License & Ownership
-
-- License type
-- Copyright and ownership details
-- Internal vs open-source usage notes (if applicable)
+- Generate a resource: `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`
+- Fills `src/resources/<resource>.resource.ts` with a `defineResource` template; add pages, fields, and fetchers, then type-check/build.

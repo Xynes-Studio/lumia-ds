@@ -2,6 +2,12 @@
 
 Icon registry utilities and the `Icon` React component for Lumia DS.
 
+## Install
+
+```bash
+pnpm add @lumia/icons
+```
+
 ## Base icons
 
 A curated set of Lucide icons is pre-registered:

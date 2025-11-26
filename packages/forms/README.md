@@ -1,6 +1,12 @@
 # @lumia/forms
 
-Type definitions for Lumia-style inline validation.
+Validation helpers and React Hook Form wiring for Lumia components.
+
+## Install
+
+```bash
+pnpm add @lumia/forms react-hook-form
+```
 
 ## ValidationRule
 

@@ -1,8 +1,14 @@
 # @lumia/components
 
-Lumia design-system React components, wrapping shadcn primitives and themed via `@lumia/theme` and `@lumia/tokens`.
+Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia/theme` and `@lumia/tokens`.
 
-## Usage
+## Install
+
+```bash
+pnpm add @lumia/components @lumia/theme @lumia/tokens
+```
+
+## Usage (sampler)
 
 ```tsx
 import {
@@ -121,12 +127,12 @@ export function Example() {
           <p className="text-sm text-foreground/80">
             Body copy lives here. Press ESC or click outside to dismiss.
           </p>
-      <DialogFooter>
-        <Button variant="secondary">Cancel</Button>
-        <Button>Confirm</Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+          <DialogFooter>
+            <Button variant="secondary">Cancel</Button>
+            <Button>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Sheet>
         <SheetTrigger asChild>
@@ -183,7 +189,8 @@ export function Example() {
 }
 ```
 
-Storybook (Button playground):  
+## Storybook
+
 `HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006`
 
 More details: see `docs/storybook.md`.
