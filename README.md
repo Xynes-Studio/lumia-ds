@@ -151,6 +151,11 @@ A framework-aware, Next.js-first design system published as an independent NPM p
 - Changelog requirements
 - Publishing steps to NPM and tagging in Git
 
+### 8.5. Resource Scaffolding CLI
+
+- Generate a new resource config with `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`.
+- The command creates `src/resources/<resource-name>.resource.ts` in the current working directory with a `defineResource` template; fill in pages, fields, and data fetchers, then run type-check/build to confirm it compiles.
+
 ---
 
 ## 9. Roadmap

@@ -1,0 +1,10 @@
+{
+  "name": "@lumia/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CLI utilities for Lumia DS",
+  "bin": {
+    "lumia-resource": "./bin/lumia-resource.js"
+  },
+  "license": "ISC"
+}

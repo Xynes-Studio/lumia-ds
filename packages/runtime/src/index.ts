@@ -68,6 +68,12 @@ export type ResourceConfig<TFieldValues extends FieldValues = FieldValues> = {
   dataFetcher?: FormDataFetcher<TFieldValues>;
 };
 
+export function defineResource<TFieldValues extends FieldValues = FieldValues>(
+  config: ResourceConfig<TFieldValues>,
+): ResourceConfig<TFieldValues> {
+  return config;
+}
+
 export type ResourceScreen = 'list' | 'detail' | 'create' | 'update';
 
 export type DataQueryContext<TFieldValues extends FieldValues = FieldValues> = {

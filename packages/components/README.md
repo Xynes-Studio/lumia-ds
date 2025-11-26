@@ -194,6 +194,12 @@ More details: see `docs/storybook.md`.
 - Overlay and content pull design tokens for background, border, radius, and shadow; overlay click, ESC key, and the close button all dismiss and return focus to the trigger.
 - Use `DialogTrigger` with `asChild` to wrap buttons/links, and compose `DialogHeader`, `DialogTitle`, `DialogDescription`, and `DialogFooter` for consistent spacing.
 
+### Tabs notes
+
+- Horizontal by default; pass `orientation="vertical"` to render the list in a column and keep panels aligned to the right.
+- Keyboard arrows and Home/End follow WAI-ARIA: left/up/right/down (or up/down for vertical) move focus, Home/End jump to first/last enabled tab.
+- Use `defaultValue` for uncontrolled use, or `value` + `onValueChange` for controlled tabs; disabled triggers are skipped when moving with the keyboard.
+
 ### Sheet notes
 
 - Same Radix foundation as Dialog but positioned as a drawer from any edge (`side="right" | "left" | "top" | "bottom"`).

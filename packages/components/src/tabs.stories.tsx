@@ -33,25 +33,44 @@ const Content = ({ title, body }: { title: string; body: string }) => (
 
 const renderTabs = (args: Story['args'], includeDisabled = false) => (
   <Tabs {...args} className="w-full max-w-3xl">
-    <TabsList>
-      <TabsTrigger value="overview">Overview</TabsTrigger>
-      <TabsTrigger value="usage">Usage</TabsTrigger>
-      <TabsTrigger value="history" disabled={includeDisabled}>
-        History {includeDisabled ? '(disabled)' : ''}
-      </TabsTrigger>
-    </TabsList>
-    <TabsContent value="overview">
-      <Content title="Overview" body="High level summary content lives here." />
-    </TabsContent>
-    <TabsContent value="usage">
-      <Content
-        title="Usage"
-        body="Best practices, copy, and quick references."
-      />
-    </TabsContent>
-    <TabsContent value="history">
-      <Content title="History" body="Changes or notes for this section." />
-    </TabsContent>
+    <div
+      className={
+        args?.orientation === 'vertical'
+          ? 'grid grid-cols-[auto,1fr] items-start gap-4'
+          : 'flex flex-col gap-3'
+      }
+    >
+      <TabsList
+        className={
+          args?.orientation === 'vertical'
+            ? 'flex-col items-stretch gap-1'
+            : undefined
+        }
+      >
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="usage">Usage</TabsTrigger>
+        <TabsTrigger value="history" disabled={includeDisabled}>
+          History {includeDisabled ? '(disabled)' : ''}
+        </TabsTrigger>
+      </TabsList>
+      <div className="flex flex-col gap-3">
+        <TabsContent value="overview">
+          <Content
+            title="Overview"
+            body="High level summary content lives here."
+          />
+        </TabsContent>
+        <TabsContent value="usage">
+          <Content
+            title="Usage"
+            body="Best practices, copy, and quick references."
+          />
+        </TabsContent>
+        <TabsContent value="history">
+          <Content title="History" body="Changes or notes for this section." />
+        </TabsContent>
+      </div>
+    </div>
   </Tabs>
 );
 
@@ -66,6 +85,22 @@ export const WithDisabledTab: Story = {
       description: {
         story:
           'Demonstrates default, hover, focus, and disabled tab trigger states.',
+      },
+    },
+  },
+};
+
+export const Vertical: Story = {
+  args: {
+    orientation: 'vertical',
+    defaultValue: 'overview',
+  },
+  render: (args) => renderTabs(args),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Vertical layout pins the list to the left and keeps panels stacked on the right. Keyboard arrows follow WAI-ARIA orientation guidance.',
       },
     },
   },
