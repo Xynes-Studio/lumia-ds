@@ -80,6 +80,59 @@ describe('ListBlock', () => {
     await act(async () => root.unmount());
     host.remove();
   });
+
+  it('virtualizes large datasets when enabled', async () => {
+    const { root, host } = createTestRoot();
+
+    const rows = Array.from({ length: 1000 }, (_, index) => ({
+      id: index + 1,
+      name: `User ${index + 1}`,
+      status: index % 2 === 0 ? 'Active' : 'Invited',
+    }));
+
+    await act(async () => {
+      root.render(
+        <ListBlock
+          title="Members"
+          virtualized
+          data={rows}
+          columns={[
+            { key: 'id', label: 'ID', align: 'end' },
+            { key: 'name', label: 'Name' },
+          ]}
+        />,
+      );
+    });
+
+    const virtualBody = host.querySelector(
+      '[data-virtualized-body="true"]',
+    ) as HTMLDivElement | null;
+    expect(virtualBody).not.toBeNull();
+
+    if (!virtualBody) {
+      throw new Error('Virtualized body not rendered');
+    }
+
+    const initialRows = virtualBody.querySelectorAll('[data-row-index]');
+    expect(initialRows.length).toBeGreaterThan(0);
+    expect(initialRows.length).toBeLessThan(rows.length);
+
+    await act(async () => {
+      virtualBody.scrollTop = 2000;
+      Simulate.scroll(virtualBody);
+      await Promise.resolve();
+    });
+
+    const updatedRows = virtualBody.querySelectorAll('[data-row-index]');
+    const firstRenderedIndex = updatedRows[0]
+      ? Number(updatedRows[0].getAttribute('data-row-index'))
+      : 0;
+
+    expect(firstRenderedIndex).toBeGreaterThan(0);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
 });
 
 describe('DetailBlock', () => {

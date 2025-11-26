@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
+  FlatList,
   Select,
   Textarea,
   type CardProps,
@@ -33,6 +34,10 @@ const alignClassNames: Record<Alignment, string> = {
   center: 'text-center',
   end: 'text-right',
 };
+
+const VIRTUALIZATION_THRESHOLD = 50;
+const VIRTUALIZED_MAX_HEIGHT = 480;
+const ESTIMATED_ROW_HEIGHT = 56;
 
 const columnSpanClassNames: Record<1 | 2 | 3, string> = {
   1: 'md:col-span-1',
@@ -178,11 +183,12 @@ export type ListBlockProps = CardProps & {
   data: DataRecord[];
   columns: ListBlockColumn[];
   emptyMessage?: string;
+  virtualized?: boolean;
 };
 
 export type ListBlockConfig = Pick<
   ListBlockProps,
-  'title' | 'description' | 'columns' | 'emptyMessage'
+  'title' | 'description' | 'columns' | 'emptyMessage' | 'virtualized'
 >;
 
 export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
@@ -193,6 +199,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
       data,
       columns,
       emptyMessage = 'No records to display',
+      virtualized = false,
       className,
       ...props
     },
@@ -201,6 +208,13 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
     const headerPresent = Boolean(title || description);
     const resolvedColumns = columns ?? [];
     const rows = data ?? [];
+    const shouldVirtualize =
+      Boolean(virtualized) && rows.length >= VIRTUALIZATION_THRESHOLD;
+
+    const columnTemplate = useMemo(() => {
+      const count = resolvedColumns.length || 1;
+      return `repeat(${count}, minmax(0, 1fr))`;
+    }, [resolvedColumns.length]);
 
     return (
       <Card
@@ -221,73 +235,151 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
 
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-0 text-sm">
-              <thead className="bg-muted/40">
-                <tr>
+            {shouldVirtualize ? (
+              <div className="min-w-full">
+                <div
+                  className="grid bg-muted/40 text-xs font-semibold uppercase tracking-[0.08em] text-muted"
+                  style={{ gridTemplateColumns: columnTemplate }}
+                >
                   {resolvedColumns.map((column) => (
-                    <th
+                    <div
                       key={column.key}
-                      scope="col"
                       className={cx(
-                        'border-b border-border/80 px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-muted',
+                        'border-b border-border/80 px-4 py-3',
                         alignClassNames[column.align ?? 'start'],
                       )}
                     >
                       {column.label}
-                    </th>
+                    </div>
                   ))}
-                </tr>
-              </thead>
+                </div>
 
-              <tbody>
                 {rows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={Math.max(resolvedColumns.length, 1)}
-                      className="px-4 py-6 text-center text-sm text-muted"
-                    >
-                      {emptyMessage}
-                    </td>
-                  </tr>
+                  <div className="px-4 py-6 text-center text-sm text-muted">
+                    {emptyMessage}
+                  </div>
                 ) : (
-                  rows.map((record, rowIndex) => (
-                    <tr
-                      key={rowIndex}
-                      data-row-index={rowIndex}
-                      className={rowIndex % 2 === 1 ? 'bg-muted/10' : undefined}
-                    >
-                      {resolvedColumns.map((column, columnIndex) => {
-                        const lookupKey = column.field ?? column.key;
-                        const rawValue =
-                          typeof lookupKey === 'string'
-                            ? getValueAtPath(record, lookupKey)
-                            : undefined;
-                        const cell =
-                          column.render?.({
-                            value: rawValue,
-                            record,
-                            rowIndex,
-                            columnIndex,
-                          }) ?? formatDefaultValue(rawValue);
+                  <FlatList
+                    data={rows}
+                    estimatedItemSize={ESTIMATED_ROW_HEIGHT}
+                    className="min-w-full text-sm"
+                    scrollContainerProps={{
+                      'data-virtualized-body': true,
+                      className: 'min-w-full',
+                      style: { maxHeight: `${VIRTUALIZED_MAX_HEIGHT}px` },
+                    }}
+                    renderItem={({ item: record, index: rowIndex }) => (
+                      <div
+                        data-row-index={rowIndex}
+                        className={cx(
+                          'grid border-b border-border/60',
+                          rowIndex % 2 === 1 ? 'bg-muted/10' : undefined,
+                        )}
+                        style={{ gridTemplateColumns: columnTemplate }}
+                      >
+                        {resolvedColumns.map((column, columnIndex) => {
+                          const lookupKey = column.field ?? column.key;
+                          const rawValue =
+                            typeof lookupKey === 'string'
+                              ? getValueAtPath(record, lookupKey)
+                              : undefined;
+                          const cell =
+                            column.render?.({
+                              value: rawValue,
+                              record,
+                              rowIndex,
+                              columnIndex,
+                            }) ?? formatDefaultValue(rawValue);
 
-                        return (
-                          <td
-                            key={`${column.key}-${columnIndex}`}
-                            data-column-key={column.key}
-                            className={cx(
-                              'border-b border-border/60 px-4 py-3 text-foreground',
-                              alignClassNames[column.align ?? 'start'],
-                            )}
-                          >
-                            {cell}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))
+                          return (
+                            <div
+                              key={`${column.key}-${columnIndex}`}
+                              data-column-key={column.key}
+                              className={cx(
+                                'px-4 py-3 text-foreground',
+                                alignClassNames[column.align ?? 'start'],
+                              )}
+                            >
+                              {cell}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  />
                 )}
-              </tbody>
-            </table>
+              </div>
+            ) : (
+              <table className="min-w-full border-separate border-spacing-0 text-sm">
+                <thead className="bg-muted/40">
+                  <tr>
+                    {resolvedColumns.map((column) => (
+                      <th
+                        key={column.key}
+                        scope="col"
+                        className={cx(
+                          'border-b border-border/80 px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-muted',
+                          alignClassNames[column.align ?? 'start'],
+                        )}
+                      >
+                        {column.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {rows.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={Math.max(resolvedColumns.length, 1)}
+                        className="px-4 py-6 text-center text-sm text-muted"
+                      >
+                        {emptyMessage}
+                      </td>
+                    </tr>
+                  ) : (
+                    rows.map((record, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        data-row-index={rowIndex}
+                        className={
+                          rowIndex % 2 === 1 ? 'bg-muted/10' : undefined
+                        }
+                      >
+                        {resolvedColumns.map((column, columnIndex) => {
+                          const lookupKey = column.field ?? column.key;
+                          const rawValue =
+                            typeof lookupKey === 'string'
+                              ? getValueAtPath(record, lookupKey)
+                              : undefined;
+                          const cell =
+                            column.render?.({
+                              value: rawValue,
+                              record,
+                              rowIndex,
+                              columnIndex,
+                            }) ?? formatDefaultValue(rawValue);
+
+                          return (
+                            <td
+                              key={`${column.key}-${columnIndex}`}
+                              data-column-key={column.key}
+                              className={cx(
+                                'border-b border-border/60 px-4 py-3 text-foreground',
+                                alignClassNames[column.align ?? 'start'],
+                              )}
+                            >
+                              {cell}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </CardContent>
       </Card>
