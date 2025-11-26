@@ -28,7 +28,8 @@ type UseVirtualListConfig<TItem> = {
 type VirtualListResult<TItem> = {
   items: VirtualListItem<TItem>[];
   totalSize: number;
-  range: { start: number; end: number };
+  renderedRange: { start: number; end: number };
+  visibleRange: { start: number; end: number };
 };
 
 const useIsomorphicLayoutEffect =
@@ -44,18 +45,26 @@ const useVirtualList = <TItem,>({
   useMemo(() => {
     const itemCount = data.length;
     if (itemCount === 0) {
-      return { items: [], totalSize: 0, range: { start: 0, end: 0 } };
+      return {
+        items: [],
+        totalSize: 0,
+        renderedRange: { start: 0, end: 0 },
+        visibleRange: { start: 0, end: 0 },
+      };
     }
 
     const totalSize = itemCount * estimatedItemSize;
     const safeViewport = Math.max(viewportHeight, estimatedItemSize);
     const visibleCount = Math.ceil(safeViewport / estimatedItemSize);
 
-    const start = Math.max(
-      Math.floor(scrollOffset / estimatedItemSize) - overscan,
+    const visibleStart = Math.max(
+      Math.floor(scrollOffset / estimatedItemSize),
       0,
     );
-    const end = Math.min(start + visibleCount + overscan * 2, itemCount);
+    const visibleEnd = Math.min(visibleStart + visibleCount, itemCount);
+
+    const start = Math.max(visibleStart - overscan, 0);
+    const end = Math.min(visibleEnd + overscan, itemCount);
 
     const items: VirtualListItem<TItem>[] = [];
     for (let index = start; index < end; index += 1) {
@@ -67,7 +76,12 @@ const useVirtualList = <TItem,>({
       });
     }
 
-    return { items, totalSize, range: { start, end } };
+    return {
+      items,
+      totalSize,
+      renderedRange: { start, end },
+      visibleRange: { start: visibleStart, end: visibleEnd },
+    };
   }, [data, estimatedItemSize, overscan, scrollOffset, viewportHeight]);
 
 export type FlatListProps<TItem> = {
@@ -110,7 +124,11 @@ export function FlatList<TItem>({
     ...restScrollProps
   } = scrollContainerProps ?? {};
 
-  const { items: virtualItems, totalSize } = useVirtualList({
+  const {
+    items: virtualItems,
+    totalSize,
+    visibleRange,
+  } = useVirtualList({
     data,
     estimatedItemSize,
     overscan,
@@ -122,7 +140,18 @@ export function FlatList<TItem>({
     const node = containerRef.current;
     if (!node) return;
 
-    const updateMeasurements = () => setViewportHeight(node.clientHeight);
+    const resolveStyleHeight = () => {
+      const value = scrollStyle?.height;
+      if (typeof value === 'number') return value;
+      if (typeof value === 'string') {
+        const parsed = Number.parseFloat(value);
+        if (Number.isFinite(parsed)) return parsed;
+      }
+      return 0;
+    };
+
+    const updateMeasurements = () =>
+      setViewportHeight(node.clientHeight || resolveStyleHeight());
     updateMeasurements();
 
     if (typeof ResizeObserver !== 'undefined') {
@@ -137,7 +166,7 @@ export function FlatList<TItem>({
     }
 
     return undefined;
-  }, []);
+  }, [scrollStyle?.height]);
 
   useEffect(() => {
     endReachedRef.current = false;
@@ -152,12 +181,23 @@ export function FlatList<TItem>({
   );
 
   useEffect(() => {
+    lastViewableKeyRef.current = null;
+  }, [data]);
+
+  const visibleItems = useMemo(
+    () =>
+      virtualItems
+        .filter(
+          ({ index }) =>
+            index >= visibleRange.start && index < visibleRange.end,
+        )
+        .map(({ item, index }) => ({ item, index })),
+    [virtualItems, visibleRange.end, visibleRange.start],
+  );
+
+  useEffect(() => {
     if (!onViewableItemsChanged) return;
 
-    const visibleItems = virtualItems.map(({ item, index }) => ({
-      item,
-      index,
-    }));
     const key = visibleItems.map(({ index }) => index).join('|');
 
     if (key === lastViewableKeyRef.current) {
@@ -166,7 +206,7 @@ export function FlatList<TItem>({
 
     lastViewableKeyRef.current = key;
     onViewableItemsChanged({ visibleItems });
-  }, [onViewableItemsChanged, virtualItems]);
+  }, [onViewableItemsChanged, visibleItems]);
 
   useEffect(() => {
     if (!onEndReached || totalSize === 0) return;

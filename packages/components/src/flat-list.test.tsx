@@ -80,6 +80,63 @@ describe('FlatList component', () => {
     document.body.removeChild(host);
   });
 
+  it('reports visible indices when scrolling', async () => {
+    const data = Array.from({ length: 20 }, (_, index) => `Row ${index}`);
+    const onViewableItemsChanged = vi.fn();
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <FlatList
+          data={data}
+          estimatedItemSize={50}
+          overscan={0}
+          onViewableItemsChanged={onViewableItemsChanged}
+          renderItem={({ item, index }) => (
+            <div className="row" data-index={index}>
+              {item}
+            </div>
+          )}
+          scrollContainerProps={{
+            style: { height: 150 },
+            'data-testid': 'viewable-list',
+          }}
+        />,
+      );
+    });
+
+    const container = host.querySelector(
+      '[data-testid="viewable-list"]',
+    ) as HTMLDivElement | null;
+    expect(container).not.toBeNull();
+
+    const initialCall =
+      onViewableItemsChanged.mock.calls[
+        onViewableItemsChanged.mock.calls.length - 1
+      ]?.[0];
+
+    expect(initialCall?.visibleItems.map(({ index }) => index)).toEqual([
+      0, 1, 2,
+    ]);
+
+    await act(async () => {
+      if (!container) return;
+      container.scrollTop = 200;
+      container.dispatchEvent(new Event('scroll', { bubbles: true }));
+      await Promise.resolve();
+    });
+
+    const lastCall =
+      onViewableItemsChanged.mock.calls[
+        onViewableItemsChanged.mock.calls.length - 1
+      ]?.[0];
+
+    expect(lastCall?.visibleItems.map(({ index }) => index)).toEqual([4, 5, 6]);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
   it('invokes end reached and viewability callbacks', async () => {
     const data = Array.from({ length: 50 }, (_, index) => `Row ${index}`);
     const onEndReached = vi.fn();
@@ -111,7 +168,7 @@ describe('FlatList component', () => {
     ) as HTMLDivElement;
 
     await act(async () => {
-      container.scrollTop = data.length * 20;
+      container.scrollTop = (data.length - 1) * 20;
       container.dispatchEvent(new Event('scroll', { bubbles: true }));
     });
 

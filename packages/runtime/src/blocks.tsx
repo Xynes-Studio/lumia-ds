@@ -11,6 +11,7 @@ import {
   FlatList,
   Select,
   Textarea,
+  type FlatListProps,
   type CardProps,
 } from '@lumia/components';
 import {
@@ -184,11 +185,17 @@ export type ListBlockProps = CardProps & {
   columns: ListBlockColumn[];
   emptyMessage?: string;
   virtualized?: boolean;
+  onViewableItemsChanged?: FlatListProps<DataRecord>['onViewableItemsChanged'];
 };
 
 export type ListBlockConfig = Pick<
   ListBlockProps,
-  'title' | 'description' | 'columns' | 'emptyMessage' | 'virtualized'
+  | 'title'
+  | 'description'
+  | 'columns'
+  | 'emptyMessage'
+  | 'virtualized'
+  | 'onViewableItemsChanged'
 >;
 
 export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
@@ -200,6 +207,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
       columns,
       emptyMessage = 'No records to display',
       virtualized = false,
+      onViewableItemsChanged,
       className,
       ...props
     },
@@ -262,6 +270,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
                   <FlatList
                     data={rows}
                     estimatedItemSize={ESTIMATED_ROW_HEIGHT}
+                    onViewableItemsChanged={onViewableItemsChanged}
                     className="min-w-full text-sm"
                     scrollContainerProps={{
                       'data-virtualized-body': true,

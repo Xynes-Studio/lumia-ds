@@ -133,6 +133,56 @@ describe('ListBlock', () => {
     await act(async () => root.unmount());
     host.remove();
   });
+
+  it('forwards viewability callbacks when virtualized', async () => {
+    const { root, host } = createTestRoot();
+    const onViewableItemsChanged = vi.fn();
+
+    const rows = Array.from({ length: 200 }, (_, index) => ({
+      id: index + 1,
+      name: `User ${index + 1}`,
+      status: index % 2 === 0 ? 'Active' : 'Invited',
+    }));
+
+    await act(async () => {
+      root.render(
+        <ListBlock
+          title="Members"
+          virtualized
+          data={rows}
+          onViewableItemsChanged={onViewableItemsChanged}
+          columns={[
+            { key: 'id', label: 'ID', align: 'end' },
+            { key: 'name', label: 'Name' },
+          ]}
+        />,
+      );
+    });
+
+    expect(onViewableItemsChanged).toHaveBeenCalled();
+
+    const virtualBody = host.querySelector(
+      '[data-virtualized-body="true"]',
+    ) as HTMLDivElement | null;
+    expect(virtualBody).not.toBeNull();
+
+    const initialIndices = onViewableItemsChanged.mock.calls[
+      onViewableItemsChanged.mock.calls.length - 1
+    ]?.[0]?.visibleItems.map(({ index }) => index);
+    await act(async () => {
+      if (!virtualBody) return;
+      virtualBody.scrollTop = 800;
+      Simulate.scroll(virtualBody);
+      await Promise.resolve();
+    });
+    const afterScrollIndices = onViewableItemsChanged.mock.calls[
+      onViewableItemsChanged.mock.calls.length - 1
+    ]?.[0]?.visibleItems.map(({ index }) => index);
+    expect(afterScrollIndices?.[0]).toBeGreaterThan(initialIndices?.[0] ?? -1);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
 });
 
 describe('DetailBlock', () => {
