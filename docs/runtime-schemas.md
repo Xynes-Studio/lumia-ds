@@ -64,6 +64,12 @@ const fetcher: DataFetcher = {
 />;
 ```
 
+### Storybook examples
+
+- `Runtime/AdminShell` shows the layout scaffold with placeholder header/sidebar content.
+- `Runtime/StackLayout` demonstrates a detail page with sticky actions.
+- `Runtime/ResourcePageRenderer` wires a fake fetcher to render a list screen through schema-driven blocks.
+
 ## Block Components
 
 - `ListBlock`: DS Card-wrapped data table for array data. Props include `data: any[]`, `columns` (key/label/field/align/render), optional `title`/`description`, and `emptyMessage`. Columns can look up nested values via `field` (dot notation) and can override rendering per cell. When `virtualized: true` is passed via `BlockSchema.props`, large datasets automatically render with the `FlatList` component (virtualized window) while smaller datasets still use the simple table markup. Analytics/viewability hooks can be wired with `onViewableItemsChanged`, which is forwarded to the underlying `FlatList`.
