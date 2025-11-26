@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   Icon,
+  SparkleIcon,
   clearIconRegistry,
   getIcon,
   registerIcon,
@@ -80,6 +81,26 @@ describe('default icon registry', () => {
   });
 });
 
+describe('generated icon registry', () => {
+  beforeEach(() => {
+    resetIconRegistry();
+  });
+
+  it('registers icons produced by the CLI generator', () => {
+    expect(getIcon('chat-bubble')).toBeDefined();
+    expect(getIcon('sparkle')).toBeDefined();
+  });
+
+  it('re-exports generated components for direct import', () => {
+    const markup = renderToStaticMarkup(
+      <SparkleIcon className="text-accent" />,
+    );
+
+    expect(markup).toContain('text-accent');
+    expect(markup).toContain('viewBox="0 0 24 24"');
+  });
+});
+
 describe('<Icon />', () => {
   beforeEach(() => {
     resetIconRegistry();
@@ -109,5 +130,13 @@ describe('<Icon />', () => {
     );
 
     expect(markup).toBe('');
+  });
+
+  it('renders a generated icon and respects shared sizing', () => {
+    const markup = renderToStaticMarkup(<Icon id="chat-bubble" size={20} />);
+
+    expect(markup).toContain('width="20"');
+    expect(markup).toContain('height="20"');
+    expect(markup).toContain('stroke-width="1.5"');
   });
 });

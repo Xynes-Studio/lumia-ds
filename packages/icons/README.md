@@ -8,6 +8,10 @@ A curated set of Lucide icons is pre-registered:
 
 `home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`
 
+Custom icons generated from raw SVGs are also registered by default:
+
+`sparkle`, `chat-bubble`
+
 ## Usage
 
 ```tsx
@@ -39,4 +43,22 @@ const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 registerIcon('bell', CustomBell);
+```
+
+## Importing SVGs with the CLI
+
+Run the workspace script to convert raw SVG files into React components and register them:
+
+```bash
+pnpm icons:import
+```
+
+- Source SVGs live in `packages/icons/raw` (or pass a different folder to `lumia-icon-import`).
+- Components are generated under `packages/icons/src/generated/icons` and exported from `@lumia/icons`.
+- Registration happens automatically through `packages/icons/src/generated/registry.ts`, so `Icon` can reference the new ids immediately.
+
+The CLI is provided by `@lumia/cli` and can be invoked directly as well:
+
+```bash
+node packages/cli/bin/lumia-icon-import.js path/to/svg/folder packages/icons
 ```

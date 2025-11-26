@@ -4,7 +4,8 @@
   "private": true,
   "description": "CLI utilities for Lumia DS",
   "bin": {
-    "lumia-resource": "./bin/lumia-resource.js"
+    "lumia-resource": "./bin/lumia-resource.js",
+    "lumia-icon-import": "./bin/lumia-icon-import.js"
   },
   "license": "ISC"
 }
