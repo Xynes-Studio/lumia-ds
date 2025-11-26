@@ -17,6 +17,9 @@
         "dev": "tsup --watch",
         "test": "vitest run --coverage"
     },
+    "dependencies": {
+        "lucide-react": "^0.474.0"
+    },
     "peerDependencies": {
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
