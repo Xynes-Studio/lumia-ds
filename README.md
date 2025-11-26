@@ -37,6 +37,7 @@ A framework-aware, Next.js-first design system published as an independent NPM p
   - `@lumia/theme` — React ThemeProvider to apply token CSS variables
   - `@lumia/runtime` — runtime schemas for pages/blocks/resources
   - `@lumia/components` — React components (currently a `Hello` placeholder to validate build/test harness)
+  - `@lumia/icons` — in-memory icon registry that maps string IDs to SVG React components
 - Naming conventions for components, hooks, and utilities
 - Separation of:
   - Core components

@@ -7,13 +7,18 @@
     "lint": "eslint \"packages/**/*.{ts,tsx,js,jsx}\" --cache",
     "type-check": "tsc --build",
     "build": "pnpm -r build",
-    "coverage:all": "pnpm --filter @lumia/components test && pnpm --filter @lumia/runtime exec vitest run --coverage && pnpm --filter @lumia/forms exec vitest run --coverage && pnpm --filter @lumia/layout exec vitest run --coverage && pnpm --filter @lumia/theme test && pnpm --filter @lumia/tokens test"
+    "coverage:all": "pnpm --filter @lumia/components test && pnpm --filter @lumia/runtime exec vitest run --coverage && pnpm --filter @lumia/forms exec vitest run --coverage && pnpm --filter @lumia/layout exec vitest run --coverage && pnpm --filter @lumia/theme test && pnpm --filter @lumia/tokens test && pnpm --filter @lumia/icons test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "engines": {
     "node": ">=18"
+  },
+  "pnpm": {
+    "overrides": {
+      "flat-cache": "^4.0.1"
+    }
   },
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {

@@ -1,0 +1,34 @@
+{
+    "name": "@lumia/icons",
+    "version": "0.0.0",
+    "description": "Icon registry utilities for Lumia DS",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "vitest run --coverage"
+    },
+    "peerDependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.3.12",
+        "@types/react-dom": "^18.3.1",
+        "@vitest/coverage-v8": "^2.1.9",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "tsup": "^8.0.0",
+        "vite": "^7.2.4",
+        "vitest": "^2.1.9"
+    }
+}
