@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: var(--font-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  background-color: var(--color-bg, #ffffff);
+  color: var(--color-fg, #020817);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg, #ffffff);
+  color: var(--color-fg, #020817);
+}
+
+.sb-unstyled {
+  all: unset;
+}

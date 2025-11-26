@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Card,
   CardContent,
@@ -12,33 +13,65 @@ import { Button } from './button';
 const meta = {
   title: 'Components/Card',
   component: Card,
-};
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+  },
+} satisfies Meta<typeof Card>;
 
 export default meta;
+type Story = StoryObj<typeof Card>;
 
-export const Example = () => (
-  <div className="bg-muted p-6">
-    <Card className="max-w-md">
-      <CardHeader>
-        <CardTitle>Card title</CardTitle>
-        <CardDescription>
-          Subtitle or supporting copy goes here.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm leading-6 text-foreground">
-          Cards help group related information. Use this area to highlight key
-          details or nest form fields, lists, and summaries.
-        </p>
-      </CardContent>
-      <CardFooter>
-        <div className="flex gap-3">
-          <Button variant="secondary" size="sm">
-            Dismiss
-          </Button>
-          <Button size="sm">View details</Button>
-        </div>
-      </CardFooter>
-    </Card>
-  </div>
+const CardBody = () => (
+  <>
+    <CardHeader>
+      <CardTitle>Card title</CardTitle>
+      <CardDescription>Subtitle or supporting copy goes here.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm leading-6 text-foreground">
+        Cards group related information. Use this area to highlight key details
+        or nest form fields, lists, and summaries.
+      </p>
+    </CardContent>
+    <CardFooter>
+      <div className="flex gap-3">
+        <Button variant="secondary" size="sm">
+          Dismiss
+        </Button>
+        <Button size="sm">View details</Button>
+      </div>
+    </CardFooter>
+  </>
 );
+
+export const Example: Story = {
+  render: () => (
+    <div className="bg-muted p-6">
+      <Card className="max-w-md">
+        <CardBody />
+      </Card>
+    </div>
+  ),
+};
+
+export const States: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4 bg-muted p-6">
+      <Card className="max-w-md">
+        <CardBody />
+      </Card>
+      <Card className="max-w-md border-2 border-border shadow-md">
+        <CardBody />
+      </Card>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Default and elevated states. Hover over each card to see border and shadow emphasis.',
+      },
+    },
+  },
+};

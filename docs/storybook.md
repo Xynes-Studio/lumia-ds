@@ -1,29 +1,31 @@
-# Storybook – Lumia Components
+# Storybook – Lumia DS
 
-How to run Storybook for `@lumia/components` locally.
+Repo-level Storybook to document and manually test Lumia primitives and runtime blocks.
 
 ## Prerequisites
 - Node 18+
 - pnpm (`corepack enable` recommended)
-- The repo checked out; run `pnpm install` at least once from the root.
+- Install once from repo root: `pnpm install`
 
 ## Start Storybook (dev)
 From repo root:
 ```bash
-HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006
+STORYBOOK_DISABLE_TELEMETRY=1 pnpm storybook
 ```
-
-Notes:
-- The script injects `.storybook/disable-pnp.js` via `NODE_OPTIONS` to avoid conflicts with any global `.pnp.cjs`.
-- Pick another port if 6006 is busy: replace `-p 6006` with something free (e.g., `-p 6007`).
+Defaults to port 6006; override with `-p 6007` etc.
 
 ## Build Storybook (static)
 ```bash
-HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook:build
+STORYBOOK_DISABLE_TELEMETRY=1 pnpm storybook:build
 ```
-Output lands at `packages/components/storybook-static/`.
+Outputs to `storybook-static/` at repo root.
+
+## Theming & styling
+- Global preview wraps stories in `ThemeProvider` with `defaultTheme`.
+- Tailwind utilities come from `@lumia/theme` preset via `tailwind.config.cjs`; `@tailwind base/components/utilities` are pulled through `.storybook/preview.css`.
+- Story sources live under `packages/components/src/**` and `packages/runtime/src/**`.
 
 ## Troubleshooting
-- **React is not defined**: ensure you’re using the provided scripts (they configure Babel for the automatic JSX runtime).
-- **PnP errors**: a global `~/.pnp.cjs` can confuse Storybook. The `disable-pnp` shim is applied automatically by the scripts; if issues persist, temporarily move/rename `~/.pnp.cjs` while running Storybook.
-- **Port in use**: change the `-p` flag.
+- **Deps missing**: run `pnpm install` from repo root.
+- **Port in use**: pass `-p <port>` to the dev command.
+- **CSS not applying**: ensure Tailwind/PostCSS config files exist at repo root and `preview.css` is imported in `.storybook/preview.tsx`.
