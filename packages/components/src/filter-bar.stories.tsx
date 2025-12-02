@@ -129,7 +129,8 @@ export const ActionsOnly: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Layout remains balanced when search or quick filters are omitted.',
+        story:
+          'Layout remains balanced when search or quick filters are omitted.',
       },
     },
   },

@@ -134,7 +134,9 @@ describe('FilterBar component', () => {
 
     await act(async () => {
       root.render(
-        <FilterBar actions={<Button variant="secondary">Primary action</Button>} />,
+        <FilterBar
+          actions={<Button variant="secondary">Primary action</Button>}
+        />,
       );
     });
 
