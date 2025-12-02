@@ -67,6 +67,8 @@ import {
   type FlexProps,
   FlatList,
   type FlatListProps,
+  Pagination,
+  type PaginationProps,
   Table,
   TableBody,
   TableCell,
@@ -119,6 +121,7 @@ describe('components index barrel', () => {
 
     expect(Flex).toBeDefined();
     expect(FlatList).toBeDefined();
+    expect(Pagination).toBeDefined();
     expect(Table).toBeDefined();
     expect(TableHeader).toBeDefined();
     expect(TableBody).toBeDefined();
@@ -210,6 +213,9 @@ describe('components index barrel', () => {
     expectTypeOf<FlatListProps<string>>().toMatchTypeOf<
       Parameters<typeof FlatList>[0]
     >();
+    expectTypeOf<PaginationProps>().toMatchTypeOf<
+      ComponentProps<typeof Pagination>
+    >();
     expectTypeOf<TableProps>().toMatchTypeOf<ComponentProps<typeof Table>>();
     expectTypeOf<TableHeaderProps>().toMatchTypeOf<
       ComponentProps<typeof TableHeader>
@@ -264,6 +270,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.FlatListProps<string>>().toEqualTypeOf<
       FlatListProps<string>
     >();
+    expectTypeOf<ExternalApi.Pagination>().toEqualTypeOf<typeof Pagination>();
+    expectTypeOf<ExternalApi.PaginationProps>().toEqualTypeOf<PaginationProps>();
     expectTypeOf<ExternalApi.Table>().toEqualTypeOf<typeof Table>();
     expectTypeOf<ExternalApi.TableProps>().toEqualTypeOf<TableProps>();
     expectTypeOf<ExternalApi.TableHeader>().toEqualTypeOf<typeof TableHeader>();

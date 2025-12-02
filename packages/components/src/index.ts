@@ -10,3 +10,4 @@ export * from './sheet';
 export * from './flex';
 export * from './flat-list';
 export * from './table';
+export * from './pagination';
