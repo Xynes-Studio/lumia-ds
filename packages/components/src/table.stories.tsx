@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useState } from 'react';
+import { Button } from './button';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from './table';
 import type { TableColumn, TableSortState } from './table';
 
@@ -58,6 +59,7 @@ const meta = {
     density: 'comfortable',
     zebra: true,
     stickyHeader: false,
+    selectable: false,
   },
   argTypes: {
     density: {
@@ -68,6 +70,9 @@ const meta = {
       control: 'boolean',
     },
     stickyHeader: {
+      control: 'boolean',
+    },
+    selectable: {
       control: 'boolean',
     },
   },
@@ -92,7 +97,7 @@ export const Playground: Story = {
         </TableHeader>
         <TableBody>
           {roster.map((person) => (
-            <TableRow key={person.name}>
+            <TableRow key={person.name} rowId={person.name}>
               <TableCell>{person.name}</TableCell>
               <TableCell>{person.role}</TableCell>
               <TableCell>{person.location}</TableCell>
@@ -132,7 +137,7 @@ export const SortableColumns: Story = {
         >
           <TableBody>
             {(sortState ? sortedRoster : roster).map((person) => (
-              <TableRow key={person.name}>
+              <TableRow key={person.name} rowId={person.name}>
                 <TableCell>{person.name}</TableCell>
                 <TableCell>{person.role}</TableCell>
                 <TableCell>{person.location}</TableCell>
@@ -149,6 +154,75 @@ export const SortableColumns: Story = {
       description: {
         story:
           'Headers are derived from the columns config. Sorting is handled by the consuming screen while the table only emits the requested direction.',
+      },
+    },
+  },
+};
+
+export const RowSelectionWithBulkActions: Story = {
+  render: (args) => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const clearSelection = () => setSelectedIds([]);
+
+    return (
+      <div className="max-w-5xl overflow-hidden rounded-lg border border-border bg-background p-4 shadow-sm">
+        <Table
+          {...args}
+          selectable
+          selectedRowIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+          bulkActions={(ids) => (
+            <div className="flex w-full items-center justify-between gap-3">
+              <span className="text-sm text-muted-foreground">
+                {ids.length === 0
+                  ? 'No rows selected'
+                  : `${ids.length} selected`}
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={ids.length === 0}
+                  onClick={clearSelection}
+                >
+                  Clear
+                </Button>
+                <Button size="sm" disabled={ids.length === 0}>
+                  Archive
+                </Button>
+              </div>
+            </div>
+          )}
+        >
+          <TableHeader>
+            <TableRow>
+              <TableCell as="th">Name</TableCell>
+              <TableCell as="th">Role</TableCell>
+              <TableCell as="th">Location</TableCell>
+              <TableCell as="th" align="right">
+                Status
+              </TableCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {roster.map((person) => (
+              <TableRow key={person.name} rowId={person.name}>
+                <TableCell>{person.name}</TableCell>
+                <TableCell>{person.role}</TableCell>
+                <TableCell>{person.location}</TableCell>
+                <TableCell align="right">{person.status}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Enables row selection with a select-all checkbox and a bulk actions bar that receives the selected row IDs.',
       },
     },
   },
@@ -184,7 +258,7 @@ export const StickyHeaderWithManyRows: Story = {
           </TableHeader>
           <TableBody>
             {manyRows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} rowId={row.id.toString()}>
                 <TableCell>svc-{row.id.toString().padStart(3, '0')}</TableCell>
                 <TableCell>{row.owner}</TableCell>
                 <TableCell align="right">{row.uptime}</TableCell>

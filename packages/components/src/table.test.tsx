@@ -116,6 +116,113 @@ describe('Table component suite', () => {
     document.body.removeChild(host);
   });
 
+  it('supports row selection and select-all toggling', async () => {
+    const onSelectionChange = vi.fn((ids: string[]) => ids);
+
+    const { host, root } = await renderIntoDom(
+      <Table selectable onSelectionChange={onSelectionChange}>
+        <TableHeader>
+          <TableRow>
+            <TableCell as="th">Name</TableCell>
+            <TableCell as="th">Role</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow rowId="1">
+            <TableCell>Ada</TableCell>
+            <TableCell>Engineer</TableCell>
+          </TableRow>
+          <TableRow rowId="2">
+            <TableCell>Lin</TableCell>
+            <TableCell>Designer</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+
+    const checkboxes = host.querySelectorAll('input[type="checkbox"]');
+    const headerCheckbox = checkboxes[0] as HTMLInputElement | undefined;
+    const firstRowCheckbox = checkboxes[1] as HTMLInputElement | undefined;
+
+    expect(headerCheckbox?.disabled).toBe(false);
+    expect(firstRowCheckbox?.disabled).toBe(false);
+
+    await act(async () => {
+      firstRowCheckbox?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true }),
+      );
+    });
+    expect(onSelectionChange).toHaveBeenLastCalledWith(['1']);
+    expect(firstRowCheckbox?.checked).toBe(true);
+
+    await act(async () => {
+      headerCheckbox?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(onSelectionChange).toHaveBeenLastCalledWith(['1', '2']);
+
+    await act(async () => {
+      headerCheckbox?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('disables select-all for empty tables', async () => {
+    const { host, root } = await renderIntoDom(
+      <Table selectable>
+        <TableHeader>
+          <TableRow>
+            <TableCell as="th">Name</TableCell>
+            <TableCell as="th">Role</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody />
+      </Table>,
+    );
+
+    const emptyHeaderCheckbox = host.querySelector(
+      'thead input[type="checkbox"]',
+    ) as HTMLInputElement | null;
+    expect(emptyHeaderCheckbox?.disabled).toBe(true);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('shows an indeterminate select-all checkbox for partial selections', async () => {
+    const { host, root } = await renderIntoDom(
+      <Table selectable selectedRowIds={['1']}>
+        <TableHeader>
+          <TableRow>
+            <TableCell as="th">Name</TableCell>
+            <TableCell as="th">Role</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow rowId="1">
+            <TableCell>Ada</TableCell>
+            <TableCell>Engineer</TableCell>
+          </TableRow>
+          <TableRow rowId="2">
+            <TableCell>Lin</TableCell>
+            <TableCell>Designer</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+
+    const headerCheckbox = host.querySelector(
+      'thead input[type="checkbox"]',
+    ) as HTMLInputElement | null;
+    expect(headerCheckbox?.getAttribute('aria-checked')).toBe('mixed');
+    expect(headerCheckbox?.indeterminate).toBe(true);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
   it('renders sortable column headers and cycles through directions', async () => {
     const onSortChange = vi.fn((state: TableSortState) => state);
 
