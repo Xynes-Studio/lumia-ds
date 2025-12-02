@@ -1,8 +1,16 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
+import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { Button } from './button';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from './table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+  TableRowActions,
+} from './table';
 import type { TableColumn, TableSortState } from './table';
 
 const roster = [
@@ -43,6 +51,11 @@ const roster = [
     status: 'Active',
   },
 ];
+
+const rosterWithIds = roster.map((person, index) => ({
+  ...person,
+  id: (index + 1).toString(),
+}));
 
 const rosterColumns: TableColumn[] = [
   { id: 'name', label: 'Name', sortable: true },
@@ -154,6 +167,100 @@ export const SortableColumns: Story = {
       description: {
         story:
           'Headers are derived from the columns config. Sorting is handled by the consuming screen while the table only emits the requested direction.',
+      },
+    },
+  },
+};
+
+type RosterRow = (typeof rosterWithIds)[number];
+
+export const InlineRowActions: Story = {
+  render: (args) => {
+    const [lastAction, setLastAction] = useState('Select an action');
+
+    const columns: TableColumn<RosterRow>[] = [
+      {
+        id: 'name',
+        label: 'Name',
+        sortable: true,
+        renderCell: (row) => row.name,
+      },
+      {
+        id: 'role',
+        label: 'Role',
+        sortable: true,
+        renderCell: (row) => row.role,
+      },
+      {
+        id: 'location',
+        label: 'Location',
+        renderCell: (row) => row.location,
+      },
+      {
+        id: 'actions',
+        label: 'Actions',
+        type: 'actions',
+        align: 'right',
+        renderCell: (row) => (
+          <TableRowActions
+            row={row}
+            primaryAction={{
+              label: 'Edit',
+              onClick: () => setLastAction(`Edit ${row.name}`),
+            }}
+            secondaryActions={[
+              {
+                label: 'Duplicate',
+                onClick: () => setLastAction(`Duplicate ${row.name}`),
+              },
+              {
+                label: 'Archive',
+                onClick: () => setLastAction(`Archive ${row.name}`),
+              },
+            ]}
+          />
+        ),
+      },
+    ];
+
+    return (
+      <div className="max-w-5xl space-y-3 overflow-hidden rounded-lg border border-border bg-background p-4 shadow-sm">
+        <Table {...args} columns={columns}>
+          <TableBody>
+            {rosterWithIds.map((person) => (
+              <TableRow key={person.id} rowId={person.id}>
+                {columns.map((column) => {
+                  const typedPerson = person as Record<
+                    string,
+                    string | ReactNode
+                  >;
+                  const fallbackValue =
+                    column.id in person ? typedPerson[column.id] : null;
+                  const content = column.renderCell
+                    ? column.renderCell(person)
+                    : fallbackValue;
+                  const align =
+                    column.type === 'actions' ? 'right' : column.align;
+
+                  return (
+                    <TableCell key={`${person.id}-${column.id}`} align={align}>
+                      {content}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <p className="text-sm text-muted-foreground">{lastAction}</p>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Adds a dedicated actions column that uses renderCell to inject inline row actions with a primary button and overflow menu.',
       },
     },
   },

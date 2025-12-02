@@ -1,4 +1,9 @@
-import type { HTMLAttributes, ReactNode, TableHTMLAttributes } from 'react';
+import type {
+  FocusEvent,
+  HTMLAttributes,
+  ReactNode,
+  TableHTMLAttributes,
+} from 'react';
 import {
   Children,
   createContext,
@@ -11,6 +16,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Button } from './button';
 import { cn } from './utils';
 
 type TableDensity = 'comfortable' | 'compact';
@@ -20,11 +26,19 @@ export type TableSortState = {
   columnId: string;
   direction: TableSortDirection;
 };
-export type TableColumn = {
+export type TableRowAction<RowData = unknown> = {
+  label: string;
+  icon?: ReactNode;
+  onClick: (row: RowData) => void;
+};
+
+export type TableColumn<RowData = unknown> = {
   id: string;
   label: string;
   sortable?: boolean;
   align?: TableAlignment;
+  type?: 'data' | 'actions';
+  renderCell?: (row: RowData) => ReactNode;
 };
 
 type TableContextValue = {
@@ -295,28 +309,35 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
       <TableHeader>
         <TableRow>
           {columns?.map((column) => {
+            const isActionsColumn = column.type === 'actions';
+            const align: TableAlignment = isActionsColumn
+              ? 'right'
+              : (column.align ?? 'left');
             const direction =
               resolvedSort?.columnId === column.id
                 ? resolvedSort.direction
                 : 'none';
-            const ariaSort = column.sortable
-              ? toAriaSort(direction)
-              : undefined;
+            const ariaSort =
+              !isActionsColumn && column.sortable
+                ? toAriaSort(direction)
+                : undefined;
             const justifyContent =
-              column.align === 'right'
+              align === 'right'
                 ? 'justify-end text-right'
-                : column.align === 'center'
+                : align === 'center'
                   ? 'justify-center text-center'
                   : 'justify-start text-left';
+            const label =
+              column.label || (isActionsColumn ? 'Actions' : column.id);
 
             return (
               <TableCell
                 key={column.id}
                 as="th"
-                align={column.align}
+                align={align}
                 aria-sort={ariaSort}
               >
-                {column.sortable ? (
+                {!isActionsColumn && column.sortable ? (
                   <button
                     type="button"
                     aria-pressed={direction !== 'none'}
@@ -326,11 +347,11 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
                       justifyContent,
                     )}
                   >
-                    <span className="whitespace-nowrap">{column.label}</span>
+                    <span className="whitespace-nowrap">{label}</span>
                     <SortIcon direction={direction} />
                   </button>
                 ) : (
-                  column.label
+                  label
                 )}
               </TableCell>
             );
@@ -416,6 +437,142 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
     );
   },
 );
+
+const OverflowIcon = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 16 16"
+    className="h-4 w-4 text-muted-foreground"
+    fill="currentColor"
+  >
+    <circle cx="8" cy="3.5" r="1.25" />
+    <circle cx="8" cy="8" r="1.25" />
+    <circle cx="8" cy="12.5" r="1.25" />
+  </svg>
+);
+
+export type TableRowActionsProps<RowData = unknown> = {
+  row: RowData;
+  primaryAction?: TableRowAction<RowData>;
+  secondaryActions?: TableRowAction<RowData>[];
+  menuLabel?: string;
+  className?: string;
+};
+
+export function TableRowActions<RowData>({
+  row,
+  primaryAction,
+  secondaryActions = [],
+  menuLabel = 'More actions',
+  className,
+}: TableRowActionsProps<RowData>) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  const handleSecondaryAction = (action: TableRowAction<RowData>) => {
+    action.onClick(row);
+    setOpen(false);
+  };
+
+  const handleBlurCapture = (event: FocusEvent<HTMLDivElement>) => {
+    const next = event.relatedTarget as Node | null;
+    if (next && containerRef.current?.contains(next)) return;
+    setOpen(false);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={cn(
+        'inline-flex items-center justify-end gap-2 whitespace-nowrap',
+        className,
+      )}
+      onBlurCapture={handleBlurCapture}
+    >
+      {primaryAction ? (
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => primaryAction.onClick(row)}
+          aria-label={primaryAction.label}
+        >
+          {primaryAction.icon ? (
+            <span className="flex items-center gap-2">
+              <span className="text-muted-foreground">
+                {primaryAction.icon}
+              </span>
+              <span>{primaryAction.label}</span>
+            </span>
+          ) : (
+            primaryAction.label
+          )}
+        </Button>
+      ) : null}
+      {secondaryActions.length > 0 ? (
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-label={menuLabel}
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <OverflowIcon />
+          </Button>
+          {open ? (
+            <div
+              role="menu"
+              className="absolute right-0 z-20 mt-1 min-w-[180px] overflow-hidden rounded-md border border-border/80 bg-background shadow-lg"
+            >
+              {secondaryActions.map((action, index) => (
+                <button
+                  key={`${action.label}-${index.toString()}`}
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  onClick={() => handleSecondaryAction(action)}
+                >
+                  {action.icon ? (
+                    <span className="text-muted-foreground">{action.icon}</span>
+                  ) : null}
+                  <span>{action.label}</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 type SelectionCheckboxProps = {
   checked: boolean;

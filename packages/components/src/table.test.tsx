@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHeader,
   TableRow,
+  TableRowActions,
   type TableSortState,
 } from './table';
 
@@ -270,6 +271,93 @@ describe('Table component suite', () => {
       direction: 'none',
     });
     expect(headerCells[0]?.getAttribute('aria-sort')).toBe('none');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders an actions column aligned to the right from column config', async () => {
+    const { host, root } = await renderIntoDom(
+      <Table
+        columns={[
+          { id: 'name', label: 'Name' },
+          { id: 'actions', label: 'Actions', type: 'actions' },
+        ]}
+      >
+        <TableBody>
+          <TableRow rowId="1">
+            <TableCell>Ada</TableCell>
+            <TableCell align="right">
+              <TableRowActions
+                row={{ id: '1', name: 'Ada' }}
+                primaryAction={{ label: 'Edit', onClick: vi.fn() }}
+              />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+
+    const headerCells = host.querySelectorAll('thead th');
+    expect(headerCells[1]?.textContent).toBe('Actions');
+    expect(headerCells[1]?.className).toContain('text-right');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('fires primary and overflow row actions and closes the menu', async () => {
+    const onEdit = vi.fn();
+    const onDelete = vi.fn();
+    const row = { id: '1', name: 'Ada' };
+
+    const { host, root } = await renderIntoDom(
+      <Table>
+        <TableBody>
+          <TableRow rowId="1">
+            <TableCell>Name</TableCell>
+            <TableCell align="right">
+              <TableRowActions
+                row={row}
+                primaryAction={{ label: 'Edit', onClick: onEdit }}
+                secondaryActions={[{ label: 'Delete', onClick: onDelete }]}
+              />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+
+    const editButton = Array.from(host.querySelectorAll('button')).find(
+      (btn) => btn.textContent === 'Edit',
+    );
+    expect(editButton).toBeDefined();
+
+    await act(async () => {
+      editButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(onEdit).toHaveBeenCalledWith(row);
+
+    const overflowTrigger = host.querySelector('[aria-haspopup="menu"]');
+    expect(overflowTrigger).toBeDefined();
+
+    await act(async () => {
+      overflowTrigger?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true }),
+      );
+    });
+
+    const menuItem = host.querySelector(
+      '[role="menuitem"]',
+    ) as HTMLButtonElement | null;
+    expect(menuItem?.textContent).toContain('Delete');
+
+    await act(async () => {
+      menuItem?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(onDelete).toHaveBeenCalledWith(row);
+    expect(host.querySelector('[role="menu"]')).toBeNull();
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

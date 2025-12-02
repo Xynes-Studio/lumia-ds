@@ -3,7 +3,7 @@
 Design-system table wrapper around Shadcn primitives with DS tokens and a minimal API. Supports optional column configs and sortable headers; data ordering remains the caller’s responsibility.
 
 ## Exports
-- `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell` from `@lumia/components`.
+- `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`, `TableRowActions` from `@lumia/components`.
 
 ## Props
 - `Table`
@@ -14,7 +14,7 @@ Design-system table wrapper around Shadcn primitives with DS tokens and a minima
   - `selectedRowIds?: string[]` – controlled selection state; when omitted the table tracks selection internally.
   - `onSelectionChange?: (ids: string[]) => void` – fired when rows are toggled or select-all is used.
   - `bulkActions?: (selectedIds: string[]) => React.ReactNode` – optional render prop placed above the table with the current selection.
-  - `columns?: { id: string; label: string; sortable?: boolean; align?: 'left' | 'center' | 'right' }[]` – when provided (and no custom `<TableHeader>` is rendered) the header row is generated from this config.
+  - `columns?: { id: string; label: string; sortable?: boolean; align?: 'left' | 'center' | 'right'; type?: 'data' | 'actions'; renderCell?: (row: RowData) => React.ReactNode }[]` – when provided (and no custom `<TableHeader>` is rendered) the header row is generated from this config. Set `type: 'actions'` for a dedicated actions column; it renders right-aligned with sorting disabled.
   - `sort?: { columnId: string; direction: 'asc' | 'desc' | 'none' } | null` – controlled sort state.
   - `defaultSort?: { columnId: string; direction: 'asc' | 'desc' | 'none' } | null` – uncontrolled initial sort state.
   - `sortCycle?: Array<'asc' | 'desc' | 'none'>` – optional custom order for cycling directions (defaults to `['asc', 'desc', 'none']`).
@@ -26,6 +26,11 @@ Design-system table wrapper around Shadcn primitives with DS tokens and a minima
 - `TableCell`
   - `as?: 'td' | 'th'` – defaults to `td`; use `th` for headers.
   - `align?: 'left' | 'center' | 'right'` (default: `left`).
+- `TableRowActions`
+  - `row: RowData` – row payload passed to action callbacks.
+  - `primaryAction?: { label: string; icon?: React.ReactNode; onClick: (row: RowData) => void }`.
+  - `secondaryActions?: Array<{ label: string; icon?: React.ReactNode; onClick: (row: RowData) => void }>` – rendered in an overflow menu.
+  - `menuLabel?: string` – accessible label for the overflow trigger (default: `More actions`).
 
 ## Usage
 ```tsx
@@ -164,6 +169,63 @@ export function SortableRoster({ rows }: { rows: { name: string; role: string; s
             <TableCell>{row.name}</TableCell>
             <TableCell>{row.role}</TableCell>
             <TableCell align="right">{row.status}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Inline row actions (actions column + overflow menu)
+```tsx
+import type React from 'react';
+import type { TableColumn } from '@lumia/components';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableRowActions,
+} from '@lumia/components';
+
+type Row = { id: string; name: string; role: string; location: string };
+
+const columns: TableColumn<Row>[] = [
+  { id: 'name', label: 'Name', sortable: true, renderCell: (row) => row.name },
+  { id: 'role', label: 'Role', sortable: true, renderCell: (row) => row.role },
+  { id: 'location', label: 'Location', renderCell: (row) => row.location },
+  {
+    id: 'actions',
+    type: 'actions',
+    label: 'Actions',
+    renderCell: (row) => (
+      <TableRowActions
+        row={row}
+        primaryAction={{ label: 'Edit', onClick: () => console.log('Edit', row.id) }}
+        secondaryActions={[
+          { label: 'Duplicate', onClick: () => console.log('Duplicate', row.id) },
+          { label: 'Archive', onClick: () => console.log('Archive', row.id) },
+        ]}
+      />
+    ),
+  },
+];
+
+export function RosterWithActions({ rows }: { rows: Row[] }) {
+  return (
+    <Table columns={columns}>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={row.id} rowId={row.id}>
+            {columns.map((column) => (
+              <TableCell
+                key={`${row.id}-${column.id}`}
+                align={column.type === 'actions' ? 'right' : column.align}
+              >
+                {column.renderCell ? column.renderCell(row) : (row as Record<string, React.ReactNode>)[column.id]}
+              </TableCell>
+            ))}
           </TableRow>
         ))}
       </TableBody>
