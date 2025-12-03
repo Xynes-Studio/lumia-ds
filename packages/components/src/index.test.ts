@@ -111,6 +111,13 @@ import {
   type TableSortState,
   type TableProps,
   type TableRowProps,
+  ToastProvider,
+  ToastViewport,
+  useToast,
+  type ToastAction,
+  type ToastOptions,
+  type ToastProviderProps,
+  type ToastVariant,
 } from './index';
 
 describe('components index barrel', () => {
@@ -172,6 +179,9 @@ describe('components index barrel', () => {
     expect(TableCell).toBeDefined();
     expect(EmptyState).toBeDefined();
     expect(NoResults).toBeDefined();
+    expect(ToastProvider).toBeDefined();
+    expect(ToastViewport).toBeDefined();
+    expect(useToast).toBeDefined();
   });
 
   it('provides consumer friendly prop types', () => {
@@ -316,6 +326,14 @@ describe('components index barrel', () => {
     expectTypeOf<NoResultsProps>().toMatchTypeOf<
       ComponentProps<typeof NoResults>
     >();
+    expectTypeOf<ToastProviderProps>().toMatchTypeOf<
+      ComponentProps<typeof ToastProvider>
+    >();
+    expectTypeOf<ToastOptions>().toMatchTypeOf<ToastOptions>();
+    expectTypeOf<ToastVariant>().toEqualTypeOf<
+      'default' | 'success' | 'warning' | 'error'
+    >();
+    expectTypeOf<ToastAction>().toMatchTypeOf<ToastAction>();
   });
 
   it('mirrors the external package entrypoint', () => {
@@ -407,5 +425,16 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.EmptyStateAction>().toEqualTypeOf<EmptyStateAction>();
     expectTypeOf<ExternalApi.NoResults>().toEqualTypeOf<typeof NoResults>();
     expectTypeOf<ExternalApi.NoResultsProps>().toEqualTypeOf<NoResultsProps>();
+    expectTypeOf<ExternalApi.ToastProvider>().toEqualTypeOf<
+      typeof ToastProvider
+    >();
+    expectTypeOf<ExternalApi.ToastProviderProps>().toEqualTypeOf<ToastProviderProps>();
+    expectTypeOf<ExternalApi.ToastViewport>().toEqualTypeOf<
+      typeof ToastViewport
+    >();
+    expectTypeOf<ExternalApi.ToastVariant>().toEqualTypeOf<ToastVariant>();
+    expectTypeOf<ExternalApi.ToastAction>().toEqualTypeOf<ToastAction>();
+    expectTypeOf<ExternalApi.ToastOptions>().toEqualTypeOf<ToastOptions>();
+    expectTypeOf<ExternalApi.useToast>().toEqualTypeOf<typeof useToast>();
   });
 });
