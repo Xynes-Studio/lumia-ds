@@ -23,3 +23,4 @@ export * from './side-nav-item';
 export * from './toast';
 export * from './progress-bar';
 export * from './spinner';
+export * from './skeleton';

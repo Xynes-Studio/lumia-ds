@@ -118,6 +118,8 @@ import {
   type ToastOptions,
   type ToastProviderProps,
   type ToastVariant,
+  Skeleton,
+  type SkeletonProps,
 } from './index';
 
 describe('components index barrel', () => {
@@ -182,6 +184,7 @@ describe('components index barrel', () => {
     expect(ToastProvider).toBeDefined();
     expect(ToastViewport).toBeDefined();
     expect(useToast).toBeDefined();
+    expect(Skeleton).toBeDefined();
   });
 
   it('provides consumer friendly prop types', () => {
@@ -334,6 +337,9 @@ describe('components index barrel', () => {
       'default' | 'success' | 'warning' | 'error'
     >();
     expectTypeOf<ToastAction>().toMatchTypeOf<ToastAction>();
+    expectTypeOf<SkeletonProps>().toMatchTypeOf<
+      ComponentProps<typeof Skeleton>
+    >();
   });
 
   it('mirrors the external package entrypoint', () => {
@@ -436,5 +442,7 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.ToastAction>().toEqualTypeOf<ToastAction>();
     expectTypeOf<ExternalApi.ToastOptions>().toEqualTypeOf<ToastOptions>();
     expectTypeOf<ExternalApi.useToast>().toEqualTypeOf<typeof useToast>();
+    expectTypeOf<ExternalApi.Skeleton>().toEqualTypeOf<typeof Skeleton>();
+    expectTypeOf<ExternalApi.SkeletonProps>().toEqualTypeOf<SkeletonProps>();
   });
 });
