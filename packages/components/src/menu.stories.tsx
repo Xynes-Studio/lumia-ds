@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Icon } from '@lumia/icons';
 import { Button } from './button';
 import {
   Menu,
   MenuContent,
   MenuItem,
+  MenuLabel,
   MenuSeparator,
   MenuTrigger,
 } from './menu';
@@ -28,10 +28,10 @@ const BaseMenu = () => (
       <Button variant="secondary">Open menu</Button>
     </MenuTrigger>
     <MenuContent>
-      <MenuItem label="Profile" />
-      <MenuItem label="Settings" />
+      <MenuItem label="Profile" icon="user" />
+      <MenuItem label="Settings" icon="settings" />
       <MenuSeparator />
-      <MenuItem label="Sign out" />
+      <MenuItem label="Help" icon="info" />
     </MenuContent>
   </Menu>
 );
@@ -40,27 +40,23 @@ export const Playground: Story = {
   render: () => <BaseMenu />,
 };
 
-export const WithIcons: Story = {
+export const SectionsAndStates: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <Button variant="ghost">More actions</Button>
+        <Button variant="ghost">Workspace</Button>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem
-          label="Create"
-          icon={<Icon id="sparkle" size={16} className="text-primary-600" />}
-        />
-        <MenuItem
-          label="Edit"
-          icon={<Icon id="user" size={16} className="text-foreground" />}
-        />
+        <MenuLabel>Workspace</MenuLabel>
+        <MenuItem label="Invite teammates" icon="users" />
+        <MenuItem label="Create project" icon="add" />
         <MenuSeparator />
+        <MenuLabel>Danger zone</MenuLabel>
+        <MenuItem label="Archive workspace" icon="alert" disabled />
         <MenuItem
-          label="Delete"
-          icon={
-            <Icon id="chat-bubble" size={16} className="text-destructive" />
-          }
+          label="Delete workspace"
+          icon="delete"
+          variant="destructive"
         />
       </MenuContent>
     </Menu>
@@ -69,7 +65,7 @@ export const WithIcons: Story = {
     docs: {
       description: {
         story:
-          'Items can display optional icons for quicker scanning. All items remain keyboard accessible and support Enter/Space to trigger onSelect.',
+          'Section labels, disabled states, and destructive variants help convey hierarchy and intent. Icons use the design system icon ids.',
       },
     },
   },

@@ -6,6 +6,7 @@ import {
   Menu,
   MenuContent,
   MenuItem,
+  MenuLabel,
   MenuSeparator,
   MenuTrigger,
 } from './menu';
@@ -38,6 +39,29 @@ const MenuFixture = ({ onSelect }: { onSelect?: () => void }) => (
       <MenuItem label="Profile" onSelect={onSelect} />
       <MenuSeparator />
       <MenuItem label="Sign out" />
+    </MenuContent>
+  </Menu>
+);
+
+const MenuSectionFixture = ({
+  onDisabledSelect,
+}: {
+  onDisabledSelect?: () => void;
+}) => (
+  <Menu>
+    <MenuTrigger asChild>
+      <Button type="button">Open menu</Button>
+    </MenuTrigger>
+    <MenuContent>
+      <MenuLabel>Account</MenuLabel>
+      <MenuItem label="Profile" icon="user" />
+      <MenuItem label="Delete account" icon="delete" variant="destructive" />
+      <MenuItem
+        label="Invite teammate"
+        icon="users"
+        disabled
+        onSelect={onDisabledSelect}
+      />
     </MenuContent>
   </Menu>
 );
@@ -156,6 +180,63 @@ describe('Menu', () => {
 
     expect(document.body.querySelector('[data-lumia-menu-content]')).toBeNull();
     expect(document.activeElement).toBe(trigger);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders icons, section labels, and respects disabled/destructive states', async () => {
+    const { root, host } = createTestRoot();
+    const onDisabledSelect = vi.fn();
+
+    await act(async () => {
+      root.render(<MenuSectionFixture onDisabledSelect={onDisabledSelect} />);
+    });
+
+    const trigger = host.querySelector('button');
+
+    await act(async () => {
+      trigger?.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true }),
+      );
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await act(async () => {});
+
+    const content = document.body.querySelector(
+      '[data-lumia-menu-content]',
+    ) as HTMLElement | null;
+    expect(content).toBeTruthy();
+    expect(content?.querySelector('[data-lumia-menu-label]')?.textContent).toBe(
+      'Account',
+    );
+
+    const items = Array.from(
+      content?.querySelectorAll('[data-lumia-menu-item]') ?? [],
+    );
+    expect(items).toHaveLength(3);
+
+    const destructiveItem = items.find((item) =>
+      item.textContent?.includes('Delete account'),
+    );
+    expect(destructiveItem?.className).toContain('text-destructive');
+    expect(destructiveItem?.querySelector('svg')).toBeTruthy();
+
+    const disabledItem = items.find((item) =>
+      item.textContent?.includes('Invite teammate'),
+    );
+    expect(disabledItem?.getAttribute('aria-disabled')).toBe('true');
+    expect(disabledItem?.hasAttribute('data-disabled')).toBe(true);
+
+    await act(async () => {
+      disabledItem?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await act(async () => {});
+
+    expect(onDisabledSelect).not.toHaveBeenCalled();
+    expect(
+      document.body.querySelector('[data-lumia-menu-content]'),
+    ).toBeTruthy();
 
     await act(async () => root.unmount());
     document.body.removeChild(host);
