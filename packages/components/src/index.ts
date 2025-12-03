@@ -4,6 +4,7 @@ export * from './select';
 export * from './checkbox';
 export * from './radio';
 export * from './card';
+export * from './switch';
 export * from './tabs';
 export * from './dialog';
 export * from './confirm-dialog';
