@@ -15,6 +15,5 @@ export const hintClasses = 'text-sm leading-5 text-muted';
 export const invalidHintClasses = 'text-destructive';
 
 export const buildAriaDescribedBy = (
-  describedBy?: string | null,
-  hintId?: string,
-) => [describedBy, hintId].filter(Boolean).join(' ') || undefined;
+  ...ids: Array<string | null | undefined>
+) => ids.filter(Boolean).join(' ') || undefined;

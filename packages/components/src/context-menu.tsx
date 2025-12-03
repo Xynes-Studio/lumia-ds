@@ -80,6 +80,13 @@ export const ContextMenu = ({
   ...props
 }: ContextMenuProps) => {
   const triggerRef = useRef<HTMLElement | null>(null);
+  const focusTrigger = () => {
+    if (!triggerRef.current) return;
+
+    queueMicrotask(() => {
+      triggerRef.current?.focus();
+    });
+  };
 
   const handleKeyboardOpen = (event: KeyboardEvent<HTMLElement>) => {
     if (
@@ -127,7 +134,7 @@ export const ContextMenu = ({
       {...props}
       onOpenChange={(nextOpen) => {
         if (!nextOpen) {
-          triggerRef.current?.focus();
+          focusTrigger();
         }
         onOpenChange?.(nextOpen);
       }}
@@ -144,7 +151,7 @@ export const ContextMenu = ({
         {...contentProps}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
-          triggerRef.current?.focus();
+          focusTrigger();
           contentProps?.onCloseAutoFocus?.(event);
         }}
       >

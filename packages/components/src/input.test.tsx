@@ -89,4 +89,79 @@ describe('Textarea component', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it('displays a character counter when enabled', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Textarea
+          value="Details"
+          maxLength={120}
+          showCount
+          invalid
+          hint="Add more detail"
+        />,
+      );
+    });
+
+    const textarea = host.querySelector('textarea');
+    const describedByIds =
+      textarea?.getAttribute('aria-describedby')?.split(' ') ?? [];
+    const counterId = describedByIds.find((id) => id.endsWith('-counter'));
+    const hintId = describedByIds.find((id) => id.endsWith('-hint'));
+    const counter = counterId ? document.getElementById(counterId) : null;
+    const hint = hintId ? document.getElementById(hintId) : null;
+
+    expect(counter?.textContent).toBe('7 / 120');
+    expect(counter?.className).toContain('text-destructive');
+    expect(hint?.textContent).toBe('Add more detail');
+    expect(describedByIds).toHaveLength(2);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('auto-resizes to fit content up to the default max height', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<Textarea autoResize value="Line 1" onChange={() => {}} />);
+    });
+
+    let textarea = host.querySelector('textarea');
+
+    if (!textarea) {
+      throw new Error('Expected textarea to be rendered');
+    }
+
+    Object.defineProperty(textarea, 'scrollHeight', {
+      configurable: true,
+      writable: true,
+      value: 400,
+    });
+
+    await act(async () => {
+      textarea.value = `${textarea.value}\nLine 2\nLine 3`;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    await act(async () => {
+      root.render(
+        <Textarea
+          autoResize
+          value="Line 1\nLine 2\nLine 3"
+          onChange={() => {}}
+        />,
+      );
+    });
+
+    textarea = host.querySelector('textarea');
+
+    expect(textarea?.style.maxHeight).toBe('320px');
+    expect(textarea?.style.height).toBe('320px');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });
