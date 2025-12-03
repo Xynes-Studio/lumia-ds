@@ -28,3 +28,4 @@ export * from './spinner';
 export * from './skeleton';
 export * from './tooltip';
 export * from './popover';
+export * from './slider';
