@@ -87,6 +87,9 @@ import {
   type TabsListProps,
   type TabsProps,
   type TabsTriggerProps,
+  SegmentedControl,
+  type SegmentedControlOption,
+  type SegmentedControlProps,
   Flex,
   type FlexProps,
   FlatList,
@@ -130,6 +133,7 @@ describe('components index barrel', () => {
     expect(TabsList).toBeDefined();
     expect(TabsTrigger).toBeDefined();
     expect(TabsContent).toBeDefined();
+    expect(SegmentedControl).toBeDefined();
 
     expect(Dialog).toBeDefined();
     expect(DialogTrigger).toBeDefined();
@@ -211,6 +215,10 @@ describe('components index barrel', () => {
     expectTypeOf<TabsContentProps>().toMatchTypeOf<
       ComponentProps<typeof TabsContent>
     >();
+    expectTypeOf<SegmentedControlProps>().toMatchTypeOf<
+      ComponentProps<typeof SegmentedControl>
+    >();
+    expectTypeOf<SegmentedControlOption>().toMatchTypeOf<SegmentedControlOption>();
 
     expectTypeOf<DialogProps>().toMatchTypeOf<ComponentProps<typeof Dialog>>();
     expectTypeOf<DialogTriggerProps>().toMatchTypeOf<
@@ -328,6 +336,11 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.TabsListProps>().toEqualTypeOf<TabsListProps>();
     expectTypeOf<ExternalApi.TabsTriggerProps>().toEqualTypeOf<TabsTriggerProps>();
     expectTypeOf<ExternalApi.TabsContentProps>().toEqualTypeOf<TabsContentProps>();
+    expectTypeOf<ExternalApi.SegmentedControl>().toEqualTypeOf<
+      typeof SegmentedControl
+    >();
+    expectTypeOf<ExternalApi.SegmentedControlProps>().toEqualTypeOf<SegmentedControlProps>();
+    expectTypeOf<ExternalApi.SegmentedControlOption>().toEqualTypeOf<SegmentedControlOption>();
     expectTypeOf<ExternalApi.DialogProps>().toEqualTypeOf<DialogProps>();
     expectTypeOf<ExternalApi.DialogTriggerProps>().toEqualTypeOf<DialogTriggerProps>();
     expectTypeOf<ExternalApi.DialogContentProps>().toEqualTypeOf<DialogContentProps>();

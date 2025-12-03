@@ -9,6 +9,7 @@ export * from './dialog';
 export * from './sheet';
 export * from './menu';
 export * from './context-menu';
+export * from './segmented-control';
 export * from './flex';
 export * from './flat-list';
 export * from './table';
