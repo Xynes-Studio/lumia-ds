@@ -6,6 +6,7 @@ export * from './radio';
 export * from './card';
 export * from './tabs';
 export * from './dialog';
+export * from './confirm-dialog';
 export * from './sheet';
 export * from './menu';
 export * from './context-menu';

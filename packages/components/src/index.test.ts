@@ -5,6 +5,10 @@ import {
   Button,
   buttonStyles,
   type ButtonProps,
+  ConfirmDialog,
+  useConfirmDialog,
+  type ConfirmDialogProps,
+  type UseConfirmDialogResult,
   Card,
   CardContent,
   CardDescription,
@@ -153,6 +157,8 @@ describe('components index barrel', () => {
     expect(DialogTitle).toBeDefined();
     expect(DialogDescription).toBeDefined();
     expect(DialogFooter).toBeDefined();
+    expect(ConfirmDialog).toBeDefined();
+    expect(useConfirmDialog).toBeDefined();
 
     expect(Sheet).toBeDefined();
     expect(SheetTrigger).toBeDefined();
@@ -254,6 +260,12 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<DialogFooterProps>().toMatchTypeOf<
       ComponentProps<typeof DialogFooter>
+    >();
+    expectTypeOf<ConfirmDialogProps>().toMatchTypeOf<
+      ComponentProps<typeof ConfirmDialog>
+    >();
+    expectTypeOf<UseConfirmDialogResult>().toMatchTypeOf<
+      ReturnType<typeof useConfirmDialog>
     >();
 
     expectTypeOf<SheetProps>().toMatchTypeOf<ComponentProps<typeof Sheet>>();
@@ -378,6 +390,14 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.DialogTitleProps>().toEqualTypeOf<DialogTitleProps>();
     expectTypeOf<ExternalApi.DialogDescriptionProps>().toEqualTypeOf<DialogDescriptionProps>();
     expectTypeOf<ExternalApi.DialogFooterProps>().toEqualTypeOf<DialogFooterProps>();
+    expectTypeOf<typeof ExternalApi.ConfirmDialog>().toEqualTypeOf<
+      typeof ConfirmDialog
+    >();
+    expectTypeOf<ExternalApi.ConfirmDialogProps>().toEqualTypeOf<ConfirmDialogProps>();
+    expectTypeOf<ExternalApi.useConfirmDialog>().toEqualTypeOf<
+      typeof useConfirmDialog
+    >();
+    expectTypeOf<ExternalApi.UseConfirmDialogResult>().toEqualTypeOf<UseConfirmDialogResult>();
     expectTypeOf<ExternalApi.SheetProps>().toEqualTypeOf<SheetProps>();
     expectTypeOf<ExternalApi.SheetTriggerProps>().toEqualTypeOf<SheetTriggerProps>();
     expectTypeOf<ExternalApi.SheetContentProps>().toEqualTypeOf<SheetContentProps>();
