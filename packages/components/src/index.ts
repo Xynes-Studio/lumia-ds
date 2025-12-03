@@ -7,6 +7,7 @@ export * from './card';
 export * from './tabs';
 export * from './dialog';
 export * from './sheet';
+export * from './menu';
 export * from './flex';
 export * from './flat-list';
 export * from './table';

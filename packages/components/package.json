@@ -51,6 +51,7 @@
   "dependencies": {
     "@lumia/icons": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
     "react-day-picker": "^9.11.3"
   }
 }
