@@ -63,8 +63,10 @@ export function Example() {
 
       <Textarea
         placeholder="Describe the issue"
-        invalid
-        hint="Please add more detail"
+        autoResize
+        maxLength={240}
+        showCount
+        hint="Auto-resizes and shows a counter"
       />
 
       <Card className="max-w-md">
@@ -188,6 +190,12 @@ export function Example() {
   );
 }
 ```
+
+### Textarea options
+
+- `autoResize` automatically grows height until it hits the max height (defaults to `320px`, respects a custom `style.maxHeight`).
+- `showCount` displays a `current / maxLength` counter beside the hint when `maxLength` is provided.
+- Respects invalid state styling for both the field and counter text.
 
 ## Storybook
 

@@ -43,6 +43,13 @@ export const States: Story = {
         invalid
         hint="Please provide more details"
       />
+      <Textarea
+        placeholder="Textarea with counter"
+        autoResize
+        maxLength={120}
+        showCount
+        hint="Auto-resizes and shows characters"
+      />
       <Textarea placeholder="Textarea disabled" disabled />
     </div>
   ),
@@ -59,5 +66,35 @@ export const States: Story = {
 export const WithHint: Story = {
   args: {
     hint: 'Helper text for the field',
+  },
+};
+
+export const TextareaEnhancements: Story = {
+  render: () => (
+    <div className="grid max-w-lg gap-4 bg-background p-6">
+      <Textarea
+        placeholder="Share more context"
+        autoResize
+        maxLength={180}
+        showCount
+        hint="Counts characters and grows until it hits its max height."
+      />
+      <Textarea
+        placeholder="Describe the issue"
+        autoResize
+        maxLength={80}
+        showCount
+        invalid
+        hint="Keep it concise"
+      />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Textarea supports optional auto-resizing and a character counter when `maxLength` is provided.',
+      },
+    },
   },
 };
