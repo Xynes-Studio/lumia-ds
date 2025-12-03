@@ -33,6 +33,10 @@ import {
   type DialogProps,
   type DialogTitleProps,
   type DialogTriggerProps,
+  DateRangeFilter,
+  type DateRangeFilterProps,
+  type DateRangePreset,
+  type DateRangeValue,
   Input,
   Textarea,
   type InputProps,
@@ -93,6 +97,7 @@ describe('components index barrel', () => {
     expect(Select).toBeDefined();
     expect(Checkbox).toBeDefined();
     expect(Radio).toBeDefined();
+    expect(DateRangeFilter).toBeDefined();
 
     expect(Card).toBeDefined();
     expect(CardHeader).toBeDefined();
@@ -143,6 +148,11 @@ describe('components index barrel', () => {
       ComponentProps<typeof Checkbox>
     >();
     expectTypeOf<RadioProps>().toMatchTypeOf<ComponentProps<typeof Radio>>();
+    expectTypeOf<DateRangeFilterProps>().toMatchTypeOf<
+      ComponentProps<typeof DateRangeFilter>
+    >();
+    expectTypeOf<DateRangeValue>().toMatchTypeOf<DateRangeValue>();
+    expectTypeOf<DateRangePreset>().toMatchTypeOf<DateRangePreset>();
 
     expectTypeOf<CardProps>().toMatchTypeOf<ComponentProps<typeof Card>>();
     expectTypeOf<CardHeaderProps>().toMatchTypeOf<
@@ -245,6 +255,12 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.SelectProps>().toEqualTypeOf<SelectProps>();
     expectTypeOf<ExternalApi.CheckboxProps>().toEqualTypeOf<CheckboxProps>();
     expectTypeOf<ExternalApi.RadioProps>().toEqualTypeOf<RadioProps>();
+    expectTypeOf<ExternalApi.DateRangeFilter>().toEqualTypeOf<
+      typeof DateRangeFilter
+    >();
+    expectTypeOf<ExternalApi.DateRangeFilterProps>().toEqualTypeOf<DateRangeFilterProps>();
+    expectTypeOf<ExternalApi.DateRangeValue>().toEqualTypeOf<DateRangeValue>();
+    expectTypeOf<ExternalApi.DateRangePreset>().toEqualTypeOf<DateRangePreset>();
     expectTypeOf<ExternalApi.CardProps>().toEqualTypeOf<CardProps>();
     expectTypeOf<ExternalApi.CardHeaderProps>().toEqualTypeOf<CardHeaderProps>();
     expectTypeOf<ExternalApi.CardTitleProps>().toEqualTypeOf<CardTitleProps>();

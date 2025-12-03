@@ -49,6 +49,7 @@
         "webpack": "^5.103.0"
     },
     "dependencies": {
-        "@radix-ui/react-dialog": "^1.1.15"
+        "@radix-ui/react-dialog": "^1.1.15",
+        "react-day-picker": "^9.11.3"
     }
 }

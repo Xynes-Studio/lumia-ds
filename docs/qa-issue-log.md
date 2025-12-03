@@ -25,6 +25,10 @@ Severity: S1 blocker | S2 major | S3 minor | S4 polish
 ## Run log
 | Session ID | Date | Scope | Browsers | Status | Notes / Issues |
 | --- | --- | --- | --- | --- | --- |
+| SB-DS707-004 | 2025-12-03 | DateRangeFilter modern/classic stories smoke + lint | Unit (Vitest) | Passed | `pnpm --filter @lumia/components test -- --runInBand` (prior run), `pnpm lint`; validated modern dual-month picker, classic inputs, presets, and bounds in Storybook. |
+| SB-DS707-003 | 2025-12-03 | DateRangeFilter modern calendar + bounds | Unit (Vitest) | Passed | `pnpm --filter @lumia/components test -- --runInBand`, `pnpm lint`; modern dual-month calendar variant, min/max dates, and range caps verified. |
+| SB-DS707-002 | 2025-12-03 | DateRangeFilter bounds/variants story + lint/unit check | Unit (Vitest) | Passed | `pnpm --filter @lumia/components test -- --runInBand`, `pnpm lint`; verified min/max bounds, maxRangeDays cap, variant layouts, and presets. |
+| SB-DS707-001 | 2025-12-02 | DateRangeFilter story + lint/unit check | Unit (Vitest) | Passed | `pnpm --filter @lumia/components test -- --runInBand`, `pnpm lint`; preset buttons, keyboard close (Esc), and manual date entry verified in Storybook stories. |
 | SB-DS706-001 | 2025-02-14 | FilterBar story + lint/unit check | Unit (Vitest) | Passed | `pnpm --filter @lumia/components exec vitest run src/filter-bar.test.tsx`, `pnpm lint`; search + quick filters + actions layout verified, no defects found. |
 | SB-DS705-001 | 2025-02-13 | Table inline row actions story + lint/unit check | Unit (Vitest) | Passed | `pnpm --filter @lumia/components exec vitest run src/table.test.tsx --no-coverage`, `pnpm lint`; menu and actions interactions verified. |
 | SB-DS702-001 | 2025-12-02 | Pagination story + lint/unit check | Unit (Vitest) | Passed | `pnpm --filter @lumia/components exec vitest run src/pagination.test.tsx src/index.test.ts`, `pnpm lint`; no issues found. |
