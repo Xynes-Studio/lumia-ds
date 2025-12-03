@@ -1,7 +1,7 @@
 import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { createRoot } from 'react-dom/client';
-import { EmptyState } from './empty-state';
+import { EmptyState, NoResults } from './empty-state';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
@@ -65,6 +65,45 @@ describe('EmptyState component', () => {
 
     expect(onPrimary).toHaveBeenCalledTimes(1);
     expect(onSecondary).toHaveBeenCalledTimes(1);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+});
+
+describe('NoResults component', () => {
+  it('renders default inline copy and hint for filtered views', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<NoResults />);
+    });
+
+    const wrapper = host.firstElementChild;
+    expect(wrapper?.className).toContain('border-dashed');
+    expect(wrapper?.textContent).toContain('No results found');
+    expect(wrapper?.textContent).toContain(
+      'Reset filters or clear the search to see everything.',
+    );
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('allows overriding description and hiding the reset hint', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <NoResults
+          description="Nothing matched those filters."
+          resetHint={null}
+        />,
+      );
+    });
+
+    expect(host.textContent).toContain('Nothing matched those filters.');
+    expect(host.textContent).not.toContain('Reset filters or clear the search');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

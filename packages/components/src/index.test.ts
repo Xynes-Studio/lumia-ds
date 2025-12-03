@@ -40,6 +40,8 @@ import {
   EmptyState,
   type EmptyStateAction,
   type EmptyStateProps,
+  NoResults,
+  type NoResultsProps,
   Input,
   Textarea,
   type InputProps,
@@ -139,6 +141,7 @@ describe('components index barrel', () => {
     expect(TableRow).toBeDefined();
     expect(TableCell).toBeDefined();
     expect(EmptyState).toBeDefined();
+    expect(NoResults).toBeDefined();
   });
 
   it('provides consumer friendly prop types', () => {
@@ -253,6 +256,9 @@ describe('components index barrel', () => {
       ComponentProps<typeof EmptyState>
     >();
     expectTypeOf<EmptyStateAction>().toMatchTypeOf<EmptyStateAction>();
+    expectTypeOf<NoResultsProps>().toMatchTypeOf<
+      ComponentProps<typeof NoResults>
+    >();
   });
 
   it('mirrors the external package entrypoint', () => {
@@ -318,5 +324,7 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.EmptyState>().toEqualTypeOf<typeof EmptyState>();
     expectTypeOf<ExternalApi.EmptyStateProps>().toEqualTypeOf<EmptyStateProps>();
     expectTypeOf<ExternalApi.EmptyStateAction>().toEqualTypeOf<EmptyStateAction>();
+    expectTypeOf<ExternalApi.NoResults>().toEqualTypeOf<typeof NoResults>();
+    expectTypeOf<ExternalApi.NoResultsProps>().toEqualTypeOf<NoResultsProps>();
   });
 });
