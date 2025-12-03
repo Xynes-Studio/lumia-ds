@@ -8,7 +8,7 @@ import { Button } from './button';
 import type { DateRangeValue } from './date-range-filter';
 
 const meta = {
-  title: 'Components/FilterBar',
+  title: 'Examples/FilterBar Composition',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

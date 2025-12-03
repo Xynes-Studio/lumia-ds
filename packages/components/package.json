@@ -1,55 +1,56 @@
 {
-    "name": "@lumia/components",
-    "version": "0.0.0",
-    "description": "React component library for Lumia DS",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "build": "tsup",
-        "dev": "tsup --watch",
-        "test": "vitest run --coverage",
-        "storybook": "NODE_OPTIONS=\"--require=./.storybook/disable-pnp.js\" storybook dev -p 6006 -c .storybook",
-        "storybook:build": "NODE_OPTIONS=\"--require=./.storybook/disable-pnp.js\" storybook build -c .storybook"
-    },
-    "peerDependencies": {
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.28.5",
-        "@babel/preset-react": "^7.28.5",
-        "@babel/preset-typescript": "^7.28.5",
-        "@storybook/addon-a11y": "^8.6.14",
-        "@storybook/addon-essentials": "^8.6.14",
-        "@storybook/addon-interactions": "^8.6.14",
-        "@storybook/react-vite": "^8.6.14",
-        "@storybook/react-webpack5": "8.6.14",
-        "@storybook/test": "8.6.14",
-        "@types/react": "^18.3.12",
-        "@types/react-dom": "^18.3.1",
-        "@vitest/coverage-v8": "^2.1.9",
-        "babel-loader": "^9.2.1",
-        "happy-dom": "^20.0.10",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "semver": "^7.7.3",
-        "storybook": "^8.6.14",
-        "tsup": "^8.0.0",
-        "unplugin": "^1.16.1",
-        "vite": "^6.4.1",
-        "vitest": "^2.1.9",
-        "webpack": "^5.103.0"
-    },
-    "dependencies": {
-        "@radix-ui/react-dialog": "^1.1.15",
-        "react-day-picker": "^9.11.3"
+  "name": "@lumia/components",
+  "version": "0.0.0",
+  "description": "React component library for Lumia DS",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --coverage",
+    "storybook": "NODE_OPTIONS=\"--require=./.storybook/disable-pnp.js\" storybook dev -p 6006 -c .storybook",
+    "storybook:build": "NODE_OPTIONS=\"--require=./.storybook/disable-pnp.js\" storybook build -c .storybook"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@storybook/addon-a11y": "^8.6.14",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@storybook/react-webpack5": "8.6.14",
+    "@storybook/test": "8.6.14",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitest/coverage-v8": "^2.1.9",
+    "babel-loader": "^9.2.1",
+    "happy-dom": "^20.0.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "semver": "^7.7.3",
+    "storybook": "^8.6.14",
+    "tsup": "^8.0.0",
+    "unplugin": "^1.16.1",
+    "vite": "^6.4.1",
+    "vitest": "^2.1.9",
+    "webpack": "^5.103.0"
+  },
+  "dependencies": {
+    "@lumia/icons": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "react-day-picker": "^9.11.3"
+  }
 }
