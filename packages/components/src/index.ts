@@ -21,3 +21,5 @@ export * from './breadcrumbs';
 export * from './empty-state';
 export * from './side-nav-item';
 export * from './toast';
+export * from './progress-bar';
+export * from './spinner';
