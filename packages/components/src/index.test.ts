@@ -67,10 +67,12 @@ import {
   Menu,
   MenuContent,
   MenuItem,
+  MenuLabel,
   MenuSeparator,
   MenuTrigger,
   type MenuContentProps,
   type MenuItemProps,
+  type MenuLabelProps,
   type MenuProps,
   type MenuSeparatorProps,
   type MenuTriggerProps,
@@ -146,6 +148,7 @@ describe('components index barrel', () => {
     expect(MenuTrigger).toBeDefined();
     expect(MenuContent).toBeDefined();
     expect(MenuItem).toBeDefined();
+    expect(MenuLabel).toBeDefined();
     expect(MenuSeparator).toBeDefined();
 
     expect(Flex).toBeDefined();
@@ -254,6 +257,9 @@ describe('components index barrel', () => {
     expectTypeOf<MenuItemProps>().toMatchTypeOf<
       ComponentProps<typeof MenuItem>
     >();
+    expectTypeOf<MenuLabelProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuLabel>
+    >();
     expectTypeOf<MenuSeparatorProps>().toMatchTypeOf<
       ComponentProps<typeof MenuSeparator>
     >();
@@ -336,6 +342,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.MenuContentProps>().toEqualTypeOf<MenuContentProps>();
     expectTypeOf<ExternalApi.MenuItem>().toEqualTypeOf<typeof MenuItem>();
     expectTypeOf<ExternalApi.MenuItemProps>().toEqualTypeOf<MenuItemProps>();
+    expectTypeOf<ExternalApi.MenuLabel>().toEqualTypeOf<typeof MenuLabel>();
+    expectTypeOf<ExternalApi.MenuLabelProps>().toEqualTypeOf<MenuLabelProps>();
     expectTypeOf<ExternalApi.MenuSeparator>().toEqualTypeOf<
       typeof MenuSeparator
     >();
