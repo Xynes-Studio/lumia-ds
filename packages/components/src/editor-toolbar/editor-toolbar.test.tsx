@@ -25,6 +25,15 @@ describe('EditorToolbar', () => {
     const toolbar = screen.getByTestId('toolbar');
     expect(toolbar).toHaveClass('custom-class');
   });
+  it('renders with wrapping enabled', () => {
+    render(
+      <EditorToolbar data-testid="toolbar-wrap">
+        <div>Content</div>
+      </EditorToolbar>,
+    );
+    const toolbar = screen.getByTestId('toolbar-wrap');
+    expect(toolbar).toHaveClass('flex-wrap');
+  });
 });
 
 describe('EditorToolbarGroup', () => {

@@ -16,6 +16,7 @@ export const EditorToolbar = ({
       align="center"
       justify="between"
       gap="sm"
+      wrap="wrap"
       className={cn(
         'w-full border-b border-border bg-background p-2',
         className,
