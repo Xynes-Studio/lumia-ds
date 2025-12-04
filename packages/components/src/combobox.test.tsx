@@ -8,7 +8,7 @@ import React, {
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
 import { Simulate } from 'react-dom/test-utils';
-import { Combobox, type ComboboxOption } from './combobox';
+import { Combobox, MultiSelect, type ComboboxOption } from './combobox';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
@@ -219,6 +219,159 @@ describe('Combobox', () => {
     await act(async () => {});
 
     expect(document.body.textContent?.includes('No results')).toBe(true);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+});
+
+describe('MultiSelect', () => {
+  it('loads options, toggles selections, and shows chips', async () => {
+    const loadOptions = vi.fn().mockResolvedValue([
+      { label: 'Alpha', value: 'alpha' },
+      { label: 'Beta', value: 'beta' },
+      { label: 'Gamma', value: 'gamma' },
+    ]);
+    const handleChange = vi.fn();
+    const { root, host } = createTestRoot();
+
+    const Harness = () => {
+      const [selected, setSelected] = useState<ComboboxOption[]>([]);
+
+      return (
+        <MultiSelect
+          value={selected}
+          onChange={(options) => {
+            setSelected(options);
+            handleChange(options);
+          }}
+          loadOptions={loadOptions}
+          placeholder="Pick multiple"
+        />
+      );
+    };
+
+    await act(async () => {
+      root.render(<Harness />);
+    });
+
+    const input = host.querySelector('input') as HTMLInputElement;
+
+    await act(async () => {
+      Simulate.focus(input);
+      await Promise.resolve();
+    });
+
+    expect(loadOptions).toHaveBeenCalledWith('');
+
+    await act(async () => {
+      input.value = 'al';
+      Simulate.change(input, { target: { value: 'al' } });
+      await Promise.resolve();
+    });
+
+    expect(loadOptions).toHaveBeenLastCalledWith('al');
+
+    const options = Array.from(
+      document.body.querySelectorAll('[role="option"]'),
+    ) as HTMLButtonElement[];
+    expect(options.map((node) => node.textContent?.trim())).toEqual([
+      'Alpha',
+      'Beta',
+      'Gamma',
+    ]);
+
+    await act(async () => {
+      Simulate.click(options[0]);
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith([
+      { label: 'Alpha', value: 'alpha' },
+    ]);
+    expect(
+      Array.from(host.querySelectorAll('button[aria-label^="Remove"]')).map(
+        (node) => node.getAttribute('aria-label'),
+      ),
+    ).toContain('Remove Alpha');
+    expect(options[0].getAttribute('aria-selected')).toBe('true');
+
+    await act(async () => {
+      Simulate.click(options[1]);
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith([
+      { label: 'Alpha', value: 'alpha' },
+      { label: 'Beta', value: 'beta' },
+    ]);
+
+    const removeAlpha = host.querySelector(
+      'button[aria-label="Remove Alpha"]',
+    ) as HTMLButtonElement;
+
+    await act(async () => {
+      Simulate.click(removeAlpha);
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith([
+      { label: 'Beta', value: 'beta' },
+    ]);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('removes the last chip with backspace when the input is empty', async () => {
+    const loadOptions = vi.fn().mockResolvedValue([]);
+    const handleChange = vi.fn();
+    const { root, host } = createTestRoot();
+
+    const Harness = () => {
+      const [selected, setSelected] = useState<ComboboxOption[]>([
+        { label: 'Alpha', value: 'alpha' },
+        { label: 'Beta', value: 'beta' },
+      ]);
+
+      return (
+        <MultiSelect
+          value={selected}
+          onChange={(options) => {
+            setSelected(options);
+            handleChange(options);
+          }}
+          loadOptions={loadOptions}
+        />
+      );
+    };
+
+    await act(async () => {
+      root.render(<Harness />);
+    });
+
+    const input = host.querySelector('input') as HTMLInputElement;
+
+    await act(async () => {
+      Simulate.focus(input);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      Simulate.keyDown(input, { key: 'Backspace' });
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith([
+      { label: 'Alpha', value: 'alpha' },
+    ]);
+
+    await act(async () => {
+      Simulate.keyDown(input, { key: 'Backspace' });
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith([]);
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

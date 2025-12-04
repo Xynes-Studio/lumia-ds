@@ -1,11 +1,11 @@
-# Combobox / AsyncSelect (DS-1009)
+# Combobox / AsyncSelect (DS-1009) & MultiSelect with Tags (DS-1010)
 
-Searchable async dropdown built on the popover/input pattern for fetching and selecting options.
+Searchable async dropdowns built on the popover/input pattern for fetching and selecting options. `MultiSelect` extends Combobox to support multiple choices as inline tags.
 
 ## Exports
-- `Combobox` and `ComboboxOption` from `@lumia/components`.
+- `Combobox`, `MultiSelect`, and `ComboboxOption` from `@lumia/components`.
 
-## Props & behavior
+## Combobox props & behavior
 - `value: ComboboxOption | null` – controlled selection; `ComboboxOption` is `{ label: string; value: string }`.
 - `onChange(option: ComboboxOption | null)` – fired on selection.
 - `loadOptions(input: string) => Promise<ComboboxOption[]>` – called on focus and as the user types.
@@ -15,10 +15,18 @@ Searchable async dropdown built on the popover/input pattern for fetching and se
 - Shows spinner while loading, “No results” when nothing matches, highlights active option, and closes/commits selection on Enter or click; Esc closes and restores the current value.
 - Arrow keys move the active option; focus returns to the input when the list closes.
 
+## MultiSelect props & behavior
+- `value: ComboboxOption[]` – controlled list of selected options.
+- `onChange(options: ComboboxOption[])` – fired whenever selection changes.
+- `loadOptions(input: string) => Promise<ComboboxOption[]>` – same async loader, called on focus and typing.
+- `placeholder?: string` – shown when no tags are selected.
+- UI: selected options render as removable tags inside the field; clear via chip “x” button or Backspace on an empty input to remove the last tag; dropdown options show checkbox states for selected items.
+- Keyboard: Arrow keys move the active option, Enter toggles the highlighted option, Esc closes and clears the pending query, Backspace removes the last tag when the query is empty.
+
 ## Usage
 ```tsx
 import { useMemo, useState } from 'react';
-import { Combobox, type ComboboxOption } from '@lumia/components';
+import { Combobox, MultiSelect, type ComboboxOption } from '@lumia/components';
 
 const fruits: ComboboxOption[] = [
   { label: 'Apple', value: 'apple' },
@@ -51,9 +59,35 @@ export function FruitPicker() {
     />
   );
 }
+
+export function FruitMultiSelect() {
+  const [choices, setChoices] = useState<ComboboxOption[]>([]);
+
+  const loadOptions = useMemo(
+    () => (input: string) =>
+      new Promise<ComboboxOption[]>((resolve) => {
+        const normalized = input.trim().toLowerCase();
+        const filtered = fruits.filter((option) =>
+          option.label.toLowerCase().includes(normalized),
+        );
+        setTimeout(() => resolve(filtered), 250);
+      }),
+    [],
+  );
+
+  return (
+    <MultiSelect
+      value={choices}
+      onChange={setChoices}
+      loadOptions={loadOptions}
+      placeholder="Pick fruits..."
+    />
+  );
+}
 ```
 
 ## Accessibility notes
 - Input uses `role="combobox"` with `aria-expanded`, `aria-controls`, and `aria-activedescendant` for active option tracking.
-- List uses `role="listbox"`/`role="option"`; keyboard navigation supports Arrow keys, Enter to select, and Esc to close.
+- List uses `role="listbox"`/`role="option"`; keyboard navigation supports Arrow keys, Enter to select/toggle, and Esc to close.
 - Popover restores focus to the trigger/input on close; options are clickable and keyboard selectable.
+- MultiSelect marks the list as `aria-multiselectable="true"` and reflects selection with `aria-selected` plus checkbox visuals; chip remove buttons include accessible labels.
