@@ -89,6 +89,7 @@ import { LumiaEditor } from '@lumia/editor';
   value={doc}
   onChange={(newDoc) => setDoc(newDoc)}
   variant="full" // or "compact"
+  mode="document" // or "inline"
   readOnly={false}
 />
 ```
@@ -97,9 +98,34 @@ import { LumiaEditor } from '@lumia/editor';
 
 - `value`: The current `DocNode` JSON document.
 - `onChange`: Callback fired when the document changes.
-- `variant`: `'full' | 'compact'` - Determines the toolbar layout.
+- `variant`: `'full' | 'compact'` - Determines the toolbar layout (full shows all options, compact shows minimal options).
+- `mode`: `'document' | 'inline'` - Editor behavior mode (default: `'document'`).
+  - `'document'`: Full editor with toolbar and text area.
+  - `'inline'`: Inline editing mode - renders as typography when not focused, edits inline on click with minimal toolbar.
 - `readOnly`: `boolean` - Whether the editor is read-only.
 - `className`: `string` - Optional class name.
+
+#### Mode Examples
+
+**Document mode (default):**
+```tsx
+<LumiaEditor 
+  value={doc} 
+  onChange={handleChange}
+  variant="full"
+/>
+// Shows full editor with toolbar
+```
+
+**Inline mode:**
+```tsx
+<LumiaEditor 
+  value={doc} 
+  onChange={handleChange}
+  mode="inline"
+/>
+// Renders as text, switches to editor on click/focus
+```
 
 ### `LumiaInlineEditor`
 

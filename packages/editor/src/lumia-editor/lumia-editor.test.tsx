@@ -103,4 +103,74 @@ describe('LumiaEditor', () => {
 
     expect(handleChange).toHaveBeenCalledWith(expectedDoc);
   });
+
+  describe('mode prop', () => {
+    it('defaults to document mode when mode is not specified', () => {
+      render(<LumiaEditor value={mockDoc} onChange={() => {}} />);
+      // Document mode should show the editor input
+      expect(screen.getByTestId('lumia-editor-input')).toBeInTheDocument();
+      // And should show the toolbar
+      expect(screen.getByTitle('Bold')).toBeInTheDocument();
+    });
+
+    it('renders LumiaInlineEditor when mode is inline', () => {
+      render(<LumiaEditor value={mockDoc} onChange={() => {}} mode="inline" />);
+      // Should show inline editor view mode initially
+      expect(
+        screen.getByTestId('lumia-inline-editor-view-mode'),
+      ).toBeInTheDocument();
+      // Should NOT show the regular editor input
+      expect(
+        screen.queryByTestId('lumia-editor-input'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('does not show toolbar in inline mode', () => {
+      render(<LumiaEditor value={mockDoc} onChange={() => {}} mode="inline" />);
+      // Inline mode should NOT show the big toolbar
+      expect(screen.queryByTitle('Bold')).not.toBeInTheDocument();
+      expect(screen.queryByTitle('Italic')).not.toBeInTheDocument();
+      expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    });
+
+    it('preserves JSON state when switching between modes', () => {
+      const { rerender } = render(
+        <LumiaEditor value={mockDoc} onChange={() => {}} mode="document" />,
+      );
+
+      // Verify document mode is rendered
+      expect(screen.getByTestId('lumia-editor-input')).toBeInTheDocument();
+      expect(
+        (screen.getByTestId('lumia-editor-input') as HTMLTextAreaElement).value,
+      ).toBe(JSON.stringify(mockDoc, null, 2));
+
+      // Switch to inline mode
+      rerender(
+        <LumiaEditor value={mockDoc} onChange={() => {}} mode="inline" />,
+      );
+
+      // Verify inline mode is rendered with same data
+      expect(
+        screen.getByTestId('lumia-inline-editor-view-mode'),
+      ).toBeInTheDocument();
+      expect(screen.getByText('Hello World')).toBeInTheDocument();
+    });
+
+    it('calls onChange correctly in inline mode', () => {
+      const handleChange = vi.fn();
+      render(
+        <LumiaEditor value={mockDoc} onChange={handleChange} mode="inline" />,
+      );
+
+      // Click to enter edit mode
+      fireEvent.click(screen.getByTestId('lumia-inline-editor-view-mode'));
+
+      // Find the textarea from the compact editor
+      const input = screen.getByTestId('lumia-editor-input');
+      const newDoc = { ...mockDoc, content: [] };
+      fireEvent.change(input, { target: { value: JSON.stringify(newDoc) } });
+
+      expect(handleChange).toHaveBeenCalledWith(newDoc);
+    });
+  });
 });
