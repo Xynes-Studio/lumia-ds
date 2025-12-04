@@ -17,6 +17,14 @@ import {
   statusPillStyles,
   type StatusPillProps,
   type StatusPillVariant,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  type AccordionContentProps,
+  type AccordionItemProps,
+  type AccordionProps,
+  type AccordionTriggerProps,
   ConfirmDialog,
   useConfirmDialog,
   type ConfirmDialogProps,
@@ -187,6 +195,11 @@ describe('components index barrel', () => {
     expect(CardContent).toBeDefined();
     expect(CardFooter).toBeDefined();
 
+    expect(Accordion).toBeDefined();
+    expect(AccordionItem).toBeDefined();
+    expect(AccordionTrigger).toBeDefined();
+    expect(AccordionContent).toBeDefined();
+
     expect(Tabs).toBeDefined();
     expect(TabsList).toBeDefined();
     expect(TabsTrigger).toBeDefined();
@@ -305,6 +318,19 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<CardFooterProps>().toMatchTypeOf<
       ComponentProps<typeof CardFooter>
+    >();
+
+    expectTypeOf<AccordionProps>().toMatchTypeOf<
+      ComponentProps<typeof Accordion>
+    >();
+    expectTypeOf<AccordionItemProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionItem>
+    >();
+    expectTypeOf<AccordionTriggerProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionTrigger>
+    >();
+    expectTypeOf<AccordionContentProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionContent>
     >();
 
     expectTypeOf<TabsProps>().toMatchTypeOf<ComponentProps<typeof Tabs>>();
