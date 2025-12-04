@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ComboboxOption } from './combobox';
-import { Combobox } from './combobox';
+import { Combobox, MultiSelect } from './combobox';
 
 const options: ComboboxOption[] = [
   { label: 'Almond', value: 'almond' },
@@ -204,6 +204,59 @@ export const CountrySearch: Story = {
       description: {
         story:
           'Demonstrates live filtering against a list of countries as you type.',
+      },
+    },
+  },
+};
+
+const MultiSelectTemplate = () => {
+  const [selected, setSelected] = useState<ComboboxOption[]>([]);
+
+  const loadOptions = useMemo(
+    () => (query: string) =>
+      new Promise<ComboboxOption[]>((resolve) => {
+        const normalized = query.trim().toLowerCase();
+        const filtered = options.filter((option) =>
+          option.label.toLowerCase().includes(normalized),
+        );
+
+        setTimeout(() => resolve(filtered.slice(0, 12)), 250);
+      }),
+    [],
+  );
+
+  return (
+    <div className="w-[420px] space-y-3">
+      <div className="space-y-1">
+        <p className="text-sm font-medium text-foreground">
+          Choose multiple fruits
+        </p>
+        <p className="text-sm text-muted">
+          Selected options appear as removable tags inside the field.
+        </p>
+      </div>
+      <MultiSelect
+        value={selected}
+        onChange={setSelected}
+        loadOptions={loadOptions}
+        placeholder="Select fruits..."
+      />
+      <p className="text-sm text-muted">
+        {selected.length > 0
+          ? `Selected: ${selected.map((item) => item.label).join(', ')}`
+          : 'No fruits selected'}
+      </p>
+    </div>
+  );
+};
+
+export const MultiSelectWithTags: Story = {
+  render: () => <MultiSelectTemplate />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pick multiple results; each selection becomes a tag inside the input with remove affordances.',
       },
     },
   },

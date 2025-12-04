@@ -50,10 +50,12 @@ import {
   Textarea,
   NumberInput,
   Combobox,
+  MultiSelect,
   type InputProps,
   type TextareaProps,
   type NumberInputProps,
   type ComboboxProps,
+  type MultiSelectProps,
   type ComboboxOption,
   FileUpload,
   type FileUploadProps,
@@ -142,6 +144,7 @@ describe('components index barrel', () => {
     expect(Textarea).toBeDefined();
     expect(NumberInput).toBeDefined();
     expect(Combobox).toBeDefined();
+    expect(MultiSelect).toBeDefined();
     expect(Select).toBeDefined();
     expect(Checkbox).toBeDefined();
     expect(Radio).toBeDefined();
@@ -215,6 +218,9 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<ComboboxProps>().toMatchTypeOf<
       ComponentProps<typeof Combobox>
+    >();
+    expectTypeOf<MultiSelectProps>().toMatchTypeOf<
+      ComponentProps<typeof MultiSelect>
     >();
     expectTypeOf<ComboboxOption>().toMatchTypeOf<ComboboxOption>();
     expectTypeOf<FileUploadProps>().toMatchTypeOf<
@@ -386,6 +392,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.Combobox>().toEqualTypeOf<typeof Combobox>();
     expectTypeOf<ExternalApi.ComboboxProps>().toEqualTypeOf<ComboboxProps>();
     expectTypeOf<ExternalApi.ComboboxOption>().toEqualTypeOf<ComboboxOption>();
+    expectTypeOf<ExternalApi.MultiSelect>().toEqualTypeOf<typeof MultiSelect>();
+    expectTypeOf<ExternalApi.MultiSelectProps>().toEqualTypeOf<MultiSelectProps>();
     expectTypeOf<ExternalApi.FileUpload>().toEqualTypeOf<typeof FileUpload>();
     expectTypeOf<ExternalApi.FileUploadProps>().toEqualTypeOf<FileUploadProps>();
     expectTypeOf<ExternalApi.UploadedFile>().toEqualTypeOf<UploadedFile>();
