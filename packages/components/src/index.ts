@@ -20,6 +20,7 @@ export * from './sheet';
 export * from './menu';
 export * from './context-menu';
 export * from './segmented-control';
+export * from './view-toggle';
 export * from './alert';
 export * from './accordion';
 export * from './flex';
