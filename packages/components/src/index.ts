@@ -1,5 +1,7 @@
 export * from './button';
+export * from './badge';
 export * from './tag';
+export * from './status-pill';
 export * from './input';
 export * from './input-group';
 export * from './number-input';

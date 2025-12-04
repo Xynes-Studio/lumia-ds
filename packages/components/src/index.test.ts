@@ -5,10 +5,18 @@ import {
   Button,
   buttonStyles,
   type ButtonProps,
+  Badge,
+  badgeStyles,
+  type BadgeProps,
+  type BadgeVariant,
   Tag,
   tagStyles,
   type TagProps,
   type TagVariant,
+  StatusPill,
+  statusPillStyles,
+  type StatusPillProps,
+  type StatusPillVariant,
   ConfirmDialog,
   useConfirmDialog,
   type ConfirmDialogProps,
@@ -151,8 +159,12 @@ describe('components index barrel', () => {
   it('exports all primitives and helpers', () => {
     expect(Button).toBeDefined();
     expect(buttonStyles.base).toBeDefined();
+    expect(Badge).toBeDefined();
+    expect(badgeStyles.base).toBeDefined();
     expect(Tag).toBeDefined();
     expect(tagStyles.base).toBeDefined();
+    expect(StatusPill).toBeDefined();
+    expect(statusPillStyles.base).toBeDefined();
     expect(Input).toBeDefined();
     expect(InputGroup).toBeDefined();
     expect(InputGroupInput).toBeDefined();
@@ -226,9 +238,19 @@ describe('components index barrel', () => {
 
   it('provides consumer friendly prop types', () => {
     expectTypeOf<ButtonProps>().toMatchTypeOf<ComponentProps<typeof Button>>();
+    expectTypeOf<BadgeProps>().toMatchTypeOf<ComponentProps<typeof Badge>>();
+    expectTypeOf<BadgeVariant>().toEqualTypeOf<
+      'default' | 'outline' | 'subtle'
+    >();
     expectTypeOf<TagProps>().toMatchTypeOf<ComponentProps<typeof Tag>>();
     expectTypeOf<TagVariant>().toEqualTypeOf<
       'default' | 'success' | 'warning' | 'error'
+    >();
+    expectTypeOf<StatusPillProps>().toMatchTypeOf<
+      ComponentProps<typeof StatusPill>
+    >();
+    expectTypeOf<StatusPillVariant>().toEqualTypeOf<
+      'success' | 'warning' | 'error' | 'info'
     >();
     expectTypeOf<InputProps>().toMatchTypeOf<ComponentProps<typeof Input>>();
     expectTypeOf<InputGroupProps>().toMatchTypeOf<
@@ -415,9 +437,17 @@ describe('components index barrel', () => {
   it('mirrors the external package entrypoint', () => {
     expectTypeOf<typeof ExternalApi.Button>().toEqualTypeOf<typeof Button>();
     expectTypeOf<ExternalApi.ButtonProps>().toEqualTypeOf<ButtonProps>();
+    expectTypeOf<typeof ExternalApi.Badge>().toEqualTypeOf<typeof Badge>();
+    expectTypeOf<ExternalApi.BadgeProps>().toEqualTypeOf<BadgeProps>();
+    expectTypeOf<ExternalApi.BadgeVariant>().toEqualTypeOf<BadgeVariant>();
     expectTypeOf<typeof ExternalApi.Tag>().toEqualTypeOf<typeof Tag>();
     expectTypeOf<ExternalApi.TagProps>().toEqualTypeOf<TagProps>();
     expectTypeOf<ExternalApi.TagVariant>().toEqualTypeOf<TagVariant>();
+    expectTypeOf<typeof ExternalApi.StatusPill>().toEqualTypeOf<
+      typeof StatusPill
+    >();
+    expectTypeOf<ExternalApi.StatusPillProps>().toEqualTypeOf<StatusPillProps>();
+    expectTypeOf<ExternalApi.StatusPillVariant>().toEqualTypeOf<StatusPillVariant>();
     expectTypeOf<ExternalApi.InputGroup>().toEqualTypeOf<typeof InputGroup>();
     expectTypeOf<ExternalApi.InputGroupProps>().toEqualTypeOf<InputGroupProps>();
     expectTypeOf<ExternalApi.InputGroupInput>().toEqualTypeOf<
