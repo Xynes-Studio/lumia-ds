@@ -51,6 +51,7 @@ And the following marks:
 - `underline`
 - `code`
 - `link`
+- `font` - For inline font application (overrides block-level fonts)
 
 ## Transforms
 
@@ -276,27 +277,157 @@ This ensures that documents created before font restrictions were in place are a
 
 ## HTML Serialization
 
-The editor supports exporting documents to HTML with proper font-family CSS stacks:
+The editor supports exporting documents to HTML with class-based font styling.
 
-### `docNodeToHtml(doc: DocNode, options?: HtmlSerializerOptions): string`
+### `docNodeToHtml(doc: DocNode, options?: { fonts?: FontConfig }): string`
 
-Convert a `DocNode` to an HTML string with CSS font styles:
+Convert a `DocNode` to an HTML string with CSS class names for fonts:
 
 ```typescript
 import { docNodeToHtml } from '@lumia/editor';
 
 const html = docNodeToHtml(doc, { fonts: brandFonts });
-// Output: <p style="font-family: 'Roboto', sans-serif">Hello World</p>
+// Output: <p class="font-roboto">Hello World</p>
 ```
 
-### Font Family CSS Stacks
+### Class-Based Font Styling
 
-The serializer includes fallback fonts for all default fonts:
-- `inter` → `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`
-- `roboto` → `"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif`
-- And more...
+The serializer generates CSS class names for fonts instead of inline styles:
 
-Invalid fonts are automatically normalized to the default font's CSS stack when `fonts` config is provided.
+**Block-Level Fonts** (baseline):
+- Applied via `attrs.fontId` on `paragraph`, `heading`, and `list_item` nodes
+- Generates `class="font-{id}"` on the HTML element
+- Default fonts generate no class (no redundancy)
+
+**Inline Font Marks** (override):
+- Applied via `font` mark with `attrs.fontId` on text nodes
+- Wraps text in `<span class="font-{id}">...</span>`
+- Overrides block-level font for specific text spans
+
+#### Required CSS Classes
+
+You must define CSS classes for each font in your stylesheet:
+
+```css
+.font-inter {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.font-roboto {
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.font-lora {
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+}
+
+/* Add more fonts as needed */
+```
+
+### Font Serialization Examples
+
+**Block-level font (paragraph):**
+```typescript
+const doc = {
+  type: 'doc',
+  content: [{
+    type: 'paragraph',
+    attrs: { fontId: 'roboto' },
+    content: [{ type: 'text', text: 'Hello World' }],
+  }],
+};
+
+docNodeToHtml(doc, { fonts: brandFonts });
+// Output: <p class="font-roboto">Hello World</p>
+```
+
+**Default font (no class):**
+```typescript
+const doc = {
+  type: 'doc',
+  content: [{
+    type: 'paragraph',
+    attrs: { fontId: 'inter' }, // Assuming inter is default
+    content: [{ type: 'text', text: 'Hello' }],
+  }],
+};
+
+docNodeToHtml(doc, { fonts: brandFonts });
+// Output: <p>Hello</p>  (no class for default font)
+```
+
+**Inline font mark (override):**
+```typescript
+const doc = {
+  type: 'doc',
+  content: [{
+    type: 'paragraph',
+    attrs: { fontId: 'inter' }, // Block-level font
+    content: [
+      { type: 'text', text: 'Normal ' },
+      {
+        type: 'text',
+        text: 'special',
+        marks: [{ type: 'font', attrs: { fontId: 'roboto' } }], // Inline override
+      },
+    ],
+  }],
+};
+
+docNodeToHtml(doc, { fonts: brandFonts });
+// Output: <p>Normal <span class="font-roboto">special</span></p>
+```
+
+**Heading with font:**
+```typescript
+const doc = {
+  type: 'doc',
+  content: [{
+    type: 'heading',
+    attrs: { level: 1, fontId: 'roboto' },
+    content: [{ type: 'text', text: 'Title' }],
+  }],
+};
+
+docNodeToHtml(doc, { fonts: brandFonts });
+// Output: <h1 class="font-roboto">Title</h1>
+```
+
+### Font Normalization in HTML
+
+Invalid or disallowed fonts are normalized to the default font during serialization:
+
+```typescript
+const doc = {
+  type: 'doc',
+  content: [{
+    type: 'paragraph',
+    attrs: { fontId: 'comic-sans' }, // Not in allowedFonts
+    content: [{ type: 'text', text: 'Hello' }],
+  }],
+};
+
+const brandFonts = {
+  allFonts: [{ id: 'inter', label: 'Inter', category: 'sans' }],
+  allowedFonts: ['inter'],
+  defaultFontId: 'inter',
+};
+
+docNodeToHtml(doc, { fonts: brandFonts });
+// Output: <p>Hello</p>  
+// (comic-sans → inter → default → no class)
+```
+
+### Backward Compatibility: Font Family CSS Stacks
+
+For consumers who need inline CSS font-family values, use the deprecated `getFontFamily` utility:
+
+```typescript
+import { getFontFamily } from '@lumia/editor';
+
+const fontStack = getFontFamily('roboto');
+// Returns: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif
+```
 
 ### Example: Complete Workflow with Font Enforcement
 
