@@ -30,7 +30,7 @@ export function Example() {
           <p className="text-sm font-semibold leading-5 text-foreground">
             Quick form
           </p>
-          <p className="text-sm leading-5 text-muted">
+          <p className="text-sm leading-5 text-muted-foreground ">
             Use popovers for lightweight, anchored overlays.
           </p>
           <div className="flex justify-end gap-2">

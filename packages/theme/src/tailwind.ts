@@ -47,9 +47,18 @@ const buildTailwindPreset = () => {
             defaultCssVars['--color-border'],
           ),
           muted: withFallback('--color-muted', defaultCssVars['--color-muted']),
+          'muted-foreground': withFallback(
+            '--color-muted-foreground',
+            defaultCssVars['--color-muted-foreground'],
+          ),
+          ring: withFallback('--color-ring', defaultCssVars['--color-ring']),
           destructive: withFallback(
             '--color-destructive',
             defaultCssVars['--color-destructive'],
+          ),
+          'destructive-foreground': withFallback(
+            '--color-destructive-foreground',
+            defaultCssVars['--color-destructive-foreground'],
           ),
         },
         borderRadius: {

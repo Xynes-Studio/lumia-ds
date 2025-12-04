@@ -22,15 +22,19 @@ describe('@lumia/tokens', () => {
       foreground: expect.any(String),
       border: expect.any(String),
       muted: expect.any(String),
+      mutedForeground: expect.any(String),
+      ring: expect.any(String),
       destructive: expect.any(String),
     });
     expect(defaultTheme.colors).toMatchObject({
-      primary: '#0f172a',
-      secondary: '#f1f5f9',
+      primary: '#18181b',
+      secondary: '#f4f4f5',
       background: '#ffffff',
-      foreground: '#020817',
-      border: '#e2e8f0',
-      muted: '#f1f5f9',
+      foreground: '#09090b',
+      border: '#e4e4e7',
+      muted: '#f4f4f5',
+      mutedForeground: '#71717a',
+      ring: '#18181b',
       destructive: '#ef4444',
     });
   });
@@ -107,6 +111,10 @@ describe('@lumia/tokens', () => {
     expect(cssVars['--color-fg']).toBe(defaultTheme.colors.foreground);
     expect(cssVars['--color-border']).toBe(defaultTheme.colors.border);
     expect(cssVars['--color-muted']).toBe(defaultTheme.colors.muted);
+    expect(cssVars['--color-muted-foreground']).toBe(
+      defaultTheme.colors.mutedForeground,
+    );
+    expect(cssVars['--color-ring']).toBe(defaultTheme.colors.ring);
     expect(cssVars['--color-destructive']).toBe(
       defaultTheme.colors.destructive,
     );

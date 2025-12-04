@@ -126,7 +126,7 @@ describe('<Icon />', () => {
 
   it('returns null when the id is not found', () => {
     const markup = renderToStaticMarkup(
-      <Icon id={'missing-icon' as IconId} className="text-muted" />,
+      <Icon id={'missing-icon' as IconId} className="text-muted-foreground " />,
     );
 
     expect(markup).toBe('');

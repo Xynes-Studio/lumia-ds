@@ -24,7 +24,7 @@ export function VolumeControl() {
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm font-medium">
         <span>Volume</span>
-        <span className="text-muted">{volume}%</span>
+        <span className="text-muted-foreground ">{volume}%</span>
       </div>
       <Slider
         value={volume}

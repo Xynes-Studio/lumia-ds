@@ -159,7 +159,7 @@ export const LayoutFooter = forwardRef<HTMLDivElement, LayoutFooterProps>(
       <footer
         ref={ref}
         className={cx(
-          'border-t border-border bg-background px-6 py-4 text-sm text-muted-foreground',
+          'border-t border-border bg-background px-6 py-4 text-sm text-muted-foreground -foreground',
           className,
         )}
         {...props}

@@ -146,7 +146,8 @@ const renderBlock = (
       props.mode ?? (screen === 'update' ? 'update' : 'create');
     const formProps: FormBlockProps = {
       ...props,
-      resource: props.resource ?? resource,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      resource: (props.resource ?? resource) as any,
       mode,
       initialValues:
         props.initialValues ??
@@ -315,7 +316,7 @@ export function ResourcePageRenderer({
 
   if (state.status === 'forbidden') {
     return (
-      <div role="alert" className="text-sm text-muted">
+      <div role="alert" className="text-sm text-muted-foreground ">
         You do not have access to this resource.
       </div>
     );
@@ -346,7 +347,7 @@ export function ResourcePageRenderer({
     );
 
     const sidebar: ReactNode = (
-      <div className="flex flex-col gap-2 text-sm text-muted">
+      <div className="flex flex-col gap-2 text-sm text-muted-foreground ">
         <span className="font-semibold text-foreground">Resources</span>
         <span>{state.resource.id}</span>
       </div>

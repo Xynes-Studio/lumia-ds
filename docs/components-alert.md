@@ -46,7 +46,7 @@ export function InlineInCard() {
           description="Try the updated filters before sharing."
           icon={sparkle}
         />
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted-foreground -foreground">
           Inline alerts sit comfortably inside cards or sections without extra wrappers.
         </p>
       </CardContent>

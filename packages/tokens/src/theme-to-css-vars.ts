@@ -108,6 +108,8 @@ export const themeToCSSVars = (theme: ThemeTokens): Record<string, string> => {
   cssVars['--color-fg'] = theme.colors.foreground;
   cssVars['--color-border'] = theme.colors.border;
   cssVars['--color-muted'] = theme.colors.muted;
+  cssVars['--color-muted-foreground'] = theme.colors.mutedForeground;
+  cssVars['--color-ring'] = theme.colors.ring;
   cssVars['--color-destructive'] = theme.colors.destructive;
   cssVars['--font-sans'] = theme.typography.families.sans;
   cssVars['--font-mono'] = theme.typography.families.mono;

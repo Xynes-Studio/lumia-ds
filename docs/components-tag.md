@@ -23,7 +23,7 @@ import { Tag } from '@lumia/components';
 <Tag label="Region: West" onRemove={() => handleRemove('west')} />;
 
 // Inline next to text
-<p className="text-sm text-muted-foreground">
+<p className="text-sm text-muted-foreground -foreground">
   Owner <Tag label="Taylor" className="ml-2 align-middle" />
 </p>;
 

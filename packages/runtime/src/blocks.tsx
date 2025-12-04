@@ -246,7 +246,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
             {shouldVirtualize ? (
               <div className="min-w-full">
                 <div
-                  className="grid bg-muted/40 text-xs font-semibold uppercase tracking-[0.08em] text-muted"
+                  className="grid bg-muted/40 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground "
                   style={{ gridTemplateColumns: columnTemplate }}
                 >
                   {resolvedColumns.map((column) => (
@@ -263,7 +263,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
                 </div>
 
                 {rows.length === 0 ? (
-                  <div className="px-4 py-6 text-center text-sm text-muted">
+                  <div className="px-4 py-6 text-center text-sm text-muted-foreground ">
                     {emptyMessage}
                   </div>
                 ) : (
@@ -272,11 +272,13 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
                     estimatedItemSize={ESTIMATED_ROW_HEIGHT}
                     onViewableItemsChanged={onViewableItemsChanged}
                     className="min-w-full text-sm"
-                    scrollContainerProps={{
-                      'data-virtualized-body': true,
-                      className: 'min-w-full',
-                      style: { maxHeight: `${VIRTUALIZED_MAX_HEIGHT}px` },
-                    }}
+                    scrollContainerProps={
+                      {
+                        'data-virtualized-body': true,
+                        className: 'min-w-full',
+                        style: { maxHeight: `${VIRTUALIZED_MAX_HEIGHT}px` },
+                      } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+                    }
                     renderItem={({ item: record, index: rowIndex }) => (
                       <div
                         data-row-index={rowIndex}
@@ -327,7 +329,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
                         key={column.key}
                         scope="col"
                         className={cx(
-                          'border-b border-border/80 px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-muted',
+                          'border-b border-border/80 px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground ',
                           alignClassNames[column.align ?? 'start'],
                         )}
                       >
@@ -342,7 +344,7 @@ export const ListBlock = forwardRef<HTMLDivElement, ListBlockProps>(
                     <tr>
                       <td
                         colSpan={Math.max(resolvedColumns.length, 1)}
-                        className="px-4 py-6 text-center text-sm text-muted"
+                        className="px-4 py-6 text-center text-sm text-muted-foreground "
                       >
                         {emptyMessage}
                       </td>
@@ -457,7 +459,7 @@ export const FormBlock = forwardRef<HTMLDivElement, FormBlockProps>(
     const resolvedSubmitLabel =
       submitLabel ?? (mode === 'create' ? 'Create' : 'Update');
 
-    const handleSubmit: SubmitHandler = async (values, event) => {
+    const handleSubmit: SubmitHandler<FieldValues> = async (values, event) => {
       if (resolvedSubmit) {
         await resolvedSubmit(values, event);
       }
@@ -483,7 +485,7 @@ export const FormBlock = forwardRef<HTMLDivElement, FormBlockProps>(
               rules={controllerRules}
               render={({ field, fieldState }) => (
                 <Select
-                  {...field}
+                  {...(field as any)} // eslint-disable-line @typescript-eslint/no-explicit-any
                   ref={field.ref}
                   id={fieldId}
                   value={field.value ?? ''}
@@ -625,7 +627,7 @@ export const FormBlock = forwardRef<HTMLDivElement, FormBlockProps>(
 
         <CardContent>
           {fields.length === 0 ? (
-            <p className="text-sm text-muted">{emptyMessage}</p>
+            <p className="text-sm text-muted-foreground ">{emptyMessage}</p>
           ) : (
             <LumiaForm methods={methods} onSubmit={handleSubmit}>
               <div className="flex flex-col gap-6">
@@ -706,7 +708,7 @@ export const DetailBlock = forwardRef<HTMLDivElement, DetailBlockProps>(
 
         <CardContent>
           {safeFields.length === 0 ? (
-            <p className="text-sm text-muted">{emptyMessage}</p>
+            <p className="text-sm text-muted-foreground ">{emptyMessage}</p>
           ) : (
             <dl className={cx('grid grid-cols-1 gap-4', columnClass)}>
               {safeFields.map((field) => {
@@ -731,11 +733,13 @@ export const DetailBlock = forwardRef<HTMLDivElement, DetailBlockProps>(
                       spanClass,
                     )}
                   >
-                    <dt className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground ">
                       {field.label}
                     </dt>
                     {field.hint && (
-                      <p className="mt-1 text-xs text-muted">{field.hint}</p>
+                      <p className="mt-1 text-xs text-muted-foreground ">
+                        {field.hint}
+                      </p>
                     )}
                     <dd className="mt-2 text-sm text-foreground">{value}</dd>
                   </div>

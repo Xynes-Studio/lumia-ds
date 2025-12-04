@@ -82,11 +82,11 @@ export function AccountDetails() {
         <StackLayout title="Account details" actions={<Button size="sm">Save changes</Button>}>
             <section className="rounded-lg border border-border bg-background/80 p-5 shadow-sm">
                 <h2 className="text-base font-semibold leading-6">Profile</h2>
-                <p className="text-sm text-muted">Name, email, and contact information.</p>
+                <p className="text-sm text-muted-foreground ">Name, email, and contact information.</p>
             </section>
             <section className="rounded-lg border border-border bg-background/80 p-5 shadow-sm">
                 <h2 className="text-base font-semibold leading-6">Security</h2>
-                <p className="text-sm text-muted">Passwords, MFA, and devices.</p>
+                <p className="text-sm text-muted-foreground ">Passwords, MFA, and devices.</p>
             </section>
         </StackLayout>
     );
@@ -109,7 +109,7 @@ export function DrawerExample() {
             <DrawerLayout isOpen={open} onClose={() => setOpen(false)}>
                 <div className="space-y-3">
                     <h2 className="text-lg font-semibold leading-6">Filters</h2>
-                    <p className="text-sm text-muted">Place your filter controls or secondary flows here.</p>
+                    <p className="text-sm text-muted-foreground ">Place your filter controls or secondary flows here.</p>
                 </div>
             </DrawerLayout>
         </>

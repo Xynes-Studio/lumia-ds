@@ -99,17 +99,17 @@ export function Example() {
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             High level summary content lives here.
           </p>
         </TabsContent>
         <TabsContent value="usage">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             Best practices, copy, and quick references.
           </p>
         </TabsContent>
         <TabsContent value="history">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             Changes or notes for this section.
           </p>
         </TabsContent>
@@ -164,9 +164,9 @@ export function Example() {
         justify="between"
         gap="sm"
       >
-        <p className="text-sm text-muted">Flex layout primitive</p>
+        <p className="text-sm text-muted-foreground ">Flex layout primitive</p>
         <Flex align="center" gap="xs">
-          <span className="text-xs uppercase text-muted">Direction</span>
+          <span className="text-xs uppercase text-muted-foreground ">Direction</span>
           <code className="rounded bg-muted px-2 py-1 text-xs">row</code>
         </Flex>
       </Flex>

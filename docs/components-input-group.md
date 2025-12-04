@@ -31,16 +31,16 @@ export function SearchField() {
     <div className="space-y-3">
       <InputGroup>
         <InputGroupPrefix>
-          <Icon id="search" size={16} className="text-muted" />
+          <Icon id="search" size={16} className="text-muted-foreground " />
         </InputGroupPrefix>
         <InputGroupInput placeholder="Search the docs" />
-        <InputGroupSuffix className="text-muted">⌘K</InputGroupSuffix>
+        <InputGroupSuffix className="text-muted-foreground ">⌘K</InputGroupSuffix>
       </InputGroup>
 
       <InputGroup>
         <InputGroupPrefix>$</InputGroupPrefix>
         <InputGroupInput aria-label="Amount" defaultValue="1200" />
-        <InputGroupSuffix className="text-muted">USD</InputGroupSuffix>
+        <InputGroupSuffix className="text-muted-foreground ">USD</InputGroupSuffix>
       </InputGroup>
 
       <InputGroup>

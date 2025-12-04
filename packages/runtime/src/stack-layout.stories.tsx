@@ -45,7 +45,7 @@ export const DetailPage: Story = {
             Sticky header keeps actions visible while scrolling.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3 text-sm text-muted">
+        <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground ">
           <p>
             Use StackLayout for detail and form flows where you need a top
             actions bar and a vertical stack of sections.
@@ -64,12 +64,12 @@ export const DetailPage: Story = {
             Secondary sections align to the same content column.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3 text-sm text-muted">
+        <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground ">
           <p>
             Add as many sections as needed—the body uses a consistent stack with
             generous spacing and readable line lengths.
           </p>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted-foreground ">
             The sticky header only appears when `title` or `actions` are
             provided.
           </p>

@@ -61,7 +61,7 @@ export function BillingCard() {
           </div>
         }
       >
-        <p className="text-sm leading-5 text-muted">Autopay runs on the 5th.</p>
+        <p className="text-sm leading-5 text-muted-foreground -foreground">Autopay runs on the 5th.</p>
       </CardFooter>
     </Card>
   );

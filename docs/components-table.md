@@ -92,7 +92,7 @@ export function SelectableUsers({
       onSelectionChange={setSelected}
       bulkActions={(ids) => (
         <div className="flex w-full items-center justify-between gap-2">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground -foreground">
             {ids.length} selected
           </span>
           <div className="flex gap-2">

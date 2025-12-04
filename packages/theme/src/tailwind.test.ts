@@ -33,6 +33,13 @@ describe('Tailwind preset', () => {
     expect(colors.border).toBe(
       `var(--color-border, ${cssVars['--color-border']})`,
     );
+    expect(colors.muted).toBe(
+      `var(--color-muted, ${cssVars['--color-muted']})`,
+    );
+    expect(colors['muted-foreground']).toBe(
+      `var(--color-muted-foreground, ${cssVars['--color-muted-foreground']})`,
+    );
+    expect(colors.ring).toBe(`var(--color-ring, ${cssVars['--color-ring']})`);
     expect(colors.destructive).toBe(
       `var(--color-destructive, ${cssVars['--color-destructive']})`,
     );

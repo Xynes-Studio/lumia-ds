@@ -12,7 +12,10 @@ export type ThemeTokens = {
     foreground: string;
     border: string;
     muted: string;
+    mutedForeground: string;
+    ring: string;
     destructive: string;
+    destructiveForeground: string;
   };
   typography: {
     families: {
@@ -62,13 +65,16 @@ export type ThemeTokens = {
 
 export const defaultTheme: ThemeTokens = {
   colors: {
-    primary: '#0f172a',
-    secondary: '#f1f5f9',
+    primary: '#18181b',
+    secondary: '#f4f4f5',
     background: '#ffffff',
-    foreground: '#020817',
-    border: '#e2e8f0',
-    muted: '#f1f5f9',
+    foreground: '#09090b',
+    border: '#e4e4e7',
+    muted: '#f4f4f5',
+    mutedForeground: '#71717a',
+    ring: '#18181b',
     destructive: '#ef4444',
+    destructiveForeground: '#ffffff',
   },
   typography: {
     families: {
