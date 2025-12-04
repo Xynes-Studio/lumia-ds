@@ -106,6 +106,14 @@ import { LumiaEditor } from '@lumia/editor';
 - `readOnly`: `boolean` - Whether the editor is read-only.
 - `className`: `string` - Optional class name.
 
+#### Font Selection Behavior
+
+When using the FontCombobox in the full editor:
+
+- **Single font**: If all blocks have the same font, that font is shown in the dropdown
+- **Mixed fonts**: If the document contains blocks with different fonts, the dropdown shows a placeholder ("Select font...") to indicate the mixed state
+- **Applying font**: Selecting a font from the dropdown applies it to the current block (or all selected blocks in a real selection implementation)
+
 #### Mode Examples
 
 **Document mode (default):**

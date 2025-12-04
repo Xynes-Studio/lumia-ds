@@ -413,5 +413,49 @@ describe('LumiaEditor', () => {
       expect(updatedDoc.content[0].attrs.fontId).toBe('roboto');
       expect(updatedDoc.content[0].type).toBe('heading');
     });
+
+    it('shows placeholder when selection spans multiple fonts', () => {
+      const docWithMixedFonts = {
+        type: 'doc' as const,
+        content: [
+          {
+            type: 'paragraph' as const,
+            attrs: { fontId: 'inter' },
+            content: [
+              {
+                type: 'text' as const,
+                text: 'First paragraph',
+              },
+            ],
+          },
+          {
+            type: 'paragraph' as const,
+            attrs: { fontId: 'roboto' },
+            content: [
+              {
+                type: 'text' as const,
+                text: 'Second paragraph',
+              },
+            ],
+          },
+        ],
+      };
+
+      render(
+        <LumiaEditor
+          value={docWithMixedFonts}
+          onChange={() => {}}
+          variant="full"
+          fonts={mockFontConfig}
+        />,
+      );
+
+      const fontInput = screen.getByPlaceholderText(
+        'Select font...',
+      ) as HTMLInputElement;
+
+      // When multiple blocks have different fonts, should show empty (Mixed state)
+      expect(fontInput.value).toBe('');
+    });
   });
 });

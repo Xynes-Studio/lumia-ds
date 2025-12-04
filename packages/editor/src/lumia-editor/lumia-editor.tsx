@@ -86,15 +86,40 @@ export const LumiaEditor = ({
       : null;
   const activeBlockType = firstBlock?.type || 'paragraph';
 
-  // Get current font from first block's attrs.fontId
-  const currentFontId =
-    firstBlock &&
-    'attrs' in firstBlock &&
-    firstBlock.attrs &&
-    'fontId' in firstBlock.attrs
-      ? (firstBlock.attrs as { fontId?: string }).fontId
-      : undefined;
-  const activeFontId = normalizeFontId(currentFontId, fonts);
+  // Get current font from all blocks - detect mixed state
+  const getCurrentFont = (): string | null => {
+    const content = (value as ParentNode).content;
+    if (!content || content.length === 0) {
+      return fonts.defaultFontId;
+    }
+
+    // Collect all unique font IDs from all blocks
+    const fontIds = new Set<string>();
+
+    for (const block of content) {
+      if ('attrs' in block && block.attrs && 'fontId' in block.attrs) {
+        const fontId = (block.attrs as { fontId?: string }).fontId;
+        if (fontId) {
+          fontIds.add(fontId);
+        }
+      }
+    }
+
+    // If no fonts found, use default
+    if (fontIds.size === 0) {
+      return fonts.defaultFontId;
+    }
+
+    // If all blocks have the same font, return it
+    if (fontIds.size === 1) {
+      return normalizeFontId(Array.from(fontIds)[0], fonts);
+    }
+
+    // Multiple different fonts - return null for "Mixed" state
+    return null;
+  };
+
+  const activeFontId = getCurrentFont();
 
   const firstTextNode =
     firstBlock && 'content' in firstBlock && (firstBlock as ParentNode).content
