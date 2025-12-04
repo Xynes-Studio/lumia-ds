@@ -13,12 +13,14 @@ import {
   NodeType,
   ParentNode,
 } from '../schema/docSchema';
+import { LumiaInlineEditor } from '../lumia-inline-editor/lumia-inline-editor';
 
 export interface LumiaEditorProps {
   value: DocNode;
   onChange: (value: DocNode) => void;
   readOnly?: boolean;
   variant?: 'full' | 'compact';
+  mode?: 'document' | 'inline';
   className?: string;
 }
 
@@ -27,8 +29,21 @@ export const LumiaEditor = ({
   onChange,
   readOnly = false,
   variant = 'full',
+  mode = 'document',
   className,
 }: LumiaEditorProps) => {
+  // If inline mode is requested, use LumiaInlineEditor
+  if (mode === 'inline') {
+    return (
+      <LumiaInlineEditor
+        value={value}
+        onChange={onChange}
+        className={className}
+      />
+    );
+  }
+
+  // Document mode - full editor implementation
   // Mock internal state for now since we don't have the full engine runtime
   const [internalValue, setInternalValue] = useState<string>(
     JSON.stringify(value, null, 2),
