@@ -41,6 +41,9 @@ import {
   type CardHeaderProps,
   type CardProps,
   type CardTitleProps,
+  StatTile,
+  type StatTileDelta,
+  type StatTileProps,
   Checkbox,
   type CheckboxProps,
   Dialog,
@@ -194,6 +197,7 @@ describe('components index barrel', () => {
     expect(CardDescription).toBeDefined();
     expect(CardContent).toBeDefined();
     expect(CardFooter).toBeDefined();
+    expect(StatTile).toBeDefined();
 
     expect(Accordion).toBeDefined();
     expect(AccordionItem).toBeDefined();
@@ -319,6 +323,10 @@ describe('components index barrel', () => {
     expectTypeOf<CardFooterProps>().toMatchTypeOf<
       ComponentProps<typeof CardFooter>
     >();
+    expectTypeOf<StatTileProps>().toMatchTypeOf<
+      ComponentProps<typeof StatTile>
+    >();
+    expectTypeOf<StatTileDelta>().toMatchTypeOf<StatTileDelta>();
 
     expectTypeOf<AccordionProps>().toMatchTypeOf<
       ComponentProps<typeof Accordion>
@@ -514,6 +522,9 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.CardDescriptionProps>().toEqualTypeOf<CardDescriptionProps>();
     expectTypeOf<ExternalApi.CardContentProps>().toEqualTypeOf<CardContentProps>();
     expectTypeOf<ExternalApi.CardFooterProps>().toEqualTypeOf<CardFooterProps>();
+    expectTypeOf<ExternalApi.StatTile>().toEqualTypeOf<typeof StatTile>();
+    expectTypeOf<ExternalApi.StatTileProps>().toEqualTypeOf<StatTileProps>();
+    expectTypeOf<ExternalApi.StatTileDelta>().toEqualTypeOf<StatTileDelta>();
     expectTypeOf<ExternalApi.TabsProps>().toEqualTypeOf<TabsProps>();
     expectTypeOf<ExternalApi.TabsListProps>().toEqualTypeOf<TabsListProps>();
     expectTypeOf<ExternalApi.TabsTriggerProps>().toEqualTypeOf<TabsTriggerProps>();

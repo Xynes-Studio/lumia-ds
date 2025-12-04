@@ -11,6 +11,7 @@ export * from './combobox';
 export * from './checkbox';
 export * from './radio';
 export * from './card';
+export * from './stat-tile';
 export * from './switch';
 export * from './tabs';
 export * from './dialog';
