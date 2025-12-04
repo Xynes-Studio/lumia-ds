@@ -100,3 +100,24 @@ import { LumiaEditor } from '@lumia/editor';
 - `variant`: `'full' | 'compact'` - Determines the toolbar layout.
 - `readOnly`: `boolean` - Whether the editor is read-only.
 - `className`: `string` - Optional class name.
+
+### `LumiaInlineEditor`
+
+A wrapper component for inline editing of text blocks (e.g. titles, labels).
+
+```tsx
+import { LumiaInlineEditor } from '@lumia/editor';
+
+<LumiaInlineEditor
+  value={doc}
+  onChange={(newDoc) => setDoc(newDoc)}
+  placeholder="Click to edit..."
+/>
+```
+
+#### Props
+
+- `value`: The current `DocNode` JSON document.
+- `onChange`: Callback fired when the document changes.
+- `placeholder`: `string` - Text to show when empty (default: "Click to edit...").
+- `className`: `string` - Optional class name.
