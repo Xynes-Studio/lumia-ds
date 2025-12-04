@@ -1,6 +1,6 @@
 # FileUpload (DS-1007)
 
-Button-driven file picker with a controlled list of selected files.
+Drag-and-drop file picker with a controlled list of selected files and image previews.
 
 ## Exports
 - `FileUpload`, `type FileUploadProps`, `type UploadedFile` from `@lumia/components`.
@@ -39,8 +39,35 @@ export function Attachments() {
 }
 ```
 
+### Drag-and-drop with previews
+```tsx
+const initialImages: UploadedFile[] = [
+  {
+    name: 'welcome-banner.png',
+    size: 72_400,
+    previewUrl: 'https://dummyimage.com/320x180/121417/ffffff.png&text=Banner',
+  },
+];
+
+export function ImageDropzone() {
+  const [files, setFiles] = useState<(File | UploadedFile)[]>(initialImages);
+
+  return (
+    <FileUpload
+      files={files}
+      multiple
+      accept="image/*"
+      buttonLabel="Add images"
+      onChange={setFiles}
+    />
+  );
+}
+```
+
 ## Notes
 - Fully controlled: the component only renders `files` it receives; selection/removal flows through `onChange`.
 - Sizes are displayed in human-readable units; unknown sizes default to `0 B`.
 - Remove control is per-file; use `multiple={false}` to keep only the most recently chosen file.
+- Drag-and-drop area highlights on hover, prevents default browser navigation on drop, and emits the same `onChange(files)` payload as clicking the button.
+- Image files show a thumbnail preview; non-image files render an initial badge. Existing uploads can provide `previewUrl` alongside `name`/`size` to show their own preview.
 - Built on the shared Button (shadcn-style) to match DS focus rings and tokens.

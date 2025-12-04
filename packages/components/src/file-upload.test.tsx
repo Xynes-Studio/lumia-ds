@@ -87,4 +87,68 @@ describe('FileUpload', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it('handles drag and drop by preventing default and emitting files', async () => {
+    const { root, host } = createTestRoot();
+    const handleChange = vi.fn();
+
+    await act(async () => {
+      root.render(<FileUpload files={[]} onChange={handleChange} />);
+    });
+
+    const dropZone = host.querySelector(
+      '[data-testid="file-upload-dropzone"]',
+    ) as HTMLDivElement;
+    expect(dropZone).toBeDefined();
+
+    const file = new File(['image'], 'preview.jpg', { type: 'image/jpeg' });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    const dropEvent = new Event('drop', {
+      bubbles: true,
+      cancelable: true,
+    }) as DragEvent;
+    Object.defineProperty(dropEvent, 'dataTransfer', {
+      value: dataTransfer,
+      writable: false,
+    });
+
+    await act(async () => {
+      dropZone.dispatchEvent(dropEvent);
+    });
+
+    expect(dropEvent.defaultPrevented).toBe(true);
+    expect(handleChange).toHaveBeenCalledWith([file]);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders image previews for image files', async () => {
+    const { root, host } = createTestRoot();
+    const createObjectURLSpy = vi.fn(() => 'blob:preview-url');
+    const revokeObjectURLSpy = vi.fn();
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    URL.createObjectURL = createObjectURLSpy;
+    URL.revokeObjectURL = revokeObjectURLSpy;
+
+    const file = new File(['image'], 'banner.png', { type: 'image/png' });
+
+    await act(async () => {
+      root.render(<FileUpload files={[file]} onChange={() => {}} />);
+    });
+
+    const preview = host.querySelector('img');
+    expect(createObjectURLSpy).toHaveBeenCalledWith(file);
+    expect(preview?.getAttribute('src')).toBe('blob:preview-url');
+
+    await act(async () => root.unmount());
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:preview-url');
+
+    URL.createObjectURL = originalCreateObjectURL;
+    URL.revokeObjectURL = originalRevokeObjectURL;
+    document.body.removeChild(host);
+  });
 });

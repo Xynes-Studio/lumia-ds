@@ -39,9 +39,40 @@ export const Playground: Story = {
       <div className="space-y-4">
         <FileUpload {...args} files={files} onChange={setFiles} />
         <p className="text-sm text-muted">
-          Use the upload button to choose files. The list below stays in sync
-          with the controlled `files` prop so consumers can handle uploads
-          however they like.
+          Drag files into the dashed area or click the button to pick them. The
+          list below stays in sync with the controlled `files` prop so consumers
+          can handle uploads however they like.
+        </p>
+      </div>
+    );
+  },
+};
+
+export const ImagesOnly: Story = {
+  args: {
+    files: [
+      {
+        name: 'welcome-banner.png',
+        size: 72_400,
+        previewUrl:
+          'https://dummyimage.com/320x180/121417/ffffff.png&text=Welcome+Banner',
+      },
+    ],
+    multiple: true,
+    accept: 'image/*',
+    buttonLabel: 'Add images',
+  },
+  render: (args: FileUploadProps) => {
+    const [files, setFiles] = useState<(File | UploadedFile)[]>(
+      args.files ?? [],
+    );
+
+    return (
+      <div className="space-y-3">
+        <FileUpload {...args} files={files} onChange={setFiles} />
+        <p className="text-xs text-muted">
+          Drag over the zone to see the highlight, or drop screenshots to
+          preview them instantly.
         </p>
       </div>
     );
