@@ -5,6 +5,8 @@ import {
   ChevronDown,
   ChevronUp,
   Filter,
+  LayoutGrid,
+  List,
   Home,
   Info,
   Pencil,
@@ -31,6 +33,8 @@ export const defaultIconComponents = {
   check: CheckCircle2,
   alert: AlertTriangle,
   info: Info,
+  'layout-grid': LayoutGrid,
+  list: List,
   'chevron-up': ChevronUp,
   'chevron-down': ChevronDown,
 } satisfies Record<string, IconComponent>;
