@@ -51,3 +51,27 @@ And the following marks:
 - `underline`
 - `code`
 - `link`
+
+## Transforms
+
+The package exports functions to convert between the `DocNode` JSON tree and ProseMirror `EditorState`.
+
+### `editorStateToJson(editorState: EditorState): DocNode`
+
+Converts a ProseMirror `EditorState` to a `DocNode` JSON tree.
+
+```typescript
+import { editorStateToJson } from '@lumia/editor';
+
+const json = editorStateToJson(editorState);
+```
+
+### `jsonToEditorState(json: DocNode): EditorState`
+
+Converts a `DocNode` JSON tree to a ProseMirror `EditorState`.
+
+```typescript
+import { jsonToEditorState } from '@lumia/editor';
+
+const editorState = jsonToEditorState(json);
+```
