@@ -32,3 +32,4 @@ export * from './popover';
 export * from './slider';
 export * from './date-picker';
 export * from './time-picker';
+export * from './file-upload';

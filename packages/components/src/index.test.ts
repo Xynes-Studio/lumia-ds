@@ -52,6 +52,9 @@ import {
   type InputProps,
   type TextareaProps,
   type NumberInputProps,
+  FileUpload,
+  type FileUploadProps,
+  type UploadedFile,
   Radio,
   type RadioProps,
   Select,
@@ -138,6 +141,7 @@ describe('components index barrel', () => {
     expect(Select).toBeDefined();
     expect(Checkbox).toBeDefined();
     expect(Radio).toBeDefined();
+    expect(FileUpload).toBeDefined();
     expect(DateRangeFilter).toBeDefined();
 
     expect(Card).toBeDefined();
@@ -205,6 +209,10 @@ describe('components index barrel', () => {
     expectTypeOf<NumberInputProps>().toMatchTypeOf<
       ComponentProps<typeof NumberInput>
     >();
+    expectTypeOf<FileUploadProps>().toMatchTypeOf<
+      ComponentProps<typeof FileUpload>
+    >();
+    expectTypeOf<UploadedFile>().toMatchTypeOf<UploadedFile>();
     expectTypeOf<SelectProps>().toMatchTypeOf<ComponentProps<typeof Select>>();
     expectTypeOf<CheckboxProps>().toMatchTypeOf<
       ComponentProps<typeof Checkbox>
@@ -367,6 +375,9 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.TextareaProps>().toEqualTypeOf<TextareaProps>();
     expectTypeOf<ExternalApi.NumberInput>().toEqualTypeOf<typeof NumberInput>();
     expectTypeOf<ExternalApi.NumberInputProps>().toEqualTypeOf<NumberInputProps>();
+    expectTypeOf<ExternalApi.FileUpload>().toEqualTypeOf<typeof FileUpload>();
+    expectTypeOf<ExternalApi.FileUploadProps>().toEqualTypeOf<FileUploadProps>();
+    expectTypeOf<ExternalApi.UploadedFile>().toEqualTypeOf<UploadedFile>();
     expectTypeOf<ExternalApi.SelectProps>().toEqualTypeOf<SelectProps>();
     expectTypeOf<ExternalApi.CheckboxProps>().toEqualTypeOf<CheckboxProps>();
     expectTypeOf<ExternalApi.RadioProps>().toEqualTypeOf<RadioProps>();
