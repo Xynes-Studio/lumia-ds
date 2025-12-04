@@ -2,6 +2,7 @@ export * from './button';
 export * from './input';
 export * from './number-input';
 export * from './select';
+export * from './combobox';
 export * from './checkbox';
 export * from './radio';
 export * from './card';
