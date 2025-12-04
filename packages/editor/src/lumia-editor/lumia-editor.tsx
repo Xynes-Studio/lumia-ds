@@ -271,6 +271,7 @@ export const LumiaEditor = ({
                   : activeBlockType
               }
               onChange={(e) => handleBlockTypeChange(e.target.value)}
+              aria-label="Block type"
             >
               <option value="paragraph">Paragraph</option>
               <option value="heading1">Heading 1</option>
@@ -297,6 +298,8 @@ export const LumiaEditor = ({
               size="icon"
               onClick={() => handleToggleMark('bold')}
               title="Bold"
+              aria-label="Bold"
+              aria-pressed={activeMarks.includes('bold')}
             >
               <Icon id="bold" className="h-4 w-4" />
             </Button>
@@ -305,6 +308,8 @@ export const LumiaEditor = ({
               size="icon"
               onClick={() => handleToggleMark('italic')}
               title="Italic"
+              aria-label="Italic"
+              aria-pressed={activeMarks.includes('italic')}
             >
               <Icon id="italic" className="h-4 w-4" />
             </Button>
@@ -315,6 +320,8 @@ export const LumiaEditor = ({
               size="icon"
               onClick={() => console.log('Link')}
               title="Link"
+              aria-label="Insert link"
+              aria-pressed={activeMarks.includes('link')}
             >
               <Icon id="link" className="h-4 w-4" />
             </Button>
@@ -328,6 +335,8 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => handleToggleMark('underline')}
                   title="Underline"
+                  aria-label="Underline"
+                  aria-pressed={activeMarks.includes('underline')}
                 >
                   <Icon id="underline" className="h-4 w-4" />
                 </Button>
@@ -336,6 +345,8 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => handleToggleMark('code')}
                   title="Code"
+                  aria-label="Code"
+                  aria-pressed={activeMarks.includes('code')}
                 >
                   <Icon id="code" className="h-4 w-4" />
                 </Button>
@@ -353,6 +364,7 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => handleBlockTypeChange('bullet_list')}
                   title="Bullet List"
+                  aria-label="Bullet list"
                 >
                   <Icon id="list" className="h-4 w-4" />
                 </Button>
@@ -363,6 +375,7 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => handleBlockTypeChange('ordered_list')}
                   title="Ordered List"
+                  aria-label="Numbered list"
                 >
                   <Icon id="list-ordered" className="h-4 w-4" />
                 </Button>
@@ -374,6 +387,7 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => console.log('Align Left')}
                   title="Align Left"
+                  aria-label="Align left"
                 >
                   <Icon id="align-left" className="h-4 w-4" />
                 </Button>
@@ -382,6 +396,7 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => console.log('Align Center')}
                   title="Align Center"
+                  aria-label="Align center"
                 >
                   <Icon id="align-center" className="h-4 w-4" />
                 </Button>
@@ -390,6 +405,7 @@ export const LumiaEditor = ({
                   size="icon"
                   onClick={() => console.log('Align Right')}
                   title="Align Right"
+                  aria-label="Align right"
                 >
                   <Icon id="align-right" className="h-4 w-4" />
                 </Button>
@@ -414,6 +430,7 @@ export const LumiaEditor = ({
             onChange={handleChange}
             readOnly={readOnly}
             data-testid="lumia-editor-input"
+            aria-label="Editor content"
           />
         )}
       </div>
