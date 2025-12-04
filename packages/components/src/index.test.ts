@@ -5,6 +5,10 @@ import {
   Button,
   buttonStyles,
   type ButtonProps,
+  Tag,
+  tagStyles,
+  type TagProps,
+  type TagVariant,
   ConfirmDialog,
   useConfirmDialog,
   type ConfirmDialogProps,
@@ -140,6 +144,8 @@ describe('components index barrel', () => {
   it('exports all primitives and helpers', () => {
     expect(Button).toBeDefined();
     expect(buttonStyles.base).toBeDefined();
+    expect(Tag).toBeDefined();
+    expect(tagStyles.base).toBeDefined();
     expect(Input).toBeDefined();
     expect(Textarea).toBeDefined();
     expect(NumberInput).toBeDefined();
@@ -209,6 +215,10 @@ describe('components index barrel', () => {
 
   it('provides consumer friendly prop types', () => {
     expectTypeOf<ButtonProps>().toMatchTypeOf<ComponentProps<typeof Button>>();
+    expectTypeOf<TagProps>().toMatchTypeOf<ComponentProps<typeof Tag>>();
+    expectTypeOf<TagVariant>().toEqualTypeOf<
+      'default' | 'success' | 'warning' | 'error'
+    >();
     expectTypeOf<InputProps>().toMatchTypeOf<ComponentProps<typeof Input>>();
     expectTypeOf<TextareaProps>().toMatchTypeOf<
       ComponentProps<typeof Textarea>
@@ -385,6 +395,9 @@ describe('components index barrel', () => {
   it('mirrors the external package entrypoint', () => {
     expectTypeOf<typeof ExternalApi.Button>().toEqualTypeOf<typeof Button>();
     expectTypeOf<ExternalApi.ButtonProps>().toEqualTypeOf<ButtonProps>();
+    expectTypeOf<typeof ExternalApi.Tag>().toEqualTypeOf<typeof Tag>();
+    expectTypeOf<ExternalApi.TagProps>().toEqualTypeOf<TagProps>();
+    expectTypeOf<ExternalApi.TagVariant>().toEqualTypeOf<TagVariant>();
     expectTypeOf<ExternalApi.InputProps>().toEqualTypeOf<InputProps>();
     expectTypeOf<ExternalApi.TextareaProps>().toEqualTypeOf<TextareaProps>();
     expectTypeOf<ExternalApi.NumberInput>().toEqualTypeOf<typeof NumberInput>();

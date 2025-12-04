@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Spinner } from './spinner';
+import { Tag } from './tag';
 import { baseFieldClasses } from './field';
 import { cn } from './utils';
 
@@ -522,42 +523,20 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
               }}
             >
               {value.map((option) => (
-                <span
+                <Tag
                   key={option.value}
-                  className="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium text-foreground"
-                >
-                  <span className="max-w-[140px] truncate">{option.label}</span>
-                  {!disabled ? (
-                    <button
-                      type="button"
-                      aria-label={`Remove ${option.label}`}
-                      className="flex h-4 w-4 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onChange(
-                          value.filter(
-                            (selected) => selected.value !== option.value,
-                          ),
-                        );
-                      }}
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 16 16"
-                        className="h-3 w-3"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      >
-                        <path
-                          d="M4 4l8 8M12 4l-8 8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  ) : null}
-                </span>
+                  label={option.label}
+                  onRemove={
+                    disabled
+                      ? undefined
+                      : () =>
+                          onChange(
+                            value.filter(
+                              (selected) => selected.value !== option.value,
+                            ),
+                          )
+                  }
+                />
               ))}
               <input
                 ref={mergedRef}

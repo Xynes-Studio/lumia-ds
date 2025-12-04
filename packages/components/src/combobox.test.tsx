@@ -293,7 +293,7 @@ describe('MultiSelect', () => {
       Array.from(host.querySelectorAll('button[aria-label^="Remove"]')).map(
         (node) => node.getAttribute('aria-label'),
       ),
-    ).toContain('Remove Alpha');
+    ).toContain('Remove tag Alpha');
     expect(options[0].getAttribute('aria-selected')).toBe('true');
 
     await act(async () => {
@@ -307,7 +307,7 @@ describe('MultiSelect', () => {
     ]);
 
     const removeAlpha = host.querySelector(
-      'button[aria-label="Remove Alpha"]',
+      'button[aria-label="Remove tag Alpha"]',
     ) as HTMLButtonElement;
 
     await act(async () => {
