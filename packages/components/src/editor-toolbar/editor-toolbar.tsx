@@ -4,11 +4,13 @@ import { Flex } from '../flex/flex';
 
 export type EditorToolbarProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
+  variant?: 'full' | 'compact';
 };
 
 export const EditorToolbar = ({
   children,
   className,
+  variant = 'full',
   ...props
 }: EditorToolbarProps): ReactElement => {
   return (
@@ -18,7 +20,8 @@ export const EditorToolbar = ({
       gap="sm"
       wrap="wrap"
       className={cn(
-        'w-full border-b border-border bg-background p-2',
+        'w-full border-b border-border bg-background',
+        variant === 'compact' ? 'p-1' : 'p-2',
         className,
       )}
       {...props}

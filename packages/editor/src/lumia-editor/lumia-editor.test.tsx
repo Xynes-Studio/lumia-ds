@@ -52,8 +52,25 @@ describe('LumiaEditor', () => {
     expect(screen.getByTitle('Bold')).toBeInTheDocument();
     expect(screen.getByTitle('Italic')).toBeInTheDocument();
     expect(screen.getByTitle('Bullet List')).toBeInTheDocument();
+    expect(screen.getByTitle('Link')).toBeInTheDocument();
     // Check for Select by finding the option or combobox
     expect(screen.getByText('Paragraph')).toBeInTheDocument();
+  });
+
+  it('renders compact toolbar when variant is compact', () => {
+    render(
+      <LumiaEditor value={mockDoc} onChange={() => {}} variant="compact" />,
+    );
+    expect(screen.getByTitle('Bold')).toBeInTheDocument();
+    expect(screen.getByTitle('Italic')).toBeInTheDocument();
+    expect(screen.getByTitle('Link')).toBeInTheDocument();
+
+    // Should NOT be present
+    expect(screen.queryByTitle('Bullet List')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Ordered List')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Underline')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Code')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Align Left')).not.toBeInTheDocument();
   });
 
   it('toggles bold mark when bold button is clicked', () => {

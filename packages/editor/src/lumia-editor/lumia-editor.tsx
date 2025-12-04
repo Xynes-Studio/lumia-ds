@@ -126,8 +126,8 @@ export const LumiaEditor = ({
     <div className={`lumia-editor ${className || ''} ${variant}`}>
       {/* Placeholder for Toolbar */}
       {/* Toolbar */}
-      {!readOnly && variant === 'full' && (
-        <EditorToolbar className="border-b">
+      {!readOnly && (
+        <EditorToolbar className="border-b" variant={variant}>
           <EditorToolbarGroup>
             <Select
               className="w-32"
@@ -162,75 +162,94 @@ export const LumiaEditor = ({
             >
               <Icon id="italic" className="h-4 w-4" />
             </Button>
+
+            {/* Link button - shown in both variants */}
             <Button
-              variant={
-                activeMarks.includes('underline') ? 'secondary' : 'ghost'
-              }
+              variant={activeMarks.includes('link') ? 'secondary' : 'ghost'}
               size="icon"
-              onClick={() => handleToggleMark('underline')}
-              title="Underline"
+              onClick={() => console.log('Link')}
+              title="Link"
             >
-              <Icon id="underline" className="h-4 w-4" />
+              <Icon id="link" className="h-4 w-4" />
             </Button>
-            <Button
-              variant={activeMarks.includes('code') ? 'secondary' : 'ghost'}
-              size="icon"
-              onClick={() => handleToggleMark('code')}
-              title="Code"
-            >
-              <Icon id="code" className="h-4 w-4" />
-            </Button>
+
+            {variant === 'full' && (
+              <>
+                <Button
+                  variant={
+                    activeMarks.includes('underline') ? 'secondary' : 'ghost'
+                  }
+                  size="icon"
+                  onClick={() => handleToggleMark('underline')}
+                  title="Underline"
+                >
+                  <Icon id="underline" className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={activeMarks.includes('code') ? 'secondary' : 'ghost'}
+                  size="icon"
+                  onClick={() => handleToggleMark('code')}
+                  title="Code"
+                >
+                  <Icon id="code" className="h-4 w-4" />
+                </Button>
+              </>
+            )}
           </EditorToolbarGroup>
 
-          <EditorToolbarGroup>
-            <Button
-              variant={
-                activeBlockType === 'bullet_list' ? 'secondary' : 'ghost'
-              }
-              size="icon"
-              onClick={() => handleBlockTypeChange('bullet_list')}
-              title="Bullet List"
-            >
-              <Icon id="list" className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={
-                activeBlockType === 'ordered_list' ? 'secondary' : 'ghost'
-              }
-              size="icon"
-              onClick={() => handleBlockTypeChange('ordered_list')}
-              title="Ordered List"
-            >
-              <Icon id="list-ordered" className="h-4 w-4" />
-            </Button>
-          </EditorToolbarGroup>
+          {variant === 'full' && (
+            <>
+              <EditorToolbarGroup>
+                <Button
+                  variant={
+                    activeBlockType === 'bullet_list' ? 'secondary' : 'ghost'
+                  }
+                  size="icon"
+                  onClick={() => handleBlockTypeChange('bullet_list')}
+                  title="Bullet List"
+                >
+                  <Icon id="list" className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={
+                    activeBlockType === 'ordered_list' ? 'secondary' : 'ghost'
+                  }
+                  size="icon"
+                  onClick={() => handleBlockTypeChange('ordered_list')}
+                  title="Ordered List"
+                >
+                  <Icon id="list-ordered" className="h-4 w-4" />
+                </Button>
+              </EditorToolbarGroup>
 
-          <EditorToolbarGroup>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => console.log('Align Left')}
-              title="Align Left"
-            >
-              <Icon id="align-left" className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => console.log('Align Center')}
-              title="Align Center"
-            >
-              <Icon id="align-center" className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => console.log('Align Right')}
-              title="Align Right"
-            >
-              <Icon id="align-right" className="h-4 w-4" />
-            </Button>
-          </EditorToolbarGroup>
+              <EditorToolbarGroup>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => console.log('Align Left')}
+                  title="Align Left"
+                >
+                  <Icon id="align-left" className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => console.log('Align Center')}
+                  title="Align Center"
+                >
+                  <Icon id="align-center" className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => console.log('Align Right')}
+                  title="Align Right"
+                >
+                  <Icon id="align-right" className="h-4 w-4" />
+                </Button>
+              </EditorToolbarGroup>
+            </>
+          )}
         </EditorToolbar>
       )}
 
