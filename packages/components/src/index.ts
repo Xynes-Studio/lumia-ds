@@ -8,6 +8,7 @@ export * from './input-group/input-group';
 export * from './number-input/number-input';
 export * from './select/select';
 export * from './combobox/combobox';
+export * from './font-combobox/font-combobox';
 export * from './checkbox/checkbox';
 export * from './radio/radio';
 export * from './card/card';

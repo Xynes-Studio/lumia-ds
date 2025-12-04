@@ -20,6 +20,8 @@ import {
   CardSubtitle,
   CardTitle,
   Checkbox,
+  Combobox,
+  FontCombobox,
   Input,
   Radio,
   Select,
@@ -233,6 +235,42 @@ More details: see `docs/storybook.md`.
 - Virtualized rendering uses a relative container with absolutely positioned items sized by `estimatedItemSize` and optional `overscan`.
 - `onEndReached` fires when scroll progress exceeds `onEndReachedThreshold` (default `0.8`), and viewability callback is triggered when the visible window changes.
 - Pass `scrollContainerProps` for scroll height/attributes; only visible rows mount while total scroll height matches the estimated list size.
+
+### Combobox & FontCombobox notes
+
+- `Combobox` provides searchable, async-loadable select with keyboard navigation (Arrow keys, Enter, Escape).
+- `loadOptions` receives the search query and returns a Promise of options; filters/loads can be debounced externally.
+- `FontCombobox` is a specialized wrapper for font selection that provides synchronous filtering by font name.
+
+```tsx
+// Basic Combobox with async loading
+const [selected, setSelected] = useState<ComboboxOption | null>(null);
+const loadOptions = async (query: string) => {
+  const response = await fetch(`/api/search?q=${query}`);
+  return response.json();
+};
+
+<Combobox
+  value={selected}
+  onChange={setSelected}
+  loadOptions={loadOptions}
+  placeholder="Search..."
+/>
+
+// FontCombobox for font selection
+const fonts = [
+  { id: 'roboto', label: 'Roboto', category: 'sans' },
+  { id: 'lora', label: 'Lora', category: 'serif' },
+];
+const [fontId, setFontId] = useState<string | null>(null);
+
+<FontCombobox
+  fonts={fonts}
+  value={fontId}
+  onChange={setFontId}
+  placeholder="Select a font..."
+/>
+```
 
 ## Local development
 
