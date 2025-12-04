@@ -51,11 +51,18 @@ import {
   NoResults,
   type NoResultsProps,
   Input,
+  InputGroup,
+  InputGroupInput,
+  InputGroupPrefix,
+  InputGroupSuffix,
   Textarea,
   NumberInput,
   Combobox,
   MultiSelect,
   type InputProps,
+  type InputGroupAddonProps,
+  type InputGroupInputProps,
+  type InputGroupProps,
   type TextareaProps,
   type NumberInputProps,
   type ComboboxProps,
@@ -147,6 +154,10 @@ describe('components index barrel', () => {
     expect(Tag).toBeDefined();
     expect(tagStyles.base).toBeDefined();
     expect(Input).toBeDefined();
+    expect(InputGroup).toBeDefined();
+    expect(InputGroupInput).toBeDefined();
+    expect(InputGroupPrefix).toBeDefined();
+    expect(InputGroupSuffix).toBeDefined();
     expect(Textarea).toBeDefined();
     expect(NumberInput).toBeDefined();
     expect(Combobox).toBeDefined();
@@ -220,6 +231,15 @@ describe('components index barrel', () => {
       'default' | 'success' | 'warning' | 'error'
     >();
     expectTypeOf<InputProps>().toMatchTypeOf<ComponentProps<typeof Input>>();
+    expectTypeOf<InputGroupProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroup>
+    >();
+    expectTypeOf<InputGroupInputProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroupInput>
+    >();
+    expectTypeOf<InputGroupAddonProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroupPrefix>
+    >();
     expectTypeOf<TextareaProps>().toMatchTypeOf<
       ComponentProps<typeof Textarea>
     >();
@@ -398,6 +418,19 @@ describe('components index barrel', () => {
     expectTypeOf<typeof ExternalApi.Tag>().toEqualTypeOf<typeof Tag>();
     expectTypeOf<ExternalApi.TagProps>().toEqualTypeOf<TagProps>();
     expectTypeOf<ExternalApi.TagVariant>().toEqualTypeOf<TagVariant>();
+    expectTypeOf<ExternalApi.InputGroup>().toEqualTypeOf<typeof InputGroup>();
+    expectTypeOf<ExternalApi.InputGroupProps>().toEqualTypeOf<InputGroupProps>();
+    expectTypeOf<ExternalApi.InputGroupInput>().toEqualTypeOf<
+      typeof InputGroupInput
+    >();
+    expectTypeOf<ExternalApi.InputGroupInputProps>().toEqualTypeOf<InputGroupInputProps>();
+    expectTypeOf<ExternalApi.InputGroupPrefix>().toEqualTypeOf<
+      typeof InputGroupPrefix
+    >();
+    expectTypeOf<ExternalApi.InputGroupSuffix>().toEqualTypeOf<
+      typeof InputGroupSuffix
+    >();
+    expectTypeOf<ExternalApi.InputGroupAddonProps>().toEqualTypeOf<InputGroupAddonProps>();
     expectTypeOf<ExternalApi.InputProps>().toEqualTypeOf<InputProps>();
     expectTypeOf<ExternalApi.TextareaProps>().toEqualTypeOf<TextareaProps>();
     expectTypeOf<ExternalApi.NumberInput>().toEqualTypeOf<typeof NumberInput>();
