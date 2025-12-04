@@ -3,17 +3,27 @@ import {
   EditorToolbar,
   EditorToolbarGroup,
   Select,
+  FontCombobox,
+  type FontItem,
 } from '@lumia/components';
 import { Icon } from '@lumia/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   DocNode,
   Heading,
   Mark,
   NodeType,
   ParentNode,
+  Paragraph,
+  ListItem,
 } from '../schema/docSchema';
 import { LumiaInlineEditor } from '../lumia-inline-editor/lumia-inline-editor';
+import {
+  FontConfig,
+  DEFAULT_FONT_CONFIG,
+  getAvailableFonts,
+  normalizeFontId,
+} from '../config/fontConfig';
 
 export interface LumiaEditorProps {
   value: DocNode;
@@ -21,6 +31,7 @@ export interface LumiaEditorProps {
   readOnly?: boolean;
   variant?: 'full' | 'compact';
   mode?: 'document' | 'inline';
+  fonts?: FontConfig;
   className?: string;
 }
 
@@ -30,6 +41,7 @@ export const LumiaEditor = ({
   readOnly = false,
   variant = 'full',
   mode = 'document',
+  fonts = DEFAULT_FONT_CONFIG,
   className,
 }: LumiaEditorProps) => {
   // If inline mode is requested, use LumiaInlineEditor
@@ -53,12 +65,37 @@ export const LumiaEditor = ({
     setInternalValue(JSON.stringify(value, null, 2));
   }, [value]);
 
+  // Get available fonts based on config
+  const availableFonts = useMemo(() => getAvailableFonts(fonts), [fonts]);
+
+  // Convert FontMeta to FontItem for FontCombobox
+  const fontItems: FontItem[] = useMemo(
+    () =>
+      availableFonts.map((font) => ({
+        id: font.id,
+        label: font.label,
+        category: font.category,
+      })),
+    [availableFonts],
+  );
+
   // Derive active state from the first block/text node for demonstration
   const firstBlock =
     (value as ParentNode).content && (value as ParentNode).content!.length > 0
       ? (value as ParentNode).content![0]
       : null;
   const activeBlockType = firstBlock?.type || 'paragraph';
+
+  // Get current font from first block's attrs.fontId
+  const currentFontId =
+    firstBlock &&
+    'attrs' in firstBlock &&
+    firstBlock.attrs &&
+    'fontId' in firstBlock.attrs
+      ? (firstBlock.attrs as { fontId?: string }).fontId
+      : undefined;
+  const activeFontId = normalizeFontId(currentFontId, fonts);
+
   const firstTextNode =
     firstBlock && 'content' in firstBlock && (firstBlock as ParentNode).content
       ? (firstBlock as ParentNode).content![0]
@@ -77,14 +114,71 @@ export const LumiaEditor = ({
     ) {
       const firstBlock = (newValue as ParentNode).content![0];
       const isHeading = type.startsWith('heading');
+      const existingFontId =
+        firstBlock.attrs && 'fontId' in firstBlock.attrs
+          ? (firstBlock.attrs as { fontId?: string }).fontId
+          : undefined;
+
       (newValue as ParentNode).content![0] = {
         ...firstBlock,
         type: (isHeading ? 'heading' : type) as NodeType,
         // Reset attrs if switching to/from heading
         attrs: isHeading
-          ? { level: parseInt(type.replace('heading', ''), 10) || 1 }
-          : undefined,
+          ? {
+              level: parseInt(type.replace('heading', ''), 10) || 1,
+              fontId: existingFontId,
+            }
+          : firstBlock.attrs
+            ? { ...firstBlock.attrs, fontId: existingFontId }
+            : existingFontId
+              ? { fontId: existingFontId }
+              : undefined,
       } as DocNode;
+      onChange(newValue);
+    }
+  };
+
+  const handleFontChange = (fontId: string | null) => {
+    // Validate and apply font to the first block
+    if (!fontId) return;
+
+    const validatedFontId = normalizeFontId(fontId, fonts);
+    const newValue = { ...value };
+
+    if (
+      (newValue as ParentNode).content &&
+      (newValue as ParentNode).content!.length > 0
+    ) {
+      const firstBlock = (newValue as ParentNode).content![0];
+      const blockType = firstBlock.type;
+
+      // Update attrs.fontId based on block type
+      if (blockType === 'paragraph') {
+        (newValue as ParentNode).content![0] = {
+          ...firstBlock,
+          attrs: {
+            ...(firstBlock.attrs as Paragraph['attrs']),
+            fontId: validatedFontId,
+          },
+        } as Paragraph;
+      } else if (blockType === 'heading') {
+        (newValue as ParentNode).content![0] = {
+          ...firstBlock,
+          attrs: {
+            ...(firstBlock.attrs as Heading['attrs']),
+            fontId: validatedFontId,
+          },
+        } as Heading;
+      } else if (blockType === 'list_item') {
+        (newValue as ParentNode).content![0] = {
+          ...firstBlock,
+          attrs: {
+            ...(firstBlock.attrs as ListItem['attrs']),
+            fontId: validatedFontId,
+          },
+        } as ListItem;
+      }
+
       onChange(newValue);
     }
   };
@@ -159,6 +253,18 @@ export const LumiaEditor = ({
               <option value="heading3">Heading 3</option>
             </Select>
           </EditorToolbarGroup>
+
+          {variant === 'full' && (
+            <EditorToolbarGroup>
+              <FontCombobox
+                fonts={fontItems}
+                value={activeFontId}
+                onChange={handleFontChange}
+                placeholder="Select font..."
+                className="w-36"
+              />
+            </EditorToolbarGroup>
+          )}
 
           <EditorToolbarGroup>
             <Button

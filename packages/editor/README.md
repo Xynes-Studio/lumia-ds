@@ -102,6 +102,7 @@ import { LumiaEditor } from '@lumia/editor';
 - `mode`: `'document' | 'inline'` - Editor behavior mode (default: `'document'`).
   - `'document'`: Full editor with toolbar and text area.
   - `'inline'`: Inline editing mode - renders as typography when not focused, edits inline on click with minimal toolbar.
+- `fonts`: `FontConfig` - Optional font configuration to control available fonts (see Font Configuration section below).
 - `readOnly`: `boolean` - Whether the editor is read-only.
 - `className`: `string` - Optional class name.
 
@@ -147,3 +148,104 @@ import { LumiaInlineEditor } from '@lumia/editor';
 - `onChange`: Callback fired when the document changes.
 - `placeholder`: `string` - Text to show when empty (default: "Click to edit...").
 - `className`: `string` - Optional class name.
+
+## Font Configuration
+
+The editor supports configurable font controls to enforce brand fonts or limit font choices.
+
+### FontConfig Type
+
+```typescript
+interface FontMeta {
+  id: string;
+  label: string;
+  category?: 'serif' | 'sans' | 'mono';
+}
+
+interface FontConfig {
+  allFonts: FontMeta[];          // Full set of available fonts
+  allowedFonts?: string[];       // Optional whitelist of font IDs
+  defaultFontId: string;         // Default font when none is set
+}
+```
+
+### Default Configuration
+
+The editor ships with a curated default font set:
+
+```typescript
+import { DEFAULT_FONT_CONFIG } from '@lumia/editor';
+
+// Includes: Inter, Roboto, Open Sans, Montserrat, Lora, Merriweather, 
+//           Roboto Mono, Source Code Pro
+```
+
+### Usage Examples
+
+**Using default fonts:**
+```tsx
+<LumiaEditor 
+  value={doc} 
+  onChange={handleChange}
+  variant="full"
+/>
+// Font selector shows all default fonts (Inter, Roboto, etc.)
+```
+
+**Limiting to brand fonts:**
+```tsx
+const brandFonts: FontConfig = {
+  allFonts: DEFAULT_FONT_CONFIG.allFonts,
+  allowedFonts: ['inter', 'roboto'],  // Only allow these fonts
+  defaultFontId: 'inter',
+};
+
+<LumiaEditor 
+  value={doc} 
+  onChange={handleChange}
+  variant="full"
+  fonts={brandFonts}
+/>
+// Font selector shows only Inter and Roboto
+```
+
+**Custom font set:**
+```tsx
+const customFonts: FontConfig = {
+  allFonts: [
+    { id: 'brand-sans', label: 'Brand Sans', category: 'sans' },
+    { id: 'brand-serif', label: 'Brand Serif', category: 'serif' },
+  ],
+  defaultFontId: 'brand-sans',
+};
+
+<LumiaEditor 
+  value={doc} 
+  onChange={handleChange}
+  fonts={customFonts}
+/>
+```
+
+### Font Application
+
+Fonts are applied as block-level attributes (`attrs.fontId`) on paragraph, heading, and list_item nodes:
+
+```typescript
+const docWithFont: Doc = {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      attrs: { fontId: 'roboto' },  // Font applied here
+      content: [{ type: 'text', text: 'Hello World' }],
+    },
+  ],
+};
+```
+
+### Font Normalization
+
+Invalid or disallowed fonts are automatically normalized to `defaultFontId`:
+- Font ID not in `allFonts` → `defaultFontId`
+- Font ID not in `allowedFonts` → `defaultFontId`
+- No font ID specified → `defaultFontId`

@@ -73,6 +73,10 @@ export interface Doc extends ParentNode {
  */
 export interface Paragraph extends ParentNode {
   type: 'paragraph';
+  attrs?: {
+    /** The font ID to apply to this paragraph. */
+    fontId?: string;
+  };
 }
 
 /**
@@ -83,6 +87,8 @@ export interface Heading extends ParentNode {
   attrs: {
     /** The level of the heading (1-6). */
     level: number;
+    /** The font ID to apply to this heading. */
+    fontId?: string;
   };
 }
 
@@ -109,6 +115,10 @@ export interface OrderedList extends ParentNode {
  */
 export interface ListItem extends ParentNode {
   type: 'list_item';
+  attrs?: {
+    /** The font ID to apply to this list item. */
+    fontId?: string;
+  };
 }
 
 /**
