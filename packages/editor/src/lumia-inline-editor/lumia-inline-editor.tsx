@@ -29,6 +29,20 @@ export const LumiaInlineEditor = ({
     setIsEditing(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Exit editing mode on Escape key
+    if (e.key === 'Escape') {
+      setIsEditing(false);
+      // Return focus to the view mode element
+      if (containerRef.current) {
+        const viewElement = containerRef.current.querySelector(
+          '[data-testid="lumia-inline-editor-view-mode"]',
+        ) as HTMLElement;
+        viewElement?.focus();
+      }
+    }
+  };
+
   const renderContent = (node: DocNode, key?: React.Key): React.ReactNode => {
     if (node.type === 'text') {
       return <span key={key}>{(node as TextNode).text}</span>;
@@ -84,8 +98,11 @@ export const LumiaInlineEditor = ({
       <div
         ref={containerRef}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         className={`lumia-inline-editor-wrapper ${className || ''}`}
         data-testid="lumia-inline-editor-edit-mode"
+        role="textbox"
+        aria-label="Inline editor"
       >
         <LumiaEditor
           value={value}
@@ -99,13 +116,16 @@ export const LumiaInlineEditor = ({
 
   return (
     <div
+      ref={containerRef}
       onClick={() => setIsEditing(true)}
-      className={`lumia-inline-editor-view cursor-text hover:bg-gray-50 p-1 rounded -m-1 transition-colors ${
+      className={`lumia-inline-editor-view cursor-text hover:bg-gray-50 p-1 rounded -m-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
         className || ''
       }`}
       data-testid="lumia-inline-editor-view-mode"
       tabIndex={0}
       onFocus={() => setIsEditing(true)}
+      role="button"
+      aria-label="Click to edit text"
     >
       {renderContent(value)}
     </div>
