@@ -138,6 +138,8 @@ import {
   type SegmentedControlProps,
   Flex,
   type FlexProps,
+  Toolbar,
+  type ToolbarProps,
   FlatList,
   type FlatListProps,
   Pagination,
@@ -240,6 +242,7 @@ describe('components index barrel', () => {
     expect(MenuSeparator).toBeDefined();
 
     expect(Flex).toBeDefined();
+    expect(Toolbar).toBeDefined();
     expect(FlatList).toBeDefined();
     expect(Pagination).toBeDefined();
     expect(SideNavItem).toBeDefined();
@@ -429,6 +432,9 @@ describe('components index barrel', () => {
     expectTypeOf<MenuItemConfig>().toMatchTypeOf<MenuItemConfig>();
 
     expectTypeOf<FlexProps>().toMatchTypeOf<ComponentProps<typeof Flex>>();
+    expectTypeOf<ToolbarProps>().toMatchTypeOf<
+      ComponentProps<typeof Toolbar>
+    >();
     expectTypeOf<FlatListProps<string>>().toMatchTypeOf<
       Parameters<typeof FlatList>[0]
     >();
@@ -583,6 +589,8 @@ describe('components index barrel', () => {
 
     expectTypeOf<ExternalApi.Flex>().toEqualTypeOf<typeof Flex>();
     expectTypeOf<ExternalApi.FlexProps>().toEqualTypeOf<FlexProps>();
+    expectTypeOf<ExternalApi.Toolbar>().toEqualTypeOf<typeof Toolbar>();
+    expectTypeOf<ExternalApi.ToolbarProps>().toEqualTypeOf<ToolbarProps>();
     expectTypeOf<ExternalApi.FlatList>().toEqualTypeOf<typeof FlatList>();
     expectTypeOf<ExternalApi.FlatListProps<string>>().toEqualTypeOf<
       FlatListProps<string>

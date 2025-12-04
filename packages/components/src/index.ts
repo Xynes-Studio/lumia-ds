@@ -23,6 +23,7 @@ export * from './segmented-control';
 export * from './alert';
 export * from './accordion';
 export * from './flex';
+export * from './toolbar';
 export * from './flat-list';
 export * from './table';
 export * from './pagination';
