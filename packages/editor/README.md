@@ -75,3 +75,28 @@ import { jsonToEditorState } from '@lumia/editor';
 
 const editorState = jsonToEditorState(json);
 ```
+
+## Components
+
+### `LumiaEditor`
+
+The main editor component.
+
+```tsx
+import { LumiaEditor } from '@lumia/editor';
+
+<LumiaEditor
+  value={doc}
+  onChange={(newDoc) => setDoc(newDoc)}
+  variant="full" // or "compact"
+  readOnly={false}
+/>
+```
+
+#### Props
+
+- `value`: The current `DocNode` JSON document.
+- `onChange`: Callback fired when the document changes.
+- `variant`: `'full' | 'compact'` - Determines the toolbar layout.
+- `readOnly`: `boolean` - Whether the editor is read-only.
+- `className`: `string` - Optional class name.

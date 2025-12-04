@@ -1,0 +1,88 @@
+
+> @lumia/editor@0.0.0 test /Users/archanray/lumia-ds/packages/editor
+> vitest run lumia-editor -t 'renders full toolbar'
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/archanray/lumia-ds/packages/editor
+
+stderr | src/lumia-editor/lumia-editor.test.tsx > LumiaEditor > renders full toolbar when variant is full
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:108.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:121.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:156.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:175.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:107.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:108.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:121.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:156.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:175.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at lumia-editor.tsx:107.
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+The above error occurred in the <div> component:
+
+    at div
+    at LumiaEditor (/Users/archanray/lumia-ds/packages/editor/src/lumia-editor/lumia-editor.tsx:10:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ❯ src/lumia-editor/lumia-editor.test.tsx (6 tests | 1 failed | 5 skipped) 11ms
+   × LumiaEditor > renders full toolbar when variant is full 11ms
+     → Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `LumiaEditor`.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lumia-editor/lumia-editor.test.tsx > LumiaEditor > renders full toolbar when variant is full
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `LumiaEditor`.
+ ❯ createFiberFromTypeAndProps ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:28478:17
+ ❯ createFiberFromElement ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:28504:15
+ ❯ createChild ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:13345:28
+ ❯ reconcileChildrenArray ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:13640:25
+ ❯ reconcileChildFibers ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:14057:16
+ ❯ reconcileChildren ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19186:28
+ ❯ updateHostComponent ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:19953:3
+ ❯ beginWork ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21657:14
+ ❯ HTMLUnknownElement.callCallback ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14
+ ❯ HTMLUnknownElement.#callDispatchEventListeners ../../node_modules/.pnpm/happy-dom@20.0.10/node_modules/happy-dom/src/event/EventTarget.ts:299:42
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  23:39:03
+   Duration  1.10s (transform 118ms, setup 71ms, collect 586ms, tests 11ms, environment 122ms, prepare 95ms)
+
+ ELIFECYCLE  Test failed. See above for more details.

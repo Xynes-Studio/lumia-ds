@@ -1,12 +1,19 @@
 import {
   AlertTriangle,
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   BarChart3,
+  Bold,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
+  Code,
   Filter,
+  Italic,
   LayoutGrid,
   List,
+  ListOrdered,
   Home,
   Info,
   Pencil,
@@ -14,6 +21,7 @@ import {
   Search,
   Settings,
   Trash2,
+  Underline,
   User,
   Users,
 } from 'lucide-react';
@@ -37,6 +45,14 @@ export const defaultIconComponents = {
   list: List,
   'chevron-up': ChevronUp,
   'chevron-down': ChevronDown,
+  bold: Bold,
+  italic: Italic,
+  underline: Underline,
+  code: Code,
+  'align-left': AlignLeft,
+  'align-center': AlignCenter,
+  'align-right': AlignRight,
+  'list-ordered': ListOrdered,
 } satisfies Record<string, IconComponent>;
 
 export function seedDefaultIcons(registerIcon: RegisterIconFn) {

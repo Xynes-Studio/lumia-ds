@@ -205,6 +205,13 @@ importers:
         version: 8.5.1(jiti@1.21.7)(postcss@8.5.6)(typescript@5.9.3)
 
   packages/editor:
+    dependencies:
+      '@lumia/components':
+        specifier: workspace:*
+        version: link:../components
+      '@lumia/icons':
+        specifier: workspace:*
+        version: link:../icons
     devDependencies:
       '@testing-library/dom':
         specifier: ^10.4.0
