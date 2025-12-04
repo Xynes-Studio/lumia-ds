@@ -140,6 +140,8 @@ import {
   type FlexProps,
   Toolbar,
   type ToolbarProps,
+  PageHeader,
+  type PageHeaderProps,
   FlatList,
   type FlatListProps,
   Pagination,
@@ -243,6 +245,7 @@ describe('components index barrel', () => {
 
     expect(Flex).toBeDefined();
     expect(Toolbar).toBeDefined();
+    expect(PageHeader).toBeDefined();
     expect(FlatList).toBeDefined();
     expect(Pagination).toBeDefined();
     expect(SideNavItem).toBeDefined();
@@ -435,6 +438,9 @@ describe('components index barrel', () => {
     expectTypeOf<ToolbarProps>().toMatchTypeOf<
       ComponentProps<typeof Toolbar>
     >();
+    expectTypeOf<PageHeaderProps>().toMatchTypeOf<
+      ComponentProps<typeof PageHeader>
+    >();
     expectTypeOf<FlatListProps<string>>().toMatchTypeOf<
       Parameters<typeof FlatList>[0]
     >();
@@ -591,6 +597,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.FlexProps>().toEqualTypeOf<FlexProps>();
     expectTypeOf<ExternalApi.Toolbar>().toEqualTypeOf<typeof Toolbar>();
     expectTypeOf<ExternalApi.ToolbarProps>().toEqualTypeOf<ToolbarProps>();
+    expectTypeOf<ExternalApi.PageHeader>().toEqualTypeOf<typeof PageHeader>();
+    expectTypeOf<ExternalApi.PageHeaderProps>().toEqualTypeOf<PageHeaderProps>();
     expectTypeOf<ExternalApi.FlatList>().toEqualTypeOf<typeof FlatList>();
     expectTypeOf<ExternalApi.FlatListProps<string>>().toEqualTypeOf<
       FlatListProps<string>
