@@ -237,4 +237,21 @@ More details: see `docs/storybook.md`.
 ## Local development
 
 - Build: `pnpm --filter @lumia/components build`
-- Test (happy-dom): `pnpm --filter @lumia/components test`
+
+### EditorToolbar notes
+
+- Layout component for editor tools.
+- Supports `align="start" | "center" | "end"` and `gap` props.
+- Use `EditorToolbarGroup` to group related buttons.
+
+```tsx
+<EditorToolbar>
+  <EditorToolbarGroup>
+    <Button>Bold</Button>
+    <Button>Italic</Button>
+  </EditorToolbarGroup>
+  <EditorToolbarGroup align="end">
+    <Button>Save</Button>
+  </EditorToolbarGroup>
+</EditorToolbar>
+```
