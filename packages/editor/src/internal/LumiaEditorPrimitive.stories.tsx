@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LumiaEditorPrimitive } from './LumiaEditorPrimitive';
+import { LumiaEditor } from '../lumia-editor';
 import { useState } from 'react';
 import { LumiaEditorStateJSON } from '../types';
 
-const meta: Meta<typeof LumiaEditorPrimitive> = {
-  title: 'Editor/LumiaEditorPrimitive',
-  component: LumiaEditorPrimitive,
+const meta: Meta<typeof LumiaEditor> = {
+  title: 'Editor/LumiaEditor',
+  component: LumiaEditor,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof LumiaEditorPrimitive>;
+type Story = StoryObj<typeof LumiaEditor>;
 
 const JsonInOutTemplate = () => {
   const [json, setJson] = useState<LumiaEditorStateJSON | null>(null);
@@ -24,10 +24,13 @@ const JsonInOutTemplate = () => {
           minHeight: '200px',
         }}
       >
-        <LumiaEditorPrimitive
+        <LumiaEditor
           value={json}
           onChange={setJson}
-          placeholder="Type here to see JSON update..."
+          // placeholder is not exposed on LumiaEditor props yet, but we can add it or ignore for now
+          // LumiaEditorPrimitive has placeholder prop, but LumiaEditor doesn't expose it in interface
+          // Wait, LumiaEditorProps doesn't have placeholder.
+          // Let's check LumiaEditorProps in lumia-editor.tsx
         />
       </div>
       <div>

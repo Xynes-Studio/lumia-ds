@@ -1,6 +1,7 @@
 import React from 'react';
 import { LumiaEditorPrimitive } from './internal/LumiaEditorPrimitive';
 import { LumiaEditorStateJSON } from './types';
+import { EditorProvider } from './EditorProvider';
 
 export interface LumiaEditorProps {
   value: LumiaEditorStateJSON | null;
@@ -20,11 +21,8 @@ export const LumiaEditor = ({
   readOnly,
 }: LumiaEditorProps) => {
   return (
-    <LumiaEditorPrimitive
-      value={value}
-      onChange={onChange}
-      className={className}
-      readOnly={readOnly}
-    />
+    <EditorProvider value={value} onChange={onChange} readOnly={readOnly}>
+      <LumiaEditorPrimitive className={className} />
+    </EditorProvider>
   );
 };
