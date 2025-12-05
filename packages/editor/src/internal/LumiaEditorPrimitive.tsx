@@ -7,6 +7,8 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 
+import { Toolbar } from './Toolbar';
+
 interface LumiaEditorPrimitiveProps {
   placeholder?: string;
   className?: string;
@@ -18,6 +20,7 @@ export function LumiaEditorPrimitive({
 }: LumiaEditorPrimitiveProps) {
   return (
     <div className={`editor-container ${className || ''}`}>
+      <Toolbar />
       <RichTextPlugin
         contentEditable={<ContentEditable className="editor-input" />}
         placeholder={<div className="editor-placeholder">{placeholder}</div>}
