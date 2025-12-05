@@ -17,3 +17,11 @@ function App() {
   return <LumiaEditor placeholder="Start typing..." />;
 }
 ```
+
+## Development
+
+To view the editor components in Storybook:
+
+```bash
+pnpm storybook
+```

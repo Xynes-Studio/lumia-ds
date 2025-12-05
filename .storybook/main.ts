@@ -5,6 +5,7 @@ const config: StorybookConfig = {
   stories: [
     '../packages/components/src/**/*.stories.@(ts|tsx)',
     '../packages/runtime/src/**/*.stories.@(ts|tsx)',
+    '../packages/editor/src/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
     '@storybook/addon-essentials',
@@ -28,6 +29,7 @@ const config: StorybookConfig = {
       '@lumia/layout': path.resolve(__dirname, '../packages/layout/src'),
       '@lumia/forms': path.resolve(__dirname, '../packages/forms/src'),
       '@lumia/icons': path.resolve(__dirname, '../packages/icons/src'),
+      '@lumia/editor': path.resolve(__dirname, '../packages/editor/src'),
     };
 
     return config;
