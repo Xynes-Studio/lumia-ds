@@ -270,6 +270,25 @@ const imageBlock = getBlockDefinition('image');
 // Returns BlockDefinition for 'image'
 ```
 
+### Image Block
+
+The editor supports image blocks with optional captions and selection styling.
+
+```tsx
+import { $createImageBlockNode } from '@lumia/editor/nodes/ImageBlockNode';
+
+editor.update(() => {
+  const node = $createImageBlockNode({
+    src: 'https://example.com/image.jpg',
+    alt: 'Alt text',
+    caption: 'Optional caption',
+    width: 500,
+    height: 300,
+  });
+  $insertNodes([node]);
+});
+```
+
 
 ## Performance Testing
 

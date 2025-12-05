@@ -7,6 +7,7 @@ import {
   Spread,
 } from 'lexical';
 import * as React from 'react';
+import { ImageBlockComponent } from './ImageBlockComponent';
 
 export interface ImageBlockPayload {
   src: string;
@@ -114,15 +115,13 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
 
   decorate(): React.ReactElement {
     return (
-      <img
+      <ImageBlockComponent
         src={this.__src}
         alt={this.__alt}
         width={this.__width}
         height={this.__height}
-        style={{
-          maxWidth: '100%',
-          display: this.__layout === 'inline' ? 'inline-block' : 'block',
-        }}
+        caption={this.__caption}
+        nodeKey={this.getKey()}
       />
     );
   }
