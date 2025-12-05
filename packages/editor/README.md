@@ -16,6 +16,13 @@ import { LumiaEditor } from '@lumia/editor';
 function App() {
   return <LumiaEditor placeholder="Start typing..." />;
 }
+
+// Internal usage
+import { InternalLexicalEditor } from '@lumia/editor/internal';
+
+function InternalApp() {
+  return <InternalLexicalEditor />;
+}
 ```
 
 ## Development
