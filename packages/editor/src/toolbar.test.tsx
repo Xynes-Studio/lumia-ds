@@ -83,4 +83,29 @@ describe('Toolbar', () => {
       });
     }
   });
+
+  it('toggles code block formatting when clicking the code block button', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LumiaEditor value={null} onChange={onChange} />);
+
+    const editorInput = screen.getByRole('textbox');
+    await user.click(editorInput);
+    await user.keyboard('Hello Code');
+
+    const codeBlockButton = screen.getByRole('button', { name: /Code Block/i });
+    await user.click(codeBlockButton);
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalled();
+      expect(codeBlockButton).toHaveClass('bg-secondary');
+    });
+
+    // Toggle back
+    await user.click(codeBlockButton);
+    await waitFor(() => {
+      expect(codeBlockButton).not.toHaveClass('bg-secondary');
+    });
+  });
 });

@@ -7,6 +7,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { CodeHighlightPlugin } from './CodeHighlightPlugin';
 
 import { Toolbar } from './Toolbar';
 import { ClickableLinkPlugin } from './ClickableLinkPlugin';
@@ -34,6 +35,7 @@ export function LumiaEditorPrimitive({
       <LinkPlugin />
       <ClickableLinkPlugin />
       <PasteLinkPlugin />
+      <CodeHighlightPlugin />
     </div>
   );
 }

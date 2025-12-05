@@ -16,8 +16,20 @@ import {
   PopoverTrigger,
   Input,
 } from '@lumia/components';
-import { Bold, Italic, Underline, Code, Link as LinkIcon, Trash2, ExternalLink } from 'lucide-react';
+import {
+  Bold,
+  Italic,
+  Underline,
+  Code,
+  Link as LinkIcon,
+  Trash2,
+  ExternalLink,
+  FileCode,
+} from 'lucide-react';
 import { TOGGLE_LINK_COMMAND, $isLinkNode } from '@lexical/link';
+import { $createCodeNode, $isCodeNode } from '@lexical/code';
+import { $setBlocksType } from '@lexical/selection';
+import { $createParagraphNode } from 'lexical';
 
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
@@ -25,6 +37,7 @@ export function Toolbar() {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isCode, setIsCode] = useState(false);
+  const [isCodeBlock, setIsCodeBlock] = useState(false);
   const [isLink, setIsLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -38,6 +51,14 @@ export function Toolbar() {
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
       setIsCode(selection.hasFormat('code'));
+
+      // Check for code block
+      const anchorNode = selection.anchor.getNode();
+      const element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : anchorNode.getTopLevelElementOrThrow();
+      setIsCodeBlock($isCodeNode(element));
 
       // Check for link
       const node = selection.getNodes().find((n) => $isLinkNode(n));
@@ -53,7 +74,7 @@ export function Toolbar() {
         setLinkUrl('');
       }
     }
-  }, []);
+  }, [editor]);
 
   const insertLink = useCallback(() => {
     if (!isLink) {
@@ -157,6 +178,27 @@ export function Toolbar() {
           title="Code"
         >
           <Code className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={isCodeBlock ? 'secondary' : 'ghost'}
+          size="icon"
+          onClick={() => {
+            editor.update(() => {
+              const selection = $getSelection();
+              if ($isRangeSelection(selection)) {
+                if (isCodeBlock) {
+                  $setBlocksType(selection, () => $createParagraphNode());
+                } else {
+                  $setBlocksType(selection, () => $createCodeNode());
+                }
+              }
+            });
+          }}
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label="Format Code Block"
+          title="Code Block"
+        >
+          <FileCode className="h-4 w-4" />
         </Button>
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
