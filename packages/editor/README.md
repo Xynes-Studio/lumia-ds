@@ -125,6 +125,46 @@ const brandFonts: FontConfig = {
 
 **Auto-Normalization**: If `defaultFontId` is not in `allowedFonts`, the editor automatically uses the first font in `allowedFonts` as the default. This ensures brand compliance without requiring manual configuration updates.
 
+### Media Configuration
+
+Configure media upload behavior using the `media` prop:
+
+```tsx
+import { LumiaEditor, type EditorMediaConfig } from '@lumia/editor';
+
+const mediaConfig: EditorMediaConfig = {
+  // Optional: Custom upload adapter
+  uploadAdapter: {
+    uploadFile: async (file) => {
+      // Upload file to your backend
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await response.json();
+      return {
+        url: data.url,
+        mime: data.mime,
+        size: data.size,
+      };
+    },
+  },
+  // Optional: Restrict allowed types
+  allowedImageTypes: ['image/jpeg', 'image/png'],
+  maxFileSizeMB: 10,
+};
+
+function App() {
+  return (
+    <LumiaEditor
+      media={mediaConfig}
+      // ... other props
+    />
+  );
+}
+```
+
+If no `uploadAdapter` is provided, upload features will be gracefully disabled.
+
 
 ### Advanced Usage
 

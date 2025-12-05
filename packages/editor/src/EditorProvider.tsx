@@ -21,6 +21,7 @@ import {
   getDefaultFontConfig,
   normalizeFontConfig,
 } from './font-config';
+import { EditorMediaConfig, getEffectiveMediaConfig } from './media-config';
 
 interface EditorContextType {
   editor: LexicalEditor | null;
@@ -36,6 +37,11 @@ export const useEditorContext = () => useContext(EditorContext);
 
 // FontsContext to provide font configuration throughout the editor
 export const FontsContext = createContext<FontConfig | null>(null);
+
+// MediaContext to provide media configuration throughout the editor
+export const MediaContext = createContext<EditorMediaConfig | null>(null);
+
+export const useMediaContext = () => useContext(MediaContext);
 
 function EditorStatePlugin({
   onChange,
@@ -95,6 +101,7 @@ interface EditorProviderProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
   fonts?: FontConfig;
+  media?: EditorMediaConfig;
 }
 
 export function EditorProvider({
@@ -104,12 +111,15 @@ export function EditorProvider({
   readOnly,
   theme = {},
   fonts,
+  media,
 }: EditorProviderProps) {
   // Use provided fonts config or default, then normalize
   const fontsConfig = useMemo(
     () => normalizeFontConfig(fonts || getDefaultFontConfig()),
     [fonts],
   );
+
+  const mediaConfig = useMemo(() => getEffectiveMediaConfig(media), [media]);
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<LumiaEditorStateJSON | null>(
     value || null,
@@ -201,13 +211,15 @@ export function EditorProvider({
   return (
     <EditorContext.Provider value={contextValue}>
       <FontsContext.Provider value={fontsConfig}>
-        <LexicalComposer initialConfig={initialConfig}>
-          <InternalEditorContext.Provider value={internalContextValue}>
-            <ContextUpdaterPlugin setEditor={setEditor} />
-            <EditorStatePlugin onChange={onChange} />
-            {children}
-          </InternalEditorContext.Provider>
-        </LexicalComposer>
+        <MediaContext.Provider value={mediaConfig}>
+          <LexicalComposer initialConfig={initialConfig}>
+            <InternalEditorContext.Provider value={internalContextValue}>
+              <ContextUpdaterPlugin setEditor={setEditor} />
+              <EditorStatePlugin onChange={onChange} />
+              {children}
+            </InternalEditorContext.Provider>
+          </LexicalComposer>
+        </MediaContext.Provider>
       </FontsContext.Provider>
     </EditorContext.Provider>
   );

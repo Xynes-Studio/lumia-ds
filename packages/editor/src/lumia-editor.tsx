@@ -4,6 +4,7 @@ import { LumiaInlineEditorPrimitive } from './internal/LumiaInlineEditorPrimitiv
 import { LumiaEditorStateJSON } from './types';
 import { EditorProvider } from './EditorProvider';
 import type { FontConfig } from './font-config';
+import type { EditorMediaConfig } from './media-config';
 
 export interface LumiaEditorProps {
   value: LumiaEditorStateJSON | null;
@@ -12,6 +13,7 @@ export interface LumiaEditorProps {
   variant?: 'full' | 'compact';
   readOnly?: boolean;
   fonts?: FontConfig;
+  media?: EditorMediaConfig;
   className?: string;
 }
 
@@ -21,6 +23,7 @@ export const LumiaEditor = ({
   className,
   readOnly,
   fonts,
+  media,
   variant,
   mode = 'document',
 }: LumiaEditorProps) => {
@@ -30,6 +33,7 @@ export const LumiaEditor = ({
       onChange={onChange}
       readOnly={readOnly}
       fonts={fonts}
+      media={media}
     >
       {mode === 'inline' ? (
         <LumiaInlineEditorPrimitive className={className} />
