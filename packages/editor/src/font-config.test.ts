@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { getDefaultFontConfig, type FontMeta } from './font-config';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  getDefaultFontConfig,
+  normalizeFontConfig,
+  type FontConfig,
+  type FontMeta,
+} from './font-config';
 
 describe('font-config', () => {
   describe('getDefaultFontConfig', () => {
@@ -73,6 +78,109 @@ describe('font-config', () => {
       const config2 = getDefaultFontConfig();
 
       expect(config1).toEqual(config2);
+    });
+  });
+
+  describe('normalizeFontConfig', () => {
+    const mockFonts: FontMeta[] = [
+      { id: 'inter', label: 'Inter', cssStack: 'Inter, sans-serif' },
+      { id: 'roboto', label: 'Roboto', cssStack: 'Roboto, sans-serif' },
+      { id: 'lora', label: 'Lora', cssStack: 'Lora, serif' },
+    ];
+
+    it('returns config unchanged when allowedFonts is undefined', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        defaultFontId: 'inter',
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result).toEqual(config);
+      expect(result.defaultFontId).toBe('inter');
+    });
+
+    it('returns config unchanged when allowedFonts is empty array', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: [],
+        defaultFontId: 'inter',
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result).toEqual(config);
+      expect(result.defaultFontId).toBe('inter');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'FontConfig has empty allowedFonts array. No font restrictions will be applied.',
+      );
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('returns config unchanged when defaultFontId is in allowedFonts', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: ['inter', 'roboto'],
+        defaultFontId: 'inter',
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result).toEqual(config);
+      expect(result.defaultFontId).toBe('inter');
+    });
+
+    it('maps defaultFontId to first allowed font when defaultFontId is not in allowedFonts', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: ['inter', 'roboto'],
+        defaultFontId: 'lora', // not in allowedFonts
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result.defaultFontId).toBe('inter'); // first in allowedFonts
+      expect(result.allFonts).toEqual(mockFonts);
+      expect(result.allowedFonts).toEqual(['inter', 'roboto']);
+    });
+
+    it('does not mutate the original config object', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: ['inter', 'roboto'],
+        defaultFontId: 'lora',
+      };
+
+      const originalDefaultFontId = config.defaultFontId;
+      normalizeFontConfig(config);
+
+      expect(config.defaultFontId).toBe(originalDefaultFontId);
+    });
+
+    it('handles case where defaultFontId is second in allowedFonts', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: ['inter', 'roboto'],
+        defaultFontId: 'roboto',
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result.defaultFontId).toBe('roboto'); // unchanged
+    });
+
+    it('normalizes to first allowed font when multiple fonts are not allowed', () => {
+      const config: FontConfig = {
+        allFonts: mockFonts,
+        allowedFonts: ['roboto'], // only one allowed
+        defaultFontId: 'lora',
+      };
+
+      const result = normalizeFontConfig(config);
+
+      expect(result.defaultFontId).toBe('roboto');
     });
   });
 });

@@ -15,7 +15,7 @@ import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { FontConfig, getDefaultFontConfig } from './font-config';
+import { FontConfig, getDefaultFontConfig, normalizeFontConfig } from './font-config';
 
 interface EditorContextType {
   editor: LexicalEditor | null;
@@ -66,7 +66,7 @@ function EditorStatePlugin({
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
 }>({
-  setEditorState: () => {},
+  setEditorState: () => { },
 });
 const useInternalEditorContext = () => useContext(InternalEditorContext);
 
@@ -100,8 +100,11 @@ export function EditorProvider({
   theme = {},
   fonts,
 }: EditorProviderProps) {
-  // Use provided fonts config or default
-  const fontsConfig = useMemo(() => fonts || getDefaultFontConfig(), [fonts]);
+  // Use provided fonts config or default, then normalize
+  const fontsConfig = useMemo(
+    () => normalizeFontConfig(fonts || getDefaultFontConfig()),
+    [fonts],
+  );
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<LumiaEditorStateJSON | null>(
     value || null,

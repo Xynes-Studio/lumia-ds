@@ -86,9 +86,17 @@ export function FontCombobox({
 
   // Handle selection
   const handleChange = (option: ComboboxOption | null) => {
-    if (option) {
-      onChange(option.value);
+    if (!option) return;
+
+    // Validate against allowedFonts if restrictions are set
+    if (config.allowedFonts && config.allowedFonts.length > 0) {
+      if (!config.allowedFonts.includes(option.value)) {
+        // Attempted to select a disallowed font, ignore the selection
+        return;
+      }
     }
+
+    onChange(option.value);
   };
 
   return (

@@ -119,3 +119,43 @@ export const WithBrandRestrictedFonts: Story = {
     },
   },
 };
+
+/**
+ * Demonstrates auto-normalization when defaultFontId is not in allowedFonts.
+ * The editor automatically normalizes the defaultFontId to the first allowed font.
+ */
+export const WithAutoNormalization: Story = {
+  args: {
+    value: null,
+    onChange: (val) => console.log('onChange', val),
+    fonts: {
+      allFonts: [
+        {
+          id: 'inter',
+          label: 'Inter',
+          cssStack: 'Inter, system-ui, -apple-system, sans-serif',
+        },
+        {
+          id: 'roboto',
+          label: 'Roboto',
+          cssStack: 'Roboto, system-ui, -apple-system, sans-serif',
+        },
+        {
+          id: 'lora',
+          label: 'Lora',
+          cssStack: 'Lora, Georgia, "Times New Roman", serif',
+        },
+      ],
+      allowedFonts: ['inter', 'roboto'], // Only these two fonts are allowed
+      defaultFontId: 'lora', // Not in allowedFonts! Will be auto-normalized to 'inter'
+    } as FontConfig,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates auto-normalization: defaultFontId is set to "Lora" (not in allowedFonts), but the editor automatically normalizes it to "Inter" (first in allowedFonts). Only Inter and Roboto appear in the font selector.',
+      },
+    },
+  },
+};
