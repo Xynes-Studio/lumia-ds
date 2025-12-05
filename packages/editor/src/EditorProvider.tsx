@@ -15,6 +15,7 @@ import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ImageBlockNode } from './nodes/ImageBlockNode';
 import {
   FontConfig,
   getDefaultFontConfig,
@@ -176,6 +177,7 @@ export function EditorProvider({
       TableRowNode,
       AutoLinkNode,
       LinkNode,
+      ImageBlockNode,
     ],
     editorState: value ? JSON.stringify(value) : undefined,
     editable: !readOnly,

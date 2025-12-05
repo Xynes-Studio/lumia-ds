@@ -10,7 +10,7 @@ pnpm add @lumia/editor
 
 ## Features
 
-- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks.
+- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks, Images.
 - **Text Formatting**: Bold, Italic, Underline, Inline Code (with keyboard shortcuts), Links (Cmd+K, Smart Paste).
 - **History**: Undo/Redo support.
 - **Inline Editor**: Dedicated component for titles and single-line text with bubble toolbar.
