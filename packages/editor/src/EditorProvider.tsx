@@ -62,7 +62,7 @@ function EditorStatePlugin({
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
 }>({
-  setEditorState: () => {},
+  setEditorState: () => { },
 });
 const useInternalEditorContext = () => useContext(InternalEditorContext);
 
@@ -101,7 +101,10 @@ export function EditorProvider({
 
   const initialConfig = {
     namespace: 'LumiaEditor',
-    theme,
+    theme: {
+      link: 'editor-link',
+      ...theme,
+    },
     onError: (error: Error) => console.error(error),
     nodes: [
       HeadingNode,

@@ -6,8 +6,11 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 
 import { Toolbar } from './Toolbar';
+import { ClickableLinkPlugin } from './ClickableLinkPlugin';
+import { PasteLinkPlugin } from './PasteLinkPlugin';
 
 interface LumiaEditorPrimitiveProps {
   placeholder?: string;
@@ -28,6 +31,9 @@ export function LumiaEditorPrimitive({
       />
       <HistoryPlugin />
       <ListPlugin />
+      <LinkPlugin />
+      <ClickableLinkPlugin />
+      <PasteLinkPlugin />
     </div>
   );
 }

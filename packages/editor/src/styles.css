@@ -79,3 +79,12 @@
 .editor-listitem {
     margin: 8px 32px 8px 32px;
 }
+
+.editor-link {
+    color: rgb(33, 111, 219);
+    text-decoration: underline;
+}
+
+.cmd-pressed .editor-link {
+    cursor: pointer;
+}

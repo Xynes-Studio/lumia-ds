@@ -11,7 +11,7 @@ pnpm add @lumia/editor
 ## Features
 
 - **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes.
-- **Text Formatting**: Bold, Italic, Underline, Code (with keyboard shortcuts).
+- **Text Formatting**: Bold, Italic, Underline, Code (with keyboard shortcuts), Links (Cmd+K, Smart Paste).
 - **History**: Undo/Redo support.
 - **JSON Input/Output**: Fully serializable editor state.
 
