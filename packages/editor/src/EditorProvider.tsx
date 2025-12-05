@@ -156,6 +156,11 @@ export function EditorProvider({
         url: 'editor-tokenOperator',
         variable: 'editor-tokenVariable',
       },
+      list: {
+        ul: 'editor-list-ul',
+        ol: 'editor-list-ol',
+        listitem: 'editor-listitem',
+      },
       ...theme,
     },
     onError: (error: Error) => console.error(error),

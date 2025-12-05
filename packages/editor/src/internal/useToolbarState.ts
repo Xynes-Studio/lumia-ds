@@ -219,17 +219,23 @@ export function useToolbarState() {
     if (isBulletList) {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     } else {
+      if (isNumberedList) {
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+      }
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
     }
-  }, [editor, isBulletList]);
+  }, [editor, isBulletList, isNumberedList]);
 
   const toggleNumberedList = useCallback(() => {
     if (isNumberedList) {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     } else {
+      if (isBulletList) {
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+      }
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
     }
-  }, [editor, isNumberedList]);
+  }, [editor, isNumberedList, isBulletList]);
 
   useEffect(() => {
     return mergeRegister(

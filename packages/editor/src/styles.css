@@ -75,13 +75,15 @@
 .editor-list-ol {
     padding: 0;
     margin: 0;
-    margin-left: 16px;
+    padding-left: 24px;
+    list-style-type: decimal;
 }
 
 .editor-list-ul {
     padding: 0;
     margin: 0;
-    margin-left: 16px;
+    padding-left: 24px;
+    list-style-type: disc;
 }
 
 .editor-listitem {

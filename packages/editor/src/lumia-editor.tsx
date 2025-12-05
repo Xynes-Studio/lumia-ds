@@ -1,5 +1,6 @@
 import React from 'react';
 import { LumiaEditorPrimitive } from './internal/LumiaEditorPrimitive';
+import { LumiaInlineEditorPrimitive } from './internal/LumiaInlineEditorPrimitive';
 import { LumiaEditorStateJSON } from './types';
 import { EditorProvider } from './EditorProvider';
 import type { FontConfig } from './font-config';
@@ -21,6 +22,7 @@ export const LumiaEditor = ({
   readOnly,
   fonts,
   variant,
+  mode = 'document',
 }: LumiaEditorProps) => {
   return (
     <EditorProvider
@@ -29,7 +31,11 @@ export const LumiaEditor = ({
       readOnly={readOnly}
       fonts={fonts}
     >
-      <LumiaEditorPrimitive className={className} variant={variant} />
+      {mode === 'inline' ? (
+        <LumiaInlineEditorPrimitive className={className} />
+      ) : (
+        <LumiaEditorPrimitive className={className} variant={variant} />
+      )}
     </EditorProvider>
   );
 };
