@@ -13,8 +13,12 @@ const meta: Meta<typeof LumiaEditor> = {
 export default meta;
 type Story = StoryObj<typeof LumiaEditor>;
 
-export const Placeholder: Story = {
+export const Default: Story = {
   args: {
-    // Add any required props here once the component is fully implemented
+    value: null,
+    onChange: (val) => console.log('onChange', val),
+    mode: 'document',
+    variant: 'full',
+    readOnly: false,
   },
 };

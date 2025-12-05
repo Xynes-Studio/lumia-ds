@@ -14,14 +14,14 @@ pnpm add @lumia/editor
 import { LumiaEditor } from '@lumia/editor';
 
 function App() {
-  return <LumiaEditor placeholder="Start typing..." />;
-}
-
-// Internal usage
-import { InternalLexicalEditor } from '@lumia/editor/internal';
-
-function InternalApp() {
-  return <InternalLexicalEditor />;
+  const [value, setValue] = useState(null);
+  
+  return (
+    <LumiaEditor 
+      value={value} 
+      onChange={setValue} 
+    />
+  );
 }
 ```
 
