@@ -8,6 +8,12 @@ The core editor package for Lumia DS, built on top of [Lexical](https://lexical.
 pnpm add @lumia/editor
 ```
 
+## Features
+
+- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes.
+- **History**: Undo/Redo support.
+- **JSON Input/Output**: Fully serializable editor state.
+
 ## Usage
 
 ```tsx
