@@ -17,6 +17,7 @@ export interface ImageBlockPayload {
   width?: number;
   height?: number;
   key?: NodeKey;
+  status?: 'uploading' | 'uploaded' | 'error';
 }
 
 export type SerializedImageBlockNode = Spread<
@@ -27,6 +28,7 @@ export type SerializedImageBlockNode = Spread<
     layout?: 'inline' | 'breakout' | 'fullWidth';
     width?: number;
     height?: number;
+    status?: 'uploading' | 'uploaded' | 'error';
   },
   SerializedLexicalNode
 >;
@@ -38,6 +40,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
   __layout?: 'inline' | 'breakout' | 'fullWidth';
   __width?: number;
   __height?: number;
+  __status?: 'uploading' | 'uploaded' | 'error';
 
   static getType(): string {
     return 'image-block';
@@ -51,12 +54,13 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       node.__layout,
       node.__width,
       node.__height,
+      node.__status,
       node.__key,
     );
   }
 
   static importJSON(serializedNode: SerializedImageBlockNode): ImageBlockNode {
-    const { src, alt, caption, layout, width, height } = serializedNode;
+    const { src, alt, caption, layout, width, height, status } = serializedNode;
     const node = $createImageBlockNode({
       src,
       alt,
@@ -64,6 +68,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       layout,
       width,
       height,
+      status,
     });
     return node;
   }
@@ -76,6 +81,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       layout: this.__layout,
       width: this.__width,
       height: this.__height,
+      status: this.__status,
       type: 'image-block',
       version: 1,
     };
@@ -88,6 +94,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
     layout?: 'inline' | 'breakout' | 'fullWidth',
     width?: number,
     height?: number,
+    status?: 'uploading' | 'uploaded' | 'error',
     key?: NodeKey,
   ) {
     super(key);
@@ -97,6 +104,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
     this.__layout = layout;
     this.__width = width;
     this.__height = height;
+    this.__status = status;
   }
 
   createDOM(config: EditorConfig): HTMLElement {
@@ -114,6 +122,10 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
   }
 
   decorate(): React.ReactElement {
+    console.log('ImageBlockNode decorate', {
+      src: this.__src,
+      status: this.__status,
+    });
     return (
       <ImageBlockComponent
         src={this.__src}
@@ -121,6 +133,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
         width={this.__width}
         height={this.__height}
         caption={this.__caption}
+        status={this.__status}
         nodeKey={this.getKey()}
       />
     );
@@ -134,9 +147,19 @@ export function $createImageBlockNode({
   layout,
   width,
   height,
+  status,
   key,
 }: ImageBlockPayload): ImageBlockNode {
-  return new ImageBlockNode(src, alt, caption, layout, width, height, key);
+  return new ImageBlockNode(
+    src,
+    alt,
+    caption,
+    layout,
+    width,
+    height,
+    status,
+    key,
+  );
 }
 
 export function $isImageBlockNode(

@@ -16,6 +16,7 @@ describe('ImageBlockNode', () => {
         'fullWidth',
         800,
         600,
+        'uploaded',
       );
       const json = node.exportJSON();
 
@@ -28,6 +29,7 @@ describe('ImageBlockNode', () => {
         layout: 'fullWidth',
         width: 800,
         height: 600,
+        status: 'uploaded',
       });
     });
   });
@@ -43,6 +45,7 @@ describe('ImageBlockNode', () => {
         layout: 'fullWidth' as const,
         width: 800,
         height: 600,
+        status: 'uploading' as const,
       };
 
       const node = ImageBlockNode.importJSON(json);
@@ -54,6 +57,7 @@ describe('ImageBlockNode', () => {
       expect(node.__layout).toBe(json.layout);
       expect(node.__width).toBe(json.width);
       expect(node.__height).toBe(json.height);
+      expect(node.__status).toBe(json.status);
     });
   });
 });

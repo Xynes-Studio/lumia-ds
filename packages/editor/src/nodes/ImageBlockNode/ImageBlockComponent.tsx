@@ -13,6 +13,7 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { Card } from '@lumia/components';
 import { $isImageBlockNode } from './ImageBlockNode';
+import { useMediaContext } from '../../EditorProvider';
 
 export interface ImageBlockComponentProps {
   src: string;
@@ -21,6 +22,7 @@ export interface ImageBlockComponentProps {
   width?: number;
   height?: number;
   nodeKey: NodeKey;
+  status?: 'uploading' | 'uploaded' | 'error';
 }
 
 export function ImageBlockComponent({
@@ -30,11 +32,14 @@ export function ImageBlockComponent({
   width,
   height,
   nodeKey,
+  status,
 }: ImageBlockComponentProps) {
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelected] =
     useLexicalNodeSelection(nodeKey);
   const imageRef = useRef<HTMLImageElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaConfig = useMediaContext();
 
   const onDelete = React.useCallback(
     (payload: KeyboardEvent) => {
@@ -83,22 +88,146 @@ export function ImageBlockComponent({
     );
   }, [clearSelected, editor, isSelected, onDelete, setSelected]);
 
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !mediaConfig?.uploadAdapter) return;
+
+    // Validate type
+    if (
+      mediaConfig.allowedImageTypes &&
+      !mediaConfig.allowedImageTypes.includes(file.type)
+    ) {
+      alert(`File type ${file.type} not allowed`);
+      return;
+    }
+
+    // Validate size
+    if (
+      mediaConfig.maxFileSizeMB &&
+      file.size > mediaConfig.maxFileSizeMB * 1024 * 1024
+    ) {
+      alert(`File size exceeds ${mediaConfig.maxFileSizeMB}MB`);
+      return;
+    }
+
+    // Optimistic preview
+    const previewUrl = URL.createObjectURL(file);
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageBlockNode(node)) {
+        const writable = node.getWritable();
+        writable.__src = previewUrl;
+        writable.__status = 'uploading';
+      }
+    });
+
+    try {
+      const result = await mediaConfig.uploadAdapter.uploadFile(file);
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isImageBlockNode(node)) {
+          const writable = node.getWritable();
+          writable.__src = result.url;
+          writable.__status = 'uploaded';
+        }
+      });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isImageBlockNode(node)) {
+          const writable = node.getWritable();
+          writable.__status = 'error';
+        }
+      });
+    }
+  };
+
+  const handleRetry = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemove = () => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageBlockNode(node)) {
+        node.remove();
+      }
+    });
+  };
+
+  // If no src and no upload adapter, we can't do anything (shouldn't happen if inserted correctly)
+  // If no src and upload adapter exists, show upload button
+  const showUpload = !src && mediaConfig?.uploadAdapter;
+  const isUploading = status === 'uploading';
+  const isError = status === 'error';
+
+  if (showUpload) {
+    return (
+      <Card className="p-4 w-full max-w-md mx-auto flex flex-col items-center gap-4 border-dashed">
+        <div className="text-muted-foreground text-sm">
+          Upload an image to display
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={mediaConfig.allowedImageTypes?.join(',')}
+          onChange={handleUpload}
+          className="sr-only"
+          data-testid="file-upload-input"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        >
+          Upload Image
+        </button>
+      </Card>
+    );
+  }
+
   return (
     <Card
-      className={`w-fit overflow-hidden transition-all duration-200 ${
+      className={`w-fit overflow-hidden transition-all duration-200 relative ${
         isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
       }`}
     >
-      <figure className="m-0 flex flex-col">
+      <figure className="m-0 flex flex-col relative">
         <img
           ref={imageRef}
           src={src}
           alt={alt}
           width={width}
           height={height}
-          className="max-w-full h-auto block select-none"
+          className={`max-w-full h-auto block select-none ${
+            isUploading ? 'opacity-50' : ''
+          }`}
           draggable="false"
         />
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        )}
+        {isError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 gap-2">
+            <p className="text-destructive font-medium">Upload Failed</p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleRetry}
+                className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
+              >
+                Retry
+              </button>
+              <button
+                onClick={handleRemove}
+                className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        )}
         {caption && (
           <figcaption className="p-2 text-sm text-muted-foreground border-t border-border bg-muted/30">
             {caption}

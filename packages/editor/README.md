@@ -330,7 +330,7 @@ editor.update(() => {
 });
 ```
 
-**Toolbar Integration**: The editor includes a built-in "Image" toolbar button that allows users to insert images by providing a URL.
+**Toolbar Integration**: The editor includes a built-in "Image" toolbar button that allows users to insert images by providing a URL. If an `uploadAdapter` is configured, inserting an image block without a URL will display an upload UI, allowing users to select a file from their device.
 
 
 
