@@ -222,6 +222,9 @@ importers:
         specifier: 0.38.2
         version: 0.38.2
     devDependencies:
+      '@lexical/headless':
+        specifier: ^0.38.2
+        version: 0.38.2
       '@testing-library/dom':
         specifier: ^10.4.1
         version: 10.4.1
@@ -1260,6 +1263,9 @@ packages:
 
   '@lexical/hashtag@0.38.2':
     resolution: {integrity: sha512-jNI4Pv+plth39bjOeeQegMypkjDmoMWBMZtV0lCynBpkkPFlfMnyL9uzW/IxkZnX8LXWSw5mbWk07nqOUNTCrA==}
+
+  '@lexical/headless@0.38.2':
+    resolution: {integrity: sha512-HFlQrw1pSSia3hGHz/OnUBAVMAGDBLSIJrqiHTst/LhDWzY5Um6PZ5Yc5DhTOtWaOp89d/Gl1SPKj935akVNZQ==}
 
   '@lexical/history@0.38.2':
     resolution: {integrity: sha512-QWPwoVDMe/oJ0+TFhy78TDi7TWU/8bcDRFUNk1nWgbq7+2m+5MMoj90LmOFwakQHnCVovgba2qj+atZrab1dsQ==}
@@ -5375,6 +5381,11 @@ snapshots:
     dependencies:
       '@lexical/text': 0.38.2
       '@lexical/utils': 0.38.2
+      lexical: 0.38.2
+
+  '@lexical/headless@0.38.2':
+    dependencies:
+      happy-dom: 20.0.10
       lexical: 0.38.2
 
   '@lexical/history@0.38.2':
