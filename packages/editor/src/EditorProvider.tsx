@@ -15,6 +15,7 @@ import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { FontConfig, getDefaultFontConfig } from './font-config';
 
 interface EditorContextType {
   editor: LexicalEditor | null;
@@ -27,6 +28,9 @@ const EditorContext = createContext<EditorContextType>({
 });
 
 export const useEditorContext = () => useContext(EditorContext);
+
+// FontsContext to provide font configuration throughout the editor
+export const FontsContext = createContext<FontConfig | null>(null);
 
 function EditorStatePlugin({
   onChange,
@@ -62,7 +66,7 @@ function EditorStatePlugin({
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
 }>({
-  setEditorState: () => { },
+  setEditorState: () => {},
 });
 const useInternalEditorContext = () => useContext(InternalEditorContext);
 
@@ -85,6 +89,7 @@ interface EditorProviderProps {
   readOnly?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
+  fonts?: FontConfig;
 }
 
 export function EditorProvider({
@@ -93,7 +98,10 @@ export function EditorProvider({
   onChange,
   readOnly,
   theme = {},
+  fonts,
 }: EditorProviderProps) {
+  // Use provided fonts config or default
+  const fontsConfig = useMemo(() => fonts || getDefaultFontConfig(), [fonts]);
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<LumiaEditorStateJSON | null>(
     value || null,
@@ -173,13 +181,15 @@ export function EditorProvider({
 
   return (
     <EditorContext.Provider value={contextValue}>
-      <LexicalComposer initialConfig={initialConfig}>
-        <InternalEditorContext.Provider value={internalContextValue}>
-          <ContextUpdaterPlugin setEditor={setEditor} />
-          <EditorStatePlugin onChange={onChange} />
-          {children}
-        </InternalEditorContext.Provider>
-      </LexicalComposer>
+      <FontsContext.Provider value={fontsConfig}>
+        <LexicalComposer initialConfig={initialConfig}>
+          <InternalEditorContext.Provider value={internalContextValue}>
+            <ContextUpdaterPlugin setEditor={setEditor} />
+            <EditorStatePlugin onChange={onChange} />
+            {children}
+          </InternalEditorContext.Provider>
+        </LexicalComposer>
+      </FontsContext.Provider>
     </EditorContext.Provider>
   );
 }
