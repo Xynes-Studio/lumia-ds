@@ -359,6 +359,28 @@ editor.update(() => {
 - **Insert File**: Use the toolbar button to insert a file. If an `uploadAdapter` is configured, selecting a file will trigger the upload flow, showing an optimistic preview and progress state.
 
 
+### Video Block
+The editor supports embedded videos from YouTube, Vimeo, Loom, and HTML5 video files.
+
+```tsx
+import { $createVideoBlockNode } from '@lumia/editor/nodes/VideoBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createVideoBlockNode({
+    src: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    provider: 'youtube',
+    title: 'Rick Roll',
+  });
+  $insertNodes([node]);
+});
+```
+
+- **Supported Providers**: 'youtube', 'vimeo', 'loom', 'html5'.
+- **Rendering**: Renders as an `iframe` for embed providers and `<video>` tag for HTML5.
+
+
+
 ## Performance Testing
 
 The editor includes a "Large Document" story for performance testing. This story pre-seeds the editor with a large JSON payload (50+ paragraphs, headings, lists) to verify rendering performance and typing latency.
