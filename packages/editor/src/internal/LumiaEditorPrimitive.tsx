@@ -13,18 +13,22 @@ import { Toolbar } from './Toolbar';
 import { ClickableLinkPlugin } from './ClickableLinkPlugin';
 import { PasteLinkPlugin } from './PasteLinkPlugin';
 
+import { EditorToolbarCompact } from './EditorToolbarCompact';
+
 interface LumiaEditorPrimitiveProps {
   placeholder?: string;
   className?: string;
+  variant?: 'full' | 'compact';
 }
 
 export function LumiaEditorPrimitive({
   placeholder = 'Enter some text...',
   className,
+  variant = 'full',
 }: LumiaEditorPrimitiveProps) {
   return (
     <div className={`editor-container ${className || ''}`}>
-      <Toolbar />
+      {variant === 'compact' ? <EditorToolbarCompact /> : <Toolbar />}
       <RichTextPlugin
         contentEditable={<ContentEditable className="editor-input" />}
         placeholder={<div className="editor-placeholder">{placeholder}</div>}

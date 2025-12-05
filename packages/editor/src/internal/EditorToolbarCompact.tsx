@@ -7,85 +7,45 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
-  Select,
 } from '@lumia/components';
 import {
   Bold,
   Italic,
   Underline,
-  Code,
   Link as LinkIcon,
   Trash2,
   ExternalLink,
-  FileCode,
   List,
-  ListOrdered,
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';
 
-export function Toolbar() {
+export function EditorToolbarCompact() {
   const {
     isBold,
     isItalic,
     isUnderline,
-    isCode,
-    isCodeBlock,
     isLink,
     linkUrl,
     setLinkUrl,
     isPopoverOpen,
     setIsPopoverOpen,
     isEditable,
-    selectedFont,
-    blockType,
     isBulletList,
-    isNumberedList,
-    fontsConfig,
     insertLink,
     onLinkSubmit,
-    handleFontChange,
-    handleBlockTypeChange,
     toggleBulletList,
-    toggleNumberedList,
     editor,
   } = useToolbarState();
 
   return (
-    <LumiaToolbar className="border-b border-border p-2" align="start" gap="sm">
+    <LumiaToolbar className="border-b border-border p-1" align="start" gap="sm">
       <div className="flex flex-wrap items-center gap-1">
-        {/* Block Type Dropdown */}
-        <div className="min-w-[120px]">
-          <Select
-            value={blockType}
-            onChange={(e) => handleBlockTypeChange(e.target.value)}
-            aria-label="Block Type"
-          >
-            <option value="paragraph">Paragraph</option>
-            <option value="h1">Heading 1</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
-            <option value="code">Code Block</option>
-          </Select>
-        </div>
-        <div className="mx-2 h-6 w-px bg-border" />
-
-        {/* Font Combobox */}
-        <div className="min-w-[160px]">
-          <FontCombobox
-            config={fontsConfig}
-            value={selectedFont}
-            onChange={handleFontChange}
-            placeholder={selectedFont === '' ? 'Mixed' : 'Font...'}
-          />
-        </div>
-        <div className="mx-2 h-6 w-px bg-border" />
-
         {/* Text Formatting Buttons */}
         <Button
           variant={isBold ? 'secondary' : 'ghost'}
           size="icon"
+          className="h-8 w-8"
           onClick={() => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
           }}
@@ -98,6 +58,7 @@ export function Toolbar() {
         <Button
           variant={isItalic ? 'secondary' : 'ghost'}
           size="icon"
+          className="h-8 w-8"
           onClick={() => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
           }}
@@ -110,6 +71,7 @@ export function Toolbar() {
         <Button
           variant={isUnderline ? 'secondary' : 'ghost'}
           size="icon"
+          className="h-8 w-8"
           onClick={() => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
           }}
@@ -119,36 +81,14 @@ export function Toolbar() {
         >
           <Underline className="h-4 w-4" />
         </Button>
-        <Button
-          variant={isCode ? 'secondary' : 'ghost'}
-          size="icon"
-          onClick={() => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-          }}
-          onMouseDown={(e) => e.preventDefault()}
-          aria-label="Format Code"
-          title="Inline Code"
-        >
-          <Code className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={isCodeBlock ? 'secondary' : 'ghost'}
-          size="icon"
-          onClick={() =>
-            handleBlockTypeChange(isCodeBlock ? 'paragraph' : 'code')
-          }
-          onMouseDown={(e) => e.preventDefault()}
-          aria-label="Format Code Block"
-          title="Code Block"
-        >
-          <FileCode className="h-4 w-4" />
-        </Button>
-        <div className="mx-2 h-6 w-px bg-border" />
 
-        {/* List Buttons */}
+        <div className="mx-1 h-4 w-px bg-border" />
+
+        {/* List Button */}
         <Button
           variant={isBulletList ? 'secondary' : 'ghost'}
           size="icon"
+          className="h-8 w-8"
           onClick={toggleBulletList}
           onMouseDown={(e) => e.preventDefault()}
           aria-label="Bullet List"
@@ -156,22 +96,16 @@ export function Toolbar() {
         >
           <List className="h-4 w-4" />
         </Button>
-        <Button
-          variant={isNumberedList ? 'secondary' : 'ghost'}
-          size="icon"
-          onClick={toggleNumberedList}
-          onMouseDown={(e) => e.preventDefault()}
-          aria-label="Numbered List"
-          title="Numbered List"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <div className="mx-2 h-6 w-px bg-border" />
+
+        <div className="mx-1 h-4 w-px bg-border" />
+
+        {/* Link Button */}
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <Button
               variant={isLink ? 'secondary' : 'ghost'}
               size="icon"
+              className="h-8 w-8"
               onClick={insertLink}
               onMouseDown={(e) => e.preventDefault()}
               disabled={!isEditable}

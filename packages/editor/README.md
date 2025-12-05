@@ -27,10 +27,18 @@ function App() {
     <LumiaEditor 
       value={value} 
       onChange={setValue} 
+      variant="full" // Optional: 'full' (default) or 'compact'
     />
   );
 }
 ```
+
+### Toolbar Variants
+
+The editor supports two toolbar variants:
+
+- **Full** (`variant="full"`): The default toolbar with all features including block type dropdown, font picker, text formatting, lists, and links.
+- **Compact** (`variant="compact"`): A simplified toolbar for tight layouts, showing only essential formatting options (Bold, Italic, Underline, Bullet List, Link).
 
 ### Font Configuration
 

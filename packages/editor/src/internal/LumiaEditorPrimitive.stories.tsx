@@ -87,3 +87,41 @@ export const DocumentFull: Story = {
     },
   },
 };
+
+/**
+ * Document Compact variant - Simplified toolbar for tight layouts.
+ *
+ * Features:
+ * - Hides Block Type and Font controls
+ * - Shows essential formatting: Bold, Italic, Underline
+ * - Shows Bullet List
+ * - Shows Link
+ */
+const DocumentCompactTemplate = () => {
+  const [json, setJson] = useState<LumiaEditorStateJSON | null>(null);
+
+  return (
+    <div
+      style={{
+        border: '1px solid #e5e5e5',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        maxWidth: '600px', // Smaller width to demonstrate compact layout
+      }}
+    >
+      <LumiaEditor value={json} onChange={setJson} variant="compact" />
+    </div>
+  );
+};
+
+export const DocumentCompact: Story = {
+  render: () => <DocumentCompactTemplate />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Compact toolbar variant for tight layouts. Hides block type and font controls, showing only essential formatting options.',
+      },
+    },
+  },
+};

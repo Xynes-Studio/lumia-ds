@@ -20,6 +20,7 @@ export const LumiaEditor = ({
   className,
   readOnly,
   fonts,
+  variant,
 }: LumiaEditorProps) => {
   return (
     <EditorProvider
@@ -28,7 +29,7 @@ export const LumiaEditor = ({
       readOnly={readOnly}
       fonts={fonts}
     >
-      <LumiaEditorPrimitive className={className} />
+      <LumiaEditorPrimitive className={className} variant={variant} />
     </EditorProvider>
   );
 };
