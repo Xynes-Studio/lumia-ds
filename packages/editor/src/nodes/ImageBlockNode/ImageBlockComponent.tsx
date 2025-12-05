@@ -14,6 +14,11 @@ import { useEffect, useRef } from 'react';
 import { Card } from '@lumia/components';
 import { $isImageBlockNode } from './ImageBlockNode';
 import { useMediaContext } from '../../EditorProvider';
+import { ImageResizer } from './ImageResizer';
+import {
+  getImageLayoutClass,
+  getImageContainerStyle,
+} from './image-layout-utils';
 
 export interface ImageBlockComponentProps {
   src: string;
@@ -23,6 +28,7 @@ export interface ImageBlockComponentProps {
   height?: number;
   nodeKey: NodeKey;
   status?: 'uploading' | 'uploaded' | 'error';
+  layout?: 'inline' | 'breakout' | 'fullWidth';
 }
 
 export function ImageBlockComponent({
@@ -33,6 +39,7 @@ export function ImageBlockComponent({
   height,
   nodeKey,
   status,
+  layout,
 }: ImageBlockComponentProps) {
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelected] =
@@ -187,53 +194,67 @@ export function ImageBlockComponent({
   }
 
   return (
-    <Card
-      className={`w-fit overflow-hidden transition-all duration-200 relative ${
-        isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-      }`}
+    <div
+      className={`image-block-container ${getImageLayoutClass(layout)}`}
+      style={getImageContainerStyle(layout, width)}
     >
-      <figure className="m-0 flex flex-col relative">
-        <img
-          ref={imageRef}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={`max-w-full h-auto block select-none ${
-            isUploading ? 'opacity-50' : ''
-          }`}
-          draggable="false"
-        />
-        {isUploading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+      <Card
+        className={`overflow-hidden transition-all duration-200 relative ${
+          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
+        } ${layout === 'fullWidth' ? 'w-full' : 'w-full'}`}
+      >
+        {isSelected && (
+          <ImageResizer
+            editor={editor}
+            nodeKey={nodeKey}
+            layout={layout}
+            width={width}
+          />
         )}
-        {isError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 gap-2">
-            <p className="text-destructive font-medium">Upload Failed</p>
-            <div className="flex gap-2">
-              <button
-                onClick={handleRetry}
-                className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
-              >
-                Retry
-              </button>
-              <button
-                onClick={handleRemove}
-                className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded"
-              >
-                Remove
-              </button>
+        <figure className="m-0 flex flex-col relative">
+          <img
+            ref={imageRef}
+            src={src}
+            alt={alt}
+            width={width} // This might be redundant if container handles it, but keeping for now
+            height={height}
+            className={`max-w-full h-auto block select-none ${
+              isUploading ? 'opacity-50' : ''
+            }`}
+            draggable="false"
+            style={{ width: '100%' }}
+          />
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-          </div>
-        )}
-        {caption && (
-          <figcaption className="p-2 text-sm text-muted-foreground border-t border-border bg-muted/30">
-            {caption}
-          </figcaption>
-        )}
-      </figure>
-    </Card>
+          )}
+          {isError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 gap-2">
+              <p className="text-destructive font-medium">Upload Failed</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleRetry}
+                  className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
+                >
+                  Retry
+                </button>
+                <button
+                  onClick={handleRemove}
+                  className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          )}
+          {caption && (
+            <figcaption className="p-2 text-sm text-muted-foreground border-t border-border bg-muted/30">
+              {caption}
+            </figcaption>
+          )}
+        </figure>
+      </Card>
+    </div>
   );
 }

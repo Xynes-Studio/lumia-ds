@@ -163,3 +163,26 @@
 .editor-tokenString {
     color: #690;
 }
+
+/* Image Block Layouts */
+.image-block-container {
+    display: flex;
+    justify-content: center;
+    /* Default centered? Or left? */
+    margin: 10px 0;
+}
+
+.image-block-container.layout-inline {
+    /* Respects width */
+    display: inline-flex;
+}
+
+.image-block-container.layout-fullWidth {
+    width: 100%;
+}
+
+.image-block-container.layout-breakout {
+    width: 120%;
+    /* Example breakout */
+    margin-left: -10%;
+}

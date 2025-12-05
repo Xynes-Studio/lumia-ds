@@ -132,6 +132,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
         alt={this.__alt}
         width={this.__width}
         height={this.__height}
+        layout={this.__layout}
         caption={this.__caption}
         status={this.__status}
         nodeKey={this.getKey()}
