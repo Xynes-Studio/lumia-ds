@@ -328,10 +328,14 @@ editor.update(() => {
   });
   $insertNodes([node]);
 });
-```
 
-**Toolbar Integration**: The editor includes a built-in "Image" toolbar button that allows users to insert images by providing a URL. If an `uploadAdapter` is configured, inserting an image block without a URL will display an upload UI, allowing users to select a file from their device.
-
+### Image Block
+- **Insert Image**: Use the toolbar button to insert an image from a URL. If an `uploadAdapter` is configured, inserting an image block without a URL will display an upload UI, allowing users to select a file from their device.
+- **Layouts**: Click on an image to see the layout toolbar.
+    - **Inline**: Default layout, respects width percentage.
+    - **Breakout**: Wider than the text column.
+    - **Full Width**: Spans the entire editor width (100%).
+- **Resizing**: Use the percentage buttons (25%, 50%, 75%, 100%) in the overlay toolbar to resize the image.
 
 
 ## Performance Testing
