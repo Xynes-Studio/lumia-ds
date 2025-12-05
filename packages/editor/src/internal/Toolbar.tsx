@@ -20,13 +20,12 @@ import {
   FileCode,
   List,
   ListOrdered,
-  Image as ImageIcon,
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { $insertNodes } from 'lexical';
-import { $createImageBlockNode } from '../nodes/ImageBlockNode';
+
 import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';
+import { ImageToolbarButton } from '../components/Toolbar/ImageToolbarButton';
 
 export function Toolbar() {
   const {
@@ -236,25 +235,7 @@ export function Toolbar() {
           </PopoverContent>
         </Popover>
         <div className="mx-2 h-6 w-px bg-border" />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            editor.update(() => {
-              const node = $createImageBlockNode({
-                src: 'https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-                alt: 'Sample Image',
-                width: 500,
-                height: 300,
-              });
-              $insertNodes([node]);
-            });
-          }}
-          aria-label="Insert Image"
-          title="Insert Image (Dev)"
-        >
-          <ImageIcon className="h-4 w-4" />
-        </Button>
+        <ImageToolbarButton />
       </div>
     </LumiaToolbar>
   );
