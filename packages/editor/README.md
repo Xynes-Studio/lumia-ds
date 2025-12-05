@@ -239,6 +239,16 @@ const normalized = normalizeFontConfig(config);
 **Note**: The editor automatically normalizes font configurations on initialization. You typically don't need to call this function directly unless you're building custom font configuration logic.
 
 
+## Performance Testing
+
+The editor includes a "Large Document" story for performance testing. This story pre-seeds the editor with a large JSON payload (50+ paragraphs, headings, lists) to verify rendering performance and typing latency.
+
+To run the performance test:
+
+1. Start Storybook: `pnpm storybook`
+2. Navigate to `Editor / LumiaEditor / Large Document`
+3. Verify that the document loads smoothly and typing latency is acceptable (< 16ms).
+
 ## Development
 
 To view the editor components in Storybook:

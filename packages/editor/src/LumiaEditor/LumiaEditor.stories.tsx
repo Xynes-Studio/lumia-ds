@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { LumiaEditor } from '../lumia-editor';
 import type { FontConfig } from '../font-config';
+import type { LumiaEditorStateJSON } from '../types';
 
 const meta: Meta<typeof LumiaEditor> = {
   title: 'Editor/LumiaEditor',
@@ -155,6 +156,164 @@ export const WithAutoNormalization: Story = {
       description: {
         story:
           'Demonstrates auto-normalization: defaultFontId is set to "Lora" (not in allowedFonts), but the editor automatically normalizes it to "Inter" (first in allowedFonts). Only Inter and Roboto appear in the font selector.',
+      },
+    },
+  },
+};
+
+const generateLargeDocumentJSON = (): LumiaEditorStateJSON => {
+  const rootChildren = [];
+
+  // Add a title
+  rootChildren.push({
+    children: [
+      {
+        detail: 0,
+        format: 0,
+        mode: 'normal',
+        style: '',
+        text: 'Large Performance Test Document',
+        type: 'text',
+        version: 1,
+      },
+    ],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    type: 'heading',
+    version: 1,
+    tag: 'h1',
+  });
+
+  // Add 50 paragraphs
+  for (let i = 0; i < 50; i++) {
+    rootChildren.push({
+      children: [
+        {
+          detail: 0,
+          format: 0,
+          mode: 'normal',
+          style: '',
+          text: `Paragraph ${i + 1}: This is a sample paragraph to test the performance of the editor with a large amount of content. It contains enough text to simulate a real-world scenario.`,
+          type: 'text',
+          version: 1,
+        },
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'paragraph',
+      version: 1,
+    });
+  }
+
+  // Add a list
+  const listChildren = [];
+  for (let i = 0; i < 20; i++) {
+    listChildren.push({
+      children: [
+        {
+          children: [
+            {
+              detail: 0,
+              format: 0,
+              mode: 'normal',
+              style: '',
+              text: `List item ${i + 1}`,
+              type: 'text',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'listitem',
+          version: 1,
+          value: i + 1,
+        },
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'list',
+      version: 1,
+      listType: 'bullet',
+      start: 1,
+      tag: 'ul',
+    });
+  }
+
+  // Lexical list structure is a bit different, let's stick to simple paragraphs and headings if lists are complex to mock manually without the nodes.
+  // Actually, let's try to add a simple list if we can, but if not, more paragraphs are fine.
+  // The above list structure is slightly wrong for Lexical (nested lists).
+  // Let's simplify to just more paragraphs and headings to be safe and robust for "Large Document" definition.
+
+  // Add another section with headings
+  for (let i = 0; i < 10; i++) {
+    rootChildren.push({
+      children: [
+        {
+          detail: 0,
+          format: 0,
+          mode: 'normal',
+          style: '',
+          text: `Section ${i + 1}`,
+          type: 'text',
+          version: 1,
+        },
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'heading',
+      version: 1,
+      tag: 'h2',
+    });
+    rootChildren.push({
+      children: [
+        {
+          detail: 0,
+          format: 0,
+          mode: 'normal',
+          style: '',
+          text: `Content for section ${i + 1}. Adding more text here to bulk up the document size.`,
+          type: 'text',
+          version: 1,
+        },
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'paragraph',
+      version: 1,
+    });
+  }
+
+  return {
+    root: {
+      children: rootChildren,
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'root',
+      version: 1,
+    },
+  };
+};
+
+/**
+ * A large document with 50+ paragraphs and headings to test performance.
+ */
+export const LargeDocument: Story = {
+  args: {
+    value: generateLargeDocumentJSON(),
+    onChange: (val) => console.log('onChange', val),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A large document pre-seeded with 50+ paragraphs and headings to verify rendering performance and typing latency.',
       },
     },
   },
