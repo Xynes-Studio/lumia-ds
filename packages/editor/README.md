@@ -238,6 +238,38 @@ const normalized = normalizeFontConfig(config);
 
 **Note**: The editor automatically normalizes font configurations on initialization. You typically don't need to call this function directly unless you're building custom font configuration logic.
 
+### Block Registry
+
+The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video).
+
+#### `BlockType`
+
+Union type of all available block types:
+
+```typescript
+type BlockType = 
+  | 'paragraph' 
+  | 'heading' 
+  | 'image' 
+  | 'video' 
+  | 'file' 
+  | 'table' 
+  | 'panel' 
+  | 'status' 
+  | 'code';
+```
+
+#### `blockRegistry`
+
+A Map containing definitions for all registered blocks. You can retrieve block definitions using `getBlockDefinition(type)`.
+
+```typescript
+import { getBlockDefinition } from '@lumia/editor/blocks';
+
+const imageBlock = getBlockDefinition('image');
+// Returns BlockDefinition for 'image'
+```
+
 
 ## Performance Testing
 
