@@ -2,6 +2,7 @@ import { ParagraphNode, ElementNode } from 'lexical';
 import { HeadingNode } from '@lexical/rich-text';
 import { CodeNode } from '@lexical/code';
 import { ImageBlockNode } from '../nodes/ImageBlockNode';
+import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import {
   Type,
   Heading,
@@ -51,7 +52,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     type: 'file',
     label: 'File',
     icon: File,
-    nodeClass: ElementNode,
+    nodeClass: FileBlockNode,
   },
   table: {
     type: 'table',

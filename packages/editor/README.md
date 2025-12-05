@@ -338,6 +338,24 @@ editor.update(() => {
 - **Resizing**: Use the percentage buttons (25%, 50%, 75%, 100%) in the overlay toolbar to resize the image.
 
 
+### File Block
+The editor supports file attachments with a card UI.
+
+```tsx
+import { $createFileBlockNode } from '@lumia/editor/nodes/FileBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createFileBlockNode({
+    url: 'https://example.com/document.pdf',
+    filename: 'document.pdf',
+    size: 1024 * 1024, // 1MB
+    mime: 'application/pdf',
+  });
+  $insertNodes([node]);
+});
+```
+
 ## Performance Testing
 
 The editor includes a "Large Document" story for performance testing. This story pre-seeds the editor with a large JSON payload (50+ paragraphs, headings, lists) to verify rendering performance and typing latency.
