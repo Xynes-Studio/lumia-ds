@@ -13,22 +13,35 @@ pnpm add @lumia/editor
 - **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks.
 - **Text Formatting**: Bold, Italic, Underline, Inline Code (with keyboard shortcuts), Links (Cmd+K, Smart Paste).
 - **History**: Undo/Redo support.
+- **Inline Editor**: Dedicated component for titles and single-line text with bubble toolbar.
 - **JSON Input/Output**: Fully serializable editor state.
 
 ## Usage
 
 ```tsx
-import { LumiaEditor } from '@lumia/editor';
+import { LumiaEditor, LumiaInlineEditor } from '@lumia/editor';
 
 function App() {
   const [value, setValue] = useState(null);
+  const [title, setTitle] = useState(null);
   
   return (
-    <LumiaEditor 
-      value={value} 
-      onChange={setValue} 
-      variant="full" // Optional: 'full' (default) or 'compact'
-    />
+    <div className="space-y-4">
+      {/* Inline Editor for titles */}
+      <LumiaInlineEditor
+        value={title}
+        onChange={setTitle}
+        placeholder="Enter title..."
+        className="text-3xl font-bold"
+      />
+
+      {/* Main Editor for content */}
+      <LumiaEditor 
+        value={value} 
+        onChange={setValue} 
+        variant="full" 
+      />
+    </div>
   );
 }
 ```
