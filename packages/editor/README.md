@@ -15,6 +15,7 @@ pnpm add @lumia/editor
 - **History**: Undo/Redo support.
 - **Inline Editor**: Dedicated component for titles and single-line text with bubble toolbar.
 - **JSON Input/Output**: Fully serializable editor state.
+- **Accessibility**: ARIA-compliant toolbar, buttons, and inputs. Tested with `jest-axe`.
 
 ## Usage
 

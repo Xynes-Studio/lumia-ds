@@ -22,7 +22,10 @@ export function LumiaInlineEditorPrimitive({
     <div className={`editor-container relative ${className || ''}`}>
       <RichTextPlugin
         contentEditable={
-          <ContentEditable className="editor-input inline-editor-input" />
+          <ContentEditable
+            className="editor-input inline-editor-input"
+            aria-label="Rich Text Editor"
+          />
         }
         placeholder={<div className="editor-placeholder">{placeholder}</div>}
         ErrorBoundary={LexicalErrorBoundary}

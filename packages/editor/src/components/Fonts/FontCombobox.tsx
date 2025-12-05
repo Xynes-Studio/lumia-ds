@@ -105,6 +105,7 @@ export function FontCombobox({
       onChange={handleChange}
       loadOptions={loadOptions}
       placeholder={placeholder}
+      aria-label="Font Family"
     />
   );
 }

@@ -195,6 +195,7 @@ export function Toolbar() {
                     }
                   }}
                   autoFocus
+                  aria-label="Link URL"
                 />
                 <Button onClick={onLinkSubmit} size="sm">
                   Save
