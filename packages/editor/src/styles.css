@@ -54,6 +54,14 @@
     text-transform: uppercase;
 }
 
+.editor-heading-h3 {
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+    margin: 8px 0;
+    padding: 0;
+}
+
 .editor-quote {
     margin: 0 0 0 20px;
     font-size: 15px;

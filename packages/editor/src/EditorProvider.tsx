@@ -119,6 +119,11 @@ export function EditorProvider({
     theme: {
       link: 'editor-link',
       code: 'editor-code',
+      heading: {
+        h1: 'editor-heading-h1',
+        h2: 'editor-heading-h2',
+        h3: 'editor-heading-h3',
+      },
       codeHighlight: {
         atrule: 'editor-tokenAttr',
         attr: 'editor-tokenAttr',

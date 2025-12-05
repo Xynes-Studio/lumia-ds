@@ -7,6 +7,7 @@ import {
   $isRangeSelection,
   KEY_MODIFIER_COMMAND,
   $isTextNode,
+  $createParagraphNode,
 } from 'lexical';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -16,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
+  Select,
 } from '@lumia/components';
 import {
   Bold,
@@ -26,13 +28,29 @@ import {
   Trash2,
   ExternalLink,
   FileCode,
+  List,
+  ListOrdered,
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND, $isLinkNode } from '@lexical/link';
 import { $createCodeNode, $isCodeNode } from '@lexical/code';
 import { $setBlocksType, $patchStyleText } from '@lexical/selection';
-import { $createParagraphNode } from 'lexical';
+import {
+  $isHeadingNode,
+  $createHeadingNode,
+  type HeadingTagType,
+} from '@lexical/rich-text';
+import {
+  INSERT_UNORDERED_LIST_COMMAND,
+  INSERT_ORDERED_LIST_COMMAND,
+  REMOVE_LIST_COMMAND,
+  $isListNode,
+  ListNode,
+} from '@lexical/list';
+import { $getNearestNodeOfType } from '@lexical/utils';
 import { FontCombobox } from '../components/Fonts';
 import { useFontsConfig } from '../useFontsConfig';
+
+type BlockType = 'paragraph' | 'h1' | 'h2' | 'h3' | 'code';
 
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
@@ -46,6 +64,9 @@ export function Toolbar() {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [selectedFont, setSelectedFont] = useState('inter');
+  const [blockType, setBlockType] = useState<BlockType>('paragraph');
+  const [isBulletList, setIsBulletList] = useState(false);
+  const [isNumberedList, setIsNumberedList] = useState(false);
   const fontsConfig = useFontsConfig();
 
   const updateToolbar = useCallback(() => {
@@ -57,13 +78,42 @@ export function Toolbar() {
       setIsUnderline(selection.hasFormat('underline'));
       setIsCode(selection.hasFormat('code'));
 
-      // Check for code block
+      // Check for block type
       const anchorNode = selection.anchor.getNode();
-      const element =
+      let element =
         anchorNode.getKey() === 'root'
           ? anchorNode
           : anchorNode.getTopLevelElementOrThrow();
-      setIsCodeBlock($isCodeNode(element));
+
+      // Check if we're in a list
+      if ($isListNode(element)) {
+        const parentList = $getNearestNodeOfType<ListNode>(
+          anchorNode,
+          ListNode,
+        );
+        if (parentList) {
+          const listType = parentList.getListType();
+          setIsBulletList(listType === 'bullet');
+          setIsNumberedList(listType === 'number');
+        }
+        setBlockType('paragraph');
+        setIsCodeBlock(false);
+      } else {
+        setIsBulletList(false);
+        setIsNumberedList(false);
+
+        if ($isHeadingNode(element)) {
+          const tag = element.getTag();
+          setBlockType(tag as BlockType);
+          setIsCodeBlock(false);
+        } else if ($isCodeNode(element)) {
+          setBlockType('code');
+          setIsCodeBlock(true);
+        } else {
+          setBlockType('paragraph');
+          setIsCodeBlock(false);
+        }
+      }
 
       // Check for link
       const node = selection.getNodes().find((n) => $isLinkNode(n));
@@ -168,6 +218,42 @@ export function Toolbar() {
     [editor, fontsConfig],
   );
 
+  const handleBlockTypeChange = useCallback(
+    (newBlockType: string) => {
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          if (newBlockType === 'paragraph') {
+            $setBlocksType(selection, () => $createParagraphNode());
+          } else if (newBlockType === 'code') {
+            $setBlocksType(selection, () => $createCodeNode());
+          } else {
+            $setBlocksType(selection, () =>
+              $createHeadingNode(newBlockType as HeadingTagType),
+            );
+          }
+        }
+      });
+    },
+    [editor],
+  );
+
+  const toggleBulletList = useCallback(() => {
+    if (isBulletList) {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+    }
+  }, [editor, isBulletList]);
+
+  const toggleNumberedList = useCallback(() => {
+    if (isNumberedList) {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+    }
+  }, [editor, isNumberedList]);
+
   useEffect(() => {
     return mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
@@ -201,7 +287,35 @@ export function Toolbar() {
 
   return (
     <LumiaToolbar className="border-b border-border p-2" align="start" gap="sm">
-      <div className="flex gap-1">
+      <div className="flex flex-wrap items-center gap-1">
+        {/* Block Type Dropdown */}
+        <div className="min-w-[120px]">
+          <Select
+            value={blockType}
+            onChange={(e) => handleBlockTypeChange(e.target.value)}
+            aria-label="Block Type"
+          >
+            <option value="paragraph">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="code">Code Block</option>
+          </Select>
+        </div>
+        <div className="mx-2 h-6 w-px bg-border" />
+
+        {/* Font Combobox */}
+        <div className="min-w-[160px]">
+          <FontCombobox
+            config={fontsConfig}
+            value={selectedFont}
+            onChange={handleFontChange}
+            placeholder={selectedFont === '' ? 'Mixed' : 'Font...'}
+          />
+        </div>
+        <div className="mx-2 h-6 w-px bg-border" />
+
+        {/* Text Formatting Buttons */}
         <Button
           variant={isBold ? 'secondary' : 'ghost'}
           size="icon"
@@ -246,25 +360,16 @@ export function Toolbar() {
           }}
           onMouseDown={(e) => e.preventDefault()}
           aria-label="Format Code"
-          title="Code"
+          title="Inline Code"
         >
           <Code className="h-4 w-4" />
         </Button>
         <Button
           variant={isCodeBlock ? 'secondary' : 'ghost'}
           size="icon"
-          onClick={() => {
-            editor.update(() => {
-              const selection = $getSelection();
-              if ($isRangeSelection(selection)) {
-                if (isCodeBlock) {
-                  $setBlocksType(selection, () => $createParagraphNode());
-                } else {
-                  $setBlocksType(selection, () => $createCodeNode());
-                }
-              }
-            });
-          }}
+          onClick={() =>
+            handleBlockTypeChange(isCodeBlock ? 'paragraph' : 'code')
+          }
           onMouseDown={(e) => e.preventDefault()}
           aria-label="Format Code Block"
           title="Code Block"
@@ -272,14 +377,28 @@ export function Toolbar() {
           <FileCode className="h-4 w-4" />
         </Button>
         <div className="mx-2 h-6 w-px bg-border" />
-        <div className="min-w-[160px]">
-          <FontCombobox
-            config={fontsConfig}
-            value={selectedFont}
-            onChange={handleFontChange}
-            placeholder={selectedFont === '' ? 'Mixed' : 'Font...'}
-          />
-        </div>
+
+        {/* List Buttons */}
+        <Button
+          variant={isBulletList ? 'secondary' : 'ghost'}
+          size="icon"
+          onClick={toggleBulletList}
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label="Bullet List"
+          title="Bullet List"
+        >
+          <List className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={isNumberedList ? 'secondary' : 'ghost'}
+          size="icon"
+          onClick={toggleNumberedList}
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label="Numbered List"
+          title="Numbered List"
+        >
+          <ListOrdered className="h-4 w-4" />
+        </Button>
         <div className="mx-2 h-6 w-px bg-border" />
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>

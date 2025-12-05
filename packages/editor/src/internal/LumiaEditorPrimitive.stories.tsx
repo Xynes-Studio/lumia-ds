@@ -48,3 +48,42 @@ const JsonInOutTemplate = () => {
 export const JsonInOut: Story = {
   render: () => <JsonInOutTemplate />,
 };
+
+/**
+ * Document Full variant - Full toolbar visible at the top with all controls.
+ *
+ * Features:
+ * - Block type dropdown (Paragraph, H1/H2/H3, Code Block)
+ * - Font picker combobox
+ * - Text formatting (Bold, Italic, Underline, Inline Code, Code Block)
+ * - List buttons (Bullet, Numbered)
+ * - Link support
+ */
+const DocumentFullTemplate = () => {
+  const [json, setJson] = useState<LumiaEditorStateJSON | null>(null);
+
+  return (
+    <div
+      style={{
+        border: '1px solid #e5e5e5',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        maxWidth: '800px',
+      }}
+    >
+      <LumiaEditor value={json} onChange={setJson} />
+    </div>
+  );
+};
+
+export const DocumentFull: Story = {
+  render: () => <DocumentFullTemplate />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Full toolbar variant with Block Type dropdown, Font picker, text formatting buttons (Bold, Italic, Underline, Code, Code Block), List buttons (Bullet, Numbered), and Link support.',
+      },
+    },
+  },
+};

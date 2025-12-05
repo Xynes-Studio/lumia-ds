@@ -108,4 +108,57 @@ describe('Toolbar', () => {
       expect(codeBlockButton).not.toHaveClass('bg-secondary');
     });
   });
+
+  it('changes block type via dropdown to heading', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LumiaEditor value={null} onChange={onChange} />);
+
+    const editorInput = screen.getByRole('textbox');
+    await user.click(editorInput);
+    await user.keyboard('Hello Heading');
+
+    // Find and change the block type dropdown
+    const blockTypeSelect = screen.getByRole('combobox', {
+      name: /Block Type/i,
+    });
+    await user.selectOptions(blockTypeSelect, 'h1');
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalled();
+      const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1][0];
+      // Verify that the root has a heading child
+      const rootChildren = lastCall.root.children;
+      expect(rootChildren.length).toBeGreaterThan(0);
+      expect(rootChildren[0].type).toBe('heading');
+      expect(rootChildren[0].tag).toBe('h1');
+    });
+  });
+
+  it('toggles bullet list when clicking the bullet list button', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LumiaEditor value={null} onChange={onChange} />);
+
+    const editorInput = screen.getByRole('textbox');
+    await user.click(editorInput);
+    await user.keyboard('List item');
+
+    const bulletListButton = screen.getByRole('button', {
+      name: /Bullet List/i,
+    });
+    await user.click(bulletListButton);
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalled();
+      expect(bulletListButton).toHaveClass('bg-secondary');
+    });
+
+    // Verify the JSON output contains a list
+    const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1][0];
+    expect(lastCall.root.children[0].type).toBe('list');
+    expect(lastCall.root.children[0].listType).toBe('bullet');
+  });
 });
