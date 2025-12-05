@@ -6,6 +6,7 @@ import {
   $getSelection,
   $isRangeSelection,
   KEY_MODIFIER_COMMAND,
+  $isTextNode,
 } from 'lexical';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -28,8 +29,10 @@ import {
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND, $isLinkNode } from '@lexical/link';
 import { $createCodeNode, $isCodeNode } from '@lexical/code';
-import { $setBlocksType } from '@lexical/selection';
+import { $setBlocksType, $patchStyleText } from '@lexical/selection';
 import { $createParagraphNode } from 'lexical';
+import { FontCombobox } from '../components/Fonts';
+import { useFontsConfig } from '../useFontsConfig';
 
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
@@ -42,6 +45,8 @@ export function Toolbar() {
   const [linkUrl, setLinkUrl] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
+  const [selectedFont, setSelectedFont] = useState('inter');
+  const fontsConfig = useFontsConfig();
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -73,8 +78,54 @@ export function Toolbar() {
         setIsLink(false);
         setLinkUrl('');
       }
+
+      // Check current font-family from selection's style
+      const nodes = selection.getNodes();
+      if (nodes.length > 0) {
+        // Check all text nodes for their fonts
+        const fonts = new Set<string>();
+
+        nodes.forEach((node) => {
+          if ($isTextNode(node)) {
+            const style = node.getStyle();
+            if (style) {
+              const fontFamilyMatch = style.match(/font-family:\s*([^;]+)/);
+              if (fontFamilyMatch) {
+                fonts.add(fontFamilyMatch[1].trim());
+              } else {
+                fonts.add('default');
+              }
+            } else {
+              fonts.add('default');
+            }
+          }
+        });
+
+        // If multiple different fonts found, show empty (mixed state)
+        if (fonts.size > 1) {
+          setSelectedFont(''); // Empty string to show placeholder
+        } else if (fonts.size === 1) {
+          const fontFamily = Array.from(fonts)[0];
+          if (fontFamily === 'default') {
+            setSelectedFont(fontsConfig.defaultFontId);
+          } else {
+            // Find matching font in config by cssStack
+            const matchingFont = fontsConfig.allFonts.find(
+              (f) => fontFamily.includes(f.id) || fontFamily.includes(f.label),
+            );
+            if (matchingFont) {
+              setSelectedFont(matchingFont.id);
+            } else {
+              setSelectedFont(fontsConfig.defaultFontId);
+            }
+          }
+        } else {
+          // No text nodes, use default
+          setSelectedFont(fontsConfig.defaultFontId);
+        }
+      }
     }
-  }, [editor]);
+  }, [editor, fontsConfig]);
 
   const insertLink = useCallback(() => {
     if (!isLink) {
@@ -96,6 +147,26 @@ export function Toolbar() {
       setIsPopoverOpen(false);
     }
   }, [editor, linkUrl]);
+
+  const handleFontChange = useCallback(
+    (fontId: string) => {
+      setSelectedFont(fontId);
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const font = fontsConfig.allFonts.find((f) => f.id === fontId);
+          if (font) {
+            // Use $patchStyleText to apply font only to selected text portion
+            // This properly splits text nodes and maintains selection boundaries
+            $patchStyleText(selection, {
+              'font-family': font.cssStack,
+            });
+          }
+        }
+      });
+    },
+    [editor, fontsConfig],
+  );
 
   useEffect(() => {
     return mergeRegister(
@@ -200,6 +271,16 @@ export function Toolbar() {
         >
           <FileCode className="h-4 w-4" />
         </Button>
+        <div className="mx-2 h-6 w-px bg-border" />
+        <div className="min-w-[160px]">
+          <FontCombobox
+            config={fontsConfig}
+            value={selectedFont}
+            onChange={handleFontChange}
+            placeholder={selectedFont === '' ? 'Mixed' : 'Font...'}
+          />
+        </div>
+        <div className="mx-2 h-6 w-px bg-border" />
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <Button
