@@ -256,3 +256,49 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Table Styles */
+.editor-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  table-layout: fixed;
+}
+
+.editor-table td,
+.editor-table th {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 75px;
+}
+
+.editor-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.editor-table td:focus,
+.editor-table th:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.editor-table-cell-selected {
+  background-color: #dbeafe;
+}
+
+.editor-table-cell-resizer {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.editor-table-cell-resizer:hover {
+  background-color: #3b82f6;
+}
