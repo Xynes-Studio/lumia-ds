@@ -403,12 +403,20 @@ The editor supports tables via the `@lexical/table` integration.
 
 **Row & Column Controls**:
 When your cursor is inside a table cell, a floating toolbar appears above the table with the following controls:
+- **Header row** (checkbox): Toggle the first row as a header row (bold text, contrast background)
 - **Insert Row Above**: Add a new row above the current row
 - **Insert Row Below**: Add a new row below the current row
 - **Delete Row**: Remove the current row (disabled if only one row remains)
 - **Insert Column Left**: Add a new column to the left of the current column
 - **Insert Column Right**: Add a new column to the right of the current column
 - **Delete Column**: Remove the current column (disabled if only one column remains)
+
+**Header Row Toggle**:
+Use the "Header row" checkbox in the table toolbar to toggle the styling of the first row:
+- When enabled, first row cells are styled as headers with bold text and a contrast background
+- When disabled, first row cells revert to normal data cell styling
+- Cell content is preserved when toggling
+- Header state persists in JSON (`headerState: 1` for headers)
 
 **Keyboard Navigation**:
 - Press `Tab` to move to the next cell

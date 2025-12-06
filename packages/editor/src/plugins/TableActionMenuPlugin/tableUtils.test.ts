@@ -11,6 +11,7 @@ import {
   $isTableNode,
   $isTableRowNode,
   $isTableCellNode,
+  TableCellHeaderStates,
 } from '@lexical/table';
 import {
   ParagraphNode,
@@ -28,6 +29,8 @@ import {
   $getSelectedTable,
   $getSelectedTableRow,
   $getTableDimensions,
+  $hasTableHeaderRow,
+  $toggleTableHeaderRow,
 } from './tableUtils';
 
 describe('tableUtils', () => {
@@ -404,6 +407,251 @@ describe('tableUtils', () => {
         const dimensions = $getTableDimensions();
         expect(dimensions?.columnCount).toBe(2);
       });
+    });
+  });
+
+  describe('$hasTableHeaderRow', () => {
+    test('should return false for table without header row', async () => {
+      await createTestTable(2, 2);
+      await selectFirstCell();
+
+      editor.getEditorState().read(() => {
+        const hasHeader = $hasTableHeaderRow();
+        expect(hasHeader).toBe(false);
+      });
+    });
+
+    test('should return true for table with header row', async () => {
+      // Create table with header row
+      await editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+
+        const tableNode = $createTableNode();
+
+        // Header row (headerState = ROW)
+        const headerRow = $createTableRowNode();
+        for (let c = 0; c < 2; c++) {
+          const cellNode = $createTableCellNode(TableCellHeaderStates.ROW);
+          const para = $createParagraphNode();
+          para.append($createTextNode(`Header${c + 1}`));
+          cellNode.append(para);
+          headerRow.append(cellNode);
+        }
+        tableNode.append(headerRow);
+
+        // Data row
+        const dataRow = $createTableRowNode();
+        for (let c = 0; c < 2; c++) {
+          const cellNode = $createTableCellNode(0);
+          const para = $createParagraphNode();
+          para.append($createTextNode(`Data${c + 1}`));
+          cellNode.append(para);
+          dataRow.append(cellNode);
+        }
+        tableNode.append(dataRow);
+
+        root.append(tableNode);
+      });
+      await selectFirstCell();
+
+      editor.getEditorState().read(() => {
+        const hasHeader = $hasTableHeaderRow();
+        expect(hasHeader).toBe(true);
+      });
+    });
+
+    test('should return false when not in a table', async () => {
+      await editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+        const para = $createParagraphNode();
+        para.append($createTextNode('Hello'));
+        root.append(para);
+        para.select();
+      });
+
+      editor.getEditorState().read(() => {
+        const hasHeader = $hasTableHeaderRow();
+        expect(hasHeader).toBe(false);
+      });
+    });
+  });
+
+  describe('$toggleTableHeaderRow', () => {
+    test('should enable header row styling', async () => {
+      await createTestTable(2, 2);
+      await selectFirstCell();
+
+      // Initially should not have header row
+      editor.getEditorState().read(() => {
+        expect($hasTableHeaderRow()).toBe(false);
+      });
+
+      // Enable header row
+      await editor.update(() => {
+        $toggleTableHeaderRow(true);
+      });
+
+      // Now should have header row
+      editor.getEditorState().read(() => {
+        expect($hasTableHeaderRow()).toBe(true);
+      });
+    });
+
+    test('should disable header row styling', async () => {
+      // Create table with header row
+      await editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+
+        const tableNode = $createTableNode();
+
+        // Header row
+        const headerRow = $createTableRowNode();
+        for (let c = 0; c < 2; c++) {
+          const cellNode = $createTableCellNode(TableCellHeaderStates.ROW);
+          const para = $createParagraphNode();
+          para.append($createTextNode(`Header${c + 1}`));
+          cellNode.append(para);
+          headerRow.append(cellNode);
+        }
+        tableNode.append(headerRow);
+
+        // Data row
+        const dataRow = $createTableRowNode();
+        for (let c = 0; c < 2; c++) {
+          const cellNode = $createTableCellNode(0);
+          const para = $createParagraphNode();
+          para.append($createTextNode(`Data${c + 1}`));
+          cellNode.append(para);
+          dataRow.append(cellNode);
+        }
+        tableNode.append(dataRow);
+
+        root.append(tableNode);
+      });
+      await selectFirstCell();
+
+      // Initially should have header row
+      editor.getEditorState().read(() => {
+        expect($hasTableHeaderRow()).toBe(true);
+      });
+
+      // Disable header row
+      await editor.update(() => {
+        $toggleTableHeaderRow(false);
+      });
+
+      // Now should not have header row
+      editor.getEditorState().read(() => {
+        expect($hasTableHeaderRow()).toBe(false);
+      });
+    });
+
+    test('should preserve cell content when toggling header', async () => {
+      await createTestTable(2, 2);
+      await selectFirstCell();
+
+      // Get original cell content
+      let originalContent: string[] = [];
+      editor.getEditorState().read(() => {
+        const root = $getRoot();
+        const table = root.getFirstChild();
+        if ($isTableNode(table)) {
+          const firstRow = table.getFirstChild();
+          if ($isTableRowNode(firstRow)) {
+            firstRow.getChildren().forEach((cell) => {
+              if ($isTableCellNode(cell)) {
+                const para = cell.getFirstChild();
+                if ($isParagraphNode(para)) {
+                  const text = para.getTextContent();
+                  originalContent.push(text);
+                }
+              }
+            });
+          }
+        }
+      });
+
+      // Toggle header on
+      await editor.update(() => {
+        $toggleTableHeaderRow(true);
+      });
+
+      // Verify content is preserved
+      editor.getEditorState().read(() => {
+        const root = $getRoot();
+        const table = root.getFirstChild();
+        if ($isTableNode(table)) {
+          const firstRow = table.getFirstChild();
+          if ($isTableRowNode(firstRow)) {
+            let index = 0;
+            firstRow.getChildren().forEach((cell) => {
+              if ($isTableCellNode(cell)) {
+                const para = cell.getFirstChild();
+                if ($isParagraphNode(para)) {
+                  expect(para.getTextContent()).toBe(originalContent[index]);
+                  index++;
+                }
+              }
+            });
+          }
+        }
+      });
+    });
+
+    test('header state should persist in JSON export', async () => {
+      await createTestTable(2, 2);
+      await selectFirstCell();
+
+      // Enable header row
+      await editor.update(() => {
+        $toggleTableHeaderRow(true);
+      });
+
+      // Verify headerState is set correctly on cells (which will be serialized to JSON)
+      editor.getEditorState().read(() => {
+        const root = $getRoot();
+        const table = root.getFirstChild();
+        if ($isTableNode(table)) {
+          const firstRow = table.getFirstChild();
+          if ($isTableRowNode(firstRow)) {
+            const firstCell = firstRow.getFirstChild();
+            if ($isTableCellNode(firstCell)) {
+              const headerState = firstCell.getHeaderStyles();
+              // Check that headerState includes ROW flag
+              expect(headerState & TableCellHeaderStates.ROW).toBe(
+                TableCellHeaderStates.ROW,
+              );
+
+              // Also verify export works
+              const cellJson = firstCell.exportJSON();
+              expect(cellJson.headerState & TableCellHeaderStates.ROW).toBe(
+                TableCellHeaderStates.ROW,
+              );
+            }
+          }
+        }
+      });
+    });
+
+    test('should return false when not in a table', async () => {
+      await editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+        const para = $createParagraphNode();
+        para.append($createTextNode('Hello'));
+        root.append(para);
+        para.select();
+      });
+
+      let result = false;
+      await editor.update(() => {
+        result = $toggleTableHeaderRow(true);
+      });
+
+      expect(result).toBe(false);
     });
   });
 });

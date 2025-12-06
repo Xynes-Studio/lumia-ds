@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection, LexicalNode } from 'lexical';
 import { $isTableNode, TableNode } from '@lexical/table';
-import { Button } from '@lumia/components';
+import { Button, Checkbox } from '@lumia/components';
 import {
   Plus,
   Minus,
@@ -24,6 +24,8 @@ import {
   $deleteRow,
   $deleteColumn,
   $getTableDimensions,
+  $hasTableHeaderRow,
+  $toggleTableHeaderRow,
 } from './tableUtils';
 
 /**
@@ -52,6 +54,7 @@ export function TableActionMenuPlugin({
   const [tableElement, setTableElement] = useState<HTMLElement | null>(null);
   const [canDeleteRow, setCanDeleteRow] = useState(true);
   const [canDeleteColumn, setCanDeleteColumn] = useState(true);
+  const [hasHeaderRow, setHasHeaderRow] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Update state based on selection
@@ -81,6 +84,10 @@ export function TableActionMenuPlugin({
             setCanDeleteRow(dimensions.rowCount > 1);
             setCanDeleteColumn(dimensions.columnCount > 1);
           }
+
+          // Check if first row is a header row
+          const isHeaderRow = $hasTableHeaderRow();
+          setHasHeaderRow(isHeaderRow);
         } else {
           setIsInTable(false);
           setTableElement(null);
@@ -131,6 +138,13 @@ export function TableActionMenuPlugin({
     });
   }, [editor]);
 
+  // Handle toggle header row
+  const handleToggleHeaderRow = useCallback(() => {
+    editor.update(() => {
+      $toggleTableHeaderRow(!hasHeaderRow);
+    });
+  }, [editor, hasHeaderRow]);
+
   if (!isInTable || !tableElement) {
     return null;
   }
@@ -152,6 +166,19 @@ export function TableActionMenuPlugin({
         left: `${left}px`,
       }}
     >
+      {/* Header Row Toggle */}
+      <div className="table-action-group table-action-header-group">
+        <Checkbox
+          id="table-header-row"
+          checked={hasHeaderRow}
+          onChange={handleToggleHeaderRow}
+          label="Header row"
+          className="table-header-checkbox"
+        />
+      </div>
+
+      <div className="table-action-divider" />
+
       {/* Row Operations */}
       <div className="table-action-group">
         <Button
