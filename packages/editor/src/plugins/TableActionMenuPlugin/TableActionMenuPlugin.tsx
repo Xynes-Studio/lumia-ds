@@ -92,14 +92,14 @@ export function TableActionMenuPlugin({
   // Handle insert row above
   const handleInsertRowAbove = useCallback(() => {
     editor.update(() => {
-      $insertRow(true);
+      $insertRow(false); // insertAfter=false means insert before (above)
     });
   }, [editor]);
 
   // Handle insert row below
   const handleInsertRowBelow = useCallback(() => {
     editor.update(() => {
-      $insertRow(false);
+      $insertRow(true); // insertAfter=true means insert after (below)
     });
   }, [editor]);
 

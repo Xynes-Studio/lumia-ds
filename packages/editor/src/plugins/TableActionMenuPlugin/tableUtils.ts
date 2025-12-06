@@ -85,17 +85,17 @@ export function $getSelectedTableRow(): TableRowNode | null {
 
 /**
  * Inserts a new row above or below the current selection.
- * @param insertBefore - If true, inserts above; if false, inserts below
+ * @param insertAfter - If true, inserts below (after current row); if false, inserts above (before current row)
  * @returns true if successful, false otherwise
  */
-export function $insertRow(insertBefore: boolean): boolean {
+export function $insertRow(insertAfter: boolean): boolean {
   const cellNode = $getSelectedTableCell();
   if (!cellNode) {
     return false;
   }
 
   try {
-    $insertTableRow__EXPERIMENTAL(insertBefore);
+    $insertTableRow__EXPERIMENTAL(insertAfter);
     return true;
   } catch {
     return false;
