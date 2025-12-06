@@ -1,6 +1,7 @@
 import { ParagraphNode, ElementNode } from 'lexical';
 import { HeadingNode } from '@lexical/rich-text';
 import { CodeNode } from '@lexical/code';
+import { TableNode } from '@lexical/table';
 import { ImageBlockNode } from '../nodes/ImageBlockNode';
 import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { VideoBlockNode } from '../nodes/VideoBlockNode';
@@ -59,7 +60,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     type: 'table',
     label: 'Table',
     icon: Table,
-    nodeClass: ElementNode,
+    nodeClass: TableNode,
   },
   panel: {
     type: 'panel',

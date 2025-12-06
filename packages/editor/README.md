@@ -10,7 +10,7 @@ pnpm add @lumia/editor
 
 ## Features
 
-- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks, Images (Upload & URL).
+- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks, Images (Upload & URL), Tables.
 - **Text Formatting**: Bold, Italic, Underline, Inline Code (with keyboard shortcuts), Links (Cmd+K, Smart Paste).
 - **History**: Undo/Redo support.
 - **Inline Editor**: Dedicated component for titles and single-line text with bubble toolbar.
@@ -391,6 +391,42 @@ The editor supports a slash menu for quick block insertion.
 - **Available Commands**:
   - `/video` - Insert a video block (prompts for URL)
   - `/image` - Insert an image block (prompts for URL)
+
+
+
+### Table
+The editor supports tables via the `@lexical/table` integration.
+
+Tables are rendered with proper styling including:
+- Cell borders and padding
+- Header cell styling (with `headerState`)
+- Selection highlighting
+- Focus outlines for accessibility
+
+```tsx
+// Example table JSON structure
+const tableJSON = {
+  type: 'table',
+  children: [
+    {
+      type: 'tablerow',
+      children: [
+        { type: 'tablecell', headerState: 1, children: [...] }, // Header cell
+        { type: 'tablecell', headerState: 1, children: [...] },
+      ]
+    },
+    {
+      type: 'tablerow', 
+      children: [
+        { type: 'tablecell', headerState: 0, children: [...] }, // Data cell
+        { type: 'tablecell', headerState: 0, children: [...] },
+      ]
+    }
+  ]
+};
+```
+
+To view a demo table, navigate to the `Table / Basic` story in Storybook.
 
 
 
