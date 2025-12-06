@@ -379,6 +379,18 @@ editor.update(() => {
 - **Supported Providers**: 'youtube', 'vimeo', 'loom', 'html5'.
 - **Rendering**: Renders as an `iframe` for embed providers and `<video>` tag for HTML5.
 - **Auto-Embed**: When you paste a YouTube, Vimeo, or Loom URL, it is automatically converted to a VideoBlockNode embed. The plugin intercepts paste events and creates an embedded video block if the pasted content is a valid video URL.
+- **Insert Video (Toolbar)**: Use the Video button in the toolbar to open a dialog where you can enter a video URL and optionally override the provider detection (Auto-detect, YouTube, Vimeo, Loom, HTML5).
+- **Insert Video (Slash Menu)**: Type `/video` at the start of a line or after a space to insert a video block via the slash menu.
+
+### Slash Menu
+
+The editor supports a slash menu for quick block insertion.
+
+- **Trigger**: Type `/` at the start of a line or after whitespace to open the menu.
+- **Navigation**: Use arrow keys (↑/↓) to navigate, Enter to select, Escape to close.
+- **Available Commands**:
+  - `/video` - Insert a video block (prompts for URL)
+  - `/image` - Insert an image block (prompts for URL)
 
 
 

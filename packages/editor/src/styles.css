@@ -1,188 +1,258 @@
 .editor-container {
-    position: relative;
-    line-height: 20px;
-    color: #444;
-    font-weight: 400;
-    text-align: left;
-    border-radius: 4px;
-    background: #fff;
+  position: relative;
+  line-height: 20px;
+  color: #444;
+  font-weight: 400;
+  text-align: left;
+  border-radius: 4px;
+  background: #fff;
 }
 
 .editor-input {
-    min-height: 150px;
-    resize: none;
-    font-size: 15px;
-    caret-color: #444;
-    position: relative;
-    tab-size: 1;
-    outline: 0;
-    padding: 10px;
+  min-height: 150px;
+  resize: none;
+  font-size: 15px;
+  caret-color: #444;
+  position: relative;
+  tab-size: 1;
+  outline: 0;
+  padding: 10px;
 }
 
 .editor-placeholder {
-    color: #999;
-    overflow: hidden;
-    position: absolute;
-    text-overflow: ellipsis;
-    top: 10px;
-    left: 10px;
-    font-size: 15px;
-    user-select: none;
-    display: inline-block;
-    pointer-events: none;
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 10px;
+  left: 10px;
+  font-size: 15px;
+  user-select: none;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .editor-paragraph {
-    margin: 0 0 8px;
-    position: relative;
+  margin: 0 0 8px;
+  position: relative;
 }
 
 .editor-heading-h1 {
-    font-size: 24px;
-    color: #333;
-    font-weight: bold;
-    margin: 0 0 12px;
-    padding: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+  margin: 0 0 12px;
+  padding: 0;
 }
 
 .editor-heading-h2 {
-    font-size: 15px;
-    color: #333;
-    font-weight: bold;
-    margin: 10px 0;
-    padding: 0;
-    text-transform: uppercase;
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 0;
+  text-transform: uppercase;
 }
 
 .editor-heading-h3 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 600;
-    margin: 8px 0;
-    padding: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+  margin: 8px 0;
+  padding: 0;
 }
 
 .editor-quote {
-    margin: 0 0 0 20px;
-    font-size: 15px;
-    color: rgb(101, 103, 107);
-    border-left-color: rgb(206, 208, 212);
-    border-left-width: 4px;
-    border-left-style: solid;
-    padding-left: 16px;
+  margin: 0 0 0 20px;
+  font-size: 15px;
+  color: rgb(101, 103, 107);
+  border-left-color: rgb(206, 208, 212);
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding-left: 16px;
 }
 
 .editor-list-ol {
-    padding: 0;
-    margin: 0;
-    padding-left: 24px;
-    list-style-type: decimal;
+  padding: 0;
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: decimal;
 }
 
 .editor-list-ul {
-    padding: 0;
-    margin: 0;
-    padding-left: 24px;
-    list-style-type: disc;
+  padding: 0;
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: disc;
 }
 
 .editor-listitem {
-    margin: 8px 32px 8px 32px;
+  margin: 8px 32px 8px 32px;
 }
 
 .editor-link {
-    color: rgb(33, 111, 219);
-    text-decoration: underline;
+  color: rgb(33, 111, 219);
+  text-decoration: underline;
 }
 
 .cmd-pressed .editor-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .editor-code {
-    background-color: rgb(240, 242, 245);
-    font-family: Menlo, Consolas, Monaco, monospace;
-    display: block;
-    padding: 8px 8px 8px 52px;
-    line-height: 1.53;
-    font-size: 13px;
-    margin: 0;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    tab-size: 2;
-    overflow-x: auto;
-    position: relative;
+  background-color: rgb(240, 242, 245);
+  font-family: Menlo, Consolas, Monaco, monospace;
+  display: block;
+  padding: 8px 8px 8px 52px;
+  line-height: 1.53;
+  font-size: 13px;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  tab-size: 2;
+  overflow-x: auto;
+  position: relative;
 }
 
 .editor-code:before {
-    content: attr(data-gutter);
-    position: absolute;
-    background-color: #eee;
-    left: 0;
-    top: 0;
-    border-right: 1px solid #ccc;
-    padding: 8px;
-    color: #777;
-    white-space: pre-wrap;
-    text-align: right;
-    min-width: 25px;
+  content: attr(data-gutter);
+  position: absolute;
+  background-color: #eee;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  color: #777;
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
 }
 
 .editor-tokenComment {
-    color: slategray;
+  color: slategray;
 }
 
 .editor-tokenPunctuation {
-    color: #999;
+  color: #999;
 }
 
 .editor-tokenProperty {
-    color: #905;
+  color: #905;
 }
 
 .editor-tokenSelector {
-    color: #690;
+  color: #690;
 }
 
 .editor-tokenOperator {
-    color: #9a6e3a;
+  color: #9a6e3a;
 }
 
 .editor-tokenAttr {
-    color: #07a;
+  color: #07a;
 }
 
 .editor-tokenVariable {
-    color: #e90;
+  color: #e90;
 }
 
 .editor-tokenFunction {
-    color: #dd4a68;
+  color: #dd4a68;
 }
 
 .editor-tokenString {
-    color: #690;
+  color: #690;
 }
 
 /* Image Block Layouts */
 .image-block-container {
-    display: flex;
-    justify-content: center;
-    /* Default centered? Or left? */
-    margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  /* Default centered? Or left? */
+  margin: 10px 0;
 }
 
 .image-block-container.layout-inline {
-    /* Respects width */
-    display: inline-flex;
+  /* Respects width */
+  display: inline-flex;
 }
 
 .image-block-container.layout-fullWidth {
-    width: 100%;
+  width: 100%;
 }
 
 .image-block-container.layout-breakout {
-    width: 120%;
-    /* Example breakout */
-    margin-left: -10%;
+  width: 120%;
+  /* Example breakout */
+  margin-left: -10%;
+}
+
+/* Slash Menu Styles */
+.slash-menu {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  min-width: 220px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.slash-menu-content {
+  padding: 4px;
+}
+
+.slash-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.slash-menu-item:hover,
+.slash-menu-item-selected {
+  background-color: #f3f4f6;
+}
+
+.slash-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.slash-menu-item-selected .slash-menu-item-icon {
+  background-color: #e5e7eb;
+}
+
+.slash-menu-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.slash-menu-item-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.slash-menu-item-description {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

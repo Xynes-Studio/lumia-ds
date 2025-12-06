@@ -27,6 +27,7 @@ import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';
 import { ImageToolbarButton } from '../components/Toolbar/ImageToolbarButton';
 import { FileToolbarButton } from '../components/Toolbar/FileToolbarButton';
+import { VideoToolbarButton } from '../components/Toolbar/VideoToolbarButton';
 
 export function Toolbar() {
   const {
@@ -238,6 +239,7 @@ export function Toolbar() {
         <div className="mx-2 h-6 w-px bg-border" />
         <ImageToolbarButton />
         <FileToolbarButton />
+        <VideoToolbarButton />
       </div>
     </LumiaToolbar>
   );

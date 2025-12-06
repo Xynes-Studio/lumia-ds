@@ -18,7 +18,7 @@ export function ImageResizer({
   nodeKey: NodeKey;
   layout: 'inline' | 'breakout' | 'fullWidth' | undefined;
   width: number | undefined;
-}): JSX.Element {
+}): React.ReactElement {
   const handleLayoutChange = (
     newLayout: 'inline' | 'breakout' | 'fullWidth',
   ) => {

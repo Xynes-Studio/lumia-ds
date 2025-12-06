@@ -14,7 +14,9 @@ import { ClickableLinkPlugin } from './ClickableLinkPlugin';
 import { PasteLinkPlugin } from './PasteLinkPlugin';
 import { InsertImagePlugin } from '../plugins/InsertImagePlugin';
 import { InsertFilePlugin } from '../plugins/InsertFilePlugin';
+import { InsertVideoPlugin } from '../plugins/InsertVideoPlugin';
 import { AutoEmbedVideoPlugin } from '../plugins/AutoEmbedVideoPlugin';
+import { SlashMenuPlugin } from '../plugins/SlashMenuPlugin';
 
 import { EditorToolbarCompact } from './EditorToolbarCompact';
 
@@ -49,7 +51,9 @@ export function LumiaEditorPrimitive({
       <PasteLinkPlugin />
       <InsertImagePlugin />
       <InsertFilePlugin />
+      <InsertVideoPlugin />
       <AutoEmbedVideoPlugin />
+      <SlashMenuPlugin />
       <CodeHighlightPlugin />
     </div>
   );
