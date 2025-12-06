@@ -5,6 +5,7 @@ import { TableNode } from '@lexical/table';
 import { ImageBlockNode } from '../nodes/ImageBlockNode';
 import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { VideoBlockNode } from '../nodes/VideoBlockNode';
+import { PanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
 import {
   Type,
   Heading,
@@ -66,13 +67,13 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     type: 'panel',
     label: 'Panel',
     icon: LayoutTemplate,
-    nodeClass: ElementNode,
+    nodeClass: PanelBlockNode,
   },
   status: {
     type: 'status',
     label: 'Status',
     icon: Info,
-    nodeClass: ElementNode,
+    nodeClass: ElementNode, // Still placeholder
   },
 };
 

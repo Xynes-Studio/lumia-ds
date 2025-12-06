@@ -453,6 +453,35 @@ const tableJSON = {
 
 To view a demo table, navigate to the `Table / Basic` story in Storybook. To test table controls, navigate to `Table / With Controls`.
 
+### Panel Block
+The editor supports panel blocks (callouts) to highlight information, warnings, success messages, or notes.
+
+```tsx
+import { $createPanelBlockNode } from '@lumia/editor/nodes/PanelBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createPanelBlockNode({
+    variant: 'info', // 'info' | 'warning' | 'success' | 'note'
+    title: 'Information',
+    icon: 'info', // Optional icon key
+  });
+  // Add content
+  const paragraph = $createParagraphNode();
+  paragraph.append($createTextNode('This is an info panel.'));
+  node.append(paragraph);
+  
+  $insertNodes([node]);
+});
+```
+
+- **Variants**: Supports `info`, `warning`, `success`, and `note`.
+- **Styling**: Styles match the Lumia UI Alert component.
+- **Content**: Supports nested rich-text (paragraphs, lists, etc.) as children.
+
+To view panel demos, navigate to the `Panel / Static` story in Storybook.
+
+
 
 
 ## Performance Testing

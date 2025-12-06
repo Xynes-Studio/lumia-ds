@@ -18,6 +18,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ImageBlockNode } from './nodes/ImageBlockNode';
 import { VideoBlockNode } from './nodes/VideoBlockNode';
 import { FileBlockNode } from './nodes/FileBlockNode/FileBlockNode';
+import { PanelBlockNode } from './nodes/PanelBlockNode/PanelBlockNode';
 import {
   FontConfig,
   getDefaultFontConfig,
@@ -179,6 +180,7 @@ export function EditorProvider({
       tableCellHeader: 'editor-table-cell-header',
       tableRow: 'editor-table-row',
       tableSelection: 'editor-table-cell-selected',
+      panel: 'panel-node',
       ...theme,
     },
     onError: (error: Error) => console.error(error),
@@ -197,6 +199,7 @@ export function EditorProvider({
       ImageBlockNode,
       VideoBlockNode,
       FileBlockNode,
+      PanelBlockNode,
     ],
     editorState: value ? JSON.stringify(value) : undefined,
     editable: !readOnly,

@@ -369,7 +369,127 @@
   height: 16px;
 }
 
-.table-header-checkbox span:first-of-type svg {
-  width: 10px;
-  height: 10px;
+
+/* Panel Block Node */
+.panel-node {
+  position: relative;
+  width: 100%;
+  border-radius: 0.5rem;
+  /* rounded-lg */
+  border-width: 1px;
+  padding: 0.75rem 1rem;
+  /* py-3 px-4 */
+  padding-left: 3.5rem;
+  /* space for icon */
+  font-size: 0.875rem;
+  /* text-sm */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  /* shadow-sm */
+  display: flex;
+  flex-direction: column;
+  /* To stack title and content */
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.panel-node.info {
+  border-color: rgba(191, 219, 254, 0.8);
+  /* border-blue-200/80 */
+  background-color: #eff6ff;
+  /* bg-blue-50 */
+  color: #1e3a8a;
+  /* text-blue-900 */
+}
+
+.panel-node.success {
+  border-color: rgba(167, 243, 208, 0.8);
+  /* border-emerald-200/80 */
+  background-color: #ecfdf5;
+  /* bg-emerald-50 */
+  color: #064e3b;
+  /* text-emerald-900 */
+}
+
+.panel-node.warning {
+  border-color: rgba(253, 230, 138, 0.8);
+  /* border-amber-200/80 */
+  background-color: #fffbeb;
+  /* bg-amber-50 */
+  color: #78350f;
+  /* text-amber-900 */
+}
+
+.panel-node.note {
+  border-color: rgba(229, 231, 235, 0.8);
+  /* border-gray-200/80 */
+  background-color: #f9fafb;
+  /* bg-gray-50 */
+  color: #1f2937;
+  /* text-gray-900 */
+}
+
+.panel-icon {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 
+ * Map data-icon attributes to SVGs using pseudo-elements with background-image.
+ * Note: SVGs must be URL encoded. 
+ * Alternatively, we can assume standard icons.
+ */
+.panel-node.info .panel-icon::before {
+  /* Info icon (blue) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.success .panel-icon::before {
+  /* Check icon (green) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.warning .panel-icon::before {
+  /* Alert Triangle icon (amber) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.note .panel-icon::before {
+  /* File/Note icon (gray) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-title {
+  font-weight: 600;
+  /* font-semibold */
+  line-height: 1.5rem;
+  /* leading-6 */
+  margin-bottom: 0.125rem;
+  /* gap-1ish */
+  /* Colors are inherited from parent text color usually, but we can target if needed */
 }
