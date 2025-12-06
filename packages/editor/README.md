@@ -394,13 +394,21 @@ The editor supports a slash menu for quick block insertion.
   - `/table` - Insert a 3×3 table
 
 
-
 ### Table
 The editor supports tables via the `@lexical/table` integration.
 
 **Inserting Tables**:
 - **Toolbar**: Click the Table button in the toolbar to insert a 3×3 table at the current selection.
 - **Slash Menu**: Type `/table` at the start of a line or after a space to insert a 3×3 table.
+
+**Row & Column Controls**:
+When your cursor is inside a table cell, a floating toolbar appears above the table with the following controls:
+- **Insert Row Above**: Add a new row above the current row
+- **Insert Row Below**: Add a new row below the current row
+- **Delete Row**: Remove the current row (disabled if only one row remains)
+- **Insert Column Left**: Add a new column to the left of the current column
+- **Insert Column Right**: Add a new column to the right of the current column
+- **Delete Column**: Remove the current column (disabled if only one column remains)
 
 **Keyboard Navigation**:
 - Press `Tab` to move to the next cell
@@ -435,7 +443,7 @@ const tableJSON = {
 };
 ```
 
-To view a demo table, navigate to the `Table / Basic` story in Storybook. To test table insertion, navigate to `Table / Insert`.
+To view a demo table, navigate to the `Table / Basic` story in Storybook. To test table controls, navigate to `Table / With Controls`.
 
 
 

@@ -156,6 +156,26 @@ export const Basic: Story = {
 };
 
 /**
+ * Demonstrates the table action menu for adding/removing rows and columns.
+ * Click inside a table cell to see the floating toolbar.
+ */
+export const WithControls: Story = {
+  args: {
+    value: createTableJSON(),
+    onChange: (val) => console.log('Table onChange:', val),
+    mode: 'document',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Click inside any table cell to see the table action menu. Use it to insert rows above/below, columns left/right, or delete rows/columns. The menu appears as a floating toolbar above the table.',
+      },
+    },
+  },
+};
+
+/**
  * An empty table for testing table creation.
  */
 export const EmptyTable: Story = {

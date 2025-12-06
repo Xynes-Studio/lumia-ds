@@ -18,6 +18,7 @@ import { InsertFilePlugin } from '../plugins/InsertFilePlugin';
 import { InsertVideoPlugin } from '../plugins/InsertVideoPlugin';
 import { AutoEmbedVideoPlugin } from '../plugins/AutoEmbedVideoPlugin';
 import { SlashMenuPlugin } from '../plugins/SlashMenuPlugin';
+import { TableActionMenuPlugin } from '../plugins/TableActionMenuPlugin';
 
 import { EditorToolbarCompact } from './EditorToolbarCompact';
 
@@ -48,6 +49,7 @@ export function LumiaEditorPrimitive({
       <HistoryPlugin />
       <ListPlugin />
       <TablePlugin />
+      <TableActionMenuPlugin />
       <LinkPlugin />
       <ClickableLinkPlugin />
       <PasteLinkPlugin />
