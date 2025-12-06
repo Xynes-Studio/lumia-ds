@@ -15,6 +15,7 @@ import {
   TableCellNode,
   TableNode,
   TableRowNode,
+  TableCellHeaderStates,
 } from '@lexical/table';
 
 /**
@@ -209,4 +210,61 @@ export function $getTableDimensions(): {
   const columnCount = firstRow.getChildren().filter($isTableCellNode).length;
 
   return { rowCount, columnCount };
+}
+
+/**
+ * Checks if the current table has a header row (first row has header styling).
+ * @returns true if first row cells have row header styling, false otherwise
+ */
+export function $hasTableHeaderRow(): boolean {
+  const tableNode = $getSelectedTable();
+  if (!tableNode) return false;
+
+  const rows = tableNode.getChildren().filter($isTableRowNode);
+  const firstRow = rows[0];
+  if (!firstRow) return false;
+
+  const cells = firstRow.getChildren().filter($isTableCellNode);
+  if (cells.length === 0) return false;
+
+  // Check if all cells in first row have row header styling
+  return cells.every((cell) => {
+    const headerState = cell.getHeaderStyles();
+    return (headerState & TableCellHeaderStates.ROW) !== 0;
+  });
+}
+
+/**
+ * Toggles header row styling for the first row of the current table.
+ * @param enable - If true, sets first row as header; if false, removes header styling
+ * @returns true if successful, false otherwise
+ */
+export function $toggleTableHeaderRow(enable: boolean): boolean {
+  const tableNode = $getSelectedTable();
+  if (!tableNode) return false;
+
+  const rows = tableNode.getChildren().filter($isTableRowNode);
+  const firstRow = rows[0];
+  if (!firstRow) return false;
+
+  const cells = firstRow.getChildren().filter($isTableCellNode);
+
+  for (const cell of cells) {
+    const currentState = cell.getHeaderStyles();
+    if (enable) {
+      // Add ROW header styling (preserve COLUMN if present)
+      cell.setHeaderStyles(
+        currentState | TableCellHeaderStates.ROW,
+        TableCellHeaderStates.ROW,
+      );
+    } else {
+      // Remove ROW header styling (preserve COLUMN if present)
+      cell.setHeaderStyles(
+        currentState & ~TableCellHeaderStates.ROW,
+        TableCellHeaderStates.ROW,
+      );
+    }
+  }
+
+  return true;
 }

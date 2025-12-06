@@ -353,3 +353,23 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* Table Header Row Toggle */
+.table-action-header-group {
+  padding: 0 4px;
+}
+
+.table-header-checkbox {
+  font-size: 12px;
+  gap: 6px;
+}
+
+.table-header-checkbox span:first-of-type {
+  width: 16px;
+  height: 16px;
+}
+
+.table-header-checkbox span:first-of-type svg {
+  width: 10px;
+  height: 10px;
+}

@@ -390,3 +390,23 @@ export const Insert: Story = {
     },
   },
 };
+
+/**
+ * Demonstrates the header row toggle feature.
+ * Click inside a table cell, then toggle "Header row" checkbox in the toolbar.
+ */
+export const HeaderRowToggle: Story = {
+  args: {
+    value: createTableJSON(),
+    onChange: (val) => console.log('HeaderRowToggle onChange:', val),
+    mode: 'document',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the header row toggle. Click inside any table cell to see the table action menu with the "Header row" checkbox. Toggling it will style the first row as a header (bold, contrast background) or revert it to normal cells. The header state persists in JSON.',
+      },
+    },
+  },
+};
