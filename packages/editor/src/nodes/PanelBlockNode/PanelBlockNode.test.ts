@@ -58,4 +58,36 @@ describe('PanelBlockNode', () => {
       expect(importedNode.__icon).toBe('check');
     });
   });
+
+  test('should update variant and icon via setters', () => {
+    const editor = createHeadlessEditor(editorConfig);
+    editor.update(() => {
+      const node = $createPanelBlockNode({ variant: 'info' });
+      expect(node.getVariant()).toBe('info');
+
+      node.setVariant('warning');
+      expect(node.getVariant()).toBe('warning');
+      expect(node.__variant).toBe('warning');
+
+      node.setIcon('alert-triangle');
+      expect(node.getIcon()).toBe('alert-triangle');
+
+      node.setTitle('New Title');
+      expect(node.getTitle()).toBe('New Title');
+    });
+  });
+
+  test('should create node from command payload', () => {
+    const editor = createHeadlessEditor(editorConfig);
+    editor.update(() => {
+      // Simulate payload from /panel command
+      const payload = {
+        variant: 'info' as const,
+        title: 'Info Panel',
+      };
+      const node = $createPanelBlockNode(payload);
+      expect(node.getVariant()).toBe('info');
+      expect(node.getTitle()).toBe('Info Panel');
+    });
+  });
 });

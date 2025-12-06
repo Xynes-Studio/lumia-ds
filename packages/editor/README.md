@@ -478,6 +478,9 @@ editor.update(() => {
 - **Variants**: Supports `info`, `warning`, `success`, and `note`.
 - **Styling**: Styles match the Lumia UI Alert component.
 - **Content**: Supports nested rich-text (paragraphs, lists, etc.) as children.
+- **Insert Panel (Toolbar)**: Use the Panel button in the toolbar to insert a panel with a selected variant.
+- **Insert Panel (Slash Menu)**: Type `/panel` to insert an info panel.
+- **Variant Switching**: Click on an existing panel to use the floating menu to switch between variants.
 
 To view panel demos, navigate to the `Panel / Static` story in Storybook.
 

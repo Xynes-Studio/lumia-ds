@@ -29,6 +29,7 @@ import { ImageToolbarButton } from '../components/Toolbar/ImageToolbarButton';
 import { FileToolbarButton } from '../components/Toolbar/FileToolbarButton';
 import { VideoToolbarButton } from '../components/Toolbar/VideoToolbarButton';
 import { TableToolbarButton } from '../components/Toolbar/TableToolbarButton';
+import { PanelToolbarButton } from '../components/Toolbar/PanelToolbarButton';
 
 export function Toolbar() {
   const {
@@ -242,6 +243,7 @@ export function Toolbar() {
         <FileToolbarButton />
         <VideoToolbarButton />
         <TableToolbarButton />
+        <PanelToolbarButton />
       </div>
     </LumiaToolbar>
   );

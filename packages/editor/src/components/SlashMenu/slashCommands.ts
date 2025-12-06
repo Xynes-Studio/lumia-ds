@@ -1,6 +1,7 @@
-import { LucideIcon, Video, Image, Table2 } from 'lucide-react';
+import { LucideIcon, Video, Image, Table2, Info } from 'lucide-react';
 import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
+import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { LexicalEditor } from 'lexical';
 
@@ -56,6 +57,19 @@ export const defaultSlashCommands: SlashCommand[] = [
           alt: '',
         });
       }
+    },
+  },
+  {
+    name: 'panel',
+    label: 'Panel',
+    description: 'Insert an info panel',
+    icon: Info,
+    keywords: ['panel', 'alert', 'info', 'note', 'warning', 'callout'],
+    execute: (editor) => {
+      editor.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'info',
+        title: 'Info Panel',
+      });
     },
   },
   {

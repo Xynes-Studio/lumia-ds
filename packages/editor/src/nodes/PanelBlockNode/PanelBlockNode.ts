@@ -76,6 +76,33 @@ export class PanelBlockNode extends ElementNode {
     this.__icon = icon;
   }
 
+  getVariant(): PanelVariant {
+    return this.__variant;
+  }
+
+  setVariant(variant: PanelVariant): void {
+    const self = this.getWritable();
+    self.__variant = variant;
+  }
+
+  getTitle(): string | undefined {
+    return this.__title;
+  }
+
+  setTitle(title: string | undefined): void {
+    const self = this.getWritable();
+    self.__title = title;
+  }
+
+  getIcon(): string | undefined {
+    return this.__icon;
+  }
+
+  setIcon(icon: string | undefined): void {
+    const self = this.getWritable();
+    self.__icon = icon;
+  }
+
   createDOM(config: EditorConfig): HTMLElement {
     const div = document.createElement('div');
     const className = config.theme.panel || 'panel-node';
