@@ -8,3 +8,4 @@ export * from './useFontsConfig';
 export * from './components/Fonts';
 export * from './blocks';
 export * from './components/BlockInspector/BlockInspector';
+export * from './components/BlockOutline';
