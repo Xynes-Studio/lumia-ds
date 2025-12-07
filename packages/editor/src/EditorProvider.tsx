@@ -89,8 +89,8 @@ const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
   setSelectedBlock: (block: SelectedBlock | null) => void;
 }>({
-  setEditorState: () => { },
-  setSelectedBlock: () => { },
+  setEditorState: () => {},
+  setSelectedBlock: () => {},
 });
 export const useInternalEditorContext = () => useContext(InternalEditorContext);
 
