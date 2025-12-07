@@ -1,0 +1,41 @@
+{
+    "name": "@lumia/editor-renderer",
+    "type": "module",
+    "version": "0.0.0",
+    "description": "Read-only renderer for Lumia Lexical documents",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "vitest run",
+        "lint": "eslint \"src/**/*.{ts,tsx}\""
+    },
+    "peerDependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.3.12",
+        "@types/react-dom": "^18.3.1",
+        "tsup": "^8.0.0",
+        "typescript": "^5.0.0",
+        "vitest": "^2.1.9"
+    },
+    "dependencies": {
+        "@lumia/components": "workspace:*",
+        "@lumia/icons": "workspace:*",
+        "lexical": "0.38.2",
+        "lucide-react": "^0.474.0",
+        "clsx": "^2.1.1",
+        "tailwind-merge": "^2.3.0"
+    }
+}
