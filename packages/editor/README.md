@@ -577,6 +577,25 @@ function App() {
 - **Custom Inspectors**: You can provide custom inspector components when registering custom blocks.
 - **Fallback**: Displays "No block selected" or "No configurable properties" when appropriate.
 
+### Supported Inspectors
+
+The following core blocks now have dedicated inspectors:
+
+- **Image**:
+    - **Alt Text**: Update the alt text for accessibility.
+    - **Layout**: Switch between Inline, Breakout, and Full Width layouts.
+    - **Width**: Adjust image width percentage via slider.
+- **Video**:
+    - **URL**: Update the video source URL.
+    - **Provider**: Switch provider type (YouTube, Vimeo, Loom, HTML5).
+    - **Title**: Update the video title.
+- **Panel**:
+    - **Variant**: Change panel style (Info, Warning, Success, Note).
+    - **Title**: Update the panel title.
+- **Status**:
+    - **Text**: Update the status label.
+    - **Color**: Change the status color (Info, Success, Warning, Error).
+
 
 
 

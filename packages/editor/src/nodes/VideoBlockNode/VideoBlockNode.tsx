@@ -118,6 +118,21 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
       />
     );
   }
+
+  setSrc(src: string): void {
+    const self = this.getWritable();
+    self.__src = src;
+  }
+
+  setProvider(provider: VideoProvider): void {
+    const self = this.getWritable();
+    self.__provider = provider;
+  }
+
+  setTitle(title: string): void {
+    const self = this.getWritable();
+    self.__title = title;
+  }
 }
 
 export function $createVideoBlockNode({
