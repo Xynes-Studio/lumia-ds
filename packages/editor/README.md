@@ -449,10 +449,14 @@ The editor supports a slash menu for quick block insertion.
 
 - **Trigger**: Type `/` at the start of a line or after whitespace to open the menu.
 - **Navigation**: Use arrow keys (↑/↓) to navigate, Enter to select, Escape to close.
+- **Powered by BlockRegistry**: Commands are dynamically generated from blocks with `slashEnabled: true`.
 - **Available Commands**:
-  - `/video` - Insert a video block (prompts for URL)
   - `/image` - Insert an image block (prompts for URL)
+  - `/video` - Insert a video block (prompts for URL)
+  - `/file` - Attach a file
   - `/table` - Insert a 3×3 table
+  - `/panel` - Insert an info panel
+  - `/status` - Insert a status pill
 
 
 ### Table
