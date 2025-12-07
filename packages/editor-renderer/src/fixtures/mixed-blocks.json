@@ -1,0 +1,172 @@
+{
+    "root": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Welcome to Lumia Editor",
+                        "type": "text",
+                        "version": 1
+                    }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "heading",
+                "version": 1,
+                "tag": "h1"
+            },
+            {
+                "children": [
+                    {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "This is a paragraph with some ",
+                        "type": "text",
+                        "version": 1
+                    },
+                    {
+                        "detail": 0,
+                        "format": 1,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "bold text",
+                        "type": "text",
+                        "version": 1
+                    },
+                    {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": ".",
+                        "type": "text",
+                        "version": 1
+                    }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "paragraph",
+                "version": 1
+            },
+            {
+                "format": "",
+                "type": "image-block",
+                "version": 1,
+                "src": "https://placehold.co/600x400",
+                "altText": "Placeholder Image",
+                "width": 600,
+                "height": 400
+            },
+            {
+                "format": "",
+                "type": "panel-block",
+                "version": 1,
+                "panelType": "info",
+                "children": [
+                    {
+                        "type": "paragraph",
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "This is an info panel."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "children": [
+                    {
+                        "type": "tablerow",
+                        "children": [
+                            {
+                                "type": "tablecell",
+                                "headerState": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Header 1"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "tablecell",
+                                "headerState": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Header 2"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tablerow",
+                        "children": [
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Cell 1"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Cell 2"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "status",
+                "status": "success",
+                "label": "Done"
+            }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "root",
+        "version": 1
+    }
+}

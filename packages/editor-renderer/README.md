@@ -42,5 +42,5 @@ function MyPage() {
 | Prop | Type | Description |
 |------|------|-------------|
 | `value` | `LumiaEditorStateJSON` | The JSON output from Lumia Editor. |
-| `blockRegistry` | `BlockDefinition[]` | Optional registry for custom block metadata (future use). |
+| `blockRegistry` | `BlockDefinition[]` | Optional registry to override or extend block rendering components. |
 | `className` | `string` | Optional CSS class for the container. |

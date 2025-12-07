@@ -1,13 +1,9 @@
 import React from 'react';
-import { PanelBlock } from './blocks/PanelBlock';
-import { VideoBlock } from './blocks/VideoBlock';
-import { ImageBlock } from './blocks/ImageBlock';
-import { FileBlock } from './blocks/FileBlock';
-import { StatusBlock } from './blocks/StatusBlock';
 import { TextRenderer } from './renderers/TextRenderer';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { LumiaEditorStateJSON, BlockDefinition } from '../types';
+import { defaultBlockRegistry } from '../blockRegistry';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -28,31 +24,72 @@ export interface LumiaDocumentProps {
 
 export const LumiaDocument: React.FC<LumiaDocumentProps> = ({
   value,
+  blockRegistry = [],
   className,
 }) => {
   if (!value || !value.root) return null;
+
+  // Merge default registry with provided registry
+  // Provided registry overrides defaults if types match
+  const mergedRegistry = new Map<string, BlockDefinition>();
+  defaultBlockRegistry.forEach((def) => mergedRegistry.set(def.type, def));
+  blockRegistry.forEach((def) => mergedRegistry.set(def.type, def));
+
   return (
     <div
       className={cn('lumia-document prose prose-slate max-w-none', className)}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <RenderChildren nodes={(value.root as any).children} />
+      {}
+      <RenderChildren
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodes={(value.root as any).children}
+        registry={mergedRegistry}
+      />
     </div>
   );
 };
 
-const RenderChildren = ({ nodes }: { nodes: LumiaNode[] }) => {
+const RenderChildren = ({
+  nodes,
+  registry,
+}: {
+  nodes: LumiaNode[];
+  registry: Map<string, BlockDefinition>;
+}) => {
   if (!nodes) return null;
   return (
     <>
       {nodes.map((node: LumiaNode, i: number) => (
-        <NodeRenderer key={(node.key as string) || i} node={node} />
+        <NodeRenderer
+          key={(node.key as string) || i}
+          node={node}
+          registry={registry}
+        />
       ))}
     </>
   );
 };
 
-const NodeRenderer = ({ node }: { node: LumiaNode }) => {
+const NodeRenderer = ({
+  node,
+  registry,
+}: {
+  node: LumiaNode;
+  registry: Map<string, BlockDefinition>;
+}) => {
+  // Check if we have a custom component for this block type
+  const blockDef = registry.get(node.type);
+  if (blockDef && blockDef.component) {
+    const Component = blockDef.component;
+
+    return (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      <Component node={node as any}>
+        <RenderChildren nodes={node.children || []} registry={registry} />
+      </Component>
+    );
+  }
+
   switch (node.type) {
     case 'text':
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,7 +105,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
           )}
           style={getIndentStyle(node.indent as number)}
         >
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </p>
       );
 
@@ -91,7 +128,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
           )}
           style={getIndentStyle(node.indent as number)}
         >
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </Tag>
       );
     }
@@ -99,7 +136,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
     case 'quote':
       return (
         <blockquote className="border-l-4 border-gray-300 pl-4 py-1 my-4 italic text-gray-700 bg-gray-50/50">
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </blockquote>
       );
 
@@ -111,7 +148,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
           rel={node.rel as string}
           className="text-blue-600 hover:underline cursor-pointer"
         >
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </a>
       );
 
@@ -121,7 +158,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
         node.listType === 'number' ? 'list-decimal' : 'list-disc';
       return (
         <ListTag className={cn('list-inside my-4 pl-4', listStyle)}>
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </ListTag>
       );
     }
@@ -145,7 +182,7 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
             />
           )}
           <span className="flex-1 min-w-0">
-            <RenderChildren nodes={node.children || []} />
+            <RenderChildren nodes={node.children || []} registry={registry} />
           </span>
         </li>
       );
@@ -160,27 +197,56 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
           </div>
           <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono text-gray-800 border border-gray-200">
             <code>
-              <RenderChildren nodes={node.children || []} />
+              <RenderChildren nodes={node.children || []} registry={registry} />
             </code>
           </pre>
         </div>
       );
     }
 
-    case 'table':
+    case 'table': {
+      // Separate header rows from body rows
+      const children = node.children || [];
+      const headerRows: LumiaNode[] = [];
+      const bodyRows: LumiaNode[] = [];
+
+      children.forEach((row) => {
+        // Check if row has any header cells
+        const hasHeaderCell = row.children?.some(
+          (cell) => cell.headerState === 1,
+        );
+        if (hasHeaderCell) {
+          headerRows.push(row);
+        } else {
+          bodyRows.push(row);
+        }
+      });
+
+      // If no explicit header rows found but maybe it's just the first row?
+      // Lexical table usually marks header cells. If all cells in first row are headers, it's a header row.
+      // We will stick to the logic: row containing header cells -> head, else -> body.
+      // Wait, complex tables might have headers on left.
+      // Standard simplified validation: If specific header rows exist, use them in thead.
+
       return (
         <div className="overflow-x-auto my-6 border rounded-lg">
           <table className="w-full border-collapse bg-white text-sm text-left">
+            {headerRows.length > 0 && (
+              <thead className="bg-gray-50 text-gray-900 border-b border-gray-200">
+                <RenderChildren nodes={headerRows} registry={registry} />
+              </thead>
+            )}
             <tbody className="divide-y divide-gray-200">
-              <RenderChildren nodes={node.children || []} />
+              <RenderChildren nodes={bodyRows} registry={registry} />
             </tbody>
           </table>
         </div>
       );
+    }
     case 'tablerow':
       return (
         <tr className="hover:bg-gray-50/50 transition-colors">
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </tr>
       );
     case 'tablecell': {
@@ -196,42 +262,18 @@ const NodeRenderer = ({ node }: { node: LumiaNode }) => {
               : 'text-gray-700',
           )}
           colSpan={node.colSpan as number}
+          rowSpan={node.rowSpan as number}
         >
-          <RenderChildren nodes={node.children || []} />
+          <RenderChildren nodes={node.children || []} registry={registry} />
         </CellTag>
       );
     }
-
-    // Custom Blocks
-    case 'panel-block':
-      return (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        <PanelBlock node={node as any}>
-          <RenderChildren nodes={node.children || []} />
-        </PanelBlock>
-      );
-
-    case 'video-block':
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return <VideoBlock node={node as any} />;
-
-    case 'image-block':
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return <ImageBlock node={node as any} />;
-
-    case 'file-block':
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return <FileBlock node={node as any} />;
-
-    case 'status':
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return <StatusBlock node={node as any} />;
 
     default:
       if (node.children) {
         return (
           <div className="unknown-block my-2">
-            <RenderChildren nodes={node.children || []} />
+            <RenderChildren nodes={node.children || []} registry={registry} />
           </div>
         );
       }
