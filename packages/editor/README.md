@@ -549,6 +549,34 @@ editor.update(() => {
 
 To view panel demos, navigate to the `Panel / Static` story in Storybook.
 
+### Block Inspector
+
+The `BlockInspector` component provides a context-aware property inspector for the currently selected block. It renders specific inspector controls based on the selected block type (e.g., Image settings when an image is selected).
+
+```tsx
+import { BlockInspector, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+        <div className="w-80 border-l">
+          {/* Automatically shows controls for the selected block */}
+          <BlockInspector />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Registry-Driven**: Inspectors are defined in the `BlockRegistry` via the `inspector` property.
+- **Custom Inspectors**: You can provide custom inspector components when registering custom blocks.
+- **Fallback**: Displays "No block selected" or "No configurable properties" when appropriate.
+
 
 
 

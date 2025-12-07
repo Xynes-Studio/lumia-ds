@@ -3,9 +3,11 @@ import { HeadingNode } from '@lexical/rich-text';
 import { CodeNode } from '@lexical/code';
 import { TableNode } from '@lexical/table';
 import { ImageBlockNode } from '../nodes/ImageBlockNode';
+import { ImageBlockInspector } from '../nodes/ImageBlockNode/ImageBlockInspector';
 import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { VideoBlockNode } from '../nodes/VideoBlockNode';
 import { PanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
+import { PanelBlockInspector } from '../nodes/PanelBlockNode/PanelBlockInspector';
 import { StatusNode } from '../nodes/StatusNode';
 import {
   Type,
@@ -59,6 +61,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     insertable: true,
     insertAction: 'custom',
     slashEnabled: true,
+    inspector: ImageBlockInspector,
   },
   video: {
     type: 'video',
@@ -103,6 +106,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     insertable: true,
     insertAction: 'custom',
     slashEnabled: true,
+    inspector: PanelBlockInspector,
   },
   status: {
     type: 'status',
