@@ -37,6 +37,15 @@ function MyPage() {
   - `file-block` (File attachments)
   - `table` (Tables)
 
+
+## Examples
+
+Check out the Storybook for live examples:
+
+- **Marketing Document**: Rich text processing with hero images and key points.
+- **Knowledge Base Article**: Technical documentation with status indicators and panels.
+- **Blog Post**: Content with code snippets, video tutorials, and data tables.
+
 ## Props
 
 | Prop | Type | Description |

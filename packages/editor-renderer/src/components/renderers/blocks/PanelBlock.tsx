@@ -12,9 +12,9 @@ interface PanelBlockProps {
     variant: 'info' | 'warning' | 'success' | 'note';
     title?: string;
     icon?: string;
-    children: React.ReactNode;
+    children?: unknown; // Lexical children node array
   };
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const PanelBlock: React.FC<PanelBlockProps> = ({ node, children }) => {
