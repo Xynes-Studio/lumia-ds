@@ -81,7 +81,7 @@ function EditorStatePlugin({
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
 }>({
-  setEditorState: () => { },
+  setEditorState: () => {},
 });
 const useInternalEditorContext = () => useContext(InternalEditorContext);
 

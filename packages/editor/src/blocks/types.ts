@@ -18,4 +18,10 @@ export interface BlockDefinition {
   icon: React.ComponentType;
   nodeClass: Klass<LexicalNode>;
   inspector?: React.ComponentType<{ nodeKey: NodeKey }>;
+  /** Description shown in slash menu */
+  description?: string;
+  /** Keywords for slash menu filtering */
+  keywords?: string[];
+  /** Custom slash command name (defaults to type) */
+  slashCommand?: string;
 }

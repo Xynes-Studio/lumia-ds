@@ -280,7 +280,7 @@ const normalized = normalizeFontConfig(config);
 
 ### Block Registry
 
-The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video).
+The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video). This is the single source of truth for block metadata.
 
 #### `BlockType`
 
@@ -299,9 +299,26 @@ type BlockType =
   | 'code';
 ```
 
-#### `blockRegistry`
+#### `BlockDefinition`
 
-A Map containing definitions for all registered blocks. You can retrieve block definitions using `getBlockDefinition(type)`.
+Interface for block metadata:
+
+```typescript
+interface BlockDefinition {
+  type: BlockType;
+  label: string;
+  icon: React.ComponentType;
+  nodeClass: Klass<LexicalNode>;
+  inspector?: React.ComponentType<{ nodeKey: NodeKey }>;
+  description?: string;       // Description shown in slash menu
+  keywords?: string[];        // Keywords for slash menu filtering
+  slashCommand?: string;      // Custom slash command name
+}
+```
+
+#### `getBlockDefinition(type)`
+
+Retrieve a single block definition by type:
 
 ```typescript
 import { getBlockDefinition } from '@lumia/editor/blocks';
@@ -309,6 +326,18 @@ import { getBlockDefinition } from '@lumia/editor/blocks';
 const imageBlock = getBlockDefinition('image');
 // Returns BlockDefinition for 'image'
 ```
+
+#### `getBlockDefinitions()`
+
+Retrieve all registered block definitions:
+
+```typescript
+import { getBlockDefinitions } from '@lumia/editor/blocks';
+
+const allBlocks = getBlockDefinitions();
+// Returns BlockDefinition[] with all 9 core block types
+```
+
 
 ### Image Block
 
