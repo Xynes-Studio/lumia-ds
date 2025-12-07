@@ -3,9 +3,14 @@ import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
 import { INSERT_STATUS_COMMAND } from '../../plugins/InsertStatusPlugin';
+import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { LexicalEditor } from 'lexical';
-import { getBlockDefinition, BlockType } from '../../blocks';
+import {
+  getSlashCommandBlocks,
+  getBlockDefinition,
+  BlockType,
+} from '../../blocks';
 
 export interface SlashCommand {
   /** Name of the command (without leading slash) */
@@ -20,6 +25,77 @@ export interface SlashCommand {
   keywords: string[];
   /** Action to execute when command is selected */
   execute: (editor: LexicalEditor) => void;
+}
+
+/**
+ * Registry of execute functions for each block type.
+ * Maps block types to their slash command execute handlers.
+ */
+const slashCommandExecutors: Record<string, (editor: LexicalEditor) => void> = {
+  video: (editor: LexicalEditor) => {
+    const url = window.prompt('Enter video URL:');
+    if (url) {
+      editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
+        src: url,
+      });
+    }
+  },
+  image: (editor: LexicalEditor) => {
+    const url = window.prompt('Enter image URL:');
+    if (url) {
+      editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
+        src: url,
+        alt: '',
+      });
+    }
+  },
+  panel: (editor: LexicalEditor) => {
+    editor.dispatchCommand(INSERT_PANEL_COMMAND, {
+      variant: 'info',
+      title: 'Info Panel',
+    });
+  },
+  table: (editor: LexicalEditor) => {
+    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+      rows: '3',
+      columns: '3',
+      includeHeaders: false,
+    });
+  },
+  status: (editor: LexicalEditor) => {
+    editor.dispatchCommand(INSERT_STATUS_COMMAND, {
+      text: 'Status',
+      color: 'info',
+    });
+  },
+  file: (editor: LexicalEditor) => {
+    const url = window.prompt('Enter file URL:');
+    if (url) {
+      editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+        url,
+        filename: url.split('/').pop() || 'file',
+      });
+    }
+  },
+};
+
+/**
+ * Icon overrides for specific block types in the slash menu.
+ * Use this when the slash menu should show a different icon than the registry default.
+ */
+const iconOverrides: Partial<Record<string, LucideIcon>> = {
+  table: Table2,
+};
+
+/**
+ * Get the execute function for a block type.
+ * @param blockType - The block type to get the executor for
+ * @returns The execute function or undefined if not found
+ */
+export function getSlashCommandExecutor(
+  blockType: string,
+): ((editor: LexicalEditor) => void) | undefined {
+  return slashCommandExecutors[blockType];
 }
 
 /**
@@ -51,63 +127,42 @@ export function createSlashCommandFromRegistry(
   };
 }
 
-// Execute functions for each block type
-const executeVideo = (editor: LexicalEditor) => {
-  const url = window.prompt('Enter video URL:');
-  if (url) {
-    editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
-      src: url,
-    });
+/**
+ * Dynamically generate slash commands from the BlockRegistry.
+ * Only includes blocks with slashEnabled: true that have an executor defined.
+ */
+function generateSlashCommands(): SlashCommand[] {
+  const slashBlocks = getSlashCommandBlocks();
+  const commands: SlashCommand[] = [];
+
+  for (const block of slashBlocks) {
+    const executor = slashCommandExecutors[block.type];
+    if (!executor) continue;
+
+    const iconOverride = iconOverrides[block.type];
+    const command = createSlashCommandFromRegistry(
+      block.type,
+      executor,
+      iconOverride ? { icon: iconOverride } : undefined,
+    );
+
+    if (command) {
+      commands.push(command);
+    }
   }
-};
 
-const executeImage = (editor: LexicalEditor) => {
-  const url = window.prompt('Enter image URL:');
-  if (url) {
-    editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
-      src: url,
-      alt: '',
-    });
-  }
-};
-
-const executePanel = (editor: LexicalEditor) => {
-  editor.dispatchCommand(INSERT_PANEL_COMMAND, {
-    variant: 'info',
-    title: 'Info Panel',
-  });
-};
-
-const executeTable = (editor: LexicalEditor) => {
-  editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-    rows: '3',
-    columns: '3',
-    includeHeaders: false,
-  });
-};
-
-const executeStatus = (editor: LexicalEditor) => {
-  editor.dispatchCommand(INSERT_STATUS_COMMAND, {
-    text: 'Status',
-    color: 'info',
-  });
-};
+  return commands;
+}
 
 /**
  * Default slash commands available in the editor.
  * Metadata is derived from BlockRegistry to ensure single source of truth.
  */
-export const defaultSlashCommands: SlashCommand[] = [
-  createSlashCommandFromRegistry('video', executeVideo),
-  createSlashCommandFromRegistry('image', executeImage),
-  createSlashCommandFromRegistry('panel', executePanel),
-  // Table uses a different icon (Table2) in slash menu
-  createSlashCommandFromRegistry('table', executeTable, { icon: Table2 }),
-  createSlashCommandFromRegistry('status', executeStatus),
-].filter((cmd): cmd is SlashCommand => cmd !== null);
+export const defaultSlashCommands: SlashCommand[] = generateSlashCommands();
 
 /**
  * Filter commands based on query string.
+ * Matches against command name, label, and keywords.
  */
 export function filterSlashCommands(
   commands: SlashCommand[],

@@ -58,6 +58,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['image', 'picture', 'photo', 'media'],
     insertable: true,
     insertAction: 'custom',
+    slashEnabled: true,
   },
   video: {
     type: 'video',
@@ -68,6 +69,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['video', 'youtube', 'vimeo', 'loom', 'embed', 'media'],
     insertable: true,
     insertAction: 'custom',
+    slashEnabled: true,
   },
   file: {
     type: 'file',
@@ -78,6 +80,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['file', 'attachment', 'document', 'upload'],
     insertable: true,
     insertAction: 'custom',
+    slashEnabled: true,
   },
   table: {
     type: 'table',
@@ -88,6 +91,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['table', 'grid', 'rows', 'columns'],
     insertable: true,
     insertAction: 'command',
+    slashEnabled: true,
   },
   panel: {
     type: 'panel',
@@ -98,6 +102,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['panel', 'alert', 'info', 'note', 'warning', 'callout'],
     insertable: true,
     insertAction: 'custom',
+    slashEnabled: true,
   },
   status: {
     type: 'status',
@@ -108,6 +113,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     keywords: ['status', 'pill', 'tag', 'label', 'badge'],
     insertable: true,
     insertAction: 'command',
+    slashEnabled: true,
   },
 };
 
@@ -144,4 +150,12 @@ export function getBlockDefinitions(): BlockDefinition[] {
  */
 export function getInsertableBlocks(): BlockDefinition[] {
   return getBlockDefinitions().filter((block) => block.insertable === true);
+}
+
+/**
+ * Get all block definitions that appear in the slash menu.
+ * @returns Array of slash-menu-enabled block definitions
+ */
+export function getSlashCommandBlocks(): BlockDefinition[] {
+  return getBlockDefinitions().filter((block) => block.slashEnabled === true);
 }

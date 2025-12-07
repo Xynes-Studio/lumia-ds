@@ -28,4 +28,6 @@ export interface BlockDefinition {
   insertable?: boolean;
   /** Insert action type - 'command' dispatches directly, 'custom' opens dialog/popover */
   insertAction?: 'command' | 'custom';
+  /** Whether this block appears in the slash menu */
+  slashEnabled?: boolean;
 }
