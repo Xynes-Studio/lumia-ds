@@ -280,7 +280,7 @@ const normalized = normalizeFontConfig(config);
 
 ### Block Registry
 
-The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video).
+The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video). This is the single source of truth for block metadata.
 
 #### `BlockType`
 
@@ -299,9 +299,26 @@ type BlockType =
   | 'code';
 ```
 
-#### `blockRegistry`
+#### `BlockDefinition`
 
-A Map containing definitions for all registered blocks. You can retrieve block definitions using `getBlockDefinition(type)`.
+Interface for block metadata:
+
+```typescript
+interface BlockDefinition {
+  type: BlockType;
+  label: string;
+  icon: React.ComponentType;
+  nodeClass: Klass<LexicalNode>;
+  inspector?: React.ComponentType<{ nodeKey: NodeKey }>;
+  description?: string;       // Description shown in slash menu
+  keywords?: string[];        // Keywords for slash menu filtering
+  slashCommand?: string;      // Custom slash command name
+}
+```
+
+#### `getBlockDefinition(type)`
+
+Retrieve a single block definition by type:
 
 ```typescript
 import { getBlockDefinition } from '@lumia/editor/blocks';
@@ -309,6 +326,50 @@ import { getBlockDefinition } from '@lumia/editor/blocks';
 const imageBlock = getBlockDefinition('image');
 // Returns BlockDefinition for 'image'
 ```
+
+#### `getBlockDefinitions()`
+
+Retrieve all registered block definitions:
+
+```typescript
+import { getBlockDefinitions } from '@lumia/editor/blocks';
+
+const allBlocks = getBlockDefinitions();
+// Returns BlockDefinition[] with all 9 core block types
+```
+
+#### `getInsertableBlocks()`
+
+Retrieve only block definitions that can be inserted via the Insert menu:
+
+```typescript
+import { getInsertableBlocks } from '@lumia/editor/blocks';
+
+const insertableBlocks = getInsertableBlocks();
+// Returns BlockDefinition[] with insertable: true
+```
+
+### Insert Menu
+
+The editor toolbar includes an **Insert** dropdown menu that is dynamically generated from the BlockRegistry. Blocks with `insertable: true` appear in this menu.
+
+To make a custom block appear in the Insert menu, add these fields to your BlockDefinition:
+
+```typescript
+const customBlock: BlockDefinition = {
+  type: 'custom',
+  label: 'Custom Block',
+  icon: CustomIcon,
+  nodeClass: CustomNode,
+  insertable: true,         // Appear in Insert menu
+  insertAction: 'command',  // 'command' for simple insert, 'custom' for dialog
+};
+```
+
+**Insert Action Types:**
+- `'command'` - Dispatches insert command directly (e.g., table, status)
+- `'custom'` - Opens a dialog/popover for additional input (e.g., image URL, panel variant)
+
 
 ### Image Block
 

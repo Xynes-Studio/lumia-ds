@@ -4,9 +4,9 @@ import type { StatusColor } from './StatusNode';
 import { StatusNodePopover } from './StatusNodePopover';
 
 export interface StatusNodeComponentProps {
-    text: string;
-    color: StatusColor;
-    nodeKey: NodeKey;
+  text: string;
+  color: StatusColor;
+  nodeKey: NodeKey;
 }
 
 /**
@@ -15,15 +15,9 @@ export interface StatusNodeComponentProps {
  * Wraps the status pill with a popover for inline editing of text and color.
  */
 export function StatusNodeComponent({
-    text,
-    color,
-    nodeKey,
+  text,
+  color,
+  nodeKey,
 }: StatusNodeComponentProps): React.ReactElement {
-    return (
-        <StatusNodePopover
-            nodeKey={nodeKey}
-            text={text}
-            color={color}
-        />
-    );
+  return <StatusNodePopover nodeKey={nodeKey} text={text} color={color} />;
 }
