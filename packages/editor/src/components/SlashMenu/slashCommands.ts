@@ -1,7 +1,8 @@
-import { LucideIcon, Video, Image, Table2, Info } from 'lucide-react';
+import { LucideIcon, Video, Image, Table2, Info, CircleDot } from 'lucide-react';
 import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
+import { INSERT_STATUS_COMMAND } from '../../plugins/InsertStatusPlugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { LexicalEditor } from 'lexical';
 
@@ -83,6 +84,19 @@ export const defaultSlashCommands: SlashCommand[] = [
         rows: '3',
         columns: '3',
         includeHeaders: false,
+      });
+    },
+  },
+  {
+    name: 'status',
+    label: 'Status',
+    description: 'Insert a status pill',
+    icon: CircleDot,
+    keywords: ['status', 'pill', 'tag', 'label', 'badge'],
+    execute: (editor) => {
+      editor.dispatchCommand(INSERT_STATUS_COMMAND, {
+        text: 'Status',
+        color: 'info',
       });
     },
   },

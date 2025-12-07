@@ -84,8 +84,18 @@ export class StatusNode extends DecoratorNode<React.ReactElement> {
         return true;
     }
 
+    setText(text: string): void {
+        const writable = this.getWritable();
+        writable.__text = text;
+    }
+
+    setColor(color: StatusColor): void {
+        const writable = this.getWritable();
+        writable.__color = color;
+    }
+
     decorate(): React.ReactElement {
-        return <StatusNodeComponent text={this.__text} color={this.__color} />;
+        return <StatusNodeComponent text={this.__text} color={this.__color} nodeKey={this.__key} />;
     }
 }
 

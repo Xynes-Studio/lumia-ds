@@ -1,4 +1,4 @@
-# StatusNode (ED-218)
+# StatusNode (ED-218 & ED-219)
 
 Inline status lozenge for displaying status labels within paragraph text, similar to Confluence Status macro.
 
@@ -8,6 +8,32 @@ Inline status lozenge for displaying status labels within paragraph text, simila
 ## Attributes
 - `text: string` – the status text to display.
 - `color: 'success' | 'warning' | 'error' | 'info'` – semantic color variant.
+
+## Quick Insert via Slash Command (ED-219)
+
+Type `/status` in the editor to insert a status pill:
+
+1. In an empty paragraph, type `/status`
+2. Select "Status" from the slash menu
+3. A default "Status" pill with `info` color is inserted
+
+## Editing via Popover (ED-219)
+
+Click on any status pill to open the editing popover:
+
+- **Text Input**: Edit the label text (debounced 300ms updates)
+- **Color Swatches**: Click to instantly change color (success, warning, error, info)
+
+### Programmatic Updates
+```tsx
+editor.update(() => {
+  const node = $getNodeByKey(nodeKey);
+  if ($isStatusNode(node)) {
+    node.setText('Updated');
+    node.setColor('success');
+  }
+});
+```
 
 ## Usage
 
@@ -44,6 +70,16 @@ editor.update(() => {
 });
 ```
 
+### Via Command
+```tsx
+import { INSERT_STATUS_COMMAND } from '@lumia/editor';
+
+editor.dispatchCommand(INSERT_STATUS_COMMAND, {
+  text: 'In Progress',
+  color: 'info',
+});
+```
+
 ## Serialization
 ```json
 {
@@ -58,3 +94,5 @@ editor.update(() => {
 - StatusNode is **inline** (`isInline()` returns `true`), allowing it to be placed within paragraph text.
 - Uses Lumia's `StatusPill` component for consistent styling.
 - Registered in the editor's block registry under type `'status'`.
+- Popover uses Lumia `Popover`, `PopoverContent`, `PopoverTrigger`, and `Input` components.
+

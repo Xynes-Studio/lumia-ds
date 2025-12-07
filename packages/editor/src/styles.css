@@ -493,3 +493,30 @@
   /* gap-1ish */
   /* Colors are inherited from parent text color usually, but we can target if needed */
 }
+
+/* Status Node Popover Styles */
+.status-color-swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.status-color-swatch:hover {
+  transform: scale(1.05);
+}
+
+.status-color-swatch-selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.status-color-swatch:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}

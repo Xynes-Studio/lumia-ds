@@ -1,24 +1,29 @@
 import * as React from 'react';
-import { StatusPill, StatusPillVariant } from '@lumia/components';
+import type { NodeKey } from 'lexical';
 import type { StatusColor } from './StatusNode';
+import { StatusNodePopover } from './StatusNodePopover';
 
 export interface StatusNodeComponentProps {
     text: string;
     color: StatusColor;
+    nodeKey: NodeKey;
 }
 
-const colorToVariant: Record<StatusColor, StatusPillVariant> = {
-    success: 'success',
-    warning: 'warning',
-    error: 'error',
-    info: 'info',
-};
-
+/**
+ * StatusNodeComponent - React component rendered by StatusNode decorator.
+ *
+ * Wraps the status pill with a popover for inline editing of text and color.
+ */
 export function StatusNodeComponent({
     text,
     color,
+    nodeKey,
 }: StatusNodeComponentProps): React.ReactElement {
-    const variant = colorToVariant[color] || 'info';
-
-    return <StatusPill variant={variant}>{text}</StatusPill>;
+    return (
+        <StatusNodePopover
+            nodeKey={nodeKey}
+            text={text}
+            color={color}
+        />
+    );
 }
