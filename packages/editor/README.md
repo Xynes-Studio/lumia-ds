@@ -599,6 +599,34 @@ The following core blocks now have dedicated inspectors:
 
 
 
+### Block Outline
+
+The `BlockOutline` component provides a sidebar navigation listing all top-level blocks in the document. It allows users to quickly jump to specific sections or content blocks.
+
+```tsx
+import { BlockOutline, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="w-64 border-r">
+          {/* Shows a list of blocks and updates automatically */}
+          <BlockOutline />
+        </div>
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Live Updates**: The outline updates in real-time as content changes (throttled).
+- **Navigation**: Clicking an item scrolls the editor to that block and selects it.
+- **Active State**: The current block in view is highlighted in the outline.
+
 ## Performance Testing
 
 The editor includes a "Large Document" story for performance testing. This story pre-seeds the editor with a large JSON payload (50+ paragraphs, headings, lists) to verify rendering performance and typing latency.
