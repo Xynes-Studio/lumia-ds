@@ -52,4 +52,28 @@ describe('StatusNode', () => {
             expect(StatusNode.getType()).toBe(StatusNode.getType());
         });
     });
+
+    test('setText should update the text', () => {
+        editor.update(() => {
+            const node = new StatusNode('Original', 'info');
+            node.setText('Updated');
+            expect(node.__text).toBe('Updated');
+        });
+    });
+
+    test('setColor should update the color', () => {
+        editor.update(() => {
+            const node = new StatusNode('Status', 'info');
+            node.setColor('success');
+            expect(node.__color).toBe('success');
+        });
+    });
+
+    test('getText and getColor accessors work correctly', () => {
+        editor.update(() => {
+            const node = new StatusNode('Test', 'warning');
+            expect(node.getText()).toBe('Test');
+            expect(node.getColor()).toBe('warning');
+        });
+    });
 });
