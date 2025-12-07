@@ -6,9 +6,11 @@ import { ImageBlockNode } from '../nodes/ImageBlockNode';
 import { ImageBlockInspector } from '../nodes/ImageBlockNode/ImageBlockInspector';
 import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { VideoBlockNode } from '../nodes/VideoBlockNode';
+import { VideoBlockInspector } from '../nodes/VideoBlockNode/VideoBlockInspector';
 import { PanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
 import { PanelBlockInspector } from '../nodes/PanelBlockNode/PanelBlockInspector';
 import { StatusNode } from '../nodes/StatusNode';
+import { StatusInspector } from '../nodes/StatusNode/StatusInspector';
 import {
   Type,
   Heading,
@@ -73,6 +75,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     insertable: true,
     insertAction: 'custom',
     slashEnabled: true,
+    inspector: VideoBlockInspector,
   },
   file: {
     type: 'file',
@@ -118,6 +121,7 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     insertable: true,
     insertAction: 'command',
     slashEnabled: true,
+    inspector: StatusInspector,
   },
 };
 

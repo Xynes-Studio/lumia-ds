@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 
 export type SliderProps = Omit<
   ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
-  'value' | 'defaultValue' | 'onValueChange'
+  'value' | 'defaultValue' | 'onValueChange' | 'onChange'
 > & {
   value: number;
   min: number;
