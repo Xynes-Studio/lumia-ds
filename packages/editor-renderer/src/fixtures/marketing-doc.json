@@ -1,0 +1,192 @@
+{
+    "root": {
+        "children": [
+            {
+                "type": "heading",
+                "tag": "h1",
+                "format": "center",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Lumia: The Future of Workspace",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "image-block",
+                "src": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=1200",
+                "alt": "Modern office space",
+                "caption": "Reimagining how we work together",
+                "layout": "center",
+                "width": 800,
+                "height": 500,
+                "version": 1
+            },
+            {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "In today's fast-paced digital landscape, ",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    },
+                    {
+                        "type": "text",
+                        "text": "collaboration is key",
+                        "format": 1,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    },
+                    {
+                        "type": "text",
+                        "text": ". Lumia brings your team together in a single, unified environment designed for creativity and productivity.",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "quote",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "The best way to predict the future is to create it.",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "tag": "h2",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Why choose Lumia?",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "list",
+                "listType": "bullet",
+                "listStyleType": "disc",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 1,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Seamless Integration: Works with your favorite tools.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 2,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Real-time Sync: Never lose a change.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 3,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Beautiful Design: A joy to use every day.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "panel-block",
+                "variant": "success",
+                "title": "Pro Tip",
+                "version": 1,
+                "children": [
+                    {
+                        "type": "paragraph",
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Start your free trial today and experience the difference immediately!",
+                                "format": 0,
+                                "version": 1,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0
+                            }
+                        ],
+                        "format": "",
+                        "indent": 0,
+                        "version": 1
+                    }
+                ]
+            }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "root",
+        "version": 1
+    }
+}

@@ -1,0 +1,309 @@
+{
+    "root": {
+        "children": [
+            {
+                "type": "image-block",
+                "src": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200",
+                "alt": "Coding screen",
+                "caption": "",
+                "layout": "full-width",
+                "width": 1200,
+                "height": 600,
+                "version": 1
+            },
+            {
+                "type": "heading",
+                "tag": "h1",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Mastering React Hooks",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "By ",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    },
+                    {
+                        "type": "text",
+                        "text": "Jane Doe",
+                        "format": 1,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    },
+                    {
+                        "type": "text",
+                        "text": " | Dec 7, 2025",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "color: #666",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ],
+                "format": "",
+                "indent": 0,
+                "version": 1
+            },
+            {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "React Hooks have revolutionized how we write components. In this guide, we'll explore custom hooks and patterns for efficient state management.",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "tag": "h2",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "The useToggle Hook",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "One of the simplest yet most useful hooks is `useToggle`. Here is how you can implement it:",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "code",
+                "language": "typescript",
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "import { useState, useCallback } from 'react';\n\nexport function useToggle(initialValue: boolean = false) {\n  const [value, setValue] = useState(initialValue);\n  const toggle = useCallback(() => setValue(v => !v), []);\n  return [value, toggle] as const;\n}",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "tag": "h3",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Video Tutorial",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "video-block",
+                "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "provider": "youtube",
+                "title": "React Hooks Tutorial",
+                "version": 1
+            },
+            {
+                "type": "heading",
+                "tag": "h3",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Performance Comparison",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "children": [
+                    {
+                        "type": "tablerow",
+                        "children": [
+                            {
+                                "type": "tablecell",
+                                "headerState": 1,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Approach",
+                                                "format": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "tablecell",
+                                "headerState": 1,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Render Time (ms)",
+                                                "format": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tablerow",
+                        "children": [
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Class Component"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "1.2"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tablerow",
+                        "children": [
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "Functional + Hooks"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "tablecell",
+                                "headerState": 0,
+                                "colSpan": 1,
+                                "rowSpan": 1,
+                                "children": [
+                                    {
+                                        "type": "paragraph",
+                                        "children": [
+                                            {
+                                                "type": "text",
+                                                "text": "0.9"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "root",
+        "version": 1
+    }
+}
