@@ -24,4 +24,8 @@ export interface BlockDefinition {
   keywords?: string[];
   /** Custom slash command name (defaults to type) */
   slashCommand?: string;
+  /** Whether this block can be inserted via the Insert menu */
+  insertable?: boolean;
+  /** Insert action type - 'command' dispatches directly, 'custom' opens dialog/popover */
+  insertAction?: 'command' | 'custom';
 }

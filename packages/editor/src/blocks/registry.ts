@@ -56,6 +56,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: ImageBlockNode,
     description: 'Insert an image from URL',
     keywords: ['image', 'picture', 'photo', 'media'],
+    insertable: true,
+    insertAction: 'custom',
   },
   video: {
     type: 'video',
@@ -64,6 +66,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: VideoBlockNode,
     description: 'Embed a video from YouTube, Vimeo, or Loom',
     keywords: ['video', 'youtube', 'vimeo', 'loom', 'embed', 'media'],
+    insertable: true,
+    insertAction: 'custom',
   },
   file: {
     type: 'file',
@@ -72,6 +76,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: FileBlockNode,
     description: 'Attach a file',
     keywords: ['file', 'attachment', 'document', 'upload'],
+    insertable: true,
+    insertAction: 'custom',
   },
   table: {
     type: 'table',
@@ -80,6 +86,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: TableNode,
     description: 'Insert a table',
     keywords: ['table', 'grid', 'rows', 'columns'],
+    insertable: true,
+    insertAction: 'command',
   },
   panel: {
     type: 'panel',
@@ -88,6 +96,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: PanelBlockNode,
     description: 'Insert an info panel',
     keywords: ['panel', 'alert', 'info', 'note', 'warning', 'callout'],
+    insertable: true,
+    insertAction: 'custom',
   },
   status: {
     type: 'status',
@@ -96,6 +106,8 @@ export const CORE_BLOCKS: Record<string, BlockDefinition> = {
     nodeClass: StatusNode,
     description: 'Insert a status pill',
     keywords: ['status', 'pill', 'tag', 'label', 'badge'],
+    insertable: true,
+    insertAction: 'command',
   },
 };
 
@@ -124,4 +136,12 @@ export function getBlockDefinition(
  */
 export function getBlockDefinitions(): BlockDefinition[] {
   return Array.from(blockRegistry.values());
+}
+
+/**
+ * Get all block definitions that can be inserted via the Insert menu.
+ * @returns Array of insertable block definitions
+ */
+export function getInsertableBlocks(): BlockDefinition[] {
+  return getBlockDefinitions().filter((block) => block.insertable === true);
 }

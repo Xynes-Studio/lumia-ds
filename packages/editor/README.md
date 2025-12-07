@@ -338,6 +338,38 @@ const allBlocks = getBlockDefinitions();
 // Returns BlockDefinition[] with all 9 core block types
 ```
 
+#### `getInsertableBlocks()`
+
+Retrieve only block definitions that can be inserted via the Insert menu:
+
+```typescript
+import { getInsertableBlocks } from '@lumia/editor/blocks';
+
+const insertableBlocks = getInsertableBlocks();
+// Returns BlockDefinition[] with insertable: true
+```
+
+### Insert Menu
+
+The editor toolbar includes an **Insert** dropdown menu that is dynamically generated from the BlockRegistry. Blocks with `insertable: true` appear in this menu.
+
+To make a custom block appear in the Insert menu, add these fields to your BlockDefinition:
+
+```typescript
+const customBlock: BlockDefinition = {
+  type: 'custom',
+  label: 'Custom Block',
+  icon: CustomIcon,
+  nodeClass: CustomNode,
+  insertable: true,         // Appear in Insert menu
+  insertAction: 'command',  // 'command' for simple insert, 'custom' for dialog
+};
+```
+
+**Insert Action Types:**
+- `'command'` - Dispatches insert command directly (e.g., table, status)
+- `'custom'` - Opens a dialog/popover for additional input (e.g., image URL, panel variant)
+
 
 ### Image Block
 
