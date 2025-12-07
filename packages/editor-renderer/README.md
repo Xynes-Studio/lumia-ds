@@ -53,3 +53,14 @@ Check out the Storybook for live examples:
 | `value` | `LumiaEditorStateJSON` | The JSON output from Lumia Editor. |
 | `blockRegistry` | `BlockDefinition[]` | Optional registry to override or extend block rendering components. |
 | `className` | `string` | Optional CSS class for the container. |
+
+## Testing
+
+To ensure compatibility between the Editor's JSON output and this Renderer, we include a compatibility suite integration test.
+
+```bash
+# Run compatibility tests
+npm run test
+```
+
+This verifies that all supported core and custom blocks (Image, Video, Panel, etc.) render correctly from a standardized JSON fixture.
