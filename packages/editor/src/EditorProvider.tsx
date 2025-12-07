@@ -19,6 +19,7 @@ import { ImageBlockNode } from './nodes/ImageBlockNode';
 import { VideoBlockNode } from './nodes/VideoBlockNode';
 import { FileBlockNode } from './nodes/FileBlockNode/FileBlockNode';
 import { PanelBlockNode } from './nodes/PanelBlockNode/PanelBlockNode';
+import { StatusNode } from './nodes/StatusNode';
 import {
   FontConfig,
   getDefaultFontConfig,
@@ -80,7 +81,7 @@ function EditorStatePlugin({
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
 }>({
-  setEditorState: () => {},
+  setEditorState: () => { },
 });
 const useInternalEditorContext = () => useContext(InternalEditorContext);
 
@@ -181,6 +182,7 @@ export function EditorProvider({
       tableRow: 'editor-table-row',
       tableSelection: 'editor-table-cell-selected',
       panel: 'panel-node',
+      status: 'status-node',
       ...theme,
     },
     onError: (error: Error) => console.error(error),
@@ -200,6 +202,7 @@ export function EditorProvider({
       VideoBlockNode,
       FileBlockNode,
       PanelBlockNode,
+      StatusNode,
     ],
     editorState: value ? JSON.stringify(value) : undefined,
     editable: !readOnly,
