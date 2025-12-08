@@ -9,6 +9,11 @@ import {
   getMenuNavigationAction,
   calculateMenuPosition,
   extractQueryFromText,
+  isValidSlashQuery,
+  shouldCloseOnCursorMove,
+  isSlashStillPresent,
+  calculateFallbackPosition,
+  isEmptyRect,
 } from '../slashMenuUtils';
 
 describe('slashMenuUtils', () => {
@@ -209,4 +214,99 @@ describe('slashMenuUtils', () => {
       expect(result).toBe('vid');
     });
   });
+
+  describe('isValidSlashQuery', () => {
+    test('returns true for valid query without spaces', () => {
+      expect(isValidSlashQuery('table')).toBe(true);
+      expect(isValidSlashQuery('img')).toBe(true);
+      expect(isValidSlashQuery('')).toBe(true);
+    });
+
+    test('returns false for query with space', () => {
+      expect(isValidSlashQuery('table ')).toBe(false);
+      expect(isValidSlashQuery(' img')).toBe(false);
+      expect(isValidSlashQuery('hello world')).toBe(false);
+    });
+
+    test('returns true for special characters', () => {
+      expect(isValidSlashQuery('heading1')).toBe(true);
+      expect(isValidSlashQuery('bullet-list')).toBe(true);
+    });
+  });
+
+  describe('shouldCloseOnCursorMove', () => {
+    test('returns true when cursor is at slash', () => {
+      expect(shouldCloseOnCursorMove(5, 5)).toBe(true);
+    });
+
+    test('returns true when cursor is before slash', () => {
+      expect(shouldCloseOnCursorMove(3, 5)).toBe(true);
+    });
+
+    test('returns false when cursor is after slash', () => {
+      expect(shouldCloseOnCursorMove(6, 5)).toBe(false);
+      expect(shouldCloseOnCursorMove(10, 5)).toBe(false);
+    });
+  });
+
+  describe('isSlashStillPresent', () => {
+    test('returns true when slash is at expected position', () => {
+      expect(isSlashStillPresent('/table', 0)).toBe(true);
+      expect(isSlashStillPresent('Hello /world', 6)).toBe(true);
+    });
+
+    test('returns false when slash is not at expected position', () => {
+      expect(isSlashStillPresent('table', 0)).toBe(false);
+      expect(isSlashStillPresent('Hello world', 6)).toBe(false);
+    });
+
+    test('returns false for empty string or out of bounds', () => {
+      expect(isSlashStillPresent('', 0)).toBe(false);
+      expect(isSlashStillPresent('/tab', 10)).toBe(false);
+    });
+  });
+
+  describe('calculateFallbackPosition', () => {
+    test('calculates position with default offset', () => {
+      const rect = { top: 100, left: 50 };
+      const result = calculateFallbackPosition(rect);
+      expect(result.top).toBe(120); // 100 + 20 default
+      expect(result.left).toBe(50);
+    });
+
+    test('calculates position with custom offset', () => {
+      const rect = { top: 100, left: 50 };
+      const result = calculateFallbackPosition(rect, 30);
+      expect(result.top).toBe(130);
+      expect(result.left).toBe(50);
+    });
+
+    test('returns zero position for null rect', () => {
+      const result = calculateFallbackPosition(null);
+      expect(result).toEqual({ top: 0, left: 0 });
+    });
+  });
+
+  describe('isEmptyRect', () => {
+    test('returns true for null rect', () => {
+      expect(isEmptyRect(null)).toBe(true);
+    });
+
+    test('returns true for zero dimensions', () => {
+      expect(isEmptyRect({ width: 0, height: 0 })).toBe(true);
+    });
+
+    test('returns false for rect with width', () => {
+      expect(isEmptyRect({ width: 10, height: 0 })).toBe(false);
+    });
+
+    test('returns false for rect with height', () => {
+      expect(isEmptyRect({ width: 0, height: 10 })).toBe(false);
+    });
+
+    test('returns false for valid rect', () => {
+      expect(isEmptyRect({ width: 100, height: 20 })).toBe(false);
+    });
+  });
 });
+

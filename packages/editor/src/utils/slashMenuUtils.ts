@@ -139,3 +139,66 @@ export function extractQueryFromText(
   if (cursorOffset <= slashOffset) return '';
   return text.substring(slashOffset + 1, cursorOffset);
 }
+
+/**
+ * Check if a query is valid (doesn't contain spaces).
+ * Query becomes invalid when user types a space.
+ * @param query - The current query string
+ * @returns True if query is valid
+ */
+export function isValidSlashQuery(query: string): boolean {
+  return !query.includes(' ');
+}
+
+/**
+ * Check if cursor has moved before the slash position.
+ * This indicates the menu should close.
+ * @param cursorOffset - Current cursor offset
+ * @param slashOffset - The offset where slash was typed
+ * @returns True if menu should close due to cursor position
+ */
+export function shouldCloseOnCursorMove(
+  cursorOffset: number,
+  slashOffset: number,
+): boolean {
+  return cursorOffset <= slashOffset;
+}
+
+/**
+ * Check if slash character is still present at expected position.
+ * @param text - Current text content
+ * @param slashOffset - Expected slash position
+ * @returns True if slash is still at expected position
+ */
+export function isSlashStillPresent(text: string, slashOffset: number): boolean {
+  return text[slashOffset] === '/';
+}
+
+/**
+ * Calculate fallback position from element rect when selection rect is empty.
+ * @param elementRect - The element's bounding rect
+ * @param lineHeightOffset - Offset to add for line height (default 20)
+ * @returns Position object with top and left
+ */
+export function calculateFallbackPosition(
+  elementRect: { top: number; left: number } | null,
+  lineHeightOffset: number = 20,
+): { top: number; left: number } {
+  if (!elementRect) return { top: 0, left: 0 };
+  return {
+    top: elementRect.top + lineHeightOffset,
+    left: elementRect.left,
+  };
+}
+
+/**
+ * Check if a bounding rect is effectively empty (has no dimensions).
+ * @param rect - The bounding rect to check
+ * @returns True if rect has no width and height
+ */
+export function isEmptyRect(
+  rect: { width: number; height: number } | null,
+): boolean {
+  if (!rect) return true;
+  return rect.width === 0 && rect.height === 0;
+}

@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createHeadlessEditor } from '@lexical/headless';
 import { $getRoot, ParagraphNode, COMMAND_PRIORITY_EDITOR } from 'lexical';
-import { INSERT_FILE_BLOCK_COMMAND } from './InsertFilePlugin';
+import { INSERT_FILE_BLOCK_COMMAND, InsertFilePlugin } from './InsertFilePlugin';
 import {
   FileBlockNode,
   $createFileBlockNode,
@@ -9,6 +9,14 @@ import {
 import { $insertNodes, $isRootOrShadowRoot } from 'lexical';
 import { $wrapNodeInElement } from '@lexical/utils';
 import { $createParagraphNode } from 'lexical';
+import { render } from '@testing-library/react';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { MediaContext } from '../EditorProvider';
+import { EditorMediaConfig } from '../media-config';
+import React from 'react';
 
 describe('InsertFilePlugin', () => {
   let editor: ReturnType<typeof createHeadlessEditor>;
@@ -179,3 +187,75 @@ describe('InsertFilePlugin', () => {
     });
   });
 });
+
+describe('InsertFilePlugin with MediaContext', () => {
+  const createTestEditor = (mediaConfig: EditorMediaConfig | null) => {
+    const TestComponent = () => (
+      <LexicalComposer
+        initialConfig={{
+          namespace: 'test',
+          nodes: [FileBlockNode, ParagraphNode],
+          onError: (error) => console.error(error),
+        }}
+      >
+        <MediaContext.Provider value={mediaConfig}>
+          <RichTextPlugin
+            contentEditable={<ContentEditable />}
+            placeholder={<div />}
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <InsertFilePlugin />
+        </MediaContext.Provider>
+      </LexicalComposer>
+    );
+    return render(<TestComponent />);
+  };
+
+  it('renders plugin without crashing', () => {
+    expect(() => createTestEditor(null)).not.toThrow();
+  });
+
+  it('renders plugin with uploadAdapter', () => {
+    const mediaConfig: EditorMediaConfig = {
+      uploadAdapter: {
+        uploadFile: vi.fn().mockResolvedValue({
+          url: 'https://example.com/uploaded.pdf',
+          mime: 'application/pdf',
+          size: 1024,
+        }),
+      },
+      maxFileSizeMB: 10,
+    };
+
+    expect(() => createTestEditor(mediaConfig)).not.toThrow();
+  });
+
+  it('renders plugin with callbacks', () => {
+    const mediaConfig: EditorMediaConfig = {
+      uploadAdapter: {
+        uploadFile: vi.fn().mockResolvedValue({
+          url: 'https://example.com/uploaded.pdf',
+          mime: 'application/pdf',
+          size: 1024,
+        }),
+      },
+      callbacks: {
+        onUploadStart: vi.fn(),
+        onUploadProgress: vi.fn(),
+        onUploadComplete: vi.fn(),
+        onUploadError: vi.fn(),
+      },
+      maxFileSizeMB: 10,
+    };
+
+    expect(() => createTestEditor(mediaConfig)).not.toThrow();
+  });
+});
+
+describe('INSERT_FILE_BLOCK_COMMAND', () => {
+  it('exports the command', () => {
+    expect(INSERT_FILE_BLOCK_COMMAND).toBeDefined();
+    expect(typeof INSERT_FILE_BLOCK_COMMAND).toBe('object');
+  });
+});
+

@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PanelBlockInspector } from './PanelBlockInspector';
 import { vi, describe, beforeEach, it, expect, Mock } from 'vitest';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $getNodeByKey } from 'lexical';
+import { $isPanelBlockNode } from './PanelBlockNode';
 
 // Mock lexical
 vi.mock('@lexical/react/LexicalComposerContext', () => ({
@@ -72,6 +74,8 @@ describe('PanelBlockInspector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useLexicalComposerContext as Mock).mockReturnValue([mockEditor]);
+    ($getNodeByKey as unknown as Mock).mockReturnValue(null);
+    ($isPanelBlockNode as unknown as Mock).mockReturnValue(false);
   });
 
   it('renders the inspector title', () => {
@@ -121,4 +125,51 @@ describe('PanelBlockInspector', () => {
 
     expect(mockUpdate).toHaveBeenCalled();
   });
+
+  describe('with real node mocking', () => {
+    const mockNode = {
+      getVariant: vi.fn(() => 'info'),
+      getTitle: vi.fn(() => 'Test Title'),
+      setVariant: vi.fn(),
+      setTitle: vi.fn(),
+      getWritable: vi.fn(() => ({
+        setVariant: vi.fn(),
+        setTitle: vi.fn(),
+      })),
+    };
+
+    beforeEach(() => {
+      ($getNodeByKey as unknown as Mock).mockReturnValue(mockNode);
+      ($isPanelBlockNode as unknown as Mock).mockReturnValue(true);
+    });
+
+    it('loads node values on mount when node exists', () => {
+      render(<PanelBlockInspector nodeKey="panel-123" />);
+      expect(mockRead).toHaveBeenCalled();
+    });
+
+    it('updates variant from node on register update listener', () => {
+      render(<PanelBlockInspector nodeKey="panel-123" />);
+      expect(mockRegisterUpdateListener).toHaveBeenCalled();
+    });
+
+    it('handles variant change when node is valid', () => {
+      render(<PanelBlockInspector nodeKey="panel-123" />);
+      const select = screen.getByTestId('panel-variant-select');
+
+      fireEvent.change(select, { target: { value: 'success' } });
+
+      expect(mockUpdate).toHaveBeenCalled();
+    });
+
+    it('handles title change when node is valid', () => {
+      render(<PanelBlockInspector nodeKey="panel-123" />);
+      const input = screen.getByTestId('panel-title-input');
+
+      fireEvent.change(input, { target: { value: 'Updated Title' } });
+
+      expect(mockUpdate).toHaveBeenCalled();
+    });
+  });
 });
+

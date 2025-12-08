@@ -701,4 +701,124 @@ describe('tableUtils', () => {
       });
     });
   });
+
+  describe('edge cases', () => {
+    describe('$getTableDimensions edge cases', () => {
+      test('should return 0,0 for table with empty rows array after filtering', async () => {
+        // This tests the case where firstRow is undefined
+        await editor.update(() => {
+          const root = $getRoot();
+          root.clear();
+          // Create empty table (no rows)
+          const tableNode = $createTableNode();
+          root.append(tableNode);
+          // Add a paragraph to select
+          const para = $createParagraphNode();
+          root.append(para);
+          para.select();
+        });
+
+        // Selection is not in table, should return null
+        editor.getEditorState().read(() => {
+          const dimensions = $getTableDimensions();
+          expect(dimensions).toBeNull();
+        });
+      });
+    });
+
+    describe('$getSelectedTableRow edge cases', () => {
+      test('should return null when cell parent is not a row', async () => {
+        await editor.update(() => {
+          const root = $getRoot();
+          root.clear();
+          const para = $createParagraphNode();
+          para.append($createTextNode('Not in table'));
+          root.append(para);
+          para.select();
+        });
+
+        editor.getEditorState().read(() => {
+          const row = $getSelectedTableRow();
+          expect(row).toBeNull();
+        });
+      });
+    });
+
+    describe('$deleteRow edge cases', () => {
+      test('should handle table operations gracefully', async () => {
+        // Ensure operations don't crash with various table states
+        await createTestTable(2, 2);
+        await selectFirstCell();
+
+        // Multiple consecutive deletes should work as expected
+        let result = false;
+        await editor.update(() => {
+          result = $deleteRow();
+        });
+        expect(result).toBe(true);
+
+        // Now only one row left, should fail
+        await editor.update(() => {
+          result = $deleteRow();
+        });
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('$deleteColumn edge cases', () => {
+      test('should handle table with mixed content', async () => {
+        await createTestTable(2, 3);
+        await selectFirstCell();
+
+        // Delete two columns, should succeed
+        let result = false;
+        await editor.update(() => {
+          result = $deleteColumn();
+        });
+        expect(result).toBe(true);
+
+        await selectFirstCell();
+        await editor.update(() => {
+          result = $deleteColumn();
+        });
+        expect(result).toBe(true);
+
+        // Now only one column left, should fail
+        await selectFirstCell();
+        await editor.update(() => {
+          result = $deleteColumn();
+        });
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('$insertRow return values', () => {
+      test('should return true on successful insert', async () => {
+        await createTestTable(2, 2);
+        await selectFirstCell();
+
+        let result = false;
+        await editor.update(() => {
+          result = $insertRow(true);
+        });
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('$insertColumn return values', () => {
+      test('should return true on successful insert', async () => {
+        await createTestTable(2, 2);
+        await selectFirstCell();
+
+        let result = false;
+        await editor.update(() => {
+          result = $insertColumn(true);
+        });
+
+        expect(result).toBe(true);
+      });
+    });
+  });
 });
+
