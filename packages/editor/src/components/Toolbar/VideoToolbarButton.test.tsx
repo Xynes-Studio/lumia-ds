@@ -104,4 +104,19 @@ describe('VideoToolbarButton', () => {
 
     expect(mockDispatchCommand).toHaveBeenCalled();
   });
+
+  it('closes popover when cancel is clicked', () => {
+    render(<VideoToolbarButton />);
+
+    fireEvent.click(screen.getByText('Cancel'));
+
+    expect(screen.getByTestId('popover')).toBeInTheDocument();
+  });
+
+  it('passes video as media type to MediaInsertTabs', () => {
+    render(<VideoToolbarButton />);
+
+    const mediaInsert = screen.getByTestId('media-insert-tabs');
+    expect(mediaInsert).toHaveAttribute('data-media-type', 'video');
+  });
 });
