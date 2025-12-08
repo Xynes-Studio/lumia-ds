@@ -312,7 +312,12 @@ export function ImageBlockComponent({
           }`}
           draggable="false"
           style={{
-            width: width ? `${width}px` : '100%',
+            width:
+              layout === 'fullWidth' || layout === 'breakout'
+                ? '100%'
+                : width
+                  ? `${width}px`
+                  : '100%',
             maxWidth: '100%',
           }}
         />

@@ -25,10 +25,14 @@ function TestEditor({
   src,
   alt,
   caption,
+  layout,
+  width,
 }: {
   src: string;
   alt?: string;
   caption?: string;
+  layout?: 'inline' | 'breakout' | 'fullWidth';
+  width?: number;
 }) {
   const initialConfig = {
     namespace: 'TestEditor',
@@ -46,7 +50,13 @@ function TestEditor({
         placeholder={null}
         ErrorBoundary={({ children }) => <>{children}</>}
       />
-      <TestPlugin src={src} alt={alt} caption={caption} />
+      <TestPlugin
+        src={src}
+        alt={alt}
+        caption={caption}
+        layout={layout}
+        width={width}
+      />
     </LexicalComposer>
   );
 }
@@ -55,19 +65,23 @@ function TestPlugin({
   src,
   alt,
   caption,
+  layout,
+  width,
 }: {
   src: string;
   alt?: string;
   caption?: string;
+  layout?: 'inline' | 'breakout' | 'fullWidth';
+  width?: number;
 }) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     editor.update(() => {
-      const node = $createImageBlockNode({ src, alt, caption });
+      const node = $createImageBlockNode({ src, alt, caption, layout, width });
       $insertNodes([node]);
     });
-  }, [editor, src, alt, caption]);
+  }, [editor, src, alt, caption, layout, width]);
 
   return null;
 }
@@ -133,5 +147,21 @@ describe('ImageBlockComponent', () => {
     await waitFor(() => {
       expect(card.className).not.toContain('ring-2');
     });
+  });
+
+  it('forces 100% width when layout is fullWidth', async () => {
+    render(
+      <TestEditor
+        src="http://example.com/image.jpg"
+        alt="Test Image"
+        layout="fullWidth"
+        width={500}
+      />,
+    );
+
+    const image = await screen.findByRole('img');
+    expect(image).toBeInTheDocument();
+    // Should be 100% even if width is 500
+    expect(image.style.width).toBe('100%');
   });
 });
