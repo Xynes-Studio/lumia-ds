@@ -484,7 +484,7 @@ editor.update(() => {
 The editor supports a slash menu for quick block insertion.
 
 - **Trigger**: Type `/` at the start of a line or after whitespace to open the menu.
-- **Navigation**: Use arrow keys (↑/↓) to navigate, Enter to select, Escape to close.
+- **Navigation**: Use arrow keys (↑/↓) to navigate, Enter or Tab to select, Escape to close.
 - **Powered by BlockRegistry**: Commands are dynamically generated from blocks with `slashEnabled: true`.
 - **Available Commands**:
   - `/image` - Insert an image block (prompts for URL)
