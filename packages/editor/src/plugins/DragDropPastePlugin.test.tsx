@@ -142,4 +142,49 @@ describe('DragDropPastePlugin', () => {
     expect(result).toBe(false);
     expect(event.preventDefault).not.toHaveBeenCalled();
   });
+
+  it('handles paste event with files', async () => {
+    render(<DragDropPastePlugin />);
+
+    const pasteHandler = mockEditor.registerCommand.mock.calls.find(
+      (call) => call[0] === PASTE_COMMAND,
+    )[1];
+
+    const file = new File(['content'], 'test.mp4', { type: 'video/mp4' });
+    const event = {
+      clipboardData: { files: [file] },
+      preventDefault: vi.fn(),
+    };
+
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:video');
+    globalThis.URL.revokeObjectURL = vi.fn();
+
+    await pasteHandler(event);
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalled();
+  });
+
+  it('ignores paste without files', () => {
+    render(<DragDropPastePlugin />);
+    const pasteHandler = mockEditor.registerCommand.mock.calls.find(
+      (call) => call[0] === PASTE_COMMAND,
+    )[1];
+
+    const event = {
+      clipboardData: { files: [] },
+      preventDefault: vi.fn(),
+    };
+
+    const result = pasteHandler(event);
+    expect(result).toBe(false);
+    expect(event.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('does not register commands when no upload adapter', () => {
+    (useMediaContext as Mock).mockReturnValue(null);
+    render(<DragDropPastePlugin />);
+    // When no upload adapter, registerCommand should not be called
+    expect(mockEditor.registerCommand).not.toHaveBeenCalled();
+  });
 });

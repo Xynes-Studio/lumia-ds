@@ -91,4 +91,69 @@ describe('VideoBlockNode', () => {
       expect(clonedNode.__alignment).toBe(node.__alignment);
     });
   });
+
+  test('should return correct type', () => {
+    expect(VideoBlockNode.getType()).toBe('video-block');
+  });
+
+  test('should handle upload status', () => {
+    editor.update(() => {
+      const node = $createVideoBlockNode({
+        src: 'blob:test',
+        provider: 'html5',
+        status: 'uploading',
+      });
+
+      expect(node.__status).toBe('uploading');
+    });
+  });
+
+  test('should handle error status', () => {
+    editor.update(() => {
+      const node = $createVideoBlockNode({
+        src: 'blob:test',
+        provider: 'html5',
+        status: 'error',
+      });
+
+      expect(node.__status).toBe('error');
+    });
+  });
+
+  test('should support width setter', () => {
+    editor.update(() => {
+      const node = $createVideoBlockNode({
+        src: 'https://example.com/video.mp4',
+        provider: 'html5',
+      });
+
+      node.setWidth(800);
+      expect(node.__width).toBe(800);
+    });
+  });
+
+  test('should support alignment setter', () => {
+    editor.update(() => {
+      const node = $createVideoBlockNode({
+        src: 'https://example.com/video.mp4',
+        provider: 'html5',
+      });
+
+      node.setAlignment('right');
+      expect(node.__alignment).toBe('right');
+    });
+  });
+
+  test('should create node with youtube provider', () => {
+    editor.update(() => {
+      const node = $createVideoBlockNode({
+        src: 'https://youtube.com/watch?v=abc123',
+        provider: 'youtube',
+        title: 'YouTube Video',
+      });
+
+      expect(node.__src).toBe('https://youtube.com/watch?v=abc123');
+      expect(node.__provider).toBe('youtube');
+    });
+  });
 });
