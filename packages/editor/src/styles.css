@@ -449,6 +449,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 /* 
@@ -504,6 +505,7 @@
   margin-bottom: 0.125rem;
   /* gap-1ish */
   /* Colors are inherited from parent text color usually, but we can target if needed */
+  pointer-events: none;
 }
 
 /* Status Node Popover Styles */
