@@ -19,7 +19,7 @@ import { ImageBlockNode } from './nodes/ImageBlockNode';
 import { VideoBlockNode } from './nodes/VideoBlockNode';
 import { FileBlockNode } from './nodes/FileBlockNode/FileBlockNode';
 import { PanelBlockNode } from './nodes/PanelBlockNode/PanelBlockNode';
-import { StatusNode } from './nodes/StatusNode/StatusNode';
+import { StatusNode } from './nodes/StatusNode';
 import {
   FontConfig,
   getDefaultFontConfig,
@@ -27,14 +27,21 @@ import {
 } from './font-config';
 import { EditorMediaConfig, getEffectiveMediaConfig } from './media-config';
 
+export interface SelectedBlock {
+  nodeKey: string;
+  blockType: string;
+}
+
 interface EditorContextType {
   editor: LexicalEditor | null;
   editorState: LumiaEditorStateJSON | null;
+  selectedBlock: SelectedBlock | null;
 }
 
 const EditorContext = createContext<EditorContextType>({
   editor: null,
   editorState: null,
+  selectedBlock: null,
 });
 
 export const useEditorContext = () => useContext(EditorContext);
@@ -80,10 +87,12 @@ function EditorStatePlugin({
 // Internal context to update state from inside LexicalComposer
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
+  setSelectedBlock: (block: SelectedBlock | null) => void;
 }>({
   setEditorState: () => {},
+  setSelectedBlock: () => {},
 });
-const useInternalEditorContext = () => useContext(InternalEditorContext);
+export const useInternalEditorContext = () => useContext(InternalEditorContext);
 
 function ContextUpdaterPlugin({
   setEditor,
@@ -127,6 +136,9 @@ export function EditorProvider({
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<LumiaEditorStateJSON | null>(
     value || null,
+  );
+  const [selectedBlock, setSelectedBlock] = useState<SelectedBlock | null>(
+    null,
   );
 
   const initialConfig = {
@@ -212,13 +224,15 @@ export function EditorProvider({
     () => ({
       editor,
       editorState,
+      selectedBlock,
     }),
-    [editor, editorState],
+    [editor, editorState, selectedBlock],
   );
 
   const internalContextValue = useMemo(
     () => ({
       setEditorState,
+      setSelectedBlock,
     }),
     [],
   );

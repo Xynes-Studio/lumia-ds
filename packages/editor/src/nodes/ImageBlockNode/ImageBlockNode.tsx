@@ -139,6 +139,31 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       />
     );
   }
+
+  setAlt(alt: string): void {
+    const self = this.getWritable();
+    self.__alt = alt;
+  }
+
+  setWidth(width: number): void {
+    const self = this.getWritable();
+    self.__width = width;
+  }
+
+  setHeight(height: number): void {
+    const self = this.getWritable();
+    self.__height = height;
+  }
+
+  setLayout(layout: 'inline' | 'breakout' | 'fullWidth'): void {
+    const self = this.getWritable();
+    self.__layout = layout;
+  }
+
+  setCaption(caption: string): void {
+    const self = this.getWritable();
+    self.__caption = caption;
+  }
 }
 
 export function $createImageBlockNode({

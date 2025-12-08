@@ -8,7 +8,14 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import { StatusNodeComponent } from './StatusNodeComponent';
-import { StatusColor, StatusNodePayload } from './types';
+
+export type StatusColor = 'success' | 'warning' | 'error' | 'info';
+
+export interface StatusPayload {
+  text: string;
+  color: StatusColor;
+  key?: NodeKey;
+}
 
 export type SerializedStatusNode = Spread<
   {
@@ -23,7 +30,7 @@ export class StatusNode extends DecoratorNode<React.ReactElement> {
   __color: StatusColor;
 
   static getType(): string {
-    return 'status-node';
+    return 'status';
   }
 
   static clone(node: StatusNode): StatusNode {
@@ -32,17 +39,15 @@ export class StatusNode extends DecoratorNode<React.ReactElement> {
 
   static importJSON(serializedNode: SerializedStatusNode): StatusNode {
     const { text, color } = serializedNode;
-    return $createStatusNode({
-      text,
-      color,
-    });
+    const node = $createStatusNode({ text, color });
+    return node;
   }
 
   exportJSON(): SerializedStatusNode {
     return {
       text: this.__text,
       color: this.__color,
-      type: 'status-node',
+      type: 'status',
       version: 1,
     };
   }
@@ -51,6 +56,14 @@ export class StatusNode extends DecoratorNode<React.ReactElement> {
     super(key);
     this.__text = text;
     this.__color = color;
+  }
+
+  getText(): string {
+    return this.__text;
+  }
+
+  getColor(): StatusColor {
+    return this.__color;
   }
 
   createDOM(config: EditorConfig): HTMLElement {
@@ -67,18 +80,28 @@ export class StatusNode extends DecoratorNode<React.ReactElement> {
     return false;
   }
 
+  isInline(): boolean {
+    return true;
+  }
+
+  setText(text: string): void {
+    const writable = this.getWritable();
+    writable.__text = text;
+  }
+
+  setColor(color: StatusColor): void {
+    const writable = this.getWritable();
+    writable.__color = color;
+  }
+
   decorate(): React.ReactElement {
     return (
       <StatusNodeComponent
         text={this.__text}
         color={this.__color}
-        nodeKey={this.getKey()}
+        nodeKey={this.__key}
       />
     );
-  }
-
-  isInline(): boolean {
-    return true;
   }
 }
 
@@ -86,7 +109,7 @@ export function $createStatusNode({
   text,
   color,
   key,
-}: StatusNodePayload): StatusNode {
+}: StatusPayload): StatusNode {
   return new StatusNode(text, color, key);
 }
 

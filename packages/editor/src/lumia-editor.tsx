@@ -15,6 +15,7 @@ export interface LumiaEditorProps {
   fonts?: FontConfig;
   media?: EditorMediaConfig;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const LumiaEditor = ({
@@ -26,6 +27,7 @@ export const LumiaEditor = ({
   media,
   variant,
   mode = 'document',
+  children,
 }: LumiaEditorProps) => {
   return (
     <EditorProvider
@@ -40,6 +42,7 @@ export const LumiaEditor = ({
       ) : (
         <LumiaEditorPrimitive className={className} variant={variant} />
       )}
+      {children}
     </EditorProvider>
   );
 };

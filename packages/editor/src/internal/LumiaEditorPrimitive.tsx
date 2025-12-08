@@ -20,7 +20,9 @@ import { AutoEmbedVideoPlugin } from '../plugins/AutoEmbedVideoPlugin';
 import { SlashMenuPlugin } from '../plugins/SlashMenuPlugin';
 import { TableActionMenuPlugin } from '../plugins/TableActionMenuPlugin';
 import { InsertPanelPlugin } from '../plugins/InsertPanelPlugin';
+import { InsertStatusPlugin } from '../plugins/InsertStatusPlugin';
 import { PanelActionMenuPlugin } from '../plugins/PanelActionMenuPlugin';
+import { SelectedBlockTrackerPlugin } from '../plugins/SelectedBlockTrackerPlugin';
 
 import { EditorToolbarCompact } from './EditorToolbarCompact';
 
@@ -60,8 +62,10 @@ export function LumiaEditorPrimitive({
 
       <InsertVideoPlugin />
       <InsertPanelPlugin />
+      <InsertStatusPlugin />
       <AutoEmbedVideoPlugin />
       <SlashMenuPlugin />
+      <SelectedBlockTrackerPlugin />
 
       <PanelActionMenuPlugin />
       <CodeHighlightPlugin />

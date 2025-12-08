@@ -280,7 +280,7 @@ const normalized = normalizeFontConfig(config);
 
 ### Block Registry
 
-The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video).
+The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video). This is the single source of truth for block metadata.
 
 #### `BlockType`
 
@@ -299,9 +299,26 @@ type BlockType =
   | 'code';
 ```
 
-#### `blockRegistry`
+#### `BlockDefinition`
 
-A Map containing definitions for all registered blocks. You can retrieve block definitions using `getBlockDefinition(type)`.
+Interface for block metadata:
+
+```typescript
+interface BlockDefinition {
+  type: BlockType;
+  label: string;
+  icon: React.ComponentType;
+  nodeClass: Klass<LexicalNode>;
+  inspector?: React.ComponentType<{ nodeKey: NodeKey }>;
+  description?: string;       // Description shown in slash menu
+  keywords?: string[];        // Keywords for slash menu filtering
+  slashCommand?: string;      // Custom slash command name
+}
+```
+
+#### `getBlockDefinition(type)`
+
+Retrieve a single block definition by type:
 
 ```typescript
 import { getBlockDefinition } from '@lumia/editor/blocks';
@@ -309,6 +326,50 @@ import { getBlockDefinition } from '@lumia/editor/blocks';
 const imageBlock = getBlockDefinition('image');
 // Returns BlockDefinition for 'image'
 ```
+
+#### `getBlockDefinitions()`
+
+Retrieve all registered block definitions:
+
+```typescript
+import { getBlockDefinitions } from '@lumia/editor/blocks';
+
+const allBlocks = getBlockDefinitions();
+// Returns BlockDefinition[] with all 9 core block types
+```
+
+#### `getInsertableBlocks()`
+
+Retrieve only block definitions that can be inserted via the Insert menu:
+
+```typescript
+import { getInsertableBlocks } from '@lumia/editor/blocks';
+
+const insertableBlocks = getInsertableBlocks();
+// Returns BlockDefinition[] with insertable: true
+```
+
+### Insert Menu
+
+The editor toolbar includes an **Insert** dropdown menu that is dynamically generated from the BlockRegistry. Blocks with `insertable: true` appear in this menu.
+
+To make a custom block appear in the Insert menu, add these fields to your BlockDefinition:
+
+```typescript
+const customBlock: BlockDefinition = {
+  type: 'custom',
+  label: 'Custom Block',
+  icon: CustomIcon,
+  nodeClass: CustomNode,
+  insertable: true,         // Appear in Insert menu
+  insertAction: 'command',  // 'command' for simple insert, 'custom' for dialog
+};
+```
+
+**Insert Action Types:**
+- `'command'` - Dispatches insert command directly (e.g., table, status)
+- `'custom'` - Opens a dialog/popover for additional input (e.g., image URL, panel variant)
+
 
 ### Image Block
 
@@ -388,10 +449,14 @@ The editor supports a slash menu for quick block insertion.
 
 - **Trigger**: Type `/` at the start of a line or after whitespace to open the menu.
 - **Navigation**: Use arrow keys (↑/↓) to navigate, Enter to select, Escape to close.
+- **Powered by BlockRegistry**: Commands are dynamically generated from blocks with `slashEnabled: true`.
 - **Available Commands**:
-  - `/video` - Insert a video block (prompts for URL)
   - `/image` - Insert an image block (prompts for URL)
+  - `/video` - Insert a video block (prompts for URL)
+  - `/file` - Attach a file
   - `/table` - Insert a 3×3 table
+  - `/panel` - Insert an info panel
+  - `/status` - Insert a status pill
 
 
 ### Table
@@ -505,8 +570,83 @@ editor.update(() => {
 - **Styling**: Uses Lumia UI StatusPill component.
 - **Serialization**: Fully supports JSON import/export.
 
+### Block Inspector
+
+The `BlockInspector` component provides a context-aware property inspector for the currently selected block. It renders specific inspector controls based on the selected block type (e.g., Image settings when an image is selected).
+
+```tsx
+import { BlockInspector, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+        <div className="w-80 border-l">
+          {/* Automatically shows controls for the selected block */}
+          <BlockInspector />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Registry-Driven**: Inspectors are defined in the `BlockRegistry` via the `inspector` property.
+- **Custom Inspectors**: You can provide custom inspector components when registering custom blocks.
+- **Fallback**: Displays "No block selected" or "No configurable properties" when appropriate.
+
+### Supported Inspectors
+
+The following core blocks now have dedicated inspectors:
+
+- **Image**:
+    - **Alt Text**: Update the alt text for accessibility.
+    - **Layout**: Switch between Inline, Breakout, and Full Width layouts.
+    - **Width**: Adjust image width percentage via slider.
+- **Video**:
+    - **URL**: Update the video source URL.
+    - **Provider**: Switch provider type (YouTube, Vimeo, Loom, HTML5).
+    - **Title**: Update the video title.
+- **Panel**:
+    - **Variant**: Change panel style (Info, Warning, Success, Note).
+    - **Title**: Update the panel title.
+- **Status**:
+    - **Text**: Update the status label.
+    - **Color**: Change the status color (Info, Success, Warning, Error).
 
 
+
+
+### Block Outline
+
+The `BlockOutline` component provides a sidebar navigation listing all top-level blocks in the document. It allows users to quickly jump to specific sections or content blocks.
+
+```tsx
+import { BlockOutline, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="w-64 border-r">
+          {/* Shows a list of blocks and updates automatically */}
+          <BlockOutline />
+        </div>
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Live Updates**: The outline updates in real-time as content changes (throttled).
+- **Navigation**: Clicking an item scrolls the editor to that block and selects it.
+- **Active State**: The current block in view is highlighted in the outline.
 
 ## Performance Testing
 

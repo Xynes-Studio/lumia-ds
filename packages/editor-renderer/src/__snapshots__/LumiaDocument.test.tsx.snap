@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LumiaDocument > renders correctly 1`] = `
+<div>
+  <div
+    class="lumia-document prose prose-slate max-w-none"
+  >
+    <h1
+      class="text-4xl font-bold mt-8 mb-4"
+    >
+      Title
+    </h1>
+    <p
+      class="mb-2 leading-7"
+    >
+      Hello content
+    </p>
+  </div>
+</div>
+`;

@@ -1,41 +1,23 @@
 import * as React from 'react';
-import { StatusPill } from '@lumia/components';
-import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
-import { NodeKey } from 'lexical';
-import { StatusColor } from './types';
+import type { NodeKey } from 'lexical';
+import type { StatusColor } from './StatusNode';
+import { StatusNodePopover } from './StatusNodePopover';
 
-interface StatusNodeComponentProps {
+export interface StatusNodeComponentProps {
   text: string;
   color: StatusColor;
   nodeKey: NodeKey;
 }
 
+/**
+ * StatusNodeComponent - React component rendered by StatusNode decorator.
+ *
+ * Wraps the status pill with a popover for inline editing of text and color.
+ */
 export function StatusNodeComponent({
   text,
   color,
   nodeKey,
-}: StatusNodeComponentProps) {
-  const [isSelected, setSelected] = useLexicalNodeSelection(nodeKey);
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent) => {
-      if (event.shiftKey) {
-        setSelected(!isSelected);
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    },
-    [isSelected, setSelected],
-  );
-
-  return (
-    <span
-      className={`inline-flex items-center align-middle ${
-        isSelected ? 'ring-2 ring-offset-1 ring-primary-500 rounded-full' : ''
-      }`}
-      onClick={onClick}
-    >
-      <StatusPill variant={color}>{text}</StatusPill>
-    </span>
-  );
+}: StatusNodeComponentProps): React.ReactElement {
+  return <StatusNodePopover nodeKey={nodeKey} text={text} color={color} />;
 }
