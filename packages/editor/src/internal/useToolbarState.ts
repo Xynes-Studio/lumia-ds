@@ -7,6 +7,7 @@ import {
   KEY_MODIFIER_COMMAND,
   $isTextNode,
   $createParagraphNode,
+  $isDecoratorNode,
 } from 'lexical';
 import { mergeRegister } from '@lexical/utils';
 import { TOGGLE_LINK_COMMAND, $isLinkNode } from '@lexical/link';
@@ -200,6 +201,38 @@ export function useToolbarState() {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
+          // Check if the selection's anchor or focus is on/near a DecoratorNode
+          // $setBlocksType can inadvertently remove DecoratorNodes, so we skip
+          // block type changes when DecoratorNodes are involved
+          const anchorNode = selection.anchor.getNode();
+          const focusNode = selection.focus.getNode();
+
+          // Check if either the node itself or its parent is a DecoratorNode
+          const isAnchorDecorator =
+            $isDecoratorNode(anchorNode) ||
+            $isDecoratorNode(anchorNode.getParent());
+          const isFocusDecorator =
+            $isDecoratorNode(focusNode) ||
+            $isDecoratorNode(focusNode.getParent());
+
+          // Also check the top-level element for decorator nodes
+          const anchorTopLevel = anchorNode.getTopLevelElementOrThrow?.();
+          const focusTopLevel = focusNode.getTopLevelElementOrThrow?.();
+          const isAnchorTopLevelDecorator =
+            anchorTopLevel && $isDecoratorNode(anchorTopLevel);
+          const isFocusTopLevelDecorator =
+            focusTopLevel && $isDecoratorNode(focusTopLevel);
+
+          if (
+            isAnchorDecorator ||
+            isFocusDecorator ||
+            isAnchorTopLevelDecorator ||
+            isFocusTopLevelDecorator
+          ) {
+            // Skip block type change for DecoratorNodes to prevent removal
+            return;
+          }
+
           if (newBlockType === 'paragraph') {
             $setBlocksType(selection, () => $createParagraphNode());
           } else if (newBlockType === 'code') {
