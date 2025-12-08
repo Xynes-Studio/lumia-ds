@@ -268,3 +268,17 @@ export function $toggleTableHeaderRow(enable: boolean): boolean {
 
   return true;
 }
+
+/**
+ * Deletes the entire table containing the current selection.
+ * @returns true if successful, false otherwise
+ */
+export function $deleteTable(): boolean {
+  const tableNode = $getSelectedTable();
+  if (!tableNode) {
+    return false;
+  }
+
+  tableNode.remove();
+  return true;
+}

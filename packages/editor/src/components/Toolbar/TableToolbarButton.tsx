@@ -17,7 +17,7 @@ export function TableToolbarButton() {
     editor.dispatchCommand(INSERT_TABLE_COMMAND, {
       rows: '3',
       columns: '3',
-      includeHeaders: false,
+      includeHeaders: true,
     });
   };
 

@@ -111,7 +111,7 @@ function handleSimpleInsert(type: BlockType, editor: LexicalEditor) {
       editor.dispatchCommand(INSERT_TABLE_COMMAND, {
         rows: '3',
         columns: '3',
-        includeHeaders: false,
+        includeHeaders: true,
       });
       break;
     case 'status':

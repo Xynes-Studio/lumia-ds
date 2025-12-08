@@ -354,6 +354,11 @@
   cursor: not-allowed;
 }
 
+.table-action-delete-table:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
 /* Table Header Row Toggle */
 .table-action-header-group {
   padding: 0 4px;
