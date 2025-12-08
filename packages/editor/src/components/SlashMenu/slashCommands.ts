@@ -56,11 +56,21 @@ const slashCommandExecutors: Record<string, (editor: LexicalEditor) => void> = {
     });
   },
   table: (editor: LexicalEditor) => {
+    // Insert table without headers first (includeHeaders: true creates BOTH row AND column headers)
     editor.dispatchCommand(INSERT_TABLE_COMMAND, {
       rows: '3',
       columns: '3',
-      includeHeaders: true,
+      includeHeaders: false,
     });
+    // After table insertion, toggle only the first row as header
+    // Use setTimeout to ensure table is created before toggling
+    setTimeout(() => {
+      editor.update(() => {
+        // Import dynamically to avoid circular dependencies
+        const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+        $toggleTableHeaderRow(true);
+      });
+    }, 0);
   },
   status: (editor: LexicalEditor) => {
     editor.dispatchCommand(INSERT_STATUS_COMMAND, {

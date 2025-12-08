@@ -274,6 +274,13 @@
   min-width: 75px;
 }
 
+/* Style header cells - Lexical applies editor-table-cell-header class to header cells */
+.editor-table-cell-header {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Also support th elements for static rendering */
 .editor-table th {
   background-color: #f9fafb;
   font-weight: 600;
