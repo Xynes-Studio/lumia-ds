@@ -42,16 +42,18 @@ export function LumiaEditorPrimitive({
   return (
     <div className={`editor-container ${className || ''}`}>
       {variant === 'compact' ? <EditorToolbarCompact /> : <Toolbar />}
-      <RichTextPlugin
-        contentEditable={
-          <ContentEditable
-            className="editor-input"
-            aria-label="Rich Text Editor"
-          />
-        }
-        placeholder={<div className="editor-placeholder">{placeholder}</div>}
-        ErrorBoundary={LexicalErrorBoundary}
-      />
+      <div className="editor-input-wrapper">
+        <RichTextPlugin
+          contentEditable={
+            <ContentEditable
+              className="editor-input"
+              aria-label="Rich Text Editor"
+            />
+          }
+          placeholder={<div className="editor-placeholder">{placeholder}</div>}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+      </div>
       <HistoryPlugin />
       <ListPlugin />
       <TablePlugin />
