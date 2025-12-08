@@ -17,8 +17,12 @@ import {
   shouldTriggerSlashMenu,
   getSlashPosition,
   extractQueryWithCursor,
+  validateQueryUpdate,
+  getCorrectedSlashIndex,
+  isSelectionInValidNode,
+  getMenuPositionFromRect,
+  getMenuPositionFromElement,
 } from '../slashMenuUtils';
-
 
 describe('slashMenuUtils', () => {
   describe('initialSlashMenuState', () => {
@@ -395,5 +399,88 @@ describe('slashMenuUtils', () => {
       expect(result.isValid).toBe(true);
     });
   });
-});
 
+  describe('validateQueryUpdate', () => {
+    test('returns cursor_before_slash when cursor is before slash', () => {
+      const result = validateQueryUpdate(0, 5, '');
+      expect(result.shouldClose).toBe(true);
+      expect(result.reason).toBe('cursor_before_slash');
+    });
+
+    test('returns cursor_before_slash when cursor is at slash', () => {
+      const result = validateQueryUpdate(5, 5, '');
+      expect(result.shouldClose).toBe(true);
+      expect(result.reason).toBe('cursor_before_slash');
+    });
+
+    test('returns space_in_query when query contains space', () => {
+      const result = validateQueryUpdate(10, 5, 'hello world');
+      expect(result.shouldClose).toBe(true);
+      expect(result.reason).toBe('space_in_query');
+    });
+
+    test('returns valid for correct query', () => {
+      const result = validateQueryUpdate(10, 5, 'table');
+      expect(result.shouldClose).toBe(false);
+      expect(result.reason).toBe('valid');
+    });
+  });
+
+  describe('getCorrectedSlashIndex', () => {
+    test('returns 0 for element node', () => {
+      expect(getCorrectedSlashIndex(true, 5)).toBe(0);
+    });
+
+    test('returns original offset for non-element node', () => {
+      expect(getCorrectedSlashIndex(false, 5)).toBe(5);
+    });
+  });
+
+  describe('isSelectionInValidNode', () => {
+    test('returns true when in trigger node', () => {
+      const result = isSelectionInValidNode('node-1', 'node-1', null, false);
+      expect(result).toBe(true);
+    });
+
+    test('returns true when in text child', () => {
+      const result = isSelectionInValidNode('text-1', 'node-1', 'text-1', true);
+      expect(result).toBe(true);
+    });
+
+    test('returns false when in different node', () => {
+      const result = isSelectionInValidNode('other', 'node-1', 'text-1', true);
+      expect(result).toBe(false);
+    });
+
+    test('returns false when text node key is null', () => {
+      const result = isSelectionInValidNode('other', 'node-1', null, true);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('getMenuPositionFromRect', () => {
+    test('calculates position with default offset', () => {
+      const result = getMenuPositionFromRect({ bottom: 100, left: 50 });
+      expect(result.top).toBe(104);
+      expect(result.left).toBe(50);
+    });
+
+    test('uses custom vertical offset', () => {
+      const result = getMenuPositionFromRect({ bottom: 100, left: 50 }, 10);
+      expect(result.top).toBe(110);
+    });
+  });
+
+  describe('getMenuPositionFromElement', () => {
+    test('calculates position with default line height', () => {
+      const result = getMenuPositionFromElement({ top: 100, left: 50 });
+      expect(result.top).toBe(120);
+      expect(result.left).toBe(50);
+    });
+
+    test('uses custom line height offset', () => {
+      const result = getMenuPositionFromElement({ top: 100, left: 50 }, 30);
+      expect(result.top).toBe(130);
+    });
+  });
+});

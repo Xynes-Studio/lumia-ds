@@ -42,6 +42,12 @@ import {
   extractQueryWithCursor,
   shouldOpenModal,
   calculateSlashRemoval,
+  validateQueryUpdate,
+  getCorrectedSlashIndex,
+  isSelectionInValidNode,
+  getMenuPositionFromRect,
+  getMenuPositionFromElement,
+  isSlashStillPresent,
 } from '../utils/slashMenuUtils';
 
 /**

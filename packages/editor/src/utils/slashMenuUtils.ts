@@ -256,3 +256,88 @@ export function extractQueryWithCursor(
   const isValid = !query.includes(' ');
   return { query, isValid };
 }
+
+/**
+ * Validate if the current query update should close the menu.
+ * @param currentOffset - Current cursor position
+ * @param slashIndex - Position of the slash
+ * @param query - The extracted query
+ * @returns Object with shouldClose and reason
+ */
+export function validateQueryUpdate(
+  currentOffset: number,
+  slashIndex: number,
+  query: string,
+): { shouldClose: boolean; reason: 'cursor_before_slash' | 'space_in_query' | 'valid' } {
+  if (currentOffset <= slashIndex) {
+    return { shouldClose: true, reason: 'cursor_before_slash' };
+  }
+  if (query.includes(' ')) {
+    return { shouldClose: true, reason: 'space_in_query' };
+  }
+  return { shouldClose: false, reason: 'valid' };
+}
+
+/**
+ * Get the corrected slash index when working with element nodes.
+ * @param isElementNode - Whether the node is an element
+ * @param originalOffset - Original trigger offset
+ * @returns Corrected slash index
+ */
+export function getCorrectedSlashIndex(
+  isElementNode: boolean,
+  originalOffset: number,
+): number {
+  return isElementNode ? 0 : originalOffset;
+}
+
+/**
+ * Check if selection is in valid node for slash menu.
+ * @param selectionNodeKey - Key of selection anchor node
+ * @param triggerNodeKey - Key of original trigger node
+ * @param textNodeKey - Key of text node (if different from trigger)
+ * @param isTextNode - Whether selection is on a text node
+ * @returns True if selection is in valid position
+ */
+export function isSelectionInValidNode(
+  selectionNodeKey: string,
+  triggerNodeKey: string,
+  textNodeKey: string | null,
+  isTextNode: boolean,
+): boolean {
+  const isInTrigger = selectionNodeKey === triggerNodeKey;
+  const isInTextChild = isTextNode && textNodeKey !== null && selectionNodeKey === textNodeKey;
+  return isInTrigger || isInTextChild;
+}
+
+/**
+ * Get menu position with offset from rect.
+ * @param rect - Bounding client rect
+ * @param verticalOffset - Vertical offset (default 4)
+ * @returns Position object
+ */
+export function getMenuPositionFromRect(
+  rect: { bottom: number; left: number },
+  verticalOffset: number = 4,
+): { top: number; left: number } {
+  return {
+    top: rect.bottom + verticalOffset,
+    left: rect.left,
+  };
+}
+
+/**
+ * Get menu position from element with line height offset.
+ * @param elementRect - Element bounding rect
+ * @param lineHeightOffset - Line height offset (default 20)
+ * @returns Position object
+ */
+export function getMenuPositionFromElement(
+  elementRect: { top: number; left: number },
+  lineHeightOffset: number = 20,
+): { top: number; left: number } {
+  return {
+    top: elementRect.top + lineHeightOffset,
+    left: elementRect.left,
+  };
+}
