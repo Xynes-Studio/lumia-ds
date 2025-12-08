@@ -108,11 +108,21 @@ function InsertBlockMenuItem({
 function handleSimpleInsert(type: BlockType, editor: LexicalEditor) {
   switch (type) {
     case 'table':
+      // Insert table without headers first (includeHeaders: true creates BOTH row AND column headers)
       editor.dispatchCommand(INSERT_TABLE_COMMAND, {
         rows: '3',
         columns: '3',
         includeHeaders: false,
       });
+      // After table insertion, toggle only the first row as header
+      setTimeout(() => {
+        editor.update(() => {
+          // Import dynamically to avoid circular dependencies
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+          $toggleTableHeaderRow(true);
+        });
+      }, 0);
       break;
     case 'status':
       editor.dispatchCommand(INSERT_STATUS_COMMAND, {
@@ -437,11 +447,11 @@ const PANEL_VARIANTS: {
   label: string;
   color: string;
 }[] = [
-  { variant: 'info', label: 'Info', color: 'text-blue-500' },
-  { variant: 'warning', label: 'Warning', color: 'text-yellow-500' },
-  { variant: 'success', label: 'Success', color: 'text-green-500' },
-  { variant: 'note', label: 'Note', color: 'text-gray-500' },
-];
+    { variant: 'info', label: 'Info', color: 'text-blue-500' },
+    { variant: 'warning', label: 'Warning', color: 'text-yellow-500' },
+    { variant: 'success', label: 'Success', color: 'text-green-500' },
+    { variant: 'note', label: 'Note', color: 'text-gray-500' },
+  ];
 
 function PanelInsertItem({
   icon: Icon,

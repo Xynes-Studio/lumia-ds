@@ -14,11 +14,20 @@ export function TableToolbarButton() {
   const [editor] = useLexicalComposerContext();
 
   const handleInsertTable = () => {
+    // Insert table without headers first (includeHeaders: true creates BOTH row AND column headers)
     editor.dispatchCommand(INSERT_TABLE_COMMAND, {
       rows: '3',
       columns: '3',
       includeHeaders: false,
     });
+    // After table insertion, toggle only the first row as header
+    setTimeout(() => {
+      editor.update(() => {
+        // Import dynamically to avoid circular dependencies
+        const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+        $toggleTableHeaderRow(true);
+      });
+    }, 0);
   };
 
   return (

@@ -17,12 +17,14 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Trash2,
 } from 'lucide-react';
 import {
   $insertRow,
   $insertColumn,
   $deleteRow,
   $deleteColumn,
+  $deleteTable,
   $getTableDimensions,
   $hasTableHeaderRow,
   $toggleTableHeaderRow,
@@ -145,6 +147,13 @@ export function TableActionMenuPlugin({
     });
   }, [editor, hasHeaderRow]);
 
+  // Handle delete table
+  const handleDeleteTable = useCallback(() => {
+    editor.update(() => {
+      $deleteTable();
+    });
+  }, [editor]);
+
   if (!isInTable || !tableElement) {
     return null;
   }
@@ -260,6 +269,24 @@ export function TableActionMenuPlugin({
         >
           <Minus className="h-3 w-3" />
           <span className="text-xs">Col</span>
+        </Button>
+      </div>
+
+      <div className="table-action-divider" />
+
+      {/* Delete Table */}
+      <div className="table-action-group">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDeleteTable}
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label="Delete table"
+          title="Delete table"
+          className="table-action-button table-action-delete-table"
+        >
+          <Trash2 className="h-3 w-3" />
+          <span className="text-xs">Table</span>
         </Button>
       </div>
     </div>

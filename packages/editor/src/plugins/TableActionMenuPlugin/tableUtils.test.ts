@@ -25,6 +25,7 @@ import {
   $insertColumn,
   $deleteRow,
   $deleteColumn,
+  $deleteTable,
   $getSelectedTableCell,
   $getSelectedTable,
   $getSelectedTableRow,
@@ -652,6 +653,52 @@ describe('tableUtils', () => {
       });
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('$deleteTable', () => {
+    test('should return false when not in a table', async () => {
+      await editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+        const para = $createParagraphNode();
+        para.append($createTextNode('Hello'));
+        root.append(para);
+        para.select();
+      });
+
+      let result = false;
+      await editor.update(() => {
+        result = $deleteTable();
+      });
+
+      expect(result).toBe(false);
+    });
+
+    test('should delete the entire table when in a table cell', async () => {
+      await createTestTable(3, 3);
+      await selectFirstCell();
+
+      // Verify table exists
+      editor.getEditorState().read(() => {
+        const root = $getRoot();
+        const tableNodes = root.getChildren().filter($isTableNode);
+        expect(tableNodes.length).toBe(1);
+      });
+
+      let result = false;
+      await editor.update(() => {
+        result = $deleteTable();
+      });
+
+      expect(result).toBe(true);
+
+      // Verify table is deleted
+      editor.getEditorState().read(() => {
+        const root = $getRoot();
+        const tableNodes = root.getChildren().filter($isTableNode);
+        expect(tableNodes.length).toBe(0);
+      });
     });
   });
 });

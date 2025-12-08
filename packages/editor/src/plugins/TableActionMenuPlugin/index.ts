@@ -4,6 +4,7 @@ export {
   $insertColumn,
   $deleteRow,
   $deleteColumn,
+  $deleteTable,
   $getSelectedTableCell,
   $getSelectedTable,
   $getSelectedTableRow,
