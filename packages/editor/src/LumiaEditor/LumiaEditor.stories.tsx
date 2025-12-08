@@ -318,3 +318,52 @@ export const LargeDocument: Story = {
     },
   },
 };
+
+/**
+ * Demonstrates media upload functionality with a mock upload adapter.
+ * Click the image/video button to see both "Embed link" and "Upload" tabs.
+ */
+export const WithMediaUpload: Story = {
+  args: {
+    value: null,
+    onChange: (val) => console.log('onChange', val),
+    media: {
+      uploadAdapter: {
+        uploadFile: async (file: File) => {
+          // Simulate upload delay
+          console.log('Uploading file:', file.name);
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // Return mock URL
+          const mockUrl = URL.createObjectURL(file);
+          console.log('Upload complete:', mockUrl);
+
+          return {
+            url: mockUrl,
+            mime: file.type,
+            size: file.size,
+          };
+        },
+      },
+      callbacks: {
+        onUploadStart: (file, type) =>
+          console.log(`Upload started: ${file.name} (${type})`),
+        onUploadComplete: (file, result) =>
+          console.log(`Upload complete: ${file.name} -> ${result.url}`),
+        onUploadError: (file, error) =>
+          console.error(`Upload failed: ${file.name}`, error),
+      },
+      allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+      allowedVideoTypes: ['video/mp4', 'video/webm'],
+      maxFileSizeMB: 10,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Editor with media upload enabled. Click Image or Video in the toolbar or Insert menu to see the Upload tab. The mock adapter simulates a 2-second upload delay.',
+      },
+    },
+  },
+};

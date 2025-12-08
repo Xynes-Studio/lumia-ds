@@ -24,7 +24,9 @@ export function TableToolbarButton() {
     setTimeout(() => {
       editor.update(() => {
         // Import dynamically to avoid circular dependencies
-        const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+        const {
+          $toggleTableHeaderRow,
+        } = require('../../plugins/TableActionMenuPlugin/tableUtils');
         $toggleTableHeaderRow(true);
       });
     }, 0);

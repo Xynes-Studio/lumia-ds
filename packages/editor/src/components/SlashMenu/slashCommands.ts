@@ -12,6 +12,14 @@ import {
   BlockType,
 } from '../../blocks';
 
+/**
+ * Type of modal UI to show when a slash command is selected.
+ * - 'none': Execute immediately without UI
+ * - 'media-image': Show MediaInsertTabs for image
+ * - 'media-video': Show MediaInsertTabs for video
+ */
+export type SlashCommandModalType = 'none' | 'media-image' | 'media-video';
+
 export interface SlashCommand {
   /** Name of the command (without leading slash) */
   name: string;
@@ -23,69 +31,82 @@ export interface SlashCommand {
   icon: LucideIcon;
   /** Keywords for filtering */
   keywords: string[];
-  /** Action to execute when command is selected */
+  /** Action to execute when command is selected (only used when modalType is 'none') */
   execute: (editor: LexicalEditor) => void;
+  /** Type of modal UI to show, defaults to 'none' */
+  modalType?: SlashCommandModalType;
+}
+
+/**
+ * Slash command executor with optional modal type.
+ */
+interface SlashCommandExecutorConfig {
+  execute: (editor: LexicalEditor) => void;
+  modalType?: SlashCommandModalType;
 }
 
 /**
  * Registry of execute functions for each block type.
  * Maps block types to their slash command execute handlers.
  */
-const slashCommandExecutors: Record<string, (editor: LexicalEditor) => void> = {
-  video: (editor: LexicalEditor) => {
-    const url = window.prompt('Enter video URL:');
-    if (url) {
-      editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
-        src: url,
+const slashCommandExecutors: Record<string, SlashCommandExecutorConfig> = {
+  video: {
+    // Execute is a no-op for modal commands; the modal handles insertion
+    execute: () => {},
+    modalType: 'media-video',
+  },
+  image: {
+    // Execute is a no-op for modal commands; the modal handles insertion
+    execute: () => {},
+    modalType: 'media-image',
+  },
+  panel: {
+    execute: (editor: LexicalEditor) => {
+      editor.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'info',
+        title: 'Info Panel',
       });
-    }
+    },
   },
-  image: (editor: LexicalEditor) => {
-    const url = window.prompt('Enter image URL:');
-    if (url) {
-      editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
-        src: url,
-        alt: '',
+  table: {
+    execute: (editor: LexicalEditor) => {
+      // Insert table without headers first (includeHeaders: true creates BOTH row AND column headers)
+      editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+        rows: '3',
+        columns: '3',
+        includeHeaders: false,
       });
-    }
+      // After table insertion, toggle only the first row as header
+      // Use setTimeout to ensure table is created before toggling
+      setTimeout(() => {
+        editor.update(() => {
+          // Import dynamically to avoid circular dependencies
+          const {
+            $toggleTableHeaderRow,
+          } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+          $toggleTableHeaderRow(true);
+        });
+      }, 0);
+    },
   },
-  panel: (editor: LexicalEditor) => {
-    editor.dispatchCommand(INSERT_PANEL_COMMAND, {
-      variant: 'info',
-      title: 'Info Panel',
-    });
-  },
-  table: (editor: LexicalEditor) => {
-    // Insert table without headers first (includeHeaders: true creates BOTH row AND column headers)
-    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
-      rows: '3',
-      columns: '3',
-      includeHeaders: false,
-    });
-    // After table insertion, toggle only the first row as header
-    // Use setTimeout to ensure table is created before toggling
-    setTimeout(() => {
-      editor.update(() => {
-        // Import dynamically to avoid circular dependencies
-        const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
-        $toggleTableHeaderRow(true);
+  status: {
+    execute: (editor: LexicalEditor) => {
+      editor.dispatchCommand(INSERT_STATUS_COMMAND, {
+        text: 'Status',
+        color: 'info',
       });
-    }, 0);
+    },
   },
-  status: (editor: LexicalEditor) => {
-    editor.dispatchCommand(INSERT_STATUS_COMMAND, {
-      text: 'Status',
-      color: 'info',
-    });
-  },
-  file: (editor: LexicalEditor) => {
-    const url = window.prompt('Enter file URL:');
-    if (url) {
-      editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
-        url,
-        filename: url.split('/').pop() || 'file',
-      });
-    }
+  file: {
+    execute: (editor: LexicalEditor) => {
+      const url = window.prompt('Enter file URL:');
+      if (url) {
+        editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+          url,
+          filename: url.split('/').pop() || 'file',
+        });
+      }
+    },
   },
 };
 
@@ -105,7 +126,7 @@ const iconOverrides: Partial<Record<string, LucideIcon>> = {
 export function getSlashCommandExecutor(
   blockType: string,
 ): ((editor: LexicalEditor) => void) | undefined {
-  return slashCommandExecutors[blockType];
+  return slashCommandExecutors[blockType]?.execute;
 }
 
 /**
@@ -113,13 +134,13 @@ export function getSlashCommandExecutor(
  * This ensures metadata is always derived from the BlockRegistry.
  *
  * @param blockType - The block type from the registry
- * @param execute - The execute function for the command
+ * @param executorConfig - The execute config for the command
  * @param overrides - Optional overrides for specific fields
  * @returns A SlashCommand or null if the block type is not found
  */
 export function createSlashCommandFromRegistry(
   blockType: BlockType,
-  execute: (editor: LexicalEditor) => void,
+  executorConfig: SlashCommandExecutorConfig,
   overrides?: Partial<
     Pick<SlashCommand, 'name' | 'description' | 'icon' | 'keywords'>
   >,
@@ -133,7 +154,8 @@ export function createSlashCommandFromRegistry(
     description: definition.description ?? '',
     icon: (overrides?.icon ?? definition.icon) as LucideIcon,
     keywords: overrides?.keywords ?? definition.keywords ?? [],
-    execute,
+    execute: executorConfig.execute,
+    modalType: executorConfig.modalType,
   };
 }
 
@@ -146,13 +168,13 @@ function generateSlashCommands(): SlashCommand[] {
   const commands: SlashCommand[] = [];
 
   for (const block of slashBlocks) {
-    const executor = slashCommandExecutors[block.type];
-    if (!executor) continue;
+    const executorConfig = slashCommandExecutors[block.type];
+    if (!executorConfig) continue;
 
     const iconOverride = iconOverrides[block.type];
     const command = createSlashCommandFromRegistry(
       block.type,
-      executor,
+      executorConfig,
       iconOverride ? { icon: iconOverride } : undefined,
     );
 

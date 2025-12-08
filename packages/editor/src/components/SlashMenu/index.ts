@@ -5,4 +5,5 @@ export {
   createSlashCommandFromRegistry,
   getSlashCommandExecutor,
   type SlashCommand,
+  type SlashCommandModalType,
 } from './slashCommands';
