@@ -6,6 +6,7 @@ import {
   KEY_DOWN_COMMAND,
   $getNodeByKey,
   $isTextNode,
+  $isElementNode,
 } from 'lexical';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -57,20 +58,35 @@ export function SlashMenuPlugin(): React.ReactElement | null {
         // Remove the slash and query text
         if (menuState.triggerNodeKey) {
           const node = $getNodeByKey(menuState.triggerNodeKey);
-          if (node && $isTextNode(node)) {
-            const textContent = node.getTextContent();
-            const beforeSlash = textContent.substring(
-              0,
-              menuState.triggerOffset,
-            );
-            const afterQuery = textContent.substring(
-              menuState.triggerOffset + 1 + menuState.query.length,
-            );
-            node.setTextContent(beforeSlash + afterQuery);
+          if (node) {
+            let textNode = node;
+            let offset = menuState.triggerOffset;
 
-            // If the node is now empty, select it
-            if (beforeSlash + afterQuery === '') {
-              node.select();
+            // If trigger was on element node, find the first text child
+            if ($isElementNode(node)) {
+              const firstChild = node.getFirstChild();
+              if (firstChild && $isTextNode(firstChild)) {
+                textNode = firstChild;
+                offset = 0;
+              }
+            }
+
+            if ($isTextNode(textNode)) {
+              const textContent = textNode.getTextContent();
+              const beforeSlash = textContent.substring(0, offset);
+              const afterQuery = textContent.substring(
+                offset + 1 + menuState.query.length,
+              );
+              textNode.setTextContent(beforeSlash + afterQuery);
+
+              // If the node is now empty, select the parent element
+              if (beforeSlash + afterQuery === '') {
+                if ($isElementNode(node)) {
+                  node.select();
+                } else {
+                  textNode.select();
+                }
+              }
             }
           }
         }
@@ -127,6 +143,37 @@ export function SlashMenuPlugin(): React.ReactElement | null {
                 });
               }
             }
+          } else if ($isElementNode(anchorNode) && anchor.offset === 0) {
+            // Handle empty element nodes (e.g., empty paragraphs)
+            // When the cursor is in an empty paragraph, the anchor is the paragraph itself
+            const domSelection = window.getSelection();
+            if (domSelection && domSelection.rangeCount > 0) {
+              const range = domSelection.getRangeAt(0);
+              const rect = range.getBoundingClientRect();
+
+              // For empty elements, we need to get position from the element itself
+              // since getBoundingClientRect on an empty range may return 0,0
+              let top = rect.bottom + 4;
+              let left = rect.left;
+
+              // Fallback: get the element's position if rect is empty
+              if (rect.width === 0 && rect.height === 0) {
+                const element = editor.getElementByKey(anchorNode.getKey());
+                if (element) {
+                  const elementRect = element.getBoundingClientRect();
+                  top = elementRect.top + 20; // Add some offset for the line height
+                  left = elementRect.left;
+                }
+              }
+
+              setMenuState({
+                isOpen: true,
+                query: '',
+                position: { top, left },
+                triggerNodeKey: anchorNode.getKey(),
+                triggerOffset: 0,
+              });
+            }
           }
         }
 
@@ -154,13 +201,30 @@ export function SlashMenuPlugin(): React.ReactElement | null {
           }
 
           const node = $getNodeByKey(menuState.triggerNodeKey);
-          if (!node || !$isTextNode(node)) {
+          if (!node) {
             closeMenu();
             return;
           }
 
-          const textContent = node.getTextContent();
-          const slashIndex = menuState.triggerOffset;
+          let textNode = node;
+          let slashIndex = menuState.triggerOffset;
+
+          // If the trigger was on an element node, find the first text child
+          // (Lexical creates a text node when you type in an empty paragraph)
+          if ($isElementNode(node)) {
+            const firstChild = node.getFirstChild();
+            if (!firstChild || !$isTextNode(firstChild)) {
+              // No text child yet, menu should stay open waiting for text
+              return;
+            }
+            textNode = firstChild;
+            slashIndex = 0; // The slash will be at position 0 in the new text node
+          } else if (!$isTextNode(node)) {
+            closeMenu();
+            return;
+          }
+
+          const textContent = textNode.getTextContent();
 
           // Check if slash is still there
           if (textContent[slashIndex] !== '/') {
@@ -176,7 +240,17 @@ export function SlashMenuPlugin(): React.ReactElement | null {
           }
 
           const anchor = selection.anchor;
-          if (anchor.getNode().getKey() !== menuState.triggerNodeKey) {
+          const anchorNode = anchor.getNode();
+
+          // Check if selection is in the expected node
+          // (either the trigger node or its first text child)
+          const isInTriggerNode =
+            anchorNode.getKey() === menuState.triggerNodeKey;
+          const isInTextChild =
+            $isTextNode(anchorNode) &&
+            anchorNode.getKey() === textNode.getKey();
+
+          if (!isInTriggerNode && !isInTextChild) {
             closeMenu();
             return;
           }
