@@ -202,3 +202,57 @@ export function isEmptyRect(
   if (!rect) return true;
   return rect.width === 0 && rect.height === 0;
 }
+
+/**
+ * Check if slash menu should be triggered based on cursor position.
+ * @param offset - The cursor offset in text
+ * @param textBeforeCursor - Text content before cursor
+ * @returns True if at start or after whitespace
+ */
+export function shouldTriggerSlashMenu(
+  offset: number,
+  textBeforeCursor: string,
+): boolean {
+  if (offset === 0) return true;
+  if (textBeforeCursor.length === 0) return true;
+  // Check if last char before cursor is whitespace
+  const lastChar = textBeforeCursor[textBeforeCursor.length - 1];
+  return /\s/.test(lastChar);
+}
+
+/**
+ * Get detailed slash position information.
+ * @param textContent - The text content
+ * @param offset - The cursor offset
+ * @returns Object with isAtStart and isAfterWhitespace
+ */
+export function getSlashPosition(
+  textContent: string,
+  offset: number,
+): { isAtStart: boolean; isAfterWhitespace: boolean } {
+  const isAtStart = offset === 0;
+  const isAfterWhitespace =
+    !isAtStart && offset > 0 && /\s/.test(textContent[offset - 1]);
+  return { isAtStart, isAfterWhitespace };
+}
+
+/**
+ * Extract query with cursor position and validate it.
+ * @param text - Full text content
+ * @param slashOffset - Offset where slash is
+ * @param cursorOffset - Current cursor offset
+ * @returns Object with query string and isValid flag
+ */
+export function extractQueryWithCursor(
+  text: string,
+  slashOffset: number,
+  cursorOffset: number,
+): { query: string; isValid: boolean } {
+  // If cursor is at or before slash, invalid
+  if (cursorOffset <= slashOffset) {
+    return { query: '', isValid: false };
+  }
+  const query = text.substring(slashOffset + 1, cursorOffset);
+  const isValid = !query.includes(' ');
+  return { query, isValid };
+}

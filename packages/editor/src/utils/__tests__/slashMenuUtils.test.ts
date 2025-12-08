@@ -14,7 +14,11 @@ import {
   isSlashStillPresent,
   calculateFallbackPosition,
   isEmptyRect,
+  shouldTriggerSlashMenu,
+  getSlashPosition,
+  extractQueryWithCursor,
 } from '../slashMenuUtils';
+
 
 describe('slashMenuUtils', () => {
   describe('initialSlashMenuState', () => {
@@ -306,6 +310,89 @@ describe('slashMenuUtils', () => {
 
     test('returns false for valid rect', () => {
       expect(isEmptyRect({ width: 100, height: 20 })).toBe(false);
+    });
+  });
+
+  describe('shouldTriggerSlashMenu', () => {
+    test('returns true at start of line (offset 0)', () => {
+      expect(shouldTriggerSlashMenu(0, '')).toBe(true);
+    });
+
+    test('returns true after whitespace', () => {
+      expect(shouldTriggerSlashMenu(6, 'Hello ')).toBe(true);
+    });
+
+    test('returns false in middle of word', () => {
+      expect(shouldTriggerSlashMenu(5, 'Hello')).toBe(false);
+    });
+
+    test('returns true after newline', () => {
+      expect(shouldTriggerSlashMenu(6, 'Hello\n')).toBe(true);
+    });
+
+    test('returns true after tab', () => {
+      expect(shouldTriggerSlashMenu(1, '\t')).toBe(true);
+    });
+
+    test('returns false when text before cursor has no trailing whitespace', () => {
+      expect(shouldTriggerSlashMenu(5, 'Hello')).toBe(false);
+    });
+  });
+
+  describe('getSlashPosition', () => {
+    test('detects position at start', () => {
+      const result = getSlashPosition('', 0);
+      expect(result.isAtStart).toBe(true);
+      expect(result.isAfterWhitespace).toBe(false);
+    });
+
+    test('detects position after space', () => {
+      const result = getSlashPosition('Hello ', 6);
+      expect(result.isAtStart).toBe(false);
+      expect(result.isAfterWhitespace).toBe(true);
+    });
+
+    test('detects position in middle of word', () => {
+      const result = getSlashPosition('Hello', 5);
+      expect(result.isAtStart).toBe(false);
+      expect(result.isAfterWhitespace).toBe(false);
+    });
+
+    test('detects position after newline', () => {
+      const result = getSlashPosition('Line1\n', 6);
+      expect(result.isAfterWhitespace).toBe(true);
+    });
+  });
+
+  describe('extractQueryWithCursor', () => {
+    test('extracts query between slash and cursor', () => {
+      const result = extractQueryWithCursor('/table', 0, 6);
+      expect(result.query).toBe('table');
+      expect(result.isValid).toBe(true);
+    });
+
+    test('returns empty query when cursor at slash', () => {
+      const result = extractQueryWithCursor('/', 0, 1);
+      expect(result.query).toBe('');
+      expect(result.isValid).toBe(true);
+    });
+
+    test('marks query as invalid if it contains space', () => {
+      const result = extractQueryWithCursor('/hello world', 0, 12);
+      expect(result.query).toBe('hello world');
+      expect(result.isValid).toBe(false);
+    });
+
+    test('handles cursor before slash', () => {
+      const result = extractQueryWithCursor('/tab', 0, 0);
+      expect(result.query).toBe('');
+      expect(result.isValid).toBe(false);
+    });
+
+    test('extracts partial query', () => {
+      const result = extractQueryWithCursor('/para', 0, 3);
+      expect(result.query).toBe('pa');
+      expect(result.isValid).toBe(true);
     });
   });
 });
