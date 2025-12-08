@@ -13,8 +13,10 @@ import * as React from 'react';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Card } from '@lumia/components';
 import { $isImageBlockNode } from './ImageBlockNode';
+import type { ImageBlockAlignment } from './ImageBlockNode';
 import { useMediaContext } from '../../EditorProvider';
 import { ImageResizer } from './ImageResizer';
+import { ImageFloatingToolbar } from './ImageFloatingToolbar';
 import {
   getImageLayoutClass,
   getImageContainerStyle,
@@ -29,6 +31,7 @@ export interface ImageBlockComponentProps {
   nodeKey: NodeKey;
   status?: 'uploading' | 'uploaded' | 'error';
   layout?: 'inline' | 'breakout' | 'fullWidth';
+  alignment?: ImageBlockAlignment;
 }
 
 export function ImageBlockComponent({
@@ -40,16 +43,19 @@ export function ImageBlockComponent({
   nodeKey,
   status,
   layout,
+  alignment,
 }: ImageBlockComponentProps) {
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelected] =
     useLexicalNodeSelection(nodeKey);
   const imageRef = useRef<HTMLImageElement>(null);
+  const componentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaConfig = useMediaContext();
 
   // Store file reference for retry
   const pendingFileRef = useRef<File | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const onDelete = useCallback(
@@ -73,7 +79,10 @@ export function ImageBlockComponent({
       editor.registerCommand(
         CLICK_COMMAND,
         (event: MouseEvent) => {
-          if (event.target === imageRef.current) {
+          if (
+            event.target === imageRef.current ||
+            componentRef.current?.contains(event.target as Node)
+          ) {
             if (event.shiftKey) {
               setSelected(!isSelected);
             } else {
@@ -211,6 +220,16 @@ export function ImageBlockComponent({
     });
   };
 
+  const setCaption = (newCaption: string) => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageBlockNode(node)) {
+        const writable = node.getWritable();
+        writable.__caption = newCaption;
+      }
+    });
+  };
+
   // If no src and no upload adapter, we can't do anything (shouldn't happen if inserted correctly)
   // If no src and upload adapter exists, show upload button
   const showUpload = !src && mediaConfig?.uploadAdapter;
@@ -241,68 +260,103 @@ export function ImageBlockComponent({
     );
   }
 
+  // Calculate alignment style for the container
+
   return (
     <div
-      className={`image-block-container ${getImageLayoutClass(layout)}`}
-      style={getImageContainerStyle(layout, width)}
+      className={`image-block-container group relative ${getImageLayoutClass(layout)}`}
+      style={{
+        ...getImageContainerStyle(layout, width),
+        // We apply alignment here if it's not handled by the layout class mechanism completely
+        // For inline/breakout, flex parent might be better, but margin auto works for block
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems:
+          alignment === 'center'
+            ? 'center'
+            : alignment === 'right'
+              ? 'flex-end'
+              : 'flex-start',
+      }}
+      ref={componentRef}
     >
-      <Card
-        className={`overflow-hidden transition-all duration-200 relative ${
-          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-        } ${layout === 'fullWidth' ? 'w-full' : 'w-full'}`}
+      <div
+        className={`relative inline-block ${isSelected ? 'ring-2 ring-primary ring-offset-2 rounded-md' : ''}`}
+        style={{ maxWidth: '100%' }} // Ensure it doesn't overflow parent
       >
         {isSelected && (
-          <ImageResizer
-            editor={editor}
-            nodeKey={nodeKey}
-            layout={layout}
-            width={width}
-          />
+          <>
+            <ImageFloatingToolbar
+              editor={editor}
+              nodeKey={nodeKey}
+              layout={layout}
+              alignment={alignment}
+            />
+            <ImageResizer
+              editor={editor}
+              nodeKey={nodeKey}
+              imageRef={imageRef}
+            />
+          </>
         )}
-        <figure className="m-0 flex flex-col relative">
-          <img
-            ref={imageRef}
-            src={src}
-            alt={alt}
-            width={width} // This might be redundant if container handles it, but keeping for now
-            height={height}
-            className={`max-w-full h-auto block select-none ${
-              isUploading ? 'opacity-50' : ''
-            }`}
-            draggable="false"
-            style={{ width: '100%' }}
-          />
-          {isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+
+        <img
+          ref={imageRef}
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          className={`max-w-full h-auto block select-none ${
+            isUploading ? 'opacity-50' : ''
+          }`}
+          draggable="false"
+          style={{
+            width: width ? `${width}px` : '100%',
+            maxWidth: '100%',
+          }}
+        />
+
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {isError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 gap-2">
+            <p className="text-destructive font-medium">Upload Failed</p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleRetry}
+                className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
+              >
+                Retry
+              </button>
+              <button
+                onClick={handleRemove}
+                className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded"
+              >
+                Remove
+              </button>
             </div>
-          )}
-          {isError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 gap-2">
-              <p className="text-destructive font-medium">Upload Failed</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleRetry}
-                  className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
-                >
-                  Retry
-                </button>
-                <button
-                  onClick={handleRemove}
-                  className="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          )}
-          {caption && (
-            <figcaption className="p-2 text-sm text-muted-foreground border-t border-border bg-muted/30">
-              {caption}
-            </figcaption>
-          )}
-        </figure>
-      </Card>
+          </div>
+        )}
+      </div>
+
+      <div
+        className="mt-2 w-full max-w-[calc(100%-1rem)]"
+        style={{ width: width ? `${width}px` : '100%' }}
+      >
+        <input
+          type="text"
+          placeholder="Write a caption..."
+          className="w-full text-center text-sm text-muted-foreground bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-muted-foreground/50"
+          value={caption || ''}
+          onChange={(e) => setCaption(e.target.value)}
+          // Prevent selecting image when clicking caption
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
     </div>
   );
 }
