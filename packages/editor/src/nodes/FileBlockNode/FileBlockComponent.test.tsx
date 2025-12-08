@@ -56,8 +56,6 @@ describe('FileBlockComponent', () => {
     );
 
     expect(screen.getByText('test.pdf')).toBeInTheDocument();
-    // Size formatting might vary (1024 bytes -> 1 KB)
-    // Adjust expectation if needed or check parts
     expect(screen.getByText(/1\s*KB/i)).toBeInTheDocument();
   });
 
@@ -75,7 +73,6 @@ describe('FileBlockComponent', () => {
       </TestWrapper>,
     );
 
-    // Check key element
     expect(screen.getByText('uploading.pdf')).toBeInTheDocument();
   });
 
@@ -95,5 +92,78 @@ describe('FileBlockComponent', () => {
 
     expect(screen.getByText('Upload Failed')).toBeInTheDocument();
     expect(screen.getByTitle('error.pdf')).toBeInTheDocument();
+  });
+
+  it('shows retry and remove buttons on error', () => {
+    render(
+      <TestWrapper>
+        <FileBlockComponent
+          nodeKey="test-key"
+          url=""
+          filename="error.pdf"
+          size={0}
+          status="error"
+        />
+      </TestWrapper>,
+    );
+
+    expect(screen.getByTitle('Retry')).toBeInTheDocument();
+    expect(screen.getByTitle('Remove')).toBeInTheDocument();
+  });
+
+  it('shows download link for uploaded files', () => {
+    render(
+      <TestWrapper>
+        <FileBlockComponent
+          nodeKey="test-key"
+          url="http://test.com/file.pdf"
+          filename="file.pdf"
+          size={2048}
+          status="uploaded"
+        />
+      </TestWrapper>,
+    );
+
+    expect(screen.getByTitle('Download')).toBeInTheDocument();
+  });
+
+  it('applies selection styling when selected', () => {
+    (useLexicalNodeSelection as Mock).mockReturnValue([
+      true, // isSelected
+      vi.fn(),
+      vi.fn(),
+    ]);
+
+    render(
+      <TestWrapper>
+        <FileBlockComponent
+          nodeKey="test-key"
+          url="http://test.com/file.pdf"
+          filename="selected.pdf"
+          size={1024}
+          status="uploaded"
+        />
+      </TestWrapper>,
+    );
+
+    // Selected file should have ring styling class
+    const card = screen.getByText('selected.pdf').closest('.flex');
+    expect(card).toHaveClass('ring-2');
+  });
+
+  it('formats large file sizes correctly', () => {
+    render(
+      <TestWrapper>
+        <FileBlockComponent
+          nodeKey="test-key"
+          url="http://test.com/file.pdf"
+          filename="large.pdf"
+          size={1048576} // 1 MB
+          status="uploaded"
+        />
+      </TestWrapper>,
+    );
+
+    expect(screen.getByText(/1\s*MB/i)).toBeInTheDocument();
   });
 });

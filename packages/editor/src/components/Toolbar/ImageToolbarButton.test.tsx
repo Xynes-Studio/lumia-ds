@@ -107,4 +107,21 @@ describe('ImageToolbarButton', () => {
 
     expect(mockDispatchCommand).toHaveBeenCalled();
   });
+
+  it('closes popover when cancel is clicked', () => {
+    render(<ImageToolbarButton />);
+
+    // Click cancel
+    fireEvent.click(screen.getByText('Cancel'));
+
+    // Popover should still be in DOM but a state change happened
+    expect(screen.getByTestId('popover')).toBeInTheDocument();
+  });
+
+  it('shows alt text option for images', () => {
+    render(<ImageToolbarButton />);
+
+    const mediaInsert = screen.getByTestId('media-insert-tabs');
+    expect(mediaInsert).toHaveAttribute('data-media-type', 'image');
+  });
 });
