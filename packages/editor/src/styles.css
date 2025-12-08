@@ -87,7 +87,17 @@
 }
 
 .editor-listitem {
-  margin: 8px 32px 8px 32px;
+  margin: 4px 16px 4px 16px;
+}
+
+/* Reduced indentation for lists inside panels */
+.panel-node .editor-listitem {
+  margin: 4px 8px 4px 8px;
+}
+
+.panel-node .editor-list-ul,
+.panel-node .editor-list-ol {
+  padding-left: 16px;
 }
 
 .editor-link {
@@ -499,12 +509,8 @@
 
 .panel-title {
   font-weight: 600;
-  /* font-semibold */
   line-height: 1.5rem;
-  /* leading-6 */
-  margin-bottom: 0.125rem;
-  /* gap-1ish */
-  /* Colors are inherited from parent text color usually, but we can target if needed */
+  margin-bottom: 0.25rem;
   pointer-events: none;
 }
 

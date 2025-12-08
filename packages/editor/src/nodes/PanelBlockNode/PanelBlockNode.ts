@@ -112,22 +112,17 @@ export class PanelBlockNode extends ElementNode {
     div.className = `${className} ${this.__variant}`;
 
     // Icon - always create for variant-based CSS styling
-    // The CSS uses .panel-node.{variant} .panel-icon::before to render icons
     const iconDiv = document.createElement('div');
     iconDiv.className = 'panel-icon';
     iconDiv.contentEditable = 'false';
-    // pointer-events: none allows clicks to pass through to editable content
-    iconDiv.style.pointerEvents = 'none';
     iconDiv.dataset.icon = this.__icon || this.__variant;
     div.appendChild(iconDiv);
 
-    // Title
+    // Title - static display, edit via Panel Inspector or Action Menu
     if (this.__title) {
       const titleDiv = document.createElement('div');
       titleDiv.className = 'panel-title';
       titleDiv.contentEditable = 'false';
-      // pointer-events: none allows clicks to pass through to editable content
-      titleDiv.style.pointerEvents = 'none';
       titleDiv.textContent = this.__title;
       div.appendChild(titleDiv);
     }
@@ -136,17 +131,21 @@ export class PanelBlockNode extends ElementNode {
   }
 
   updateDOM(prevNode: PanelBlockNode, dom: HTMLElement): boolean {
+    // Update variant class
     if (prevNode.__variant !== this.__variant) {
       dom.classList.remove(prevNode.__variant);
       dom.classList.add(this.__variant);
     }
-    // Updating title/icon requires DOM manipulation if they changed.
-    // It's often easier to return true to force standard re-render,
-    // but ElementNode re-render might lose focus/selection state if not careful?
-    // Actually ElementNode defaults to returning false.
-    // If we want to support dynamic title/icon updates without full re-render:
-    if (prevNode.__title !== this.__title || prevNode.__icon !== this.__icon) {
-      return true; // Force re-render for simplicity
+
+    // Update icon
+    const iconDiv = dom.querySelector('.panel-icon') as HTMLElement | null;
+    if (iconDiv) {
+      iconDiv.dataset.icon = this.__icon || this.__variant;
+    }
+
+    // For title changes, force re-render to avoid complex DOM manipulation
+    if (prevNode.__title !== this.__title) {
+      return true;
     }
 
     return false;

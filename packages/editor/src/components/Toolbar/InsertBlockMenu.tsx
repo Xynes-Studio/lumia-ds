@@ -127,7 +127,7 @@ function handleSimpleInsert(type: BlockType, editor: LexicalEditor) {
       setTimeout(() => {
         editor.update(() => {
           // Import dynamically to avoid circular dependencies
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
+
           const {
             $toggleTableHeaderRow,
           } = require('../../plugins/TableActionMenuPlugin/tableUtils');
