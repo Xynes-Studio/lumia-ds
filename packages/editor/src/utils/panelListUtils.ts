@@ -4,7 +4,12 @@
  */
 
 import { LexicalNode } from 'lexical';
-import { $isListItemNode, $isListNode, ListItemNode, ListNode } from '@lexical/list';
+import {
+  $isListItemNode,
+  $isListNode,
+  ListItemNode,
+  ListNode,
+} from '@lexical/list';
 import { $isPanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
 
 /**
@@ -14,14 +19,14 @@ import { $isPanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
  * @returns True if the node is inside a panel
  */
 export function $isInsidePanel(node: LexicalNode): boolean {
-    let current: LexicalNode | null = node;
-    while (current !== null) {
-        if ($isPanelBlockNode(current)) {
-            return true;
-        }
-        current = current.getParent();
+  let current: LexicalNode | null = node;
+  while (current !== null) {
+    if ($isPanelBlockNode(current)) {
+      return true;
     }
-    return false;
+    current = current.getParent();
+  }
+  return false;
 }
 
 /**
@@ -30,14 +35,14 @@ export function $isInsidePanel(node: LexicalNode): boolean {
  * @returns The parent ListItemNode or null
  */
 export function $findParentListItem(node: LexicalNode): ListItemNode | null {
-    let current: LexicalNode | null = node;
-    while (current !== null) {
-        if ($isListItemNode(current)) {
-            return current;
-        }
-        current = current.getParent();
+  let current: LexicalNode | null = node;
+  while (current !== null) {
+    if ($isListItemNode(current)) {
+      return current;
     }
-    return null;
+    current = current.getParent();
+  }
+  return null;
 }
 
 /**
@@ -46,11 +51,11 @@ export function $findParentListItem(node: LexicalNode): ListItemNode | null {
  * @returns True if the list item has no content
  */
 export function isListItemEmpty(listItem: ListItemNode): boolean {
-    return (
-        listItem.getTextContentSize() === 0 ||
-        (listItem.getChildrenSize() === 1 &&
-            listItem.getFirstChild()?.getTextContentSize() === 0)
-    );
+  return (
+    listItem.getTextContentSize() === 0 ||
+    (listItem.getChildrenSize() === 1 &&
+      listItem.getFirstChild()?.getTextContentSize() === 0)
+  );
 }
 
 /**
@@ -59,8 +64,8 @@ export function isListItemEmpty(listItem: ListItemNode): boolean {
  * @returns True if inside a list structure
  */
 export function isInsideList(node: LexicalNode | null): boolean {
-    if (!node) return false;
-    return $isListItemNode(node) || $isListNode(node);
+  if (!node) return false;
+  return $isListItemNode(node) || $isListNode(node);
 }
 
 /**
@@ -69,11 +74,11 @@ export function isInsideList(node: LexicalNode | null): boolean {
  * @returns The parent ListNode or null
  */
 export function getParentList(listItem: ListItemNode): ListNode | null {
-    const parent = listItem.getParent();
-    if (!parent || !$isListNode(parent)) {
-        return null;
-    }
-    return parent;
+  const parent = listItem.getParent();
+  if (!parent || !$isListNode(parent)) {
+    return null;
+  }
+  return parent;
 }
 
 /**
@@ -82,7 +87,7 @@ export function getParentList(listItem: ListItemNode): ListNode | null {
  * @returns True if the list has exactly one child
  */
 export function isListSingleItem(listNode: ListNode): boolean {
-    return listNode.getChildrenSize() === 1;
+  return listNode.getChildrenSize() === 1;
 }
 
 /**
@@ -93,11 +98,11 @@ export function isListSingleItem(listNode: ListNode): boolean {
  * @returns True if we should exit the list
  */
 export function shouldExitListOnEnter(
-    isInPanel: boolean,
-    listItem: ListItemNode | null,
-    isEmpty: boolean,
+  isInPanel: boolean,
+  listItem: ListItemNode | null,
+  isEmpty: boolean,
 ): boolean {
-    return isInPanel && listItem !== null && isEmpty;
+  return isInPanel && listItem !== null && isEmpty;
 }
 
 /**
@@ -106,5 +111,5 @@ export function shouldExitListOnEnter(
  * @returns The list type string
  */
 export function getListType(isOrdered: boolean): 'bullet' | 'number' {
-    return isOrdered ? 'number' : 'bullet';
+  return isOrdered ? 'number' : 'bullet';
 }

@@ -4,31 +4,31 @@
  */
 
 export interface SlashMenuState {
-    isOpen: boolean;
-    query: string;
-    position: { top: number; left: number };
-    triggerNodeKey: string | null;
-    triggerOffset: number;
+  isOpen: boolean;
+  query: string;
+  position: { top: number; left: number };
+  triggerNodeKey: string | null;
+  triggerOffset: number;
 }
 
 export interface ModalState {
-    isOpen: boolean;
-    type: string | null;
-    position: { top: number; left: number };
+  isOpen: boolean;
+  type: string | null;
+  position: { top: number; left: number };
 }
 
 export const initialSlashMenuState: SlashMenuState = {
-    isOpen: false,
-    query: '',
-    position: { top: 0, left: 0 },
-    triggerNodeKey: null,
-    triggerOffset: 0,
+  isOpen: false,
+  query: '',
+  position: { top: 0, left: 0 },
+  triggerNodeKey: null,
+  triggerOffset: 0,
 };
 
 export const initialModalState: ModalState = {
-    isOpen: false,
-    type: null,
-    position: { top: 0, left: 0 },
+  isOpen: false,
+  type: null,
+  position: { top: 0, left: 0 },
 };
 
 /**
@@ -39,17 +39,17 @@ export const initialModalState: ModalState = {
  * @returns Object with beforeSlash and afterQuery parts
  */
 export function calculateSlashRemoval(
-    textContent: string,
-    offset: number,
-    queryLength: number,
+  textContent: string,
+  offset: number,
+  queryLength: number,
 ): { beforeSlash: string; afterQuery: string; isEmpty: boolean } {
-    const beforeSlash = textContent.substring(0, offset);
-    const afterQuery = textContent.substring(offset + 1 + queryLength);
-    return {
-        beforeSlash,
-        afterQuery,
-        isEmpty: beforeSlash + afterQuery === '',
-    };
+  const beforeSlash = textContent.substring(0, offset);
+  const afterQuery = textContent.substring(offset + 1 + queryLength);
+  return {
+    beforeSlash,
+    afterQuery,
+    isEmpty: beforeSlash + afterQuery === '',
+  };
 }
 
 /**
@@ -58,7 +58,7 @@ export function calculateSlashRemoval(
  * @returns True if the command should open a modal
  */
 export function shouldOpenModal(modalType: string | undefined): boolean {
-    return modalType !== undefined && modalType !== 'none';
+  return modalType !== undefined && modalType !== 'none';
 }
 
 /**
@@ -68,10 +68,13 @@ export function shouldOpenModal(modalType: string | undefined): boolean {
  * @param textBeforeCursor - Text before the cursor position
  * @returns True if slash menu should open
  */
-export function isSlashTrigger(char: string, textBeforeCursor: string): boolean {
-    if (char !== '/') return false;
-    // Open if at start or after whitespace
-    return textBeforeCursor === '' || /\s$/.test(textBeforeCursor);
+export function isSlashTrigger(
+  char: string,
+  textBeforeCursor: string,
+): boolean {
+  if (char !== '/') return false;
+  // Open if at start or after whitespace
+  return textBeforeCursor === '' || /\s$/.test(textBeforeCursor);
 }
 
 /**
@@ -80,7 +83,7 @@ export function isSlashTrigger(char: string, textBeforeCursor: string): boolean 
  * @returns True if the key should close the menu
  */
 export function isMenuCloseKey(key: string): boolean {
-    return key === 'Escape' || key === ' ';
+  return key === 'Escape' || key === ' ';
 }
 
 /**
@@ -89,19 +92,19 @@ export function isMenuCloseKey(key: string): boolean {
  * @returns 'up', 'down', 'select', or null
  */
 export function getMenuNavigationAction(
-    key: string,
+  key: string,
 ): 'up' | 'down' | 'select' | null {
-    switch (key) {
-        case 'ArrowUp':
-            return 'up';
-        case 'ArrowDown':
-            return 'down';
-        case 'Enter':
-        case 'Tab':
-            return 'select';
-        default:
-            return null;
-    }
+  switch (key) {
+    case 'ArrowUp':
+      return 'up';
+    case 'ArrowDown':
+      return 'down';
+    case 'Enter':
+    case 'Tab':
+      return 'select';
+    default:
+      return null;
+  }
 }
 
 /**
@@ -111,14 +114,14 @@ export function getMenuNavigationAction(
  * @returns Position object with top and left
  */
 export function calculateMenuPosition(
-    rect: { bottom: number; left: number } | null,
-    offset: { top?: number; left?: number } = {},
+  rect: { bottom: number; left: number } | null,
+  offset: { top?: number; left?: number } = {},
 ): { top: number; left: number } {
-    if (!rect) return { top: 0, left: 0 };
-    return {
-        top: rect.bottom + (offset.top ?? 4),
-        left: rect.left + (offset.left ?? 0),
-    };
+  if (!rect) return { top: 0, left: 0 };
+  return {
+    top: rect.bottom + (offset.top ?? 4),
+    left: rect.left + (offset.left ?? 0),
+  };
 }
 
 /**
@@ -129,10 +132,10 @@ export function calculateMenuPosition(
  * @returns The query string after the slash
  */
 export function extractQueryFromText(
-    text: string,
-    slashOffset: number,
-    cursorOffset: number,
+  text: string,
+  slashOffset: number,
+  cursorOffset: number,
 ): string {
-    if (cursorOffset <= slashOffset) return '';
-    return text.substring(slashOffset + 1, cursorOffset);
+  if (cursorOffset <= slashOffset) return '';
+  return text.substring(slashOffset + 1, cursorOffset);
 }

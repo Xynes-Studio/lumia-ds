@@ -92,7 +92,10 @@ describe('FileBlockNode', () => {
 
   test('should handle undefined optional fields', () => {
     editor.update(() => {
-      const node = new FileBlockNode('https://example.com/file.pdf', 'file.pdf');
+      const node = new FileBlockNode(
+        'https://example.com/file.pdf',
+        'file.pdf',
+      );
       expect(node.__size).toBeUndefined();
       expect(node.__mime).toBeUndefined();
       expect(node.__status).toBeUndefined();

@@ -119,7 +119,7 @@ describe('ImageBlockUpload', () => {
       allowedImageTypes: ['image/jpeg', 'image/png'],
     };
 
-    let resolveUpload: (value: any) => void;
+    let resolveUpload: (value: unknown) => void;
     mockUploadFile.mockImplementation(
       () =>
         new Promise((resolve) => {
@@ -164,7 +164,7 @@ describe('ImageBlockUpload', () => {
   it('handles upload error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => { });
+      .mockImplementation(() => {});
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {
@@ -193,7 +193,7 @@ describe('ImageBlockUpload', () => {
   });
 
   it('validates file size', async () => {
-    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => { });
+    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {

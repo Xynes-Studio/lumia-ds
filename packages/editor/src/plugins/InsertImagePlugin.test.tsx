@@ -12,7 +12,7 @@ describe('InsertImagePlugin', () => {
   beforeEach(() => {
     editor = createHeadlessEditor({
       nodes: [ImageBlockNode],
-      onError: () => { },
+      onError: () => {},
     });
   });
 

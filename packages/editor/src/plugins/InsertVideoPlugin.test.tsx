@@ -13,7 +13,7 @@ describe('InsertVideoPlugin', () => {
   beforeEach(() => {
     editor = createHeadlessEditor({
       nodes: [VideoBlockNode],
-      onError: () => { },
+      onError: () => {},
     });
   });
 

@@ -9,8 +9,6 @@ import {
   $createTableRowNode,
   $createTableCellNode,
   SerializedTableNode,
-  SerializedTableRowNode,
-  SerializedTableCellNode,
   INSERT_TABLE_COMMAND,
   $isTableNode,
   registerTablePlugin,
@@ -96,7 +94,7 @@ describe('Table Nodes', () => {
   });
 
   test('should import table from JSON correctly', async () => {
-    // Use a simpler JSON without children expectation for this test, 
+    // Use a simpler JSON without children expectation for this test,
     // or acknowledge import might be shallow matching export behavior.
     const tableJSON: SerializedTableNode = {
       type: 'table',

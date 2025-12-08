@@ -16,6 +16,7 @@ import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { LexicalEditor } from 'lexical';
 import { ImageBlockNode } from '../../nodes/ImageBlockNode';
 import { VideoBlockNode } from '../../nodes/VideoBlockNode';
 import { FileBlockNode } from '../../nodes/FileBlockNode/FileBlockNode';
@@ -23,42 +24,55 @@ import { PanelBlockNode } from '../../nodes/PanelBlockNode/PanelBlockNode';
 import { StatusNode } from '../../nodes/StatusNode';
 
 vi.mock('@lumia/components', () => ({
-  Button: React.forwardRef(({ children, onClick, ...props }: React.ComponentProps<any>, ref: any) => (
-    <button ref={ref} onClick={onClick} {...props}>
-      {children}
-    </button>
-  )),
-  Menu: ({ children }: any) => <div data-testid="menu">{children}</div>,
-  MenuTrigger: ({ children }: any) => (
+  Button: React.forwardRef(
+    (
+      { children, onClick, ...props }: React.ComponentProps<'button'>,
+      ref: React.Ref<HTMLButtonElement>,
+    ) => (
+      <button ref={ref} onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
+  ),
+  Menu: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="menu">{children}</div>
+  ),
+  MenuTrigger: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="menu-trigger">{children}</div>
   ),
-  MenuContent: ({ children }: any) => (
+  MenuContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="menu-content">{children}</div>
   ),
-  Popover: ({ children }: any) => <div data-testid="popover">{children}</div>,
-  PopoverTrigger: ({ children }: any) => (
+  Popover: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="popover">{children}</div>
+  ),
+  PopoverTrigger: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="popover-trigger">{children}</div>
   ),
-  PopoverContent: ({ children }: any) => (
+  PopoverContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="popover-content">{children}</div>
   ),
-  Tabs: ({ children }: any) => <div data-testid="tabs">{children}</div>,
-  TabsList: ({ children }: any) => (
+  Tabs: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="tabs">{children}</div>
+  ),
+  TabsList: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tabs-list">{children}</div>
   ),
-  TabsTrigger: ({ children }: any) => (
+  TabsTrigger: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tabs-trigger">{children}</div>
   ),
-  TabsContent: ({ children }: any) => (
+  TabsContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="tabs-content">{children}</div>
   ),
-  Input: (props: any) => <input {...props} data-testid="input" />,
-  Select: ({ children, ...props }: any) => (
+  Input: (props: React.ComponentProps<'input'>) => (
+    <input {...props} data-testid="input" />
+  ),
+  Select: ({ children, ...props }: React.ComponentProps<'select'>) => (
     <select {...props} data-testid="select">
       {children}
     </select>
   ),
-  Slider: (props: any) => <div data-testid="slider" />,
+  Slider: () => <div data-testid="slider" />,
 }));
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
@@ -169,10 +183,10 @@ describe('InsertBlockMenu', () => {
     // We can't easily access the editor instance created inside TestWrapper > LexicalComposer
     // without a child component that uses useLexicalComposerContext.
 
-    let editorSpy: any;
+    let editorSpy!: LexicalEditor;
     const EditorSpy = () => {
       const [editor] = useLexicalComposerContext();
-      editorSpy = editor as any;
+      editorSpy = editor;
       return null;
     };
 
