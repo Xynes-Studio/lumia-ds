@@ -120,4 +120,38 @@ describe('SlashMenu Commands', () => {
       expect(typeof cmd.execute).toBe('function');
     });
   });
+
+  test('command execute functions exist', () => {
+    defaultSlashCommands.forEach(cmd => {
+      expect(typeof cmd.execute).toBe('function');
+    });
+  });
+
+  test('commands have valid block types', () => {
+    const validTypes = ['table', 'image', 'video', 'panel', 'status', 'file', 'quote', 'code', 'heading1', 'heading2', 'heading3', 'bulletList', 'numberedList', 'divider', 'paragraph'];
+    defaultSlashCommands.forEach(cmd => {
+      expect(validTypes.includes(cmd.name) || cmd.name.startsWith('heading')).toBe(true);
+    });
+  });
+
+  test('filterSlashCommands is case insensitive', () => {
+    const resultLower = filterSlashCommands(defaultSlashCommands, 'video');
+    const resultUpper = filterSlashCommands(defaultSlashCommands, 'VIDEO');
+    expect(resultLower.length).toBe(resultUpper.length);
+  });
+
+  test('commands with modalType are identified', () => {
+    const commandsWithModal = defaultSlashCommands.filter(cmd => cmd.modalType);
+    expect(commandsWithModal.length).toBeGreaterThan(0);
+  });
+
+  test('filterSlashCommands matches by keywords', () => {
+    // Most commands should have keywords
+    const cmdWithKeywords = defaultSlashCommands.find(cmd => cmd.keywords.length > 0);
+    if (cmdWithKeywords) {
+      const keyword = cmdWithKeywords.keywords[0];
+      const result = filterSlashCommands(defaultSlashCommands, keyword);
+      expect(result.length).toBeGreaterThan(0);
+    }
+  });
 });

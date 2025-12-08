@@ -102,4 +102,80 @@ describe('InsertFilePlugin', () => {
       expect(root.getChildrenSize()).toBeGreaterThan(0);
     });
   });
+
+  it('inserts file node with uploading status', async () => {
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+            url: 'blob:test',
+            filename: 'uploading.pdf',
+            size: 2048,
+            mime: 'application/pdf',
+            status: 'uploading',
+          });
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    editor.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
+
+  it('inserts file node with error status', async () => {
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+            url: 'blob:failed',
+            filename: 'failed.pdf',
+            size: 1024,
+            mime: 'application/pdf',
+            status: 'error',
+          });
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    editor.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
+
+  it('creates file node directly with createFileBlockNode', () => {
+    editor.update(() => {
+      const fileNode = $createFileBlockNode({
+        url: 'https://example.com/doc.pdf',
+        filename: 'doc.pdf',
+        size: 4096,
+        mime: 'application/pdf',
+        status: 'uploaded',
+      });
+      expect(fileNode.getType()).toBe('file-block');
+    });
+  });
+
+  it('handles file without optional fields', async () => {
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+            url: 'https://example.com/file.bin',
+            filename: 'file.bin',
+          });
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    editor.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
 });
