@@ -54,4 +54,48 @@ describe('FileBlockNode', () => {
       expect(deserialized.__status).toBe('uploaded');
     });
   });
+
+  test('should return correct type', () => {
+    expect(FileBlockNode.getType()).toBe('file-block');
+  });
+
+  test('should clone node correctly', () => {
+    editor.update(() => {
+      const node = new FileBlockNode(
+        'https://example.com/test.zip',
+        'test.zip',
+        2048,
+        'application/zip',
+        'uploading',
+      );
+      const cloned = FileBlockNode.clone(node);
+      expect(cloned.__url).toBe('https://example.com/test.zip');
+      expect(cloned.__filename).toBe('test.zip');
+      expect(cloned.__size).toBe(2048);
+      expect(cloned.__mime).toBe('application/zip');
+      expect(cloned.__status).toBe('uploading');
+    });
+  });
+
+  test('should handle error status', () => {
+    editor.update(() => {
+      const node = new FileBlockNode(
+        'https://example.com/file.pdf',
+        'file.pdf',
+        1024,
+        'application/pdf',
+        'error',
+      );
+      expect(node.__status).toBe('error');
+    });
+  });
+
+  test('should handle undefined optional fields', () => {
+    editor.update(() => {
+      const node = new FileBlockNode('https://example.com/file.pdf', 'file.pdf');
+      expect(node.__size).toBeUndefined();
+      expect(node.__mime).toBeUndefined();
+      expect(node.__status).toBeUndefined();
+    });
+  });
 });
