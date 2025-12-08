@@ -1,6 +1,25 @@
+/**
+ * Options for file upload operations.
+ */
+export interface UploadOptions {
+  /** Called with progress updates (0-100) during upload */
+  onProgress?: (progress: number) => void;
+}
+
+/**
+ * Adapter interface for handling file uploads.
+ * Consumers implement this to integrate with their backend.
+ */
 export interface MediaUploadAdapter {
+  /**
+   * Upload a file and return its URL.
+   * @param file - The file to upload
+   * @param options - Optional upload configuration including progress callback
+   * @returns Promise resolving to upload result with URL, mime type, and size
+   */
   uploadFile: (
     file: File,
+    options?: UploadOptions,
   ) => Promise<{ url: string; mime: string; size: number }>;
 }
 

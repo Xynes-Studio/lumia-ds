@@ -10,7 +10,7 @@ import {
   KEY_BACKSPACE_COMMAND,
 } from 'lexical';
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { Card } from '@lumia/components';
 import { $isVideoBlockNode, VideoProvider } from './VideoBlockNode';
 import { useMediaContext } from '../../EditorProvider';
@@ -38,7 +38,11 @@ export function VideoBlockComponent({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaConfig = useMediaContext();
 
-  const onDelete = React.useCallback(
+  // Store file reference for retry
+  const pendingFileRef = useRef<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const onDelete = useCallback(
     (payload: KeyboardEvent) => {
       if (isSelected && $isVideoBlockNode($getNodeByKey(nodeKey))) {
         payload.preventDefault();
@@ -87,6 +91,73 @@ export function VideoBlockComponent({
     }
   };
 
+  const performUpload = useCallback(
+    async (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      // Store file for potential retry
+      pendingFileRef.current = file;
+      setUploadProgress(0);
+
+      // Optimistic preview
+      const previewUrl = URL.createObjectURL(file);
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isVideoBlockNode(node)) {
+          const writable = node.getWritable();
+          writable.__src = previewUrl;
+          writable.__status = 'uploading';
+          writable.__provider = 'html5'; // Local files are always html5
+        }
+      });
+
+      // Notify start
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+
+      try {
+        const result = await mediaConfig.uploadAdapter.uploadFile(file, {
+          onProgress: (progress) => {
+            setUploadProgress(progress);
+            mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+          },
+        });
+
+        editor.update(() => {
+          const node = $getNodeByKey(nodeKey);
+          if ($isVideoBlockNode(node)) {
+            const writable = node.getWritable();
+            writable.__src = result.url;
+            writable.__status = 'uploaded';
+          }
+        });
+
+        mediaConfig.callbacks?.onUploadComplete?.(file, result);
+
+        // Clear pending file on success
+        pendingFileRef.current = null;
+
+        // Revoke blob URL to free memory
+        URL.revokeObjectURL(previewUrl);
+      } catch (error) {
+        console.error('Upload failed:', error);
+
+        editor.update(() => {
+          const node = $getNodeByKey(nodeKey);
+          if ($isVideoBlockNode(node)) {
+            const writable = node.getWritable();
+            writable.__status = 'error';
+          }
+        });
+
+        mediaConfig.callbacks?.onUploadError?.(
+          file,
+          error instanceof Error ? error : new Error('Upload failed'),
+        );
+      }
+    },
+    [editor, nodeKey, mediaConfig],
+  );
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !mediaConfig?.uploadAdapter) return;
@@ -109,53 +180,29 @@ export function VideoBlockComponent({
       return;
     }
 
-    // Call onUploadStart callback
-    mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+    await performUpload(file);
+  };
 
-    // Optimistic preview
-    const previewUrl = URL.createObjectURL(file);
+  const handleRetry = useCallback(() => {
+    const pendingFile = pendingFileRef.current;
+    if (pendingFile) {
+      // Retry with stored file
+      performUpload(pendingFile);
+    } else {
+      // Fallback: open file picker if no stored file
+      fileInputRef.current?.click();
+    }
+  }, [performUpload]);
+
+  const handleRemove = useCallback(() => {
+    pendingFileRef.current = null;
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isVideoBlockNode(node)) {
-        const writable = node.getWritable();
-        writable.__src = previewUrl;
-        writable.__status = 'uploading';
-        writable.__provider = 'html5'; // Local files are always html5
+        node.remove();
       }
     });
-
-    try {
-      const result = await mediaConfig.uploadAdapter.uploadFile(file);
-
-      // Call onUploadComplete callback
-      mediaConfig.callbacks?.onUploadComplete?.(file, result);
-
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isVideoBlockNode(node)) {
-          const writable = node.getWritable();
-          writable.__src = result.url;
-          writable.__status = 'uploaded';
-        }
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-
-      // Call onUploadError callback
-      mediaConfig.callbacks?.onUploadError?.(
-        file,
-        error instanceof Error ? error : new Error('Upload failed'),
-      );
-
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isVideoBlockNode(node)) {
-          const writable = node.getWritable();
-          writable.__status = 'error';
-        }
-      });
-    }
-  };
+  }, [editor, nodeKey]);
 
   // Show upload UI when no src is provided
   if (!src) {
@@ -219,7 +266,7 @@ export function VideoBlockComponent({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  fileInputRef.current?.click();
+                  handleRetry();
                 }}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium"
               >
@@ -228,12 +275,7 @@ export function VideoBlockComponent({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  editor.update(() => {
-                    const node = $getNodeByKey(nodeKey);
-                    if ($isVideoBlockNode(node)) {
-                      node.remove();
-                    }
-                  });
+                  handleRemove();
                 }}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90 h-9 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium"
               >

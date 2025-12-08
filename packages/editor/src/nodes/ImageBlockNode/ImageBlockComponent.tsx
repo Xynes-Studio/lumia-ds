@@ -10,7 +10,7 @@ import {
   KEY_BACKSPACE_COMMAND,
 } from 'lexical';
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { Card } from '@lumia/components';
 import { $isImageBlockNode } from './ImageBlockNode';
 import { useMediaContext } from '../../EditorProvider';
@@ -48,7 +48,11 @@ export function ImageBlockComponent({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaConfig = useMediaContext();
 
-  const onDelete = React.useCallback(
+  // Store file reference for retry
+  const pendingFileRef = useRef<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const onDelete = useCallback(
     (payload: KeyboardEvent) => {
       if (isSelected && $isImageBlockNode($getNodeByKey(nodeKey))) {
         const event: KeyboardEvent = payload;
@@ -95,6 +99,72 @@ export function ImageBlockComponent({
     );
   }, [clearSelected, editor, isSelected, onDelete, setSelected]);
 
+  const performUpload = useCallback(
+    async (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      // Store file for potential retry
+      pendingFileRef.current = file;
+      setUploadProgress(0);
+
+      // Optimistic preview
+      const previewUrl = URL.createObjectURL(file);
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isImageBlockNode(node)) {
+          const writable = node.getWritable();
+          writable.__src = previewUrl;
+          writable.__status = 'uploading';
+        }
+      });
+
+      // Notify start
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+
+      try {
+        const result = await mediaConfig.uploadAdapter.uploadFile(file, {
+          onProgress: (progress) => {
+            setUploadProgress(progress);
+            mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+          },
+        });
+
+        editor.update(() => {
+          const node = $getNodeByKey(nodeKey);
+          if ($isImageBlockNode(node)) {
+            const writable = node.getWritable();
+            writable.__src = result.url;
+            writable.__status = 'uploaded';
+          }
+        });
+
+        mediaConfig.callbacks?.onUploadComplete?.(file, result);
+
+        // Clear pending file on success
+        pendingFileRef.current = null;
+
+        // Revoke blob URL to free memory
+        URL.revokeObjectURL(previewUrl);
+      } catch (error) {
+        console.error('Upload failed:', error);
+
+        editor.update(() => {
+          const node = $getNodeByKey(nodeKey);
+          if ($isImageBlockNode(node)) {
+            const writable = node.getWritable();
+            writable.__status = 'error';
+          }
+        });
+
+        mediaConfig.callbacks?.onUploadError?.(
+          file,
+          error instanceof Error ? error : new Error('Upload failed'),
+        );
+      }
+    },
+    [editor, nodeKey, mediaConfig],
+  );
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !mediaConfig?.uploadAdapter) return;
@@ -117,44 +187,22 @@ export function ImageBlockComponent({
       return;
     }
 
-    // Optimistic preview
-    const previewUrl = URL.createObjectURL(file);
-    editor.update(() => {
-      const node = $getNodeByKey(nodeKey);
-      if ($isImageBlockNode(node)) {
-        const writable = node.getWritable();
-        writable.__src = previewUrl;
-        writable.__status = 'uploading';
-      }
-    });
+    await performUpload(file);
+  };
 
-    try {
-      const result = await mediaConfig.uploadAdapter.uploadFile(file);
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isImageBlockNode(node)) {
-          const writable = node.getWritable();
-          writable.__src = result.url;
-          writable.__status = 'uploaded';
-        }
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-      editor.update(() => {
-        const node = $getNodeByKey(nodeKey);
-        if ($isImageBlockNode(node)) {
-          const writable = node.getWritable();
-          writable.__status = 'error';
-        }
-      });
+  const handleRetry = useCallback(() => {
+    const pendingFile = pendingFileRef.current;
+    if (pendingFile) {
+      // Retry with stored file
+      performUpload(pendingFile);
+    } else {
+      // Fallback: open file picker if no stored file
+      fileInputRef.current?.click();
     }
-  };
-
-  const handleRetry = () => {
-    fileInputRef.current?.click();
-  };
+  }, [performUpload]);
 
   const handleRemove = () => {
+    pendingFileRef.current = null;
     editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isImageBlockNode(node)) {

@@ -133,7 +133,7 @@ export function MediaInsertTabs({
         <TabsList className="w-full">
           <TabsTrigger value="link" className="flex-1 gap-2">
             <LinkIcon className="h-4 w-4" />
-            Link
+            Embed link
           </TabsTrigger>
           {uploadEnabled && (
             <TabsTrigger value="upload" className="flex-1 gap-2">
@@ -244,7 +244,7 @@ export function MediaInsertTabs({
                         onClick={() => fileInputRef.current?.click()}
                         className="text-primary hover:underline font-medium"
                       >
-                        browse
+                        choose file
                       </button>
                     </p>
                     <p className="text-xs text-muted-foreground">

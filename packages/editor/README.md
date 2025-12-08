@@ -127,29 +127,52 @@ const brandFonts: FontConfig = {
 
 ### Media Configuration
 
-Configure media upload behavior (for images and files) using the `media` prop:
+Configure media upload behavior for images, videos, and files using the `media` prop:
 
 ```tsx
 import { LumiaEditor, type EditorMediaConfig } from '@lumia/editor';
 
 const mediaConfig: EditorMediaConfig = {
-  // Optional: Custom upload adapter
+  // Upload adapter for handling file uploads
   uploadAdapter: {
-    uploadFile: async (file) => {
-      // Upload file to your backend
+    uploadFile: async (file, options) => {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await response.json();
-      return {
-        url: data.url,
-        mime: data.mime,
-        size: data.size,
-      };
+      
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        // Report progress updates
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const progress = Math.round((e.loaded / e.total) * 100);
+            options?.onProgress?.(progress);
+          }
+        };
+        
+        xhr.onload = () => {
+          const data = JSON.parse(xhr.responseText);
+          resolve({ url: data.url, mime: data.mime, size: data.size });
+        };
+        
+        xhr.onerror = () => reject(new Error('Upload failed'));
+        xhr.open('POST', '/api/upload');
+        xhr.send(formData);
+      });
     },
   },
-  // Optional: Restrict allowed types
-  allowedImageTypes: ['image/jpeg', 'image/png'],
+  
+  // Lifecycle callbacks for upload events
+  callbacks: {
+    onUploadStart: (file, type) => console.log(`Uploading ${type}:`, file.name),
+    onUploadProgress: (file, progress) => console.log(`Progress: ${progress}%`),
+    onUploadComplete: (file, result) => console.log('Done:', result.url),
+    onUploadError: (file, error) => console.error('Failed:', error),
+  },
+  
+  // File type restrictions
+  allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  allowedVideoTypes: ['video/mp4', 'video/webm'],
   maxFileSizeMB: 10,
 };
 
@@ -163,7 +186,20 @@ function App() {
 }
 ```
 
-If no `uploadAdapter` is provided, upload features will be gracefully disabled.
+**Upload Flow:**
+1. User selects file via toolbar button, Insert menu, or slash command
+2. Local preview rendered immediately using `URL.createObjectURL()`
+3. `onUploadStart` callback invoked
+4. File uploaded via `uploadAdapter.uploadFile()`
+5. `onUploadProgress` called with progress updates (0-100)
+6. On success: `onUploadComplete` called, node updated with API URL
+7. On error: `onUploadError` called, error state shown with Retry/Remove options
+
+**Retry Support:**
+If upload fails, clicking Retry will retry with the same file (no need to re-select).
+
+**No Adapter:**
+If no `uploadAdapter` is provided, only URL-based insertion is available.
 
 
 ### Advanced Usage
