@@ -549,6 +549,27 @@ editor.update(() => {
 
 To view panel demos, navigate to the `Panel / Static` story in Storybook.
 
+### Status Node
+The editor supports inline status lozenges (pills) to indicate status text with a color variant.
+
+```tsx
+import { $createStatusNode } from '@lumia/editor/nodes/StatusNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createStatusNode({
+    text: 'In Progress',
+    color: 'warning', // 'success' | 'warning' | 'error' | 'info'
+  });
+  $insertNodes([node]);
+});
+```
+
+- **Variants**: Supports `success`, `warning`, `error`, and `info`.
+- **Inline**: Renders inline with text, compatible with paragraphs.
+- **Styling**: Uses Lumia UI StatusPill component.
+- **Serialization**: Fully supports JSON import/export.
+
 ### Block Inspector
 
 The `BlockInspector` component provides a context-aware property inspector for the currently selected block. It renders specific inspector controls based on the selected block type (e.g., Image settings when an image is selected).

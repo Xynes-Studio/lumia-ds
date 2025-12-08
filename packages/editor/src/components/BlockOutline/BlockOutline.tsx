@@ -53,18 +53,20 @@ export const BlockOutline = () => {
             onClick={() => handleBlockClick(block.id)}
             className={`
               group flex items - center gap - 2 px - 2 py - 1.5 w - full text - left rounded - md text - sm transition - colors
-              ${isActive
-                ? 'bg-blue-50 text-blue-700 font-medium'
-                : 'text-gray-600 hover:bg-gray-100'
+              ${
+                isActive
+                  ? 'bg-blue-50 text-blue-700 font-medium'
+                  : 'text-gray-600 hover:bg-gray-100'
               }
 `}
           >
             {Icon && (
               <Icon
-                className={`w - 4 h - 4 ${isActive
-                  ? 'text-blue-500'
-                  : 'text-gray-400 group-hover:text-gray-500'
-                  } `}
+                className={`w - 4 h - 4 ${
+                  isActive
+                    ? 'text-blue-500'
+                    : 'text-gray-400 group-hover:text-gray-500'
+                } `}
               />
             )}
             <span className="truncate flex-1">{block.label}</span>
