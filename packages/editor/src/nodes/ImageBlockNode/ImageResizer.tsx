@@ -1,82 +1,97 @@
 import * as React from 'react';
-import { $getNodeByKey, NodeKey, LexicalEditor } from 'lexical';
+import { useRef, useState } from 'react';
+import { LexicalEditor, $getNodeByKey } from 'lexical';
 import { $isImageBlockNode } from './ImageBlockNode';
-// Assuming these exist or using standard HTML for now if not found
 
-// Since I don't have the full list of @lumia/components, I'll use standard HTML elements with classes
-// mimicking the style or use what I can find.
-// The user asked to use "lumia Ui components or shadcn as base".
-// I'll check what's available in @lumia/components later, but for now I'll build a functional component.
+interface ImageResizerProps {
+  editor: LexicalEditor;
+  nodeKey: string;
+  imageRef: React.RefObject<HTMLElement>;
+}
 
 export function ImageResizer({
   editor,
   nodeKey,
-  layout,
-  width,
-}: {
-  editor: LexicalEditor;
-  nodeKey: NodeKey;
-  layout: 'inline' | 'breakout' | 'fullWidth' | undefined;
-  width: number | undefined;
-}): React.ReactElement {
-  const handleLayoutChange = (
-    newLayout: 'inline' | 'breakout' | 'fullWidth',
-  ) => {
-    editor.update(() => {
-      const node = $getNodeByKey(nodeKey);
-      if ($isImageBlockNode(node)) {
-        const writable = node.getWritable();
-        writable.__layout = newLayout;
-      }
-    });
-  };
+  imageRef,
+}: ImageResizerProps): React.JSX.Element {
+  const controlWrapperRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
 
-  const handleWidthChange = (newWidth: number) => {
-    editor.update(() => {
-      const node = $getNodeByKey(nodeKey);
-      if ($isImageBlockNode(node)) {
-        const writable = node.getWritable();
-        writable.__width = newWidth;
-      }
-    });
+  const handlePointerDown = (
+    event: React.PointerEvent<HTMLDivElement>,
+    direction: number,
+  ) => {
+    if (!editor.isEditable()) {
+      return;
+    }
+    event.preventDefault();
+    setIsResizing(true);
+
+    const image = imageRef.current;
+    if (!image) return;
+
+    const { width } = image.getBoundingClientRect();
+    const startX = event.clientX;
+    const startWidth = width;
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const currentX = moveEvent.clientX;
+      const diffX = currentX - startX;
+
+      // Calculate new width
+      let newWidth = startWidth + diffX * direction;
+
+      // Constrain width
+      const parentWidth =
+        image.parentElement?.getBoundingClientRect().width || 1000;
+      newWidth = Math.max(100, Math.min(newWidth, parentWidth));
+
+      // Update the image style directly first
+      image.style.width = `${newWidth}px`;
+    };
+
+    const handlePointerUp = () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+      setIsResizing(false);
+
+      // Commit final width
+      const finalWidth = image.getBoundingClientRect().width;
+
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+        if ($isImageBlockNode(node)) {
+          node.setWidth(finalWidth);
+        }
+      });
+    };
+
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
   };
 
   return (
-    <div className="absolute top-2 right-2 flex gap-2 bg-background/90 p-1 rounded shadow-sm border border-border z-10">
-      <div className="flex gap-1">
-        <button
-          className={`p-1 rounded hover:bg-muted ${layout === 'inline' || !layout ? 'bg-muted' : ''}`}
-          onClick={() => handleLayoutChange('inline')}
-          title="Inline"
-        >
-          Inline
-        </button>
-        <button
-          className={`p-1 rounded hover:bg-muted ${layout === 'breakout' ? 'bg-muted' : ''}`}
-          onClick={() => handleLayoutChange('breakout')}
-          title="Breakout"
-        >
-          Breakout
-        </button>
-        <button
-          className={`p-1 rounded hover:bg-muted ${layout === 'fullWidth' ? 'bg-muted' : ''}`}
-          onClick={() => handleLayoutChange('fullWidth')}
-          title="Full Width"
-        >
-          Full
-        </button>
+    <div ref={controlWrapperRef}>
+      {/* Right Handle */}
+      <div
+        className={`absolute top-0 bottom-0 right-0 w-2 cursor-ew-resize hover:bg-primary/50 transition-colors z-20 touch-none flex flex-col justify-center ${
+          isResizing ? 'bg-primary' : ''
+        }`}
+        style={{ width: '12px', right: '-6px' }}
+        onPointerDown={(e) => handlePointerDown(e, 1)}
+      >
+        <div className="h-8 w-1.5 bg-border rounded-full mx-auto" />
       </div>
-      <div className="w-px bg-border mx-1" />
-      <div className="flex gap-1">
-        {[25, 50, 75, 100].map((w) => (
-          <button
-            key={w}
-            className={`p-1 rounded hover:bg-muted text-xs ${width === w ? 'bg-muted font-bold' : ''}`}
-            onClick={() => handleWidthChange(w)}
-          >
-            {w}%
-          </button>
-        ))}
+
+      {/* Left Handle */}
+      <div
+        className={`absolute top-0 bottom-0 left-0 w-2 cursor-ew-resize hover:bg-primary/50 transition-colors z-20 touch-none flex flex-col justify-center ${
+          isResizing ? 'bg-primary' : ''
+        }`}
+        style={{ width: '12px', left: '-6px' }}
+        onPointerDown={(e) => handlePointerDown(e, -1)}
+      >
+        <div className="h-8 w-1.5 bg-border rounded-full mx-auto" />
       </div>
     </div>
   );

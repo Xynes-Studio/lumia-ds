@@ -2,7 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ImageBlockComponent } from './ImageBlockComponent';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { ImageBlockNode } from './ImageBlockNode';
+import { ImageBlockNode, ImageBlockAlignment } from './ImageBlockNode';
 import { MediaContext } from '../../EditorProvider';
 import { EditorMediaConfig } from '../../media-config';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -48,7 +48,7 @@ const meta: Meta<typeof ImageBlockComponent> = {
       return (
         <MediaContext.Provider value={mediaConfig}>
           <LexicalComposer initialConfig={initialConfig}>
-            <div className="relative prose dark:prose-invert">
+            <div className="relative prose dark:prose-invert min-w-[600px] border p-4">
               <Story />
             </div>
           </LexicalComposer>
@@ -68,19 +68,23 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 const StoryEditor = ({
   src,
   status,
+  alignment,
+  width,
 }: {
   src: string;
   status?: 'uploading' | 'uploaded' | 'error';
+  alignment?: ImageBlockAlignment;
+  width?: number;
 }) => {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     editor.update(() => {
       $getRoot().clear();
-      const node = $createImageBlockNode({ src, status });
+      const node = $createImageBlockNode({ src, status, alignment, width });
       $getRoot().append(node);
     });
-  }, [editor, src, status]);
+  }, [editor, src, status, alignment, width]);
 
   return (
     <RichTextPlugin
@@ -119,4 +123,23 @@ export const UploadedState: Story = {
   render: () => (
     <StoryEditor src="https://picsum.photos/id/237/500/300" status="uploaded" />
   ),
+};
+
+export const Interactive: Story = {
+  render: () => (
+    <StoryEditor
+      src="https://picsum.photos/id/29/600/400"
+      status="uploaded"
+      width={400}
+      alignment="left"
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Click the image to reveal the floating toolbar. Use the alignment buttons to align the image. Drag the right handle to resize.',
+      },
+    },
+  },
 };
