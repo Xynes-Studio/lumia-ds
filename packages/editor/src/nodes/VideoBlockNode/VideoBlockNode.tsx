@@ -16,6 +16,10 @@ export interface VideoBlockPayload {
   provider?: VideoProvider;
   title?: string;
   status?: 'uploading' | 'uploaded' | 'error';
+  width?: number;
+  height?: number;
+  layout?: 'inline' | 'breakout' | 'fullWidth';
+  alignment?: VideoBlockAlignment;
   key?: NodeKey;
 }
 
@@ -25,15 +29,25 @@ export type SerializedVideoBlockNode = Spread<
     provider?: VideoProvider;
     title?: string;
     status?: 'uploading' | 'uploaded' | 'error';
+    width?: number;
+    height?: number;
+    layout?: 'inline' | 'breakout' | 'fullWidth';
+    alignment?: VideoBlockAlignment;
   },
   SerializedLexicalNode
 >;
+
+export type VideoBlockAlignment = 'left' | 'center' | 'right' | undefined;
 
 export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
   __src: string;
   __provider?: VideoProvider;
   __title?: string;
   __status?: 'uploading' | 'uploaded' | 'error';
+  __width?: number;
+  __height?: number;
+  __layout?: 'inline' | 'breakout' | 'fullWidth';
+  __alignment?: VideoBlockAlignment;
 
   static getType(): string {
     return 'video-block';
@@ -45,17 +59,26 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
       node.__provider,
       node.__title,
       node.__status,
+      node.__width,
+      node.__height,
+      node.__layout,
+      node.__alignment,
       node.__key,
     );
   }
 
   static importJSON(serializedNode: SerializedVideoBlockNode): VideoBlockNode {
-    const { src, provider, title, status } = serializedNode;
+    const { src, provider, title, status, width, height, layout, alignment } =
+      serializedNode;
     const node = $createVideoBlockNode({
       src,
       provider,
       title,
       status,
+      width,
+      height,
+      layout,
+      alignment,
     });
     return node;
   }
@@ -66,6 +89,10 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
       provider: this.__provider,
       title: this.__title,
       status: this.__status,
+      width: this.__width,
+      height: this.__height,
+      layout: this.__layout,
+      alignment: this.__alignment,
       type: 'video-block',
       version: 1,
     };
@@ -76,6 +103,10 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
     provider?: VideoProvider,
     title?: string,
     status?: 'uploading' | 'uploaded' | 'error',
+    width?: number,
+    height?: number,
+    layout?: 'inline' | 'breakout' | 'fullWidth',
+    alignment?: VideoBlockAlignment,
     key?: NodeKey,
   ) {
     super(key);
@@ -84,6 +115,10 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
     this.__provider = provider;
     this.__title = title;
     this.__status = status;
+    this.__width = width;
+    this.__height = height;
+    this.__layout = layout;
+    this.__alignment = alignment;
   }
 
   getSrc(): string {
@@ -123,6 +158,10 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
         provider={this.__provider}
         title={this.__title}
         status={this.__status}
+        width={this.__width}
+        height={this.__height}
+        layout={this.__layout}
+        alignment={this.__alignment}
         nodeKey={this.getKey()}
       />
     );
@@ -151,6 +190,26 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
     const self = this.getWritable();
     self.__title = title;
   }
+
+  setWidth(width: number): void {
+    const self = this.getWritable();
+    self.__width = width;
+  }
+
+  setHeight(height: number): void {
+    const self = this.getWritable();
+    self.__height = height;
+  }
+
+  setLayout(layout: 'inline' | 'breakout' | 'fullWidth'): void {
+    const self = this.getWritable();
+    self.__layout = layout;
+  }
+
+  setAlignment(alignment: VideoBlockAlignment): void {
+    const self = this.getWritable();
+    self.__alignment = alignment;
+  }
 }
 
 export function $createVideoBlockNode({
@@ -158,9 +217,23 @@ export function $createVideoBlockNode({
   provider,
   title,
   status,
+  width,
+  height,
+  layout,
+  alignment,
   key,
 }: VideoBlockPayload): VideoBlockNode {
-  return new VideoBlockNode(src, provider, title, status, key);
+  return new VideoBlockNode(
+    src,
+    provider,
+    title,
+    status,
+    width,
+    height,
+    layout,
+    alignment,
+    key,
+  );
 }
 
 export function $isVideoBlockNode(

@@ -12,15 +12,25 @@ import {
 import * as React from 'react';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Card } from '@lumia/components';
-import { $isVideoBlockNode, VideoProvider } from './VideoBlockNode';
+import { $isVideoBlockNode, VideoProvider, VideoBlockAlignment } from './VideoBlockNode';
 import { useMediaContext } from '../../EditorProvider';
 import { Loader2, AlertCircle, Upload } from 'lucide-react';
+import { VideoResizer } from './VideoResizer';
+import { VideoFloatingToolbar } from './VideoFloatingToolbar';
+import {
+  getImageLayoutClass,
+  getImageContainerStyle,
+} from '../ImageBlockNode/image-layout-utils';
 
 export interface VideoBlockComponentProps {
   src: string;
   provider?: VideoProvider;
   title?: string;
   status?: 'uploading' | 'uploaded' | 'error';
+  width?: number;
+  height?: number;
+  layout?: 'inline' | 'breakout' | 'fullWidth';
+  alignment?: VideoBlockAlignment;
   nodeKey: NodeKey;
 }
 
@@ -29,6 +39,10 @@ export function VideoBlockComponent({
   provider = 'html5',
   title,
   status,
+  width,
+  height,
+  layout,
+  alignment,
   nodeKey,
 }: VideoBlockComponentProps) {
   const [editor] = useLexicalComposerContext();
@@ -208,9 +222,8 @@ export function VideoBlockComponent({
   if (!src) {
     return (
       <Card
-        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-dashed cursor-pointer hover:border-primary transition-colors ${
-          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-        }`}
+        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-dashed cursor-pointer hover:border-primary transition-colors ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
+          }`}
         onClick={handleClick}
       >
         <Upload className="h-12 w-12 text-muted-foreground" />
@@ -246,9 +259,8 @@ export function VideoBlockComponent({
   if (status === 'error') {
     return (
       <Card
-        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-destructive ${
-          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-        }`}
+        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-destructive ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
+          }`}
         onClick={handleClick}
       >
         <AlertCircle className="h-12 w-12 text-destructive" />
@@ -333,13 +345,50 @@ export function VideoBlockComponent({
   };
 
   return (
-    <div className="video-block-container py-2">
-      <Card
-        className={`overflow-hidden transition-all duration-200 relative ${
-          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-        } w-full max-w-3xl mx-auto aspect-video`}
+    <div
+      className={`video-block-container group relative ${getImageLayoutClass(layout)}`}
+      style={{
+        ...getImageContainerStyle(layout),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems:
+          alignment === 'center'
+            ? 'center'
+            : alignment === 'right'
+              ? 'flex-end'
+              : 'flex-start',
+      }}
+    >
+      <div
+        className={`relative inline-block ${isSelected ? 'ring-2 ring-primary ring-offset-2 rounded-md' : ''}`}
+        style={{
+          width:
+            layout === 'fullWidth' || layout === 'breakout'
+              ? '100%'
+              : width
+                ? `${width}px`
+                : undefined,
+          maxWidth: '100%',
+          aspectRatio: !width ? '16/9' : undefined, // Default to 16:9 only if no width set (initial)
+        }}
         onClick={handleClick}
       >
+        {isSelected && (
+          <>
+            <VideoFloatingToolbar
+              editor={editor}
+              nodeKey={nodeKey}
+              layout={layout}
+              alignment={alignment}
+            />
+            <VideoResizer
+              editor={editor}
+              nodeKey={nodeKey}
+              videoRef={videoRef}
+            />
+          </>
+        )}
+
         {renderVideo()}
         {/* Loading overlay for uploading state */}
         {status === 'uploading' && (
@@ -354,7 +403,7 @@ export function VideoBlockComponent({
             onClick={handleClick}
           />
         )}
-      </Card>
+      </div>
     </div>
   );
 }
