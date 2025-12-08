@@ -2,8 +2,6 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { act } from 'react';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { StatusNode } from './StatusNode';
 import { StatusNodePopover } from './StatusNodePopover';
 
 // Mock the LexicalComposerContext

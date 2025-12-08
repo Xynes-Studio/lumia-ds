@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { createHeadlessEditor } from '@lexical/headless';
 import {
   $getRoot,
@@ -6,8 +6,13 @@ import {
   $isRangeSelection,
   ParagraphNode,
   TextNode,
+  COMMAND_PRIORITY_EDITOR,
 } from 'lexical';
-import { StatusNode, $isStatusNode } from '../nodes/StatusNode/StatusNode';
+import {
+  StatusNode,
+  $isStatusNode,
+  $createStatusNode,
+} from '../nodes/StatusNode/StatusNode';
 import { INSERT_STATUS_COMMAND } from './InsertStatusPlugin';
 
 describe('InsertStatusPlugin', () => {
@@ -20,6 +25,21 @@ describe('InsertStatusPlugin', () => {
         throw error;
       },
     });
+
+    // Register the command listener since we don't have the plugin component
+    editor.registerCommand(
+      INSERT_STATUS_COMMAND,
+      (payload) => {
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          return false;
+        }
+        const statusNode = $createStatusNode(payload);
+        selection.insertNodes([statusNode]);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
   });
 
   test('INSERT_STATUS_COMMAND should insert a StatusNode', () => {

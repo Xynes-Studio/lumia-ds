@@ -34,20 +34,6 @@ function $isInsidePanel(node: LexicalNode): boolean {
 }
 
 /**
- * Helper to get the panel ancestor
- */
-function $getPanelAncestor(node: LexicalNode): LexicalNode | null {
-  let current: LexicalNode | null = node;
-  while (current !== null) {
-    if ($isPanelBlockNode(current)) {
-      return current;
-    }
-    current = current.getParent();
-  }
-  return null;
-}
-
-/**
  * Plugin that handles list commands inside panels.
  * When inside a panel, list commands should only affect the paragraph content,
  * not replace the entire panel.

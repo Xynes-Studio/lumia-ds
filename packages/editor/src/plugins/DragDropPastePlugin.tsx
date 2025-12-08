@@ -1,13 +1,10 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { DRAG_DROP_PASTE } from '@lexical/rich-text';
-import { isMimeType, mediaFileReader } from '@lexical/utils';
 import {
   $createParagraphNode,
   $insertNodes,
   $isRootOrShadowRoot,
   COMMAND_PRIORITY_HIGH,
   DROP_COMMAND,
-  LexicalCommand,
   PASTE_COMMAND,
   $getNodeByKey,
 } from 'lexical';

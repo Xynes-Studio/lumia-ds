@@ -8,6 +8,7 @@ import {
   getBlockDefinition,
   BlockType,
 } from '../../blocks';
+import { $toggleTableHeaderRow } from '../../plugins/TableActionMenuPlugin/tableUtils';
 
 /**
  * Type of modal UI to show when a slash command is selected.
@@ -81,10 +82,6 @@ const slashCommandExecutors: Record<string, SlashCommandExecutorConfig> = {
       // Use setTimeout to ensure table is created before toggling
       setTimeout(() => {
         editor.update(() => {
-          // Import dynamically to avoid circular dependencies
-          const {
-            $toggleTableHeaderRow,
-          } = require('../../plugins/TableActionMenuPlugin/tableUtils');
           $toggleTableHeaderRow(true);
         });
       }, 0);

@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BlockInspector } from './BlockInspector';
 import { useEditorContext } from '../../EditorProvider';
+import * as registry from '../../blocks/registry';
 import { vi, describe, beforeEach, it, expect, Mock } from 'vitest';
 
 // Mock the context hook
@@ -9,11 +10,36 @@ vi.mock('../../EditorProvider', () => ({
   useEditorContext: vi.fn(),
 }));
 
+// Mock the registry module
+vi.mock('../../blocks/registry', () => ({
+  getBlockDefinition: vi.fn(),
+}));
+
+// Mock Lumia components
+vi.mock('@lumia/components', () => ({
+  Card: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => <div className={className}>{children}</div>,
+  CardContent: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => <div className={className}>{children}</div>,
+}));
+
 describe('BlockInspector', () => {
   const mockUseEditorContext = useEditorContext as Mock;
+  const mockGetBlockDefinition = registry.getBlockDefinition as Mock;
 
   beforeEach(() => {
     mockUseEditorContext.mockClear();
+    mockGetBlockDefinition.mockClear();
   });
 
   it('renders "No block selected" when selectedBlock is null', () => {
@@ -33,6 +59,12 @@ describe('BlockInspector', () => {
       },
     });
 
+    mockGetBlockDefinition.mockReturnValue({
+      type: 'paragraph',
+      label: 'Paragraph',
+      // No inspector
+    });
+
     render(<BlockInspector />);
     expect(screen.getByText('No configurable properties')).toBeInTheDocument();
   });
@@ -45,8 +77,22 @@ describe('BlockInspector', () => {
       },
     });
 
+    // Mock inspector component that doesn't use Lexical context
+    const MockImageInspector = ({ nodeKey }: { nodeKey: string }) => (
+      <div>
+        <div>Image inspector</div>
+        <div>Node Key: {nodeKey}</div>
+      </div>
+    );
+
+    mockGetBlockDefinition.mockReturnValue({
+      type: 'image',
+      label: 'Image',
+      inspector: MockImageInspector,
+    });
+
     render(<BlockInspector />);
-    // Check for the text from the placeholder inspector
+    // Check for the text from the mock inspector
     expect(screen.getByText('Image inspector')).toBeInTheDocument();
     expect(screen.getByText('Node Key: 123')).toBeInTheDocument();
   });
@@ -57,6 +103,19 @@ describe('BlockInspector', () => {
         nodeKey: '456',
         blockType: 'panel',
       },
+    });
+
+    // Mock inspector component that doesn't use Lexical context
+    const MockPanelInspector = () => (
+      <div>
+        <div>Panel inspector</div>
+      </div>
+    );
+
+    mockGetBlockDefinition.mockReturnValue({
+      type: 'panel',
+      label: 'Panel',
+      inspector: MockPanelInspector,
     });
 
     render(<BlockInspector />);

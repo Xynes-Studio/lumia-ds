@@ -18,7 +18,7 @@ import {
   VideoBlockAlignment,
 } from './VideoBlockNode';
 import { useMediaContext } from '../../EditorProvider';
-import { Loader2, AlertCircle, Upload } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
 import { MediaResizer } from '../../components/MediaResizer';
 import { MediaFloatingToolbar } from '../../components/MediaFloatingToolbar';
 import {
@@ -44,7 +44,7 @@ export function VideoBlockComponent({
   title,
   status,
   width,
-  height,
+  // height is passed but not used - keeping for API compatibility
   layout,
   alignment,
   nodeKey,
@@ -60,7 +60,7 @@ export function VideoBlockComponent({
 
   // Store file reference for retry
   const pendingFileRef = useRef<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [, setUploadProgress] = useState(0);
 
   const onDelete = useCallback(
     (payload: KeyboardEvent) => {

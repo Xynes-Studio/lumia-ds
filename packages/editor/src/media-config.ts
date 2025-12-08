@@ -42,15 +42,24 @@ export interface MediaUploadCallbacks {
   onUploadError?: (file: File, error: Error) => void;
 }
 
+/**
+ * Configuration for media handling in the editor.
+ * Allows customizing upload behavior, file type restrictions, and size limits.
+ */
 export interface EditorMediaConfig {
+  /** Optional adapter for handling file uploads to your backend */
   uploadAdapter?: MediaUploadAdapter;
   /** Optional callbacks for upload lifecycle events */
   callbacks?: MediaUploadCallbacks;
+  /** Allowed MIME types for image uploads (defaults to jpeg, png, gif, webp, svg) */
   allowedImageTypes?: string[];
+  /** Allowed MIME types for video uploads (defaults to mp4, webm) */
   allowedVideoTypes?: string[];
+  /** Maximum file size in megabytes (defaults to 5MB) */
   maxFileSizeMB?: number;
 }
 
+/** Default allowed MIME types for image uploads */
 export const DEFAULT_ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/png',
@@ -59,10 +68,29 @@ export const DEFAULT_ALLOWED_IMAGE_TYPES = [
   'image/svg+xml',
 ];
 
+/** Default allowed MIME types for video uploads */
 export const DEFAULT_ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm'];
 
+/** Default maximum file size in megabytes */
 export const DEFAULT_MAX_FILE_SIZE_MB = 5;
 
+/**
+ * Returns an effective media configuration with defaults applied.
+ * Any undefined options are filled with sensible defaults.
+ *
+ * @param config - Optional partial media configuration
+ * @returns Complete media configuration with defaults applied
+ *
+ * @example
+ * ```ts
+ * const config = getEffectiveMediaConfig({
+ *   uploadAdapter: myAdapter,
+ *   maxFileSizeMB: 10,
+ * });
+ * // config.allowedImageTypes will use defaults
+ * // config.maxFileSizeMB will be 10
+ * ```
+ */
 export const getEffectiveMediaConfig = (
   config?: EditorMediaConfig,
 ): EditorMediaConfig => {
