@@ -32,7 +32,7 @@ export function SlashMenu({
         setSelectedIndex(
           (prev) => (prev - 1 + commands.length) % commands.length,
         );
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
         if (commands[selectedIndex]) {
           onSelect(commands[selectedIndex]);
