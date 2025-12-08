@@ -56,3 +56,44 @@ export const Empty: Story = {
     nodeKey: '4',
   },
 };
+
+export const Breakout: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Breakout Layout',
+    layout: 'breakout',
+    nodeKey: '5',
+  },
+};
+
+export const FullWidth: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Full Width Layout',
+    layout: 'fullWidth',
+    nodeKey: '6',
+  },
+};
+
+export const Resized: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Resized Video',
+    width: 400,
+    nodeKey: '7',
+  },
+};
+
+export const AlignedRight: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Right Aligned',
+    width: 400,
+    alignment: 'right',
+    nodeKey: '8',
+  },
+};

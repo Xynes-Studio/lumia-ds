@@ -13,12 +13,20 @@ describe('VideoBlockNode', () => {
         src: 'https://example.com/video.mp4',
         provider: 'html5',
         title: 'Example Video',
+        width: 500,
+        height: 300,
+        layout: 'inline',
+        alignment: 'center',
       });
 
       expect(node).toBeInstanceOf(VideoBlockNode);
       expect(node.__src).toBe('https://example.com/video.mp4');
       expect(node.__provider).toBe('html5');
       expect(node.__title).toBe('Example Video');
+      expect(node.__width).toBe(500);
+      expect(node.__height).toBe(300);
+      expect(node.__layout).toBe('inline');
+      expect(node.__alignment).toBe('center');
     });
   });
 
@@ -28,6 +36,10 @@ describe('VideoBlockNode', () => {
         src: 'https://example.com/video.mp4',
         provider: 'html5',
         title: 'Example Video',
+        width: 500,
+        height: 300,
+        layout: 'inline',
+        alignment: 'center',
       });
 
       const json = node.exportJSON();
@@ -35,6 +47,10 @@ describe('VideoBlockNode', () => {
         src: 'https://example.com/video.mp4',
         provider: 'html5',
         title: 'Example Video',
+        width: 500,
+        height: 300,
+        layout: 'inline',
+        alignment: 'center',
         type: 'video-block',
         version: 1,
       });
@@ -44,6 +60,10 @@ describe('VideoBlockNode', () => {
       expect(importedNode.__src).toBe('https://example.com/video.mp4');
       expect(importedNode.__provider).toBe('html5');
       expect(importedNode.__title).toBe('Example Video');
+      expect(importedNode.__width).toBe(500);
+      expect(importedNode.__height).toBe(300);
+      expect(importedNode.__layout).toBe('inline');
+      expect(importedNode.__alignment).toBe('center');
     });
   });
 
@@ -53,6 +73,10 @@ describe('VideoBlockNode', () => {
         src: 'https://example.com/video.mp4',
         provider: 'html5',
         title: 'Example Video',
+        width: 500,
+        height: 300,
+        layout: 'inline',
+        alignment: 'center',
       });
 
       const clonedNode = VideoBlockNode.clone(node);
@@ -61,6 +85,10 @@ describe('VideoBlockNode', () => {
       expect(clonedNode.__src).toBe(node.__src);
       expect(clonedNode.__provider).toBe(node.__provider);
       expect(clonedNode.__title).toBe(node.__title);
+      expect(clonedNode.__width).toBe(node.__width);
+      expect(clonedNode.__height).toBe(node.__height);
+      expect(clonedNode.__layout).toBe(node.__layout);
+      expect(clonedNode.__alignment).toBe(node.__alignment);
     });
   });
 });
