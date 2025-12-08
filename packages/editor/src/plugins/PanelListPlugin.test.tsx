@@ -5,7 +5,9 @@ import { createHeadlessEditor } from '@lexical/headless';
 import {
   $getRoot,
   $createTextNode,
+  $createParagraphNode,
   TextNode,
+  ParagraphNode,
   COMMAND_PRIORITY_HIGH,
   KEY_ENTER_COMMAND,
 } from 'lexical';
@@ -71,6 +73,16 @@ describe('PanelListPlugin Component Logic', () => {
       COMMAND_PRIORITY_HIGH,
     );
   });
+
+  test('unregisters commands on unmount', () => {
+    const mockUnregister = vi.fn();
+    mockEditor.registerCommand.mockReturnValue(mockUnregister);
+
+    const { unmount } = render(<PanelListPlugin />);
+    unmount();
+
+    expect(mockUnregister).toHaveBeenCalledTimes(3);
+  });
 });
 
 /**
@@ -80,7 +92,7 @@ describe('PanelListPlugin Component Logic', () => {
 describe('PanelListPlugin Node Structure', () => {
   const editorConfig = {
     namespace: 'test',
-    nodes: [PanelBlockNode, ListNode, ListItemNode, TextNode],
+    nodes: [PanelBlockNode, ListNode, ListItemNode, TextNode, ParagraphNode],
     onError: (error: Error) => {
       throw error;
     },
@@ -184,6 +196,109 @@ describe('PanelListPlugin Node Structure', () => {
       expect(panel.getIcon()).toBe('check');
     });
   });
+
+  test('panel with multiple list items preserves structure', async () => {
+    const editor = createHeadlessEditor(editorConfig);
+
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          const root = $getRoot();
+          const panel = $createPanelBlockNode({
+            variant: 'note',
+            title: 'Todo List',
+          });
+
+          const list = $createListNode('bullet');
+
+          for (let i = 1; i <= 3; i++) {
+            const listItem = $createListItemNode();
+            listItem.append($createTextNode(`Item ${i}`));
+            list.append(listItem);
+          }
+
+          panel.append(list);
+          root.append(panel);
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    const json = editor.getEditorState().toJSON();
+    const panelJson = json.root.children[0] as unknown as { type: string; children: unknown[] };
+    expect(panelJson.type).toBe('panel-block');
+    expect(panelJson.children.length).toBeGreaterThan(0);
+  });
+
+  test('nested list inside panel', async () => {
+    const editor = createHeadlessEditor(editorConfig);
+
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          const root = $getRoot();
+          const panel = $createPanelBlockNode({
+            variant: 'info',
+            title: 'Nested List',
+          });
+
+          const outerList = $createListNode('bullet');
+          const outerItem = $createListItemNode();
+          outerItem.append($createTextNode('Outer item'));
+
+          const innerList = $createListNode('bullet');
+          const innerItem = $createListItemNode();
+          innerItem.append($createTextNode('Inner item'));
+          innerList.append(innerItem);
+
+          outerItem.append(innerList);
+          outerList.append(outerItem);
+          panel.append(outerList);
+          root.append(panel);
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    const json = editor.getEditorState().toJSON();
+    expect(json.root.children[0].type).toBe('panel-block');
+  });
+
+  test('panel with paragraph and list', async () => {
+    const editor = createHeadlessEditor(editorConfig);
+
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => {
+          const root = $getRoot();
+          const panel = $createPanelBlockNode({
+            variant: 'warning',
+            title: 'Mixed Content',
+          });
+
+          // Add paragraph first
+          const paragraph = $createParagraphNode();
+          paragraph.append($createTextNode('Introduction text'));
+          panel.append(paragraph);
+
+          // Add list after
+          const list = $createListNode('number');
+          const listItem = $createListItemNode();
+          listItem.append($createTextNode('Step 1'));
+          list.append(listItem);
+          panel.append(list);
+
+          root.append(panel);
+        },
+        { onUpdate: resolve },
+      );
+    });
+
+    const json = editor.getEditorState().toJSON();
+    const panelJson = json.root.children[0] as unknown as { type: string; children: unknown[] };
+    expect(panelJson.type).toBe('panel-block');
+    expect(panelJson.children.length).toBe(2); // paragraph + list
+  });
 });
 
 describe('PanelActionMenuPlugin Title Editing', () => {
@@ -263,4 +378,22 @@ describe('PanelActionMenuPlugin Title Editing', () => {
       expect(panel.getVariant()).toBe('success');
     });
   });
+
+  test('panel icon can be changed via setIcon', () => {
+    const editor = createHeadlessEditor(editorConfig);
+
+    editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Test',
+        icon: 'info',
+      });
+      root.append(panel);
+
+      panel.setIcon('star');
+      expect(panel.getIcon()).toBe('star');
+    });
+  });
 });
+

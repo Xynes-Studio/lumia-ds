@@ -187,4 +187,183 @@ describe('DragDropPastePlugin', () => {
     // When no upload adapter, registerCommand should not be called
     expect(mockEditor.registerCommand).not.toHaveBeenCalled();
   });
+
+  describe('File Type Detection', () => {
+    beforeEach(() => {
+      globalThis.URL.createObjectURL = vi.fn(() => 'blob:test');
+      globalThis.URL.revokeObjectURL = vi.fn();
+    });
+
+    it('detects image file type and calls onUploadStart with image type', async () => {
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      const file = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
+        file,
+        'image',
+      );
+    });
+
+    it('detects video file type and calls onUploadStart with video type', async () => {
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      const file = new File(['video content'], 'movie.mp4', {
+        type: 'video/mp4',
+      });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
+        file,
+        'video',
+      );
+    });
+
+    it('detects generic file type and calls onUploadStart with file type', async () => {
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      const file = new File(['pdf content'], 'document.pdf', {
+        type: 'application/pdf',
+      });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
+        file,
+        'file',
+      );
+    });
+  });
+
+  describe('Upload Completion', () => {
+    beforeEach(() => {
+      globalThis.URL.createObjectURL = vi.fn(() => 'blob:test');
+      globalThis.URL.revokeObjectURL = vi.fn();
+    });
+
+    it('calls onUploadComplete after successful upload', async () => {
+      const uploadResult = {
+        url: 'https://example.com/uploaded.jpg',
+        mime: 'image/jpeg',
+        size: 1024,
+      };
+      mockMediaConfig.uploadAdapter.uploadFile.mockResolvedValueOnce(
+        uploadResult,
+      );
+
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      // Wait for async upload to complete
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockMediaConfig.callbacks.onUploadComplete).toHaveBeenCalledWith(
+        file,
+        uploadResult,
+      );
+    });
+
+    it('calls onUploadError when upload fails', async () => {
+      const uploadError = new Error('Network error');
+      mockMediaConfig.uploadAdapter.uploadFile.mockRejectedValueOnce(
+        uploadError,
+      );
+
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      // Wait for async upload to fail
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockMediaConfig.callbacks.onUploadError).toHaveBeenCalledWith(
+        file,
+        uploadError,
+      );
+    });
+  });
+
+  describe('File Size Validation', () => {
+    it('rejects files exceeding max size', async () => {
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => { });
+
+      const configWithLimit = {
+        ...mockMediaConfig,
+        maxFileSizeMB: 1,
+      };
+      (useMediaContext as Mock).mockReturnValue(configWithLimit);
+
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = mockEditor.registerCommand.mock.calls.find(
+        (call) => call[0] === DROP_COMMAND,
+      )[1];
+
+      // Create a file that's larger than 1MB
+      const largeContent = new Array(2 * 1024 * 1024).fill('a').join('');
+      const file = new File([largeContent], 'large.jpg', { type: 'image/jpeg' });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      expect(alertSpy).toHaveBeenCalledWith('File size exceeds 1MB');
+      expect(
+        configWithLimit.uploadAdapter.uploadFile,
+      ).not.toHaveBeenCalled();
+
+      alertSpy.mockRestore();
+    });
+  });
 });
+
