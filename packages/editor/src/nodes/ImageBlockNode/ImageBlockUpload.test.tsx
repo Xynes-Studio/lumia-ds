@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -119,16 +119,11 @@ describe('ImageBlockUpload', () => {
       allowedImageTypes: ['image/jpeg', 'image/png'],
     };
 
+    let resolveUpload: (value: any) => void;
     mockUploadFile.mockImplementation(
       () =>
         new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              url: 'https://example.com/uploaded.jpg',
-              mime: 'image/jpeg',
-              size: 1024,
-            });
-          }, 100);
+          resolveUpload = resolve;
         }),
     );
 
@@ -145,6 +140,15 @@ describe('ImageBlockUpload', () => {
     expect(image).toHaveAttribute('src', 'blob:mock-preview-url');
     expect(image).toHaveClass('opacity-50'); // Uploading state
 
+    // Resolve the upload
+    await act(async () => {
+      resolveUpload({
+        url: 'https://example.com/uploaded.jpg',
+        mime: 'image/jpeg',
+        size: 1024,
+      });
+    });
+
     // Wait for upload to complete
     await waitFor(() => {
       expect(image).toHaveAttribute('src', 'https://example.com/uploaded.jpg');
@@ -160,7 +164,7 @@ describe('ImageBlockUpload', () => {
   it('handles upload error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => { });
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {
@@ -189,7 +193,7 @@ describe('ImageBlockUpload', () => {
   });
 
   it('validates file size', async () => {
-    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => { });
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {

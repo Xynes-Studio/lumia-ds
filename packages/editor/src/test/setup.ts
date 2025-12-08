@@ -20,6 +20,17 @@ globalThis.URL.revokeObjectURL = vi.fn();
   }
 };
 
+// Mock ClipboardEvent
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).ClipboardEvent = class ClipboardEvent extends Event {
+  clipboardData: DataTransfer | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(type: string, eventInitDict?: any) {
+    super(type, eventInitDict);
+    this.clipboardData = eventInitDict?.clipboardData || null;
+  }
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).matchMedia = vi.fn().mockImplementation((query) => ({
   matches: false,

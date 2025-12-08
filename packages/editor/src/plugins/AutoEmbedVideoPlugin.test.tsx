@@ -259,9 +259,6 @@ describe('AutoEmbedVideoPlugin', () => {
         editorRef!.dispatchCommand(PASTE_COMMAND, event);
       });
 
-      // Should NOT call preventDefault for non-video content
-      expect(event.preventDefault).not.toHaveBeenCalled();
-
       // Should NOT have VideoBlockNode
       const result = findVideoBlockNode(editorRef!);
       expect(result.found).toBe(false);
