@@ -3,6 +3,9 @@ import {
   blockRegistry,
   getBlockDefinition,
   getBlockDefinitions,
+  getInsertableBlocks,
+  getSlashCommandBlocks,
+  CORE_BLOCKS,
 } from './registry';
 import { BlockDefinition, BlockType } from './types';
 import { ElementNode } from 'lexical';
@@ -116,4 +119,112 @@ describe('Block Registry', () => {
       expect(Array.isArray(definitions)).toBe(true);
     });
   });
+
+  describe('getInsertableBlocks', () => {
+    it('should return only blocks with insertable: true', () => {
+      const insertable = getInsertableBlocks();
+      expect(insertable.length).toBeGreaterThan(0);
+      insertable.forEach((block) => {
+        expect(block.insertable).toBe(true);
+      });
+    });
+
+    it('should include image, video, file, table, panel, status', () => {
+      const insertable = getInsertableBlocks();
+      const types = insertable.map((b) => b.type);
+      expect(types).toContain('image');
+      expect(types).toContain('video');
+      expect(types).toContain('file');
+      expect(types).toContain('table');
+      expect(types).toContain('panel');
+      expect(types).toContain('status');
+    });
+
+    it('should exclude non-insertable blocks like paragraph and heading', () => {
+      const insertable = getInsertableBlocks();
+      const types = insertable.map((b) => b.type);
+      expect(types).not.toContain('paragraph');
+      expect(types).not.toContain('heading');
+      expect(types).not.toContain('code');
+    });
+
+    it('should have insertAction defined for all insertable blocks', () => {
+      const insertable = getInsertableBlocks();
+      insertable.forEach((block) => {
+        expect(block.insertAction).toBeDefined();
+        expect(['command', 'custom']).toContain(block.insertAction);
+      });
+    });
+  });
+
+  describe('getSlashCommandBlocks', () => {
+    it('should return only blocks with slashEnabled: true', () => {
+      const slashBlocks = getSlashCommandBlocks();
+      expect(slashBlocks.length).toBeGreaterThan(0);
+      slashBlocks.forEach((block) => {
+        expect(block.slashEnabled).toBe(true);
+      });
+    });
+
+    it('should include all slash-enabled blocks', () => {
+      const slashBlocks = getSlashCommandBlocks();
+      const types = slashBlocks.map((b) => b.type);
+      expect(types).toContain('image');
+      expect(types).toContain('video');
+      expect(types).toContain('file');
+      expect(types).toContain('table');
+      expect(types).toContain('panel');
+      expect(types).toContain('status');
+    });
+
+    it('should exclude non-slash blocks', () => {
+      const slashBlocks = getSlashCommandBlocks();
+      const types = slashBlocks.map((b) => b.type);
+      expect(types).not.toContain('paragraph');
+      expect(types).not.toContain('heading');
+      expect(types).not.toContain('code');
+    });
+  });
+
+  describe('CORE_BLOCKS', () => {
+    it('should export CORE_BLOCKS object', () => {
+      expect(CORE_BLOCKS).toBeDefined();
+      expect(typeof CORE_BLOCKS).toBe('object');
+    });
+
+    it('should have 9 core block types', () => {
+      expect(Object.keys(CORE_BLOCKS).length).toBe(9);
+    });
+
+    it('each core block has type matching its key', () => {
+      Object.entries(CORE_BLOCKS).forEach(([key, block]) => {
+        expect(block.type).toBe(key);
+      });
+    });
+
+    it('image block has custom insert action', () => {
+      expect(CORE_BLOCKS.image.insertAction).toBe('custom');
+    });
+
+    it('table block has command insert action', () => {
+      expect(CORE_BLOCKS.table.insertAction).toBe('command');
+    });
+
+    it('panel block has inspector', () => {
+      expect(CORE_BLOCKS.panel.inspector).toBeDefined();
+    });
+
+    it('status block has inspector', () => {
+      expect(CORE_BLOCKS.status.inspector).toBeDefined();
+    });
+
+    it('video block has inspector', () => {
+      expect(CORE_BLOCKS.video.inspector).toBeDefined();
+    });
+
+    it('image block has inspector', () => {
+      expect(CORE_BLOCKS.image.inspector).toBeDefined();
+    });
+  });
 });
+
