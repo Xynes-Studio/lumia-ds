@@ -15,6 +15,7 @@ export interface VideoBlockPayload {
   src: string;
   provider?: VideoProvider;
   title?: string;
+  status?: 'uploading' | 'uploaded' | 'error';
   key?: NodeKey;
 }
 
@@ -23,6 +24,7 @@ export type SerializedVideoBlockNode = Spread<
     src: string;
     provider?: VideoProvider;
     title?: string;
+    status?: 'uploading' | 'uploaded' | 'error';
   },
   SerializedLexicalNode
 >;
@@ -31,6 +33,7 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
   __src: string;
   __provider?: VideoProvider;
   __title?: string;
+  __status?: 'uploading' | 'uploaded' | 'error';
 
   static getType(): string {
     return 'video-block';
@@ -41,16 +44,18 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
       node.__src,
       node.__provider,
       node.__title,
+      node.__status,
       node.__key,
     );
   }
 
   static importJSON(serializedNode: SerializedVideoBlockNode): VideoBlockNode {
-    const { src, provider, title } = serializedNode;
+    const { src, provider, title, status } = serializedNode;
     const node = $createVideoBlockNode({
       src,
       provider,
       title,
+      status,
     });
     return node;
   }
@@ -60,6 +65,7 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
       src: this.__src,
       provider: this.__provider,
       title: this.__title,
+      status: this.__status,
       type: 'video-block',
       version: 1,
     };
@@ -69,6 +75,7 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
     src: string,
     provider?: VideoProvider,
     title?: string,
+    status?: 'uploading' | 'uploaded' | 'error',
     key?: NodeKey,
   ) {
     super(key);
@@ -76,6 +83,7 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
     this.__src = src;
     this.__provider = provider;
     this.__title = title;
+    this.__status = status;
   }
 
   getSrc(): string {
@@ -114,9 +122,19 @@ export class VideoBlockNode extends DecoratorNode<React.ReactElement> {
         src={this.__src}
         provider={this.__provider}
         title={this.__title}
+        status={this.__status}
         nodeKey={this.getKey()}
       />
     );
+  }
+
+  getStatus(): 'uploading' | 'uploaded' | 'error' | undefined {
+    return this.__status;
+  }
+
+  setStatus(status: 'uploading' | 'uploaded' | 'error'): void {
+    const self = this.getWritable();
+    self.__status = status;
   }
 
   setSrc(src: string): void {
@@ -139,9 +157,10 @@ export function $createVideoBlockNode({
   src,
   provider,
   title,
+  status,
   key,
 }: VideoBlockPayload): VideoBlockNode {
-  return new VideoBlockNode(src, provider, title, key);
+  return new VideoBlockNode(src, provider, title, status, key);
 }
 
 export function $isVideoBlockNode(

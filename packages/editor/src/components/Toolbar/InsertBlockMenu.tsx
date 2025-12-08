@@ -1,6 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LexicalEditor } from 'lexical';
+import {
+  LexicalEditor,
+  $insertNodes,
+  $isRootOrShadowRoot,
+  $createParagraphNode,
+} from 'lexical';
+import { $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils';
 import {
   Button,
   Menu,
@@ -9,7 +15,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Input,
 } from '@lumia/components';
 import { Plus, ChevronDown, LucideIcon } from 'lucide-react';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
@@ -20,6 +25,10 @@ import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
 import { INSERT_STATUS_COMMAND } from '../../plugins/InsertStatusPlugin';
 import { PanelVariant } from '../../nodes/PanelBlockNode/PanelBlockNode';
+import { MediaInsertTabs } from '../MediaInsert';
+import { useMediaContext } from '../../EditorProvider';
+import { $createImageBlockNode } from '../../nodes/ImageBlockNode/ImageBlockNode';
+import { $createVideoBlockNode } from '../../nodes/VideoBlockNode';
 
 interface InsertBlockMenuProps {
   className?: string;
@@ -119,7 +128,9 @@ function handleSimpleInsert(type: BlockType, editor: LexicalEditor) {
         editor.update(() => {
           // Import dynamically to avoid circular dependencies
           // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const { $toggleTableHeaderRow } = require('../../plugins/TableActionMenuPlugin/tableUtils');
+          const {
+            $toggleTableHeaderRow,
+          } = require('../../plugins/TableActionMenuPlugin/tableUtils');
           $toggleTableHeaderRow(true);
         });
       }, 0);
@@ -217,20 +228,80 @@ function ImageInsertItem({
   onClose,
 }: ImageInsertItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [url, setUrl] = useState('');
-  const [altText, setAltText] = useState('');
+  const mediaConfig = useMediaContext();
 
-  const handleInsert = useCallback(() => {
-    if (!url) return;
-    editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
-      src: url,
-      alt: altText,
-    });
-    setUrl('');
-    setAltText('');
+  const handleInsertFromUrl = useCallback(
+    (url: string, metadata?: { alt?: string }) => {
+      editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
+        src: url,
+        alt: metadata?.alt || '',
+      });
+      setIsOpen(false);
+      onClose();
+    },
+    [editor, onClose],
+  );
+
+  const handleInsertFromFile = useCallback(
+    (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      const previewUrl = URL.createObjectURL(file);
+
+      editor.update(() => {
+        const imageNode = $createImageBlockNode({
+          src: previewUrl,
+          alt: file.name,
+          status: 'uploading',
+        });
+        $insertNodes([imageNode]);
+        if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+          $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+        }
+
+        const nodeKey = imageNode.getKey();
+
+        mediaConfig
+          .uploadAdapter!.uploadFile(file)
+          .then((result) => {
+            mediaConfig.callbacks?.onUploadComplete?.(file, result);
+            editor.update(() => {
+              const node = editor._editorState._nodeMap.get(nodeKey);
+              if (node && node.__type === 'image-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__src = result.url;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'uploaded';
+              }
+            });
+          })
+          .catch((error) => {
+            mediaConfig.callbacks?.onUploadError?.(
+              file,
+              error instanceof Error ? error : new Error('Upload failed'),
+            );
+            editor.update(() => {
+              const node = editor._editorState._nodeMap.get(nodeKey);
+              if (node && node.__type === 'image-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'error';
+              }
+            });
+          });
+      });
+
+      setIsOpen(false);
+      onClose();
+    },
+    [editor, mediaConfig, onClose],
+  );
+
+  const handleCancel = useCallback(() => {
     setIsOpen(false);
-    onClose();
-  }, [url, altText, editor, onClose]);
+  }, []);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -243,56 +314,14 @@ function ImageInsertItem({
           <span className="flex-1 truncate">{label}</span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4" align="start" side="right">
-        <div className="flex flex-col gap-4">
-          <div className="space-y-2">
-            <label htmlFor="insert-image-url" className="text-sm font-medium">
-              Image URL
-            </label>
-            <Input
-              id="insert-image-url"
-              placeholder="https://example.com/image.jpg"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleInsert();
-                }
-              }}
-              autoFocus
-            />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="insert-image-alt" className="text-sm font-medium">
-              Alt Text
-            </label>
-            <Input
-              id="insert-image-alt"
-              placeholder="Description of the image"
-              value={altText}
-              onChange={(e) => setAltText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleInsert();
-                }
-              }}
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button size="sm" onClick={handleInsert} disabled={!url}>
-              Insert
-            </Button>
-          </div>
-        </div>
+      <PopoverContent className="w-auto p-4" align="start" side="right">
+        <MediaInsertTabs
+          mediaType="image"
+          onInsertFromUrl={handleInsertFromUrl}
+          onInsertFromFile={handleInsertFromFile}
+          onCancel={handleCancel}
+          showAltText={true}
+        />
       </PopoverContent>
     </Popover>
   );
@@ -313,17 +342,81 @@ function VideoInsertItem({
   onClose,
 }: VideoInsertItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [url, setUrl] = useState('');
+  const mediaConfig = useMediaContext();
 
-  const handleInsert = useCallback(() => {
-    if (!url) return;
-    editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
-      src: url,
-    });
-    setUrl('');
+  const handleInsertFromUrl = useCallback(
+    (url: string) => {
+      editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
+        src: url,
+      });
+      setIsOpen(false);
+      onClose();
+    },
+    [editor, onClose],
+  );
+
+  const handleInsertFromFile = useCallback(
+    (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      const previewUrl = URL.createObjectURL(file);
+
+      editor.update(() => {
+        const videoNode = $createVideoBlockNode({
+          src: previewUrl,
+          provider: 'html5',
+          title: file.name,
+          status: 'uploading',
+        });
+
+        $insertNodeToNearestRoot(videoNode);
+        const paragraphNode = $createParagraphNode();
+        videoNode.insertAfter(paragraphNode);
+        paragraphNode.select();
+
+        const nodeKey = videoNode.getKey();
+
+        mediaConfig
+          .uploadAdapter!.uploadFile(file)
+          .then((result) => {
+            mediaConfig.callbacks?.onUploadComplete?.(file, result);
+            editor.update(() => {
+              const node = editor._editorState._nodeMap.get(nodeKey);
+              if (node && node.__type === 'video-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__src = result.url;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'uploaded';
+              }
+            });
+          })
+          .catch((error) => {
+            mediaConfig.callbacks?.onUploadError?.(
+              file,
+              error instanceof Error ? error : new Error('Upload failed'),
+            );
+            editor.update(() => {
+              const node = editor._editorState._nodeMap.get(nodeKey);
+              if (node && node.__type === 'video-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'error';
+              }
+            });
+          });
+      });
+
+      setIsOpen(false);
+      onClose();
+    },
+    [editor, mediaConfig, onClose],
+  );
+
+  const handleCancel = useCallback(() => {
     setIsOpen(false);
-    onClose();
-  }, [url, editor, onClose]);
+  }, []);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -336,42 +429,14 @@ function VideoInsertItem({
           <span className="flex-1 truncate">{label}</span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4" align="start" side="right">
-        <div className="flex flex-col gap-4">
-          <div className="space-y-2">
-            <label htmlFor="insert-video-url" className="text-sm font-medium">
-              Video URL
-            </label>
-            <Input
-              id="insert-video-url"
-              placeholder="https://youtube.com/watch?v=..."
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleInsert();
-                }
-              }}
-              autoFocus
-            />
-            <p className="text-xs text-muted-foreground">
-              Supports YouTube, Vimeo, and Loom
-            </p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button size="sm" onClick={handleInsert} disabled={!url}>
-              Insert
-            </Button>
-          </div>
-        </div>
+      <PopoverContent className="w-auto p-4" align="start" side="right">
+        <MediaInsertTabs
+          mediaType="video"
+          onInsertFromUrl={handleInsertFromUrl}
+          onInsertFromFile={handleInsertFromFile}
+          onCancel={handleCancel}
+          urlPlaceholder="https://youtube.com/watch?v=..."
+        />
       </PopoverContent>
     </Popover>
   );
@@ -447,11 +512,11 @@ const PANEL_VARIANTS: {
   label: string;
   color: string;
 }[] = [
-    { variant: 'info', label: 'Info', color: 'text-blue-500' },
-    { variant: 'warning', label: 'Warning', color: 'text-yellow-500' },
-    { variant: 'success', label: 'Success', color: 'text-green-500' },
-    { variant: 'note', label: 'Note', color: 'text-gray-500' },
-  ];
+  { variant: 'info', label: 'Info', color: 'text-blue-500' },
+  { variant: 'warning', label: 'Warning', color: 'text-yellow-500' },
+  { variant: 'success', label: 'Success', color: 'text-green-500' },
+  { variant: 'note', label: 'Note', color: 'text-gray-500' },
+];
 
 function PanelInsertItem({
   icon: Icon,

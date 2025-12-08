@@ -7,7 +7,11 @@ import {
   $getNodeByKey,
   $isTextNode,
   $isElementNode,
+  $insertNodes,
+  $isRootOrShadowRoot,
+  $createParagraphNode,
 } from 'lexical';
+import { $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -15,7 +19,14 @@ import {
   defaultSlashCommands,
   filterSlashCommands,
   SlashCommand,
+  SlashCommandModalType,
 } from '../components/SlashMenu';
+import { MediaInsertTabs } from '../components/MediaInsert';
+import { useMediaContext } from '../EditorProvider';
+import { INSERT_IMAGE_BLOCK_COMMAND } from './InsertImagePlugin';
+import { INSERT_VIDEO_BLOCK_COMMAND } from './InsertVideoPlugin';
+import { $createImageBlockNode } from '../nodes/ImageBlockNode/ImageBlockNode';
+import { $createVideoBlockNode } from '../nodes/VideoBlockNode';
 
 interface SlashMenuState {
   isOpen: boolean;
@@ -25,12 +36,24 @@ interface SlashMenuState {
   triggerOffset: number;
 }
 
+interface ModalState {
+  isOpen: boolean;
+  type: SlashCommandModalType | null;
+  position: { top: number; left: number };
+}
+
 const initialState: SlashMenuState = {
   isOpen: false,
   query: '',
   position: { top: 0, left: 0 },
   triggerNodeKey: null,
   triggerOffset: 0,
+};
+
+const initialModalState: ModalState = {
+  isOpen: false,
+  type: null,
+  position: { top: 0, left: 0 },
 };
 
 /**
@@ -42,13 +65,22 @@ const initialState: SlashMenuState = {
 export function SlashMenuPlugin(): React.ReactElement | null {
   const [editor] = useLexicalComposerContext();
   const [menuState, setMenuState] = useState<SlashMenuState>(initialState);
+  const [modalState, setModalState] = useState<ModalState>(initialModalState);
+  const mediaConfig = useMediaContext();
 
   const closeMenu = useCallback(() => {
     setMenuState(initialState);
   }, []);
 
+  const closeModal = useCallback(() => {
+    setModalState(initialModalState);
+  }, []);
+
   const handleSelectCommand = useCallback(
     (command: SlashCommand) => {
+      // Store position for modal if needed
+      const position = { ...menuState.position };
+
       editor.update(() => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
@@ -94,10 +126,177 @@ export function SlashMenuPlugin(): React.ReactElement | null {
         closeMenu();
       });
 
-      // Execute the command after closing the menu
-      command.execute(editor);
+      // Check if command needs modal UI
+      if (command.modalType && command.modalType !== 'none') {
+        setModalState({
+          isOpen: true,
+          type: command.modalType,
+          position,
+        });
+      } else {
+        // Execute the command directly
+        command.execute(editor);
+      }
     },
     [editor, menuState, closeMenu],
+  );
+
+  const handleInsertImageFromUrl = useCallback(
+    (url: string, metadata?: { alt?: string }) => {
+      editor.dispatchCommand(INSERT_IMAGE_BLOCK_COMMAND, {
+        src: url,
+        alt: metadata?.alt || '',
+      });
+      closeModal();
+    },
+    [editor, closeModal],
+  );
+
+  const handleInsertVideoFromUrl = useCallback(
+    (url: string) => {
+      editor.dispatchCommand(INSERT_VIDEO_BLOCK_COMMAND, {
+        src: url,
+      });
+      closeModal();
+    },
+    [editor, closeModal],
+  );
+
+  const handleInsertImageFromFile = useCallback(
+    (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      // Call onUploadStart callback
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+
+      // Create node with uploading status
+      const previewUrl = URL.createObjectURL(file);
+
+      editor.update(() => {
+        const imageNode = $createImageBlockNode({
+          src: previewUrl,
+          alt: file.name,
+          status: 'uploading',
+        });
+        $insertNodes([imageNode]);
+        if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+          $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+        }
+
+        const nodeKey = imageNode.getKey();
+
+        // Start upload
+        mediaConfig
+          .uploadAdapter!.uploadFile(file)
+          .then((result) => {
+            mediaConfig.callbacks?.onUploadComplete?.(file, result);
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'image-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__src = result.url;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'uploaded';
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Upload failed:', error);
+            mediaConfig.callbacks?.onUploadError?.(
+              file,
+              error instanceof Error ? error : new Error('Upload failed'),
+            );
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'image-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'error';
+              }
+            });
+          });
+      });
+
+      closeModal();
+    },
+    [editor, mediaConfig, closeModal],
+  );
+
+  const handleInsertVideoFromFile = useCallback(
+    (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      // Call onUploadStart callback
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+
+      // Create node with uploading status and preview
+      const previewUrl = URL.createObjectURL(file);
+
+      editor.update(() => {
+        const videoNode = $createVideoBlockNode({
+          src: previewUrl,
+          provider: 'html5',
+          title: file.name,
+          status: 'uploading',
+        });
+
+        $insertNodeToNearestRoot(videoNode);
+
+        const paragraphNode = $createParagraphNode();
+        videoNode.insertAfter(paragraphNode);
+        paragraphNode.select();
+
+        const nodeKey = videoNode.getKey();
+
+        // Start upload
+        mediaConfig
+          .uploadAdapter!.uploadFile(file)
+          .then((result) => {
+            mediaConfig.callbacks?.onUploadComplete?.(file, result);
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'video-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__src = result.url;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'uploaded';
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Upload failed:', error);
+            mediaConfig.callbacks?.onUploadError?.(
+              file,
+              error instanceof Error ? error : new Error('Upload failed'),
+            );
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'video-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'error';
+              }
+            });
+          });
+      });
+
+      closeModal();
+    },
+    [editor, mediaConfig, closeModal],
   );
 
   useEffect(() => {
@@ -280,7 +479,64 @@ export function SlashMenuPlugin(): React.ReactElement | null {
     closeMenu,
   ]);
 
-  if (!menuState.isOpen) {
+  // Render modal popover for media insertion
+  const renderModal = () => {
+    if (!modalState.isOpen || !modalState.type) return null;
+
+    if (modalState.type === 'media-image') {
+      return createPortal(
+        <div
+          className="slash-menu-modal"
+          style={{
+            position: 'fixed',
+            top: modalState.position.top,
+            left: modalState.position.left,
+            zIndex: 1000,
+          }}
+        >
+          <div className="bg-background border border-border rounded-lg shadow-lg p-4">
+            <MediaInsertTabs
+              mediaType="image"
+              onInsertFromUrl={handleInsertImageFromUrl}
+              onInsertFromFile={handleInsertImageFromFile}
+              onCancel={closeModal}
+              showAltText={true}
+            />
+          </div>
+        </div>,
+        document.body,
+      );
+    }
+
+    if (modalState.type === 'media-video') {
+      return createPortal(
+        <div
+          className="slash-menu-modal"
+          style={{
+            position: 'fixed',
+            top: modalState.position.top,
+            left: modalState.position.left,
+            zIndex: 1000,
+          }}
+        >
+          <div className="bg-background border border-border rounded-lg shadow-lg p-4">
+            <MediaInsertTabs
+              mediaType="video"
+              onInsertFromUrl={handleInsertVideoFromUrl}
+              onInsertFromFile={handleInsertVideoFromFile}
+              onCancel={closeModal}
+              urlPlaceholder="https://youtube.com/watch?v=..."
+            />
+          </div>
+        </div>,
+        document.body,
+      );
+    }
+
+    return null;
+  };
+
+  if (!menuState.isOpen && !modalState.isOpen) {
     return null;
   }
 
@@ -289,13 +545,19 @@ export function SlashMenuPlugin(): React.ReactElement | null {
     menuState.query,
   );
 
-  return createPortal(
-    <SlashMenu
-      commands={filteredCommands}
-      onSelect={handleSelectCommand}
-      onClose={closeMenu}
-      position={menuState.position}
-    />,
-    document.body,
+  return (
+    <>
+      {menuState.isOpen &&
+        createPortal(
+          <SlashMenu
+            commands={filteredCommands}
+            onSelect={handleSelectCommand}
+            onClose={closeMenu}
+            position={menuState.position}
+          />,
+          document.body,
+        )}
+      {renderModal()}
+    </>
   );
 }
