@@ -10,7 +10,7 @@ import {
 import { Upload, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { useMediaContext } from '../../EditorProvider';
 
-export type MediaType = 'image' | 'video';
+export type MediaType = 'image' | 'video' | 'file';
 
 export interface MediaInsertTabsProps {
   /** The type of media being inserted */
@@ -56,7 +56,9 @@ export function MediaInsertTabs({
   const acceptedTypes =
     mediaType === 'image'
       ? mediaConfig?.allowedImageTypes
-      : mediaConfig?.allowedVideoTypes;
+      : mediaType === 'video'
+        ? mediaConfig?.allowedVideoTypes
+        : undefined; // For files, accept all types
 
   const handleInsertFromUrl = useCallback(() => {
     if (!url) return;
@@ -122,9 +124,21 @@ export function MediaInsertTabs({
 
   const getPlaceholder = () => {
     if (urlPlaceholder) return urlPlaceholder;
-    return mediaType === 'image'
-      ? 'https://example.com/image.jpg'
-      : 'https://youtube.com/watch?v=...';
+    if (mediaType === 'image') return 'https://example.com/image.jpg';
+    if (mediaType === 'video') return 'https://youtube.com/watch?v=...';
+    return 'https://example.com/document.pdf';
+  };
+
+  const getUrlLabel = () => {
+    if (mediaType === 'image') return 'Image URL';
+    if (mediaType === 'video') return 'Video URL';
+    return 'File URL';
+  };
+
+  const getFileTypeHint = () => {
+    if (mediaType === 'image') return 'PNG, JPG, GIF, WebP up to';
+    if (mediaType === 'video') return 'MP4, WebM up to';
+    return 'Any file up to';
   };
 
   return (
@@ -150,7 +164,7 @@ export function MediaInsertTabs({
                 htmlFor="media-url"
                 className="text-sm font-medium text-foreground"
               >
-                {mediaType === 'image' ? 'Image URL' : 'Video URL'}
+                {getUrlLabel()}
               </label>
               <Input
                 id="media-url"
@@ -248,10 +262,7 @@ export function MediaInsertTabs({
                       </button>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {mediaType === 'image'
-                        ? 'PNG, JPG, GIF, WebP up to'
-                        : 'MP4, WebM up to'}{' '}
-                      {mediaConfig?.maxFileSizeMB || 5}MB
+                      {getFileTypeHint()} {mediaConfig?.maxFileSizeMB || 5}MB
                     </p>
                   </div>
                 )}

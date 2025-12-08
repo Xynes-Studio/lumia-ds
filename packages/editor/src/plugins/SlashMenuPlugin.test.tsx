@@ -88,7 +88,9 @@ describe('SlashMenuPlugin', () => {
 
     test('createSlashCommandFromRegistry creates command from block definition', () => {
       const mockExecute = vi.fn();
-      const command = createSlashCommandFromRegistry('image', mockExecute);
+      const command = createSlashCommandFromRegistry('image', {
+        execute: mockExecute,
+      });
 
       expect(command).not.toBeNull();
       expect(command?.label).toBe('Image');
@@ -100,10 +102,9 @@ describe('SlashMenuPlugin', () => {
     test('createSlashCommandFromRegistry returns null for unknown block type', () => {
       const mockExecute = vi.fn();
       const unknownBlockType = 'unknown-block' as BlockType;
-      const command = createSlashCommandFromRegistry(
-        unknownBlockType,
-        mockExecute,
-      );
+      const command = createSlashCommandFromRegistry(unknownBlockType, {
+        execute: mockExecute,
+      });
 
       expect(command).toBeNull();
     });
@@ -189,7 +190,7 @@ describe('SlashMenuPlugin', () => {
         // Icons should be React components (functions or objects with $$typeof)
         expect(
           typeof cmd.icon === 'function' ||
-            (typeof cmd.icon === 'object' && cmd.icon !== null),
+          (typeof cmd.icon === 'object' && cmd.icon !== null),
         ).toBe(true);
       });
     });

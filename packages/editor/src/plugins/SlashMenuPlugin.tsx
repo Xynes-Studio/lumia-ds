@@ -25,8 +25,10 @@ import { MediaInsertTabs } from '../components/MediaInsert';
 import { useMediaContext } from '../EditorProvider';
 import { INSERT_IMAGE_BLOCK_COMMAND } from './InsertImagePlugin';
 import { INSERT_VIDEO_BLOCK_COMMAND } from './InsertVideoPlugin';
+import { INSERT_FILE_BLOCK_COMMAND } from './InsertFilePlugin';
 import { $createImageBlockNode } from '../nodes/ImageBlockNode/ImageBlockNode';
 import { $createVideoBlockNode } from '../nodes/VideoBlockNode';
+import { $createFileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 
 interface SlashMenuState {
   isOpen: boolean;
@@ -299,6 +301,91 @@ export function SlashMenuPlugin(): React.ReactElement | null {
     [editor, mediaConfig, closeModal],
   );
 
+  const handleInsertFileFromUrl = useCallback(
+    (url: string) => {
+      editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
+        url,
+        filename: url.split('/').pop() || 'file',
+      });
+      closeModal();
+    },
+    [editor, closeModal],
+  );
+
+  const handleInsertFileFromFile = useCallback(
+    (file: File) => {
+      if (!mediaConfig?.uploadAdapter) return;
+
+      // Call onUploadStart callback
+      mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+
+      // Create node with uploading status and preview
+      const previewUrl = URL.createObjectURL(file);
+
+      editor.update(() => {
+        const fileNode = $createFileBlockNode({
+          url: previewUrl,
+          filename: file.name,
+          size: file.size,
+          mime: file.type,
+          status: 'uploading',
+        });
+
+        $insertNodes([fileNode]);
+        if ($isRootOrShadowRoot(fileNode.getParentOrThrow())) {
+          $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd();
+        }
+
+        const nodeKey = fileNode.getKey();
+
+        // Start upload
+        mediaConfig
+          .uploadAdapter!.uploadFile(file, {
+            onProgress: (progress) => {
+              mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+            },
+          })
+          .then((result) => {
+            mediaConfig.callbacks?.onUploadComplete?.(file, result);
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'file-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__url = result.url;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'uploaded';
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Upload failed:', error);
+            mediaConfig.callbacks?.onUploadError?.(
+              file,
+              error instanceof Error ? error : new Error('Upload failed'),
+            );
+
+            editor.update(() => {
+              const node = editor
+                .getEditorState()
+                .read(() => editor._editorState._nodeMap.get(nodeKey));
+              if (node && node.__type === 'file-block') {
+                const writable = node.getWritable();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (writable as any).__status = 'error';
+              }
+            });
+          });
+      });
+
+      closeModal();
+    },
+    [editor, mediaConfig, closeModal],
+  );
+
   useEffect(() => {
     const removeKeyDownListener = editor.registerCommand(
       KEY_DOWN_COMMAND,
@@ -526,6 +613,31 @@ export function SlashMenuPlugin(): React.ReactElement | null {
               onInsertFromFile={handleInsertVideoFromFile}
               onCancel={closeModal}
               urlPlaceholder="https://youtube.com/watch?v=..."
+            />
+          </div>
+        </div>,
+        document.body,
+      );
+    }
+
+    if (modalState.type === 'media-file') {
+      return createPortal(
+        <div
+          className="slash-menu-modal"
+          style={{
+            position: 'fixed',
+            top: modalState.position.top,
+            left: modalState.position.left,
+            zIndex: 1000,
+          }}
+        >
+          <div className="bg-background border border-border rounded-lg shadow-lg p-4">
+            <MediaInsertTabs
+              mediaType="file"
+              onInsertFromUrl={handleInsertFileFromUrl}
+              onInsertFromFile={handleInsertFileFromFile}
+              onCancel={closeModal}
+              urlPlaceholder="https://example.com/document.pdf"
             />
           </div>
         </div>,
