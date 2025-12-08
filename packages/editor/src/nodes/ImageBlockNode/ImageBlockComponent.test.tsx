@@ -93,7 +93,7 @@ describe('ImageBlockComponent', () => {
     expect(image).toHaveAttribute('src', 'http://example.com/image.jpg');
     expect(image).toHaveAttribute('alt', 'Test Image');
 
-    const caption = screen.getByText('Test Caption');
+    const caption = screen.getByDisplayValue('Test Caption');
     expect(caption).toBeInTheDocument();
   });
 

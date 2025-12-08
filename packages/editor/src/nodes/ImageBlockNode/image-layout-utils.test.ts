@@ -24,16 +24,16 @@ describe('getImageLayoutClass', () => {
 
 describe('getImageContainerStyle', () => {
   it('returns width 100% for fullWidth layout', () => {
-    expect(getImageContainerStyle('fullWidth', 50)).toEqual({ width: '100%' });
+    expect(getImageContainerStyle('fullWidth')).toEqual({ width: '100%' });
   });
 
-  it('returns percentage width if defined and not fullWidth', () => {
-    expect(getImageContainerStyle('inline', 50)).toEqual({ width: '50%' });
-    expect(getImageContainerStyle(undefined, 75)).toEqual({ width: '75%' });
+  it('returns empty object if defined and not fullWidth', () => {
+    expect(getImageContainerStyle('inline')).toEqual({});
+    expect(getImageContainerStyle(undefined)).toEqual({});
   });
 
   it('returns empty object if no width and not fullWidth', () => {
-    expect(getImageContainerStyle('inline', undefined)).toEqual({});
-    expect(getImageContainerStyle(undefined, undefined)).toEqual({});
+    expect(getImageContainerStyle('inline')).toEqual({});
+    expect(getImageContainerStyle(undefined)).toEqual({});
   });
 });

@@ -266,7 +266,7 @@ export function ImageBlockComponent({
     <div
       className={`image-block-container group relative ${getImageLayoutClass(layout)}`}
       style={{
-        ...getImageContainerStyle(layout, width),
+        ...getImageContainerStyle(layout),
         // We apply alignment here if it's not handled by the layout class mechanism completely
         // For inline/breakout, flex parent might be better, but margin auto works for block
         display: 'flex',
@@ -283,6 +283,7 @@ export function ImageBlockComponent({
       <div
         className={`relative inline-block ${isSelected ? 'ring-2 ring-primary ring-offset-2 rounded-md' : ''}`}
         style={{ maxWidth: '100%' }} // Ensure it doesn't overflow parent
+        data-testid="image-card"
       >
         {isSelected && (
           <>
