@@ -12,7 +12,7 @@ import {
   $createParagraphNode,
 } from 'lexical';
 import { $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   SlashMenu,
@@ -29,34 +29,20 @@ import { INSERT_FILE_BLOCK_COMMAND } from './InsertFilePlugin';
 import { $createImageBlockNode } from '../nodes/ImageBlockNode/ImageBlockNode';
 import { $createVideoBlockNode } from '../nodes/VideoBlockNode';
 import { $createFileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
-
-interface SlashMenuState {
-  isOpen: boolean;
-  query: string;
-  position: { top: number; left: number };
-  triggerNodeKey: string | null;
-  triggerOffset: number;
-}
-
-interface ModalState {
-  isOpen: boolean;
-  type: SlashCommandModalType | null;
-  position: { top: number; left: number };
-}
-
-const initialState: SlashMenuState = {
-  isOpen: false,
-  query: '',
-  position: { top: 0, left: 0 },
-  triggerNodeKey: null,
-  triggerOffset: 0,
-};
-
-const initialModalState: ModalState = {
-  isOpen: false,
-  type: null,
-  position: { top: 0, left: 0 },
-};
+import { useSlashMenuState } from '../hooks/useSlashMenuState';
+import {
+  getMediaType,
+  createOptimisticImagePayload,
+  createOptimisticVideoPayload,
+  createOptimisticFilePayload,
+} from '../hooks/useSlashUpload';
+import {
+  shouldTriggerSlashMenu,
+  getSlashPosition,
+  extractQueryWithCursor,
+  shouldOpenModal,
+  calculateSlashRemoval,
+} from '../utils/slashMenuUtils';
 
 /**
  * SlashMenuPlugin - Enables slash command menu for quick insertion of blocks.
@@ -66,17 +52,18 @@ const initialModalState: ModalState = {
  */
 export function SlashMenuPlugin(): React.ReactElement | null {
   const [editor] = useLexicalComposerContext();
-  const [menuState, setMenuState] = useState<SlashMenuState>(initialState);
-  const [modalState, setModalState] = useState<ModalState>(initialModalState);
+  const {
+    menuState,
+    modalState,
+    openMenu,
+    closeMenu,
+    updateQuery,
+    openModal,
+    closeModal,
+  } = useSlashMenuState();
   const mediaConfig = useMediaContext();
 
-  const closeMenu = useCallback(() => {
-    setMenuState(initialState);
-  }, []);
 
-  const closeModal = useCallback(() => {
-    setModalState(initialModalState);
-  }, []);
 
   const handleSelectCommand = useCallback(
     (command: SlashCommand) => {
@@ -130,11 +117,7 @@ export function SlashMenuPlugin(): React.ReactElement | null {
 
       // Check if command needs modal UI
       if (command.modalType && command.modalType !== 'none') {
-        setModalState({
-          isOpen: true,
-          type: command.modalType,
-          position,
-        });
+        openModal(command.modalType, position);
       } else {
         // Execute the command directly
         command.execute(editor);
@@ -417,16 +400,11 @@ export function SlashMenuPlugin(): React.ReactElement | null {
                 const range = domSelection.getRangeAt(0);
                 const rect = range.getBoundingClientRect();
 
-                setMenuState({
-                  isOpen: true,
-                  query: '',
-                  position: {
-                    top: rect.bottom + 4,
-                    left: rect.left,
-                  },
-                  triggerNodeKey: anchorNode.getKey(),
-                  triggerOffset: offset,
-                });
+                openMenu(
+                  { top: rect.bottom + 4, left: rect.left },
+                  anchorNode.getKey(),
+                  offset,
+                );
               }
             }
           } else if ($isElementNode(anchorNode) && anchor.offset === 0) {
@@ -452,13 +430,11 @@ export function SlashMenuPlugin(): React.ReactElement | null {
                 }
               }
 
-              setMenuState({
-                isOpen: true,
-                query: '',
-                position: { top, left },
-                triggerNodeKey: anchorNode.getKey(),
-                triggerOffset: 0,
-              });
+              openMenu(
+                { top, left },
+                anchorNode.getKey(),
+                0,
+              );
             }
           }
         }
@@ -550,7 +526,7 @@ export function SlashMenuPlugin(): React.ReactElement | null {
             return;
           }
 
-          setMenuState((prev) => ({ ...prev, query }));
+          updateQuery(query);
         });
       },
     );
