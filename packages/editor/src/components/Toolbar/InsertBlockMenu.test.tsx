@@ -255,4 +255,66 @@ describe('InsertBlockMenu', () => {
     );
     expect(spy).toHaveBeenCalled();
   });
+
+  it('should render empty menu when no insertable blocks', () => {
+    vi.spyOn(blocksModule, 'getInsertableBlocks').mockReturnValue([]);
+    render(
+      <TestWrapper>
+        <InsertBlockMenu />
+      </TestWrapper>,
+    );
+    expect(screen.getByRole('button', { name: /insert block/i })).toBeDefined();
+  });
+
+  it('should show video item when video block is available', async () => {
+    const fakeBlocks = [
+      {
+        type: 'video' as const,
+        label: 'Video',
+        insertable: true,
+        insertAction: 'custom' as const,
+        icon: () => null,
+        nodeClass: VideoBlockNode,
+        description: '',
+        keywords: [],
+        slashEnabled: true,
+      },
+    ];
+    vi.spyOn(blocksModule, 'getInsertableBlocks').mockReturnValue(fakeBlocks);
+
+    render(
+      <TestWrapper>
+        <InsertBlockMenu />
+      </TestWrapper>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /insert block/i }));
+    expect(screen.getByText('Video')).toBeVisible();
+  });
+
+  it('should show file item when file block is available', async () => {
+    const fakeBlocks = [
+      {
+        type: 'file' as const,
+        label: 'File',
+        insertable: true,
+        insertAction: 'custom' as const,
+        icon: () => null,
+        nodeClass: FileBlockNode,
+        description: '',
+        keywords: [],
+        slashEnabled: true,
+      },
+    ];
+    vi.spyOn(blocksModule, 'getInsertableBlocks').mockReturnValue(fakeBlocks);
+
+    render(
+      <TestWrapper>
+        <InsertBlockMenu />
+      </TestWrapper>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /insert block/i }));
+    expect(screen.getByText('File')).toBeVisible();
+  });
 });
