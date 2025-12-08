@@ -15,8 +15,8 @@ import { Card } from '@lumia/components';
 import { $isImageBlockNode } from './ImageBlockNode';
 import type { ImageBlockAlignment } from './ImageBlockNode';
 import { useMediaContext } from '../../EditorProvider';
-import { ImageResizer } from './ImageResizer';
-import { ImageFloatingToolbar } from './ImageFloatingToolbar';
+import { MediaResizer } from '../../components/MediaResizer';
+import { MediaFloatingToolbar } from '../../components/MediaFloatingToolbar';
 import {
   getImageLayoutClass,
   getImageContainerStyle,
@@ -110,7 +110,7 @@ export function ImageBlockComponent({
 
   const performUpload = useCallback(
     async (file: File) => {
-      if (!mediaConfig?.uploadAdapter) return;
+      if (!mediaConfig?.uploadAdapter?.uploadFile) return;
 
       // Store file for potential retry
       pendingFileRef.current = file;
@@ -176,7 +176,7 @@ export function ImageBlockComponent({
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !mediaConfig?.uploadAdapter) return;
+    if (!file || !mediaConfig?.uploadAdapter?.uploadFile) return;
 
     // Validate type
     if (
@@ -232,7 +232,7 @@ export function ImageBlockComponent({
 
   // If no src and no upload adapter, we can't do anything (shouldn't happen if inserted correctly)
   // If no src and upload adapter exists, show upload button
-  const showUpload = !src && mediaConfig?.uploadAdapter;
+  const showUpload = !src && mediaConfig?.uploadAdapter?.uploadFile;
   const isUploading = status === 'uploading';
   const isError = status === 'error';
 
@@ -287,16 +287,45 @@ export function ImageBlockComponent({
       >
         {isSelected && (
           <>
-            <ImageFloatingToolbar
-              editor={editor}
-              nodeKey={nodeKey}
+            <MediaFloatingToolbar
               layout={layout}
               alignment={alignment}
+              onLayoutChange={(newLayout) => {
+                editor.update(() => {
+                  const node = $getNodeByKey(nodeKey);
+                  if ($isImageBlockNode(node)) {
+                    node.setLayout(newLayout);
+                  }
+                });
+              }}
+              onAlignmentChange={(newAlignment) => {
+                editor.update(() => {
+                  const node = $getNodeByKey(nodeKey);
+                  if ($isImageBlockNode(node)) {
+                    node.setAlignment(newAlignment);
+                  }
+                });
+              }}
+              onDelete={() => {
+                editor.update(() => {
+                  const node = $getNodeByKey(nodeKey);
+                  if (node) {
+                    node.remove();
+                  }
+                });
+              }}
             />
-            <ImageResizer
+            <MediaResizer
               editor={editor}
-              nodeKey={nodeKey}
-              imageRef={imageRef}
+              mediaRef={imageRef}
+              onWidthChange={(width) => {
+                editor.update(() => {
+                  const node = $getNodeByKey(nodeKey);
+                  if ($isImageBlockNode(node)) {
+                    node.setWidth(width);
+                  }
+                });
+              }}
             />
           </>
         )}
@@ -307,9 +336,8 @@ export function ImageBlockComponent({
           alt={alt}
           width={width}
           height={height}
-          className={`max-w-full h-auto block select-none ${
-            isUploading ? 'opacity-50' : ''
-          }`}
+          className={`max-w-full h-auto block select-none ${isUploading ? 'opacity-50' : ''
+            }`}
           draggable="false"
           style={{
             width:

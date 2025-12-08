@@ -23,6 +23,7 @@ import { InsertPanelPlugin } from '../plugins/InsertPanelPlugin';
 import { InsertStatusPlugin } from '../plugins/InsertStatusPlugin';
 import { PanelActionMenuPlugin } from '../plugins/PanelActionMenuPlugin';
 import { SelectedBlockTrackerPlugin } from '../plugins/SelectedBlockTrackerPlugin';
+import { DragDropPastePlugin } from '../plugins/DragDropPastePlugin';
 
 import { EditorToolbarCompact } from './EditorToolbarCompact';
 
@@ -66,6 +67,7 @@ export function LumiaEditorPrimitive({
       <AutoEmbedVideoPlugin />
       <SlashMenuPlugin />
       <SelectedBlockTrackerPlugin />
+      <DragDropPastePlugin />
 
       <PanelActionMenuPlugin />
       <CodeHighlightPlugin />

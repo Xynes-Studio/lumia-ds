@@ -10,7 +10,7 @@ const meta: Meta<typeof VideoBlockComponent> = {
   },
   decorators: [
     (Story) => (
-      <EditorProvider>
+      <EditorProvider media={{ maxFileSizeMB: 100 }}>
         <div style={{ width: '800px' }}>
           <Story />
         </div>
