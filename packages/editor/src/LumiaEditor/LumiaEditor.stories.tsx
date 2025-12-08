@@ -355,7 +355,7 @@ export const WithMediaUpload: Story = {
       },
       allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
       allowedVideoTypes: ['video/mp4', 'video/webm'],
-      maxFileSizeMB: 10,
+      maxFileSizeMB: 105,
     },
   },
   parameters: {

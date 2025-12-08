@@ -151,13 +151,16 @@ describe('ImageBlockUpload', () => {
       expect(image).not.toHaveClass('opacity-50');
     });
 
-    expect(mockUploadFile).toHaveBeenCalledWith(file);
+    expect(mockUploadFile).toHaveBeenCalledWith(
+      file,
+      expect.objectContaining({ onProgress: expect.any(Function) }),
+    );
   });
 
   it('handles upload error', async () => {
     const consoleErrorMock = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => { });
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {
@@ -186,7 +189,7 @@ describe('ImageBlockUpload', () => {
   });
 
   it('validates file size', async () => {
-    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
+    const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => { });
     const mockUploadFile = vi.fn();
     const mockMediaConfig: EditorMediaConfig = {
       uploadAdapter: {

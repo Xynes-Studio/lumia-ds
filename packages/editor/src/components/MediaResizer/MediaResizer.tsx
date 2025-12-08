@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { LexicalEditor, $getNodeByKey } from 'lexical';
-import { $isVideoBlockNode } from './VideoBlockNode';
+import { LexicalEditor } from 'lexical';
 
-interface VideoResizerProps {
+interface MediaResizerProps {
     editor: LexicalEditor;
-    nodeKey: string;
-    videoRef: React.RefObject<HTMLElement>;
+    mediaRef: React.RefObject<HTMLElement>;
+    onWidthChange: (width: number) => void;
 }
 
-export function VideoResizer({
+export function MediaResizer({
     editor,
-    nodeKey,
-    videoRef,
-}: VideoResizerProps): React.JSX.Element {
+    mediaRef,
+    onWidthChange,
+}: MediaResizerProps): React.JSX.Element {
     const controlWrapperRef = useRef<HTMLDivElement>(null);
     const [isResizing, setIsResizing] = useState(false);
 
@@ -27,10 +26,10 @@ export function VideoResizer({
         event.preventDefault();
         setIsResizing(true);
 
-        const video = videoRef.current;
-        if (!video) return;
+        const media = mediaRef.current;
+        if (!media) return;
 
-        const { width } = video.getBoundingClientRect();
+        const { width } = media.getBoundingClientRect();
         const startX = event.clientX;
         const startWidth = width;
 
@@ -41,13 +40,14 @@ export function VideoResizer({
             // Calculate new width
             let newWidth = startWidth + diffX * direction;
 
-            // Constrain width
-            const parentWidth =
-                video.parentElement?.getBoundingClientRect().width || 1000;
-            newWidth = Math.max(100, Math.min(newWidth, parentWidth));
+            // Constrain width - use editor container width, not immediate parent
+            // This allows resizing back up after making smaller
+            const editorContainer = media.closest('.editor-input') || media.closest('[data-lexical-editor]');
+            const maxWidth = editorContainer?.getBoundingClientRect().width || 1000;
+            newWidth = Math.max(100, Math.min(newWidth, maxWidth));
 
-            // Update the video style directly first
-            video.style.width = `${newWidth}px`;
+            // Update the media style directly first
+            media.style.width = `${newWidth}px`;
         };
 
         const handlePointerUp = () => {
@@ -56,14 +56,8 @@ export function VideoResizer({
             setIsResizing(false);
 
             // Commit final width
-            const finalWidth = video.getBoundingClientRect().width;
-
-            editor.update(() => {
-                const node = $getNodeByKey(nodeKey);
-                if ($isVideoBlockNode(node)) {
-                    node.setWidth(finalWidth);
-                }
-            });
+            const finalWidth = media.getBoundingClientRect().width;
+            onWidthChange(finalWidth);
         };
 
         document.addEventListener('pointermove', handlePointerMove);
