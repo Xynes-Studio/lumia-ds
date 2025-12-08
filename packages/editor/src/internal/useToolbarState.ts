@@ -249,6 +249,8 @@ export function useToolbarState() {
   );
 
   const toggleBulletList = useCallback(() => {
+    // Check if we're inside a panel - list commands work fine inside panels
+    // The issue was with handleBlockTypeChange, not list commands
     if (isBulletList) {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     } else {

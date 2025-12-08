@@ -12,7 +12,11 @@ import {
 import * as React from 'react';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Card } from '@lumia/components';
-import { $isVideoBlockNode, VideoProvider, VideoBlockAlignment } from './VideoBlockNode';
+import {
+  $isVideoBlockNode,
+  VideoProvider,
+  VideoBlockAlignment,
+} from './VideoBlockNode';
 import { useMediaContext } from '../../EditorProvider';
 import { Loader2, AlertCircle, Upload } from 'lucide-react';
 import { MediaResizer } from '../../components/MediaResizer';
@@ -235,8 +239,9 @@ export function VideoBlockComponent({
   if (!src) {
     return (
       <Card
-        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-dashed cursor-pointer hover:border-primary transition-colors ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
-          }`}
+        className={`p-8 w-full max-w-3xl mx-auto flex flex-col items-center gap-4 border-dashed cursor-pointer hover:border-primary transition-colors ${
+          isSelected ? 'ring-2 ring-primary ring-offset-2' : ''
+        }`}
         onClick={handleClick}
       >
         <Upload className="h-12 w-12 text-muted-foreground" />
@@ -267,8 +272,6 @@ export function VideoBlockComponent({
       </Card>
     );
   }
-
-
 
   const renderVideo = () => {
     if (provider === 'html5') {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
@@ -9,6 +9,7 @@ import {
 } from 'lexical';
 import {
   Button,
+  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -72,10 +73,19 @@ export function PanelActionMenuPlugin({
   const [activePanelKey, setActivePanelKey] = useState<string | null>(null);
   const [panelElement, setPanelElement] = useState<HTMLElement | null>(null);
   const [currentVariant, setCurrentVariant] = useState<PanelVariant>('info');
+  const [currentTitle, setCurrentTitle] = useState<string>('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  // Store the pending title to save on blur (not on every keystroke)
+  const pendingTitleRef = useRef<string>('');
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
+      // Skip updates while popover is open to prevent interference
+      if (isPopoverOpen) {
+        return;
+      }
+
       editorState.read(() => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
@@ -88,29 +98,93 @@ export function PanelActionMenuPlugin({
         const panelNode = $getPanelNodeFromLexicalNode(anchor);
 
         if (panelNode) {
-          setActivePanelKey(panelNode.getKey());
+          const newKey = panelNode.getKey();
+          setActivePanelKey(newKey);
           setCurrentVariant(panelNode.getVariant());
-          setPanelElement(editor.getElementByKey(panelNode.getKey()));
+          const title = panelNode.getTitle() || '';
+          setCurrentTitle(title);
+          pendingTitleRef.current = title;
+          setPanelElement(editor.getElementByKey(newKey));
         } else {
           setActivePanelKey(null);
           setPanelElement(null);
         }
       });
     });
-  }, [editor]);
+  }, [editor, isPopoverOpen]);
 
-  const handleVariantChange = (variant: PanelVariant, label: string) => {
+  const handleVariantChange = useCallback(
+    (variant: PanelVariant, label: string) => {
+      if (activePanelKey) {
+        editor.update(
+          () => {
+            const node = $getNodeByKey(activePanelKey);
+            if ($isPanelBlockNode(node)) {
+              node.setVariant(variant);
+              node.setIcon(variant);
+              // Update title if it's a default title
+              const oldTitle = node.getTitle() || '';
+              if (
+                oldTitle.includes('Panel') ||
+                ['Info', 'Warning', 'Success', 'Note'].includes(oldTitle)
+              ) {
+                node.setTitle(`${label} Panel`);
+                setCurrentTitle(`${label} Panel`);
+                pendingTitleRef.current = `${label} Panel`;
+              }
+            }
+          },
+          { discrete: true },
+        );
+        setCurrentVariant(variant);
+      }
+    },
+    [activePanelKey, editor],
+  );
+
+  // Only update local state on change, NOT the editor
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newTitle = e.target.value;
+      setCurrentTitle(newTitle);
+      pendingTitleRef.current = newTitle;
+    },
+    [],
+  );
+
+  // Save title to editor only on blur
+  const handleTitleBlur = useCallback(() => {
     if (activePanelKey) {
-      editor.update(() => {
-        const node = $getNodeByKey(activePanelKey);
-        if ($isPanelBlockNode(node)) {
-          node.setVariant(variant);
-          node.setIcon(label);
-        }
-      });
-      setIsPopoverOpen(false);
+      editor.update(
+        () => {
+          const node = $getNodeByKey(activePanelKey);
+          if ($isPanelBlockNode(node)) {
+            node.setTitle(pendingTitleRef.current);
+          }
+        },
+        { discrete: true },
+      );
     }
-  };
+  }, [activePanelKey, editor]);
+
+  const handlePopoverOpenChange = useCallback(
+    (open: boolean) => {
+      // If closing, save any pending title changes
+      if (!open && activePanelKey) {
+        editor.update(
+          () => {
+            const node = $getNodeByKey(activePanelKey);
+            if ($isPanelBlockNode(node)) {
+              node.setTitle(pendingTitleRef.current);
+            }
+          },
+          { discrete: true },
+        );
+      }
+      setIsPopoverOpen(open);
+    },
+    [activePanelKey, editor],
+  );
 
   if (!activePanelKey || !panelElement) {
     return null;
@@ -131,7 +205,7 @@ export function PanelActionMenuPlugin({
         zIndex: 10,
       }}
     >
-      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+      <Popover open={isPopoverOpen} onOpenChange={handlePopoverOpenChange}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -141,20 +215,46 @@ export function PanelActionMenuPlugin({
             <Settings className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-48 p-1" align="end">
-          <div className="flex flex-col gap-1">
-            {VARIANTS.map(({ variant, label, icon: Icon, color }) => (
-              <Button
-                key={variant}
-                variant="ghost"
-                size="sm"
-                className={`justify-start ${currentVariant === variant ? 'bg-accent' : ''}`}
-                onClick={() => handleVariantChange(variant, label)}
-              >
-                <Icon className={`mr-2 h-4 w-4 ${color}`} />
-                {label}
-              </Button>
-            ))}
+        <PopoverContent
+          className="w-56 p-3"
+          align="end"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <div className="space-y-3">
+            {/* Title Input */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">
+                Panel Title
+              </label>
+              <Input
+                value={currentTitle}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                placeholder="Enter title..."
+                className="h-8 text-sm"
+              />
+            </div>
+
+            {/* Variant Selection - Compact icons */}
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-muted-foreground">
+                Panel Type
+              </label>
+              <div className="flex gap-1">
+                {VARIANTS.map(({ variant, label, icon: Icon, color }) => (
+                  <Button
+                    key={variant}
+                    variant="ghost"
+                    size="icon"
+                    title={label}
+                    className={`h-8 w-8 ${currentVariant === variant ? 'bg-accent ring-1 ring-primary' : ''}`}
+                    onClick={() => handleVariantChange(variant, label)}
+                  >
+                    <Icon className={`h-4 w-4 ${color}`} />
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
         </PopoverContent>
       </Popover>

@@ -336,8 +336,9 @@ export function ImageBlockComponent({
           alt={alt}
           width={width}
           height={height}
-          className={`max-w-full h-auto block select-none ${isUploading ? 'opacity-50' : ''
-            }`}
+          className={`max-w-full h-auto block select-none ${
+            isUploading ? 'opacity-50' : ''
+          }`}
           draggable="false"
           style={{
             width:

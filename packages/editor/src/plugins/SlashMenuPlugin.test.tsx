@@ -190,7 +190,7 @@ describe('SlashMenuPlugin', () => {
         // Icons should be React components (functions or objects with $$typeof)
         expect(
           typeof cmd.icon === 'function' ||
-          (typeof cmd.icon === 'object' && cmd.icon !== null),
+            (typeof cmd.icon === 'object' && cmd.icon !== null),
         ).toBe(true);
       });
     });

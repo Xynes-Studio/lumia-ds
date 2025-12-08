@@ -22,6 +22,7 @@ import { TableActionMenuPlugin } from '../plugins/TableActionMenuPlugin';
 import { InsertPanelPlugin } from '../plugins/InsertPanelPlugin';
 import { InsertStatusPlugin } from '../plugins/InsertStatusPlugin';
 import { PanelActionMenuPlugin } from '../plugins/PanelActionMenuPlugin';
+import { PanelListPlugin } from '../plugins/PanelListPlugin';
 import { SelectedBlockTrackerPlugin } from '../plugins/SelectedBlockTrackerPlugin';
 import { DragDropPastePlugin } from '../plugins/DragDropPastePlugin';
 
@@ -70,6 +71,7 @@ export function LumiaEditorPrimitive({
       <DragDropPastePlugin />
 
       <PanelActionMenuPlugin />
+      <PanelListPlugin />
       <CodeHighlightPlugin />
     </div>
   );
