@@ -101,6 +101,9 @@ export function FileBlockComponent({
     const file = e.target.files?.[0];
     if (!file || !mediaConfig?.uploadAdapter) return;
 
+    // Call onUploadStart callback
+    mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+
     // Validate size
     if (
       mediaConfig.maxFileSizeMB &&
@@ -125,7 +128,12 @@ export function FileBlockComponent({
     });
 
     try {
-      const result = await mediaConfig.uploadAdapter.uploadFile(file);
+      const result = await mediaConfig.uploadAdapter.uploadFile(file, {
+        onProgress: (progress) => {
+          mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+        },
+      });
+      mediaConfig.callbacks?.onUploadComplete?.(file, result);
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isFileBlockNode(node)) {
@@ -139,6 +147,10 @@ export function FileBlockComponent({
       });
     } catch (error) {
       console.error('Upload failed:', error);
+      mediaConfig.callbacks?.onUploadError?.(
+        file,
+        error instanceof Error ? error : new Error('Upload failed'),
+      );
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isFileBlockNode(node)) {

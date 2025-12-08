@@ -42,6 +42,9 @@ export function InsertFilePlugin(): null {
 
           // If we have a file, we want to handle the upload flow
           if (file && mediaConfig?.uploadAdapter) {
+            // Call onUploadStart callback
+            mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+
             // Validate size
             if (
               mediaConfig.maxFileSizeMB &&
@@ -66,10 +69,15 @@ export function InsertFilePlugin(): null {
               $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd();
             }
 
-            // Perform upload
+            // Perform upload with progress callback
             mediaConfig.uploadAdapter
-              .uploadFile(file)
+              .uploadFile(file, {
+                onProgress: (progress) => {
+                  mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+                },
+              })
               .then((result) => {
+                mediaConfig.callbacks?.onUploadComplete?.(file, result);
                 editor.update(() => {
                   const writable = fileNode.getWritable();
                   writable.__url = result.url;
@@ -81,6 +89,10 @@ export function InsertFilePlugin(): null {
               })
               .catch((error) => {
                 console.error('Upload failed:', error);
+                mediaConfig.callbacks?.onUploadError?.(
+                  file,
+                  error instanceof Error ? error : new Error('Upload failed'),
+                );
                 editor.update(() => {
                   const writable = fileNode.getWritable();
                   writable.__status = 'error';

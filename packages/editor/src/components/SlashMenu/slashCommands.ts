@@ -1,9 +1,6 @@
 import { LucideIcon, Table2 } from 'lucide-react';
-import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
-import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
 import { INSERT_STATUS_COMMAND } from '../../plugins/InsertStatusPlugin';
-import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { LexicalEditor } from 'lexical';
 import {
@@ -18,7 +15,11 @@ import {
  * - 'media-image': Show MediaInsertTabs for image
  * - 'media-video': Show MediaInsertTabs for video
  */
-export type SlashCommandModalType = 'none' | 'media-image' | 'media-video';
+export type SlashCommandModalType =
+  | 'none'
+  | 'media-image'
+  | 'media-video'
+  | 'media-file';
 
 export interface SlashCommand {
   /** Name of the command (without leading slash) */
@@ -98,15 +99,9 @@ const slashCommandExecutors: Record<string, SlashCommandExecutorConfig> = {
     },
   },
   file: {
-    execute: (editor: LexicalEditor) => {
-      const url = window.prompt('Enter file URL:');
-      if (url) {
-        editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
-          url,
-          filename: url.split('/').pop() || 'file',
-        });
-      }
-    },
+    // Execute is a no-op for modal commands; the modal handles insertion
+    execute: () => {},
+    modalType: 'media-file',
   },
 };
 
