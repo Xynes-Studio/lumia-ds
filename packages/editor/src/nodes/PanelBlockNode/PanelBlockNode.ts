@@ -5,6 +5,9 @@ import {
   NodeKey,
   SerializedElementNode,
   Spread,
+  RangeSelection,
+  $createParagraphNode,
+  ParagraphNode,
 } from 'lexical';
 
 export type PanelVariant = 'info' | 'warning' | 'success' | 'note';
@@ -108,33 +111,23 @@ export class PanelBlockNode extends ElementNode {
     const className = config.theme.panel || 'panel-node';
     div.className = `${className} ${this.__variant}`;
 
-    // Icon
-    if (this.__icon) {
-      // Ideally we would render an SVG or Icon component here.
-      // For now, we'll create a placeholder that can be styled or replaced.
-      // Since this is a simple DOM node, we can't easily use React components without a NodeView.
-      // We'll add a data attribute or class for the icon.
-      const iconDiv = document.createElement('div');
-      iconDiv.className = 'panel-icon';
-      iconDiv.contentEditable = 'false';
-      // We can maybe put the icon name in text if needed, or handle it via CSS background.
-      // Or, if we want to use Lucide icons, `createDOM` is synchronous and non-React.
-      // We might need to map icon names to SVGs here if we want them to show up without React.
-      // However, the prompt says "Component renders a coloured container...".
-      // If strict React rendering is required effectively, we would need a DecoratorNode with a NestedEditor.
-      // But assuming ElementNode is preferred for content, we'll stick to DOM.
-
-      // Let's rely on CSS mapping for standard icons (info/check/alert) if possible,
-      // or just put the icon name in a data attribute.
-      iconDiv.dataset.icon = this.__icon;
-      div.appendChild(iconDiv);
-    }
+    // Icon - always create for variant-based CSS styling
+    // The CSS uses .panel-node.{variant} .panel-icon::before to render icons
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'panel-icon';
+    iconDiv.contentEditable = 'false';
+    // pointer-events: none allows clicks to pass through to editable content
+    iconDiv.style.pointerEvents = 'none';
+    iconDiv.dataset.icon = this.__icon || this.__variant;
+    div.appendChild(iconDiv);
 
     // Title
     if (this.__title) {
       const titleDiv = document.createElement('div');
       titleDiv.className = 'panel-title';
       titleDiv.contentEditable = 'false';
+      // pointer-events: none allows clicks to pass through to editable content
+      titleDiv.style.pointerEvents = 'none';
       titleDiv.textContent = this.__title;
       div.appendChild(titleDiv);
     }
@@ -156,6 +149,53 @@ export class PanelBlockNode extends ElementNode {
       return true; // Force re-render for simplicity
     }
 
+    return false;
+  }
+
+  /**
+   * Called when Enter key is pressed.
+   * When at the end of the panel's content, pressing Enter exits the panel
+   * and creates a new paragraph after it.
+   */
+  insertNewAfter(
+    selection?: RangeSelection,
+    restoreSelection = true,
+  ): ParagraphNode | null {
+    const anchorOffset = selection ? selection.anchor.offset : 0;
+    const lastDescendant = this.getLastDescendant();
+
+    // Check if cursor is at the end of the panel's content
+    const isAtEnd =
+      !lastDescendant ||
+      (selection &&
+        selection.anchor.key === lastDescendant.getKey() &&
+        anchorOffset === lastDescendant.getTextContentSize());
+
+    if (isAtEnd) {
+      // Exit the panel: create a new paragraph after the panel
+      const newParagraph = $createParagraphNode();
+      const direction = this.getDirection();
+      newParagraph.setDirection(direction);
+      this.insertAfter(newParagraph, restoreSelection);
+      return newParagraph;
+    }
+
+    // Not at end - let default behavior handle it (create new line inside panel)
+    return null;
+  }
+
+  /**
+   * Called when backspace is pressed at the start of the first child.
+   * Allows the panel to be converted or have its content extracted.
+   */
+  collapseAtStart(): boolean {
+    // If the panel is empty, convert it to a paragraph
+    if (this.isEmpty()) {
+      const paragraph = $createParagraphNode();
+      this.replace(paragraph);
+      paragraph.select();
+      return true;
+    }
     return false;
   }
 }

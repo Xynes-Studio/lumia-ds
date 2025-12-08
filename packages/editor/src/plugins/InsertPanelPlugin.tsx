@@ -4,6 +4,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   LexicalCommand,
+  $createParagraphNode,
 } from 'lexical';
 import { useEffect } from 'react';
 import {
@@ -22,8 +23,23 @@ export function InsertPanelPlugin() {
       editor.registerCommand(
         INSERT_PANEL_COMMAND,
         (payload) => {
-          const panelNode = $createPanelBlockNode(payload);
+          // Ensure icon is set based on variant if not provided
+          const finalPayload = {
+            ...payload,
+            icon: payload.icon || payload.variant,
+          };
+          const panelNode = $createPanelBlockNode(finalPayload);
+
+          // Create an empty paragraph inside the panel for content
+          const paragraphNode = $createParagraphNode();
+          panelNode.append(paragraphNode);
+
+          // Insert the panel at the nearest root
           $insertNodeToNearestRoot(panelNode);
+
+          // Select the paragraph inside the panel so user can start typing
+          paragraphNode.select();
+
           return true;
         },
         COMMAND_PRIORITY_EDITOR,
