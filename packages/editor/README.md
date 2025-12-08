@@ -781,7 +781,14 @@ describe('MyPlugin', () => {
     
     editor.read(() => {
       // assertions
-    });
-  });
-});
-```
+
+### Coverage Targets
+
+The project aims for **90% test coverage** across all metrics. Crucial components like plugins, nodes, and toolbar buttons must have comprehensive unit tests.
+
+### Mocking Strategy
+
+For components depending on Lexical context:
+1. **Unit Tests**: Mock `useLexicalComposerContext` and other hooks to return minimal stubbed editor instances.
+2. **Integration Tests**: Use `LexicalComposer` wrapper effectively but be mindful of JSDOM limitations with complex event dispatching.
+3. **Registry**: Mock `BlockRegistry` lookups (`getInsertableBlocks`, `getBlockDefinition`) to isolate component rendering logic.

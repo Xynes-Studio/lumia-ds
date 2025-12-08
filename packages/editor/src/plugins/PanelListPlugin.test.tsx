@@ -1,6 +1,14 @@
-import { describe, test, expect } from 'vitest';
+import React from 'react';
+import { render } from '@testing-library/react';
+import { describe, test, expect, vi, beforeEach, Mock } from 'vitest';
 import { createHeadlessEditor } from '@lexical/headless';
-import { $getRoot, $createTextNode } from 'lexical';
+import {
+  $getRoot,
+  $createTextNode,
+  TextNode,
+  COMMAND_PRIORITY_HIGH,
+  KEY_ENTER_COMMAND,
+} from 'lexical';
 import {
   PanelBlockNode,
   $createPanelBlockNode,
@@ -10,17 +18,69 @@ import {
   ListItemNode,
   $createListNode,
   $createListItemNode,
+  INSERT_UNORDERED_LIST_COMMAND,
+  INSERT_ORDERED_LIST_COMMAND,
 } from '@lexical/list';
+import { PanelListPlugin } from './PanelListPlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+
+// Mock module for the component tests
+vi.mock('@lexical/react/LexicalComposerContext', () => ({
+  useLexicalComposerContext: vi.fn(),
+}));
+
+// Mock Lexical utilities for component tests
+vi.mock('lexical', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('lexical')>();
+  return {
+    ...actual,
+    $getSelection: vi.fn(),
+    $isRangeSelection: vi.fn(() => true),
+  };
+});
+
+describe('PanelListPlugin Component Logic', () => {
+  const mockEditor = {
+    registerCommand: vi.fn(() => vi.fn()),
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (useLexicalComposerContext as Mock).mockReturnValue([mockEditor]);
+  });
+
+  test('registers commands on mount', () => {
+    render(<PanelListPlugin />);
+
+    expect(mockEditor.registerCommand).toHaveBeenCalledTimes(3);
+
+    // Verify specific commands were registered
+    expect(mockEditor.registerCommand).toHaveBeenCalledWith(
+      KEY_ENTER_COMMAND,
+      expect.any(Function),
+      COMMAND_PRIORITY_HIGH,
+    );
+    expect(mockEditor.registerCommand).toHaveBeenCalledWith(
+      INSERT_UNORDERED_LIST_COMMAND,
+      expect.any(Function),
+      COMMAND_PRIORITY_HIGH,
+    );
+    expect(mockEditor.registerCommand).toHaveBeenCalledWith(
+      INSERT_ORDERED_LIST_COMMAND,
+      expect.any(Function),
+      COMMAND_PRIORITY_HIGH,
+    );
+  });
+});
 
 /**
- * Tests for PanelListPlugin functionality.
- * Note: Full command testing requires a browser environment with the plugin registered.
- * These tests verify the underlying node structure.
+ * Tests for PanelListPlugin functionality using Headless Editor.
+ * These verify the underlying node structure.
  */
 describe('PanelListPlugin Node Structure', () => {
   const editorConfig = {
     namespace: 'test',
-    nodes: [PanelBlockNode, ListNode, ListItemNode],
+    nodes: [PanelBlockNode, ListNode, ListItemNode, TextNode],
     onError: (error: Error) => {
       throw error;
     },
@@ -81,7 +141,8 @@ describe('PanelListPlugin Node Structure', () => {
 
           const list = $createListNode('number');
           const listItem = $createListItemNode();
-          listItem.append($createTextNode('Item 1'));
+          const text = $createTextNode('Item 1');
+          listItem.append(text);
           list.append(listItem);
           panel.append(list);
           root.append(panel);
@@ -128,7 +189,7 @@ describe('PanelListPlugin Node Structure', () => {
 describe('PanelActionMenuPlugin Title Editing', () => {
   const editorConfig = {
     namespace: 'test',
-    nodes: [PanelBlockNode],
+    nodes: [PanelBlockNode, TextNode],
     onError: (error: Error) => {
       throw error;
     },
