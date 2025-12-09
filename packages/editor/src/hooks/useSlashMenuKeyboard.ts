@@ -1,6 +1,6 @@
 /**
  * useSlashMenuKeyboard - Hook for handling keyboard events for slash menu.
- * Extracted from SlashMenuPlugin for modularity and testability.
+ * Refactored to use processKeyboardTrigger from slashMenuUtils for testability.
  */
 import { useEffect } from 'react';
 import { LexicalEditor } from 'lexical';
@@ -13,7 +13,7 @@ import {
   KEY_DOWN_COMMAND,
 } from 'lexical';
 import {
-  shouldTriggerSlashMenu,
+  processKeyboardTrigger,
   isEmptyRect,
   calculateMenuPosition,
   calculateFallbackPosition,
@@ -30,7 +30,7 @@ export interface SlashMenuKeyboardOptions {
 
 /**
  * Hook that handles keyboard events for triggering the slash menu.
- * Registers a KEY_DOWN_COMMAND listener to detect '/' at valid positions.
+ * Uses processKeyboardTrigger pure function for trigger detection logic.
  */
 export function useSlashMenuKeyboard({
   editor,
@@ -40,63 +40,65 @@ export function useSlashMenuKeyboard({
     const removeKeyDownListener = editor.registerCommand(
       KEY_DOWN_COMMAND,
       (event: KeyboardEvent) => {
-        if (event.key !== '/') {
-          return false;
-        }
-
         const selection = $getSelection();
-        if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+
+        // Build input for pure function
+        const isValidSelection =
+          $isRangeSelection(selection) && selection.isCollapsed();
+
+        if (!isValidSelection || !$isRangeSelection(selection)) {
           return false;
         }
 
         const anchor = selection.anchor;
         const anchorNode = anchor.getNode();
+        const isTextNodeType = $isTextNode(anchorNode);
+        const isElementNodeType = $isElementNode(anchorNode);
 
-        // Handle text nodes
-        if ($isTextNode(anchorNode)) {
-          const textContent = anchorNode.getTextContent();
-          const offset = anchor.offset;
-          const textBeforeCursor = textContent.substring(0, offset);
+        const textBeforeCursor = isTextNodeType
+          ? anchorNode.getTextContent().substring(0, anchor.offset)
+          : '';
 
-          if (!shouldTriggerSlashMenu(offset, textBeforeCursor)) {
-            return false;
-          }
+        // Use pure function for trigger detection
+        const result = processKeyboardTrigger({
+          key: event.key,
+          hasValidSelection: true,
+          isTextNode: isTextNodeType,
+          isElementNode: isElementNodeType,
+          anchorOffset: anchor.offset,
+          textBeforeCursor,
+        });
 
-          const domSelection = window.getSelection();
-          if (domSelection && domSelection.rangeCount > 0) {
-            const range = domSelection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-            const position = calculateMenuPosition(rect);
-            onOpenMenu(position, anchorNode.getKey(), offset);
-          }
-        }
-        // Handle empty element nodes (e.g., empty paragraphs)
-        else if ($isElementNode(anchorNode) && anchor.offset === 0) {
-          const domSelection = window.getSelection();
-          if (domSelection && domSelection.rangeCount > 0) {
-            const range = domSelection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-
-            let position: { top: number; left: number };
-
-            // Fallback for empty elements with zero-dimension rects
-            if (isEmptyRect(rect)) {
-              const element = editor.getElementByKey(anchorNode.getKey());
-              if (element) {
-                position = calculateFallbackPosition(
-                  element.getBoundingClientRect(),
-                );
-              } else {
-                position = calculateMenuPosition(rect);
-              }
-            } else {
-              position = calculateMenuPosition(rect);
-            }
-
-            onOpenMenu(position, anchorNode.getKey(), 0);
-          }
+        if (!result.shouldTrigger) {
+          return false;
         }
 
+        // Calculate position based on DOM
+        const domSelection = window.getSelection();
+        if (!domSelection || domSelection.rangeCount === 0) {
+          return false;
+        }
+
+        const range = domSelection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        let position: { top: number; left: number };
+
+        if (result.isEmptyElement && isEmptyRect(rect)) {
+          // Fallback for empty elements
+          const element = editor.getElementByKey(anchorNode.getKey());
+          if (element) {
+            position = calculateFallbackPosition(
+              element.getBoundingClientRect(),
+            );
+          } else {
+            position = calculateMenuPosition(rect);
+          }
+        } else {
+          position = calculateMenuPosition(rect);
+        }
+
+        onOpenMenu(position, anchorNode.getKey(), anchor.offset);
         return false;
       },
       COMMAND_PRIORITY_LOW,

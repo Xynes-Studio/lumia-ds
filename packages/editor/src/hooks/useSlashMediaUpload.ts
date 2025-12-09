@@ -1,6 +1,6 @@
 /**
  * useSlashMediaUpload - Hook for handling media upload from slash menu.
- * Extracted from SlashMenuPlugin for modularity and testability.
+ * Refactored to use pure functions from mediaUploadUtils for testability.
  */
 import { useCallback } from 'react';
 import { LexicalEditor } from 'lexical';
@@ -17,6 +17,17 @@ import { $createFileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../plugins/InsertImagePlugin';
 import { INSERT_VIDEO_BLOCK_COMMAND } from '../plugins/InsertVideoPlugin';
 import { INSERT_FILE_BLOCK_COMMAND } from '../plugins/InsertFilePlugin';
+import {
+  hasUploadAdapter,
+  extractFilenameFromUrl,
+  createPreviewUrl,
+  normalizeUploadError,
+  buildSuccessStatusUpdates,
+  buildErrorStatusUpdates,
+  buildImageNodePayload,
+  buildVideoNodePayload,
+  buildFileNodePayload,
+} from '../utils/mediaUploadUtils';
 
 export interface SlashMediaUploadOptions {
   editor: LexicalEditor;
@@ -90,7 +101,7 @@ export function useSlashMediaUpload({
     (url: string) => {
       editor.dispatchCommand(INSERT_FILE_BLOCK_COMMAND, {
         url,
-        filename: url.split('/').pop() || 'file',
+        filename: extractFilenameFromUrl(url),
       });
       onComplete?.();
     },
@@ -100,18 +111,15 @@ export function useSlashMediaUpload({
   // File-based insertions (with upload)
   const handleInsertImageFromFile = useCallback(
     (file: File) => {
-      if (!mediaConfig?.uploadAdapter) return;
+      if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'image');
 
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = createPreviewUrl(file);
+      const payload = buildImageNodePayload(previewUrl, file.name);
 
       editor.update(() => {
-        const imageNode = $createImageBlockNode({
-          src: previewUrl,
-          alt: file.name,
-          status: 'uploading',
-        });
+        const imageNode = $createImageBlockNode(payload);
         $insertNodes([imageNode]);
         if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
           $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
@@ -119,24 +127,23 @@ export function useSlashMediaUpload({
 
         const nodeKey = imageNode.getKey();
 
-        mediaConfig
+        mediaConfig!
           .uploadAdapter!.uploadFile(file)
           .then((result) => {
-            mediaConfig.callbacks?.onUploadComplete?.(file, result);
-            updateNodeStatus(editor, nodeKey, 'image-block', {
-              __src: result.url,
-              __status: 'uploaded',
-            });
+            mediaConfig!.callbacks?.onUploadComplete?.(file, result);
+            const updates = buildSuccessStatusUpdates(result, 'image');
+            updateNodeStatus(editor, nodeKey, 'image-block', updates);
           })
           .catch((error) => {
             console.error('Upload failed:', error);
-            mediaConfig.callbacks?.onUploadError?.(
-              file,
-              error instanceof Error ? error : new Error('Upload failed'),
+            const { error: normalizedError } = normalizeUploadError(error);
+            mediaConfig!.callbacks?.onUploadError?.(file, normalizedError);
+            updateNodeStatus(
+              editor,
+              nodeKey,
+              'image-block',
+              buildErrorStatusUpdates(),
             );
-            updateNodeStatus(editor, nodeKey, 'image-block', {
-              __status: 'error',
-            });
           });
       });
 
@@ -147,19 +154,15 @@ export function useSlashMediaUpload({
 
   const handleInsertVideoFromFile = useCallback(
     (file: File) => {
-      if (!mediaConfig?.uploadAdapter) return;
+      if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'video');
 
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = createPreviewUrl(file);
+      const payload = buildVideoNodePayload(previewUrl, file.name);
 
       editor.update(() => {
-        const videoNode = $createVideoBlockNode({
-          src: previewUrl,
-          provider: 'html5',
-          title: file.name,
-          status: 'uploading',
-        });
+        const videoNode = $createVideoBlockNode(payload);
 
         $insertNodeToNearestRoot(videoNode);
 
@@ -169,24 +172,23 @@ export function useSlashMediaUpload({
 
         const nodeKey = videoNode.getKey();
 
-        mediaConfig
+        mediaConfig!
           .uploadAdapter!.uploadFile(file)
           .then((result) => {
-            mediaConfig.callbacks?.onUploadComplete?.(file, result);
-            updateNodeStatus(editor, nodeKey, 'video-block', {
-              __src: result.url,
-              __status: 'uploaded',
-            });
+            mediaConfig!.callbacks?.onUploadComplete?.(file, result);
+            const updates = buildSuccessStatusUpdates(result, 'video');
+            updateNodeStatus(editor, nodeKey, 'video-block', updates);
           })
           .catch((error) => {
             console.error('Upload failed:', error);
-            mediaConfig.callbacks?.onUploadError?.(
-              file,
-              error instanceof Error ? error : new Error('Upload failed'),
+            const { error: normalizedError } = normalizeUploadError(error);
+            mediaConfig!.callbacks?.onUploadError?.(file, normalizedError);
+            updateNodeStatus(
+              editor,
+              nodeKey,
+              'video-block',
+              buildErrorStatusUpdates(),
             );
-            updateNodeStatus(editor, nodeKey, 'video-block', {
-              __status: 'error',
-            });
           });
       });
 
@@ -197,20 +199,15 @@ export function useSlashMediaUpload({
 
   const handleInsertFileFromFile = useCallback(
     (file: File) => {
-      if (!mediaConfig?.uploadAdapter) return;
+      if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'file');
 
-      const previewUrl = URL.createObjectURL(file);
+      const previewUrl = createPreviewUrl(file);
+      const payload = buildFileNodePayload(previewUrl, file);
 
       editor.update(() => {
-        const fileNode = $createFileBlockNode({
-          url: previewUrl,
-          filename: file.name,
-          size: file.size,
-          mime: file.type,
-          status: 'uploading',
-        });
+        const fileNode = $createFileBlockNode(payload);
 
         $insertNodes([fileNode]);
         if ($isRootOrShadowRoot(fileNode.getParentOrThrow())) {
@@ -219,28 +216,27 @@ export function useSlashMediaUpload({
 
         const nodeKey = fileNode.getKey();
 
-        mediaConfig
+        mediaConfig!
           .uploadAdapter!.uploadFile(file, {
             onProgress: (progress) => {
-              mediaConfig.callbacks?.onUploadProgress?.(file, progress);
+              mediaConfig!.callbacks?.onUploadProgress?.(file, progress);
             },
           })
           .then((result) => {
-            mediaConfig.callbacks?.onUploadComplete?.(file, result);
-            updateNodeStatus(editor, nodeKey, 'file-block', {
-              __url: result.url,
-              __status: 'uploaded',
-            });
+            mediaConfig!.callbacks?.onUploadComplete?.(file, result);
+            const updates = buildSuccessStatusUpdates(result, 'file');
+            updateNodeStatus(editor, nodeKey, 'file-block', updates);
           })
           .catch((error) => {
             console.error('Upload failed:', error);
-            mediaConfig.callbacks?.onUploadError?.(
-              file,
-              error instanceof Error ? error : new Error('Upload failed'),
+            const { error: normalizedError } = normalizeUploadError(error);
+            mediaConfig!.callbacks?.onUploadError?.(file, normalizedError);
+            updateNodeStatus(
+              editor,
+              nodeKey,
+              'file-block',
+              buildErrorStatusUpdates(),
             );
-            updateNodeStatus(editor, nodeKey, 'file-block', {
-              __status: 'error',
-            });
           });
       });
 
