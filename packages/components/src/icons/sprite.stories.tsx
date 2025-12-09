@@ -165,3 +165,62 @@ export const UseReference: Story = {
     },
   },
 };
+
+export const Accessibility: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6 bg-background p-6">
+      <div>
+        <h3 className="mb-3 text-sm font-medium text-foreground">
+          Decorative Sprite Icons
+        </h3>
+        <div className="flex items-center gap-4">
+          <SpriteIcon name="check" size={24} className="text-green-600" />
+          <SpriteIcon name="chevron-down" size={24} className="text-primary" />
+        </div>
+        <code className="mt-2 block text-xs text-muted-foreground">
+          aria-hidden=&quot;true&quot; focusable=&quot;false&quot;
+        </code>
+      </div>
+      <div>
+        <h3 className="mb-3 text-sm font-medium text-foreground">
+          Informative Sprite Icons
+        </h3>
+        <div className="flex items-center gap-4">
+          <SpriteIcon
+            name="alert"
+            size={24}
+            className="text-amber-600"
+            title="Warning: Review required"
+          />
+          <SpriteIcon
+            name="info"
+            size={24}
+            className="text-blue-600"
+            title="Additional information available"
+          />
+        </div>
+        <code className="mt-2 block text-xs text-muted-foreground">
+          role=&quot;img&quot; aria-labelledby with &lt;title&gt;
+        </code>
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: `
+SpriteIcon now supports the \`title\` prop for accessible informative icons:
+
+\`\`\`tsx
+// Decorative (default)
+<SpriteIcon name="chevron-down" />
+
+// Informative
+<SpriteIcon name="alert" title="Warning" />
+\`\`\`
+        `,
+      },
+    },
+  },
+};
+

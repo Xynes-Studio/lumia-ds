@@ -53,6 +53,27 @@ function App() {
 - `primary` → text-primary
 - `danger` → text-destructive
 
+### Accessibility
+
+Icons support both decorative and informative semantics:
+
+**Decorative icons** (default) are hidden from screen readers:
+```tsx
+<Icon name="check" />
+// Output: <svg aria-hidden="true" focusable="false" />
+```
+
+**Informative icons** convey meaning via the `title` prop:
+```tsx
+<Icon name="alert" title="Warning: Action required" />
+// Output: <svg role="img" aria-labelledby="icon-title-alert"><title>...</title>
+```
+
+Same pattern works for `SpriteIcon`:
+```tsx
+<SpriteIcon name="info" title="More information" />
+```
+
 ## Available Icons
 
 **Curated Lucide icons:** `home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`

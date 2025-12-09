@@ -214,28 +214,78 @@ export const SpriteIcons: Story = {
 
 export const WithAccessibleTitle: Story = {
   render: () => (
-    <div className="flex items-center gap-6 bg-background p-6">
-      <div className="flex flex-col items-center gap-2">
-        <Icon
-          name="alert"
-          size="lg"
-          color="danger"
-          title="Warning: Action required"
-        />
-        <span className="text-xs text-muted-foreground">With title</span>
+    <div className="flex flex-col gap-6 bg-background p-6">
+      <div>
+        <h3 className="mb-3 text-sm font-medium text-foreground">
+          Decorative Icons (hidden from screen readers)
+        </h3>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <Icon name="check" size="lg" color="primary" />
+            <code className="text-xs text-muted-foreground">
+              aria-hidden, focusable=false
+            </code>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Icon name="info" size="lg" color="muted" />
+            <code className="text-xs text-muted-foreground">No title prop</code>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col items-center gap-2">
-        <Icon name="info" size="lg" color="primary" />
-        <span className="text-xs text-muted-foreground">Without title</span>
+      <div>
+        <h3 className="mb-3 text-sm font-medium text-foreground">
+          Informative Icons (announced by screen readers)
+        </h3>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <Icon
+              name="alert"
+              size="lg"
+              color="danger"
+              title="Warning: Action required"
+            />
+            <code className="text-xs text-muted-foreground">
+              role=img, aria-labelledby
+            </code>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Icon
+              name="check"
+              size="lg"
+              color="primary"
+              title="Success: Changes saved"
+            />
+            <code className="text-xs text-muted-foreground">
+              With title prop
+            </code>
+          </div>
+        </div>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Open DevTools → Elements to verify: decorative icons have{' '}
+        <code>aria-hidden=&quot;true&quot;</code> and{' '}
+        <code>focusable=&quot;false&quot;</code>; informative icons have{' '}
+        <code>&lt;title&gt;</code> and <code>role=&quot;img&quot;</code>.
+      </p>
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story:
-          'When `title` is provided, the icon gets `role="img"` and `aria-labelledby` for screen readers. Without title, icons are `aria-hidden`.',
+        story: `
+**Decorative icons** are purely visual and should be hidden from assistive technologies:
+\`\`\`tsx
+<Icon name="check" /> // aria-hidden="true" focusable="false"
+\`\`\`
+
+**Informative icons** convey meaning and need accessible labels:
+\`\`\`tsx
+<Icon name="alert" title="Warning: Action required" />
+// role="img" aria-labelledby="icon-title-alert"
+\`\`\`
+        `,
       },
     },
   },
 };
+
