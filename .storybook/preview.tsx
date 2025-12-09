@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react';
-import { ThemeProvider } from '@lumia/theme';
-import { defaultTheme } from '@lumia/tokens';
+import { ThemeProvider } from '@lumia-ui/theme';
+import { defaultTheme } from '@lumia-ui/tokens';
 import './preview.css';
 
 const preview: Preview = {

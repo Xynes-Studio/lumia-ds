@@ -95,7 +95,7 @@ export const generateComponent = async (
 
     console.log(
       chalk.blue(
-        `\nSuccessfully generated component ${name} in @lumia/${answers.targetPackage}`,
+        `\nSuccessfully generated component ${name} in @lumia-ui/${answers.targetPackage}`,
       ),
     );
   } catch (error) {

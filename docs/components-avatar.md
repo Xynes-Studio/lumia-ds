@@ -3,7 +3,7 @@
 Circular profile image wrapper built on the shadcn/Radix avatar with Lumia tokens and grouping support.
 
 ## Export
-- `Avatar`, `AvatarGroup`, `AvatarSize`, `AvatarProps`, `AvatarGroupProps` from `@lumia/components`.
+- `Avatar`, `AvatarGroup`, `AvatarSize`, `AvatarProps`, `AvatarGroupProps` from `@lumia-ui/components`.
 
 ## Avatar Props
 - `src?: string` – image URL.
@@ -22,7 +22,7 @@ Circular profile image wrapper built on the shadcn/Radix avatar with Lumia token
 
 ## Usage
 ```tsx
-import { Avatar, AvatarGroup } from '@lumia/components';
+import { Avatar, AvatarGroup } from '@lumia-ui/components';
 
 <Avatar src="https://avatar.vercel.sh/avery" alt="Avery Parker" />;
 <Avatar alt="Jamie Doe" fallbackInitials="JD" />;

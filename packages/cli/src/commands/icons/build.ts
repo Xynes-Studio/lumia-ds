@@ -18,12 +18,12 @@ export async function buildIcons(cwd: string = process.cwd()): Promise<void> {
   // Run the build command
   await new Promise<void>((resolve, reject) => {
     // We want to run pnpm build:icons in the root workspace or target the icons package
-    // Since we are likely running from root, we can use --filter @lumia/icons
-    // Or if we are in the monorepo root, just `pnpm --filter @lumia/icons build:icons`
+    // Since we are likely running from root, we can use --filter @lumia-ui/icons
+    // Or if we are in the monorepo root, just `pnpm --filter @lumia-ui/icons build:icons`
 
     // We'll assume we are running from root or somewhere where pnpm can find the workspace
     const command = 'pnpm';
-    const args = ['--filter', '@lumia/icons', 'build:icons'];
+    const args = ['--filter', '@lumia-ui/icons', 'build:icons'];
 
     const child = spawn(command, args, {
       cwd,

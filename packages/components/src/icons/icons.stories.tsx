@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Icon, IconSprite, SPRITE_ICONS } from '@lumia/icons';
+import { Icon, IconSprite, SPRITE_ICONS } from '@lumia-ui/icons';
 
 const registryIcons = [
   { name: 'home', label: 'Home' },
@@ -49,7 +49,7 @@ automatically choosing the optimal rendering path (sprite vs SVGR).
 ## Usage
 
 \`\`\`tsx
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 
 // Basic usage
 <Icon name="info" />

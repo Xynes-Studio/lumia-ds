@@ -3,7 +3,7 @@
 Searchable async dropdowns built on the popover/input pattern for fetching and selecting options. `MultiSelect` extends Combobox to support multiple choices as inline tags.
 
 ## Exports
-- `Combobox`, `MultiSelect`, and `ComboboxOption` from `@lumia/components`.
+- `Combobox`, `MultiSelect`, and `ComboboxOption` from `@lumia-ui/components`.
 
 ## Combobox props & behavior
 - `value: ComboboxOption | null` – controlled selection; `ComboboxOption` is `{ label: string; value: string }`.
@@ -26,7 +26,7 @@ Searchable async dropdowns built on the popover/input pattern for fetching and s
 ## Usage
 ```tsx
 import { useMemo, useState } from 'react';
-import { Combobox, MultiSelect, type ComboboxOption } from '@lumia/components';
+import { Combobox, MultiSelect, type ComboboxOption } from '@lumia-ui/components';
 
 const fruits: ComboboxOption[] = [
   { label: 'Apple', value: 'apple' },

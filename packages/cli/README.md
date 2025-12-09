@@ -1,4 +1,4 @@
-# @lumia/cli
+# @lumia-ui/cli
 
 > CLI utilities for Lumia Design System
 

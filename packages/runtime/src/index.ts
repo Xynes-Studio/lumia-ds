@@ -1,4 +1,4 @@
-import type { FieldValues } from '@lumia/forms';
+import type { FieldValues } from '@lumia-ui/forms';
 import type { FieldConfig, FormDataFetcher } from './blocks/blocks';
 
 // Re-export Zod schemas and their inferred types

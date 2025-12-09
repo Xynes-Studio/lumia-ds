@@ -1,17 +1,17 @@
-# @lumia/theme
+# @lumia-ui/theme
 
 `ThemeProvider` and Tailwind preset for applying Lumia token CSS variables.
 
 ## Install
 
 ```bash
-pnpm add @lumia/theme @lumia/tokens
+pnpm add @lumia-ui/theme @lumia-ui/tokens
 ```
 
 ## Wrap your app
 
 ```tsx
-import { ThemeProvider } from '@lumia/theme';
+import { ThemeProvider } from '@lumia-ui/theme';
 
 export function App({ children }: { children: React.ReactNode }) {
   // Defaults to "light" theme (sets data-theme="light")
@@ -51,7 +51,7 @@ Expose Lumia tokens to Tailwind using the exported preset or config factory:
 
 ```js
 // tailwind.config.js
-import { createLumiaTailwindConfig, lumiaTailwindPreset } from '@lumia/theme';
+import { createLumiaTailwindConfig, lumiaTailwindPreset } from '@lumia-ui/theme';
 
 export default {
   presets: [lumiaTailwindPreset],

@@ -3,7 +3,7 @@
 Small pill for inline labels or counts, built on the shadcn badge base with Lumia background/border/foreground tokens.
 
 ## Export
-- `Badge`, `BadgeVariant` from `@lumia/components`.
+- `Badge`, `BadgeVariant` from `@lumia-ui/components`.
 
 ## Props
 - `children: React.ReactNode` – badge text/content.
@@ -13,7 +13,7 @@ Small pill for inline labels or counts, built on the shadcn badge base with Lumi
 
 ## Usage
 ```tsx
-import { Badge } from '@lumia/components';
+import { Badge } from '@lumia-ui/components';
 
 <Badge>New</Badge>;
 <Badge variant="outline">Draft</Badge>;

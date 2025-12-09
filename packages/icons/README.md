@@ -1,11 +1,11 @@
-# @lumia/icons
+# @lumia-ui/icons
 
 Icon registry utilities and the unified `<Icon>` React component for Lumia DS.
 
 ## Install
 
 ```bash
-pnpm add @lumia/icons
+pnpm add @lumia-ui/icons
 ```
 
 ## Unified Icon Component
@@ -13,7 +13,7 @@ pnpm add @lumia/icons
 The `<Icon>` component provides a single API for all icons:
 
 ```tsx
-import { Icon, IconSprite } from '@lumia/icons';
+import { Icon, IconSprite } from '@lumia-ui/icons';
 
 // Add sprite once at app root
 function App() {
@@ -85,7 +85,7 @@ Same pattern works for `SpriteIcon`:
 ## Registering Custom Icons
 
 ```tsx
-import { registerIcon } from '@lumia/icons';
+import { registerIcon } from '@lumia-ui/icons';
 
 const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" {...props}>
@@ -105,12 +105,12 @@ Add SVG files to `packages/icons/svg/` and run:
 pnpm build:icons
 ```
 
-Generated components are exported from `@lumia/icons` and auto-registered.
+Generated components are exported from `@lumia-ui/icons` and auto-registered.
 
 ## Direct Import (Tree-Shakable)
 
 ```tsx
-import { IconCheck, IconSparkle } from '@lumia/icons';
+import { IconCheck, IconSparkle } from '@lumia-ui/icons';
 
 <IconCheck className="text-green-500" />
 ```

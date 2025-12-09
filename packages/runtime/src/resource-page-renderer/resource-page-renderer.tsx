@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { AdminShell, DrawerLayout, StackLayout } from '@lumia/layout';
+import { AdminShell, DrawerLayout, StackLayout } from '@lumia-ui/layout';
 import { DetailBlock, FormBlock, ListBlock } from '../blocks/blocks';
 import { PageErrorWidget } from '../components/PageErrorWidget';
 import { BlockErrorWidget } from '../components/BlockErrorWidget';
@@ -347,7 +347,7 @@ export function ResourcePageRenderer({
           }
           return;
         }
-        const validatedPage = pageValidation.data;
+        const validatedPage = pageValidation.data as PageSchema;
 
         const context: DataQueryContext = {
           resource,

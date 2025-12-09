@@ -1,6 +1,6 @@
 # Lumia CLI
 
-The Lumia CLI (`@lumia/cli`) is the unified command-line interface for the Lumia Design System. It provides a central entry point for all development workflows, including scaffolding resources, managing icons, and more.
+The Lumia CLI (`@lumia-ui/cli`) is the unified command-line interface for the Lumia Design System. It provides a central entry point for all development workflows, including scaffolding resources, managing icons, and more.
 
 ## Installation
 
@@ -44,7 +44,7 @@ lumia generate component Button
 ```
 
 **Prompts:**
-- **Package**: Which package does this component belong to? (e.g. `@lumia/ui`)
+- **Package**: Which package does this component belong to? (e.g. `@lumia-ui/ui`)
 - **Features**: Select files to generate (Storybook Story, Test File, Style File).
 
 **Output Structure:**
@@ -150,10 +150,10 @@ We follow TDD principles with a strict **75% coverage requirement**.
 
 Run tests:
 ```bash
-pnpm --filter @lumia/cli test
+pnpm --filter @lumia-ui/cli test
 ```
 
 Check coverage:
 ```bash
-pnpm --filter @lumia/cli test -- --coverage
+pnpm --filter @lumia-ui/cli test -- --coverage
 ```

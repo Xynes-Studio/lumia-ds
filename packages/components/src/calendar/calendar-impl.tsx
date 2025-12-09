@@ -33,6 +33,7 @@ export const CalendarImpl = ({
     isRangeStart,
     isRangeEnd,
     isRangeMiddle,
+    isDateDisabled,
   } = useCalendar({
     ...props,
     defaultView: controlledViewMode || 'month',
@@ -183,6 +184,7 @@ export const CalendarImpl = ({
               ))}
             </div>
             <div
+              role="grid"
               className={cn(
                 'grid grid-cols-7 flex-1',
                 isFull ? 'border-l auto-rows-fr' : 'gap-y-1',
@@ -215,7 +217,7 @@ export const CalendarImpl = ({
                         isSelected: isSelected(day),
                         isToday: false, // simplified
                         isOutside: isOutsideMonth,
-                        isDisabled: false, // simplified
+                        isDisabled: isDateDisabled(day),
                         isRangeStart: isRangeStart(day),
                         isRangeEnd: isRangeEnd(day),
                         isRangeMiddle: isRangeMiddle(day),
@@ -227,7 +229,7 @@ export const CalendarImpl = ({
                         isSelected={isSelected(day)}
                         isToday={false} // simplified
                         isOutside={isOutsideMonth}
-                        isDisabled={false} // simplified
+                        isDisabled={isDateDisabled(day)}
                         isRangeStart={isRangeStart(day)}
                         isRangeEnd={isRangeEnd(day)}
                         isRangeMiddle={isRangeMiddle(day)}

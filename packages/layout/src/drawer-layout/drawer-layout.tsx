@@ -1,4 +1,4 @@
-import { Flex } from '@lumia/components';
+import { Flex } from '@lumia-ui/components';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { forwardRef, useEffect } from 'react';
 

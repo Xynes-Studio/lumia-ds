@@ -3,7 +3,7 @@
 Flexible horizontal layout helper for aligning form controls and actions, stacking vertically on narrow viewports. Built on the shadcn-style flex wrappers used across the DS.
 
 ## Exports
-- `Toolbar`, `ToolbarProps` from `@lumia/components`.
+- `Toolbar`, `ToolbarProps` from `@lumia-ui/components`.
 
 ## Props
 - `align?: 'start' | 'center' | 'end'` – cross-axis alignment for both groups. Defaults to `center`.
@@ -14,7 +14,7 @@ Flexible horizontal layout helper for aligning form controls and actions, stacki
 
 ## Usage
 ```tsx
-import { Toolbar, Button, Input, SegmentedControl } from '@lumia/components';
+import { Toolbar, Button, Input, SegmentedControl } from '@lumia-ui/components';
 
 export function Filters() {
   return (

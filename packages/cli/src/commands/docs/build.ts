@@ -5,7 +5,7 @@ export async function buildDocs(cwd: string = process.cwd()): Promise<void> {
   console.log(chalk.blue('Building docs...'));
 
   return new Promise((resolve, reject) => {
-    const child = spawn('pnpm', ['--filter', '@lumia/docs', 'build'], {
+    const child = spawn('pnpm', ['--filter', '@lumia-ui/docs', 'build'], {
       cwd,
       stdio: 'inherit',
       shell: true,

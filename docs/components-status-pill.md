@@ -3,7 +3,7 @@
 Semantic status label with tinted backgrounds for quick scanning, built on the shadcn badge wrapper.
 
 ## Export
-- `StatusPill`, `StatusPillVariant` from `@lumia/components`.
+- `StatusPill`, `StatusPillVariant` from `@lumia-ui/components`.
 
 ## Props
 - `children: React.ReactNode` – status text.
@@ -13,7 +13,7 @@ Semantic status label with tinted backgrounds for quick scanning, built on the s
 
 ## Usage
 ```tsx
-import { StatusPill } from '@lumia/components';
+import { StatusPill } from '@lumia-ui/components';
 
 <StatusPill variant="success">Operational</StatusPill>;
 <StatusPill variant="warning">Pending</StatusPill>;

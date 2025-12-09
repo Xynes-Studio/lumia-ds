@@ -3,7 +3,7 @@
 Reusable pagination bar for tables and flat lists with accessible navigation controls.
 
 ## Exports
-- `Pagination` from `@lumia/components`.
+- `Pagination` from `@lumia-ui/components`.
 
 ## Props
 - `page: number` – current 1-based page.
@@ -15,7 +15,7 @@ Reusable pagination bar for tables and flat lists with accessible navigation con
 
 ## Usage
 ```tsx
-import { Pagination, Table, TableBody, TableCell, TableHeader, TableRow } from '@lumia/components';
+import { Pagination, Table, TableBody, TableCell, TableHeader, TableRow } from '@lumia-ui/components';
 import { useMemo, useState } from 'react';
 
 export function UsersPage() {

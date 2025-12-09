@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Alert } from '@lumia/components';
+import { Alert } from '@lumia-ui/components';
 import type { PageConfigError, ResourceConfigError } from '../validation';
 
 /**
@@ -45,10 +45,9 @@ export function PageErrorWidget({
   children,
   className,
 }: PageErrorWidgetProps) {
-  /* eslint-disable no-undef */
   const isDev =
-    typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
-  /* eslint-enable no-undef */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).process?.env?.NODE_ENV === 'development';
 
   const errorId = getErrorId(error);
   const errorType = isPageError(error) ? 'page' : 'resource';

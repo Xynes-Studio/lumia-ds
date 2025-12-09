@@ -6,7 +6,7 @@ export async function devDocs(cwd: string = process.cwd()): Promise<void> {
 
   return new Promise((resolve, reject) => {
     // We assume we are in monorepo root or have access to pnpm
-    const child = spawn('pnpm', ['--filter', '@lumia/docs', 'dev'], {
+    const child = spawn('pnpm', ['--filter', '@lumia-ui/docs', 'dev'], {
       cwd,
       stdio: 'inherit',
       shell: true,

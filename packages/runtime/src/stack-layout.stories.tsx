@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { StackLayout } from '@lumia/layout';
+import { StackLayout } from '@lumia-ui/layout';
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 const meta = {
   title: 'Runtime/StackLayout',

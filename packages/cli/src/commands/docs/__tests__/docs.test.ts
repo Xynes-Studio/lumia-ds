@@ -37,14 +37,14 @@ describe('docs commands', () => {
   });
 
   describe('devDocs', () => {
-    it('should spawn pnpm dev command for @lumia/docs', async () => {
+    it('should spawn pnpm dev command for @lumia-ui/docs', async () => {
       const promise = devDocs();
       mockChildProcess.emit('close', 0);
       await promise;
 
       expect(spawn).toHaveBeenCalledWith(
         'pnpm',
-        ['--filter', '@lumia/docs', 'dev'],
+        ['--filter', '@lumia-ui/docs', 'dev'],
         expect.objectContaining({
           stdio: 'inherit',
           shell: true,
@@ -66,14 +66,14 @@ describe('docs commands', () => {
   });
 
   describe('buildDocs', () => {
-    it('should spawn pnpm build command for @lumia/docs', async () => {
+    it('should spawn pnpm build command for @lumia-ui/docs', async () => {
       const promise = buildDocs();
       mockChildProcess.emit('close', 0);
       await promise;
 
       expect(spawn).toHaveBeenCalledWith(
         'pnpm',
-        ['--filter', '@lumia/docs', 'build'],
+        ['--filter', '@lumia-ui/docs', 'build'],
         expect.objectContaining({
           stdio: 'inherit',
           shell: true,

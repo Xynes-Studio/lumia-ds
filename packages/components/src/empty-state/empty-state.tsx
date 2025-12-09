@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import { forwardRef } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { Button, buttonStyles } from '../button/button';
 import { cn } from '../lib/utils';
 

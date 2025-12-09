@@ -70,13 +70,13 @@ Before beginning a release, ensure all pipelines pass.
 ### 2.1 Build Tokens & Icons
 - [ ] **Build design tokens**
   ```bash
-  pnpm --filter @lumia/tokens build
+  pnpm --filter @lumia-ui/tokens build
   ```
 
 - [ ] **Import and generate icons** (if icons were updated)
   ```bash
   pnpm icons:import
-  pnpm --filter @lumia/icons build
+  pnpm --filter @lumia-ui/icons build
   ```
 
 ### 2.2 Build All Packages
@@ -85,7 +85,7 @@ Before beginning a release, ensure all pipelines pass.
   pnpm build
   ```
   This builds all packages in dependency order:
-  - `@lumia/tokens` → `@lumia/theme` → `@lumia/core` → `@lumia/components` → etc.
+  - `@lumia-ui/tokens` → `@lumia-ui/theme` → `@lumia-ui/core` → `@lumia-ui/components` → etc.
 
 ### 2.3 Verify Storybook
 - [ ] **Build static Storybook**

@@ -26,7 +26,7 @@ STORYBOOK_DISABLE_TELEMETRY=1 pnpm storybook:build
 ## Theming and styling
 
 - Global preview wraps stories in `ThemeProvider` with `defaultTheme`.
-- Tailwind utilities come from the `@lumia/theme` preset via `tailwind.config.cjs`; `@tailwind base/components/utilities` are pulled through `.storybook/preview.css`.
+- Tailwind utilities come from the `@lumia-ui/theme` preset via `tailwind.config.cjs`; `@tailwind base/components/utilities` are pulled through `.storybook/preview.css`.
 - Story sources live under `packages/components/src/**` and `packages/runtime/src/**`.
 
 ## Troubleshooting

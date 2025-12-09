@@ -1,10 +1,10 @@
 # Icon Migration Guide
 
-This guide documents the migration from direct icon library imports to the unified `@lumia/icons` system.
+This guide documents the migration from direct icon library imports to the unified `@lumia-ui/icons` system.
 
 ## Overview
 
-The `@lumia/icons` package provides a unified icon system with:
+The `@lumia-ui/icons` package provides a unified icon system with:
 - Automatic sprite optimization for hot-path icons
 - Tree-shakable SVGR components
 - Consistent size and color APIs
@@ -25,7 +25,7 @@ import { Bold, Italic, Trash2 } from 'lucide-react';
 
 **After (Recommended):**
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 
 <Icon name="bold" size="sm" />
 <Icon name="italic" size="sm" />
@@ -36,7 +36,7 @@ import { Icon } from '@lumia/icons';
 
 **Before (Deprecated):**
 ```tsx
-import { IconHome, IconUser, IconBold } from '@lumia/icons';
+import { IconHome, IconUser, IconBold } from '@lumia-ui/icons';
 
 <IconHome />
 <IconUser size="lg" />
@@ -47,7 +47,7 @@ import { IconHome, IconUser, IconBold } from '@lumia/icons';
 
 **After (Recommended):**
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 
 <Icon name="home" />
 <Icon name="user" size="lg" />
@@ -61,7 +61,7 @@ Replace direct icon library imports with the unified `Icon` component:
 
 ```diff
 -import { Bold, Italic, Link } from 'lucide-react';
-+import { Icon } from '@lumia/icons';
++import { Icon } from '@lumia-ui/icons';
 ```
 
 ### Step 2: Update Icon Usage

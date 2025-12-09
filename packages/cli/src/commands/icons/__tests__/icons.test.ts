@@ -42,7 +42,7 @@ describe('Icon Commands', () => {
 
       expect(spawn).toHaveBeenCalledWith(
         'pnpm',
-        ['--filter', '@lumia/icons', 'build:icons'],
+        ['--filter', '@lumia-ui/icons', 'build:icons'],
         expect.objectContaining({
           cwd: TEST_CWD,
           shell: true,

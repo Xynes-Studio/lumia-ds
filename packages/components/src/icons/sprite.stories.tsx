@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconSprite, SpriteIcon, SPRITE_ICONS } from '@lumia/icons';
+import { IconSprite, SpriteIcon, SPRITE_ICONS } from '@lumia-ui/icons';
 
 const meta: Meta<typeof SpriteIcon> = {
   title: 'Foundations/Icons/Sprite',
@@ -23,7 +23,7 @@ defining each icon once as a \`<symbol>\` and referencing it via \`<use href>\`.
 Add \`<IconSprite />\` once at your app root:
 
 \`\`\`tsx
-import { IconSprite } from '@lumia/icons';
+import { IconSprite } from '@lumia-ui/icons';
 
 function App() {
   return (
@@ -38,7 +38,7 @@ function App() {
 ## Usage
 
 \`\`\`tsx
-import { SpriteIcon } from '@lumia/icons';
+import { SpriteIcon } from '@lumia-ui/icons';
 
 <SpriteIcon name="chevron-down" size={24} className="text-primary" />
 \`\`\`

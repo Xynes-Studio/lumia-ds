@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import type { IconId } from '@lumia/icons';
+import type { IconId } from '@lumia-ui/icons';
 import { SideNavItem } from './side-nav-item';
 
 const dashboardIcon = 'home' as IconId;

@@ -3,7 +3,7 @@
 Radix-based popover primitive for anchored overlays such as menus, forms, and pickers with DS token styling.
 
 ## Exports
-- `Popover`, `PopoverTrigger`, `PopoverContent` from `@lumia/components`.
+- `Popover`, `PopoverTrigger`, `PopoverContent` from `@lumia-ui/components`.
 
 ## Props & behavior
 - `Popover` mirrors Radix `Root`, supports controlled (`open`) and uncontrolled (`defaultOpen`) modes, and restores focus to the trigger when closing.
@@ -17,7 +17,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function Example() {
   return (

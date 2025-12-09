@@ -7,11 +7,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      '@lumia/tokens/dist/css/variables.css': resolve(
+      '@lumia-ui/tokens/dist/css/variables.css': resolve(
         __dirname,
         './test/mocks/variables.css',
       ),
-      '@lumia/tokens': resolve(__dirname, '../tokens/src/index.ts'),
+      '@lumia-ui/tokens': resolve(__dirname, '../tokens/src/index.ts'),
     },
   },
   test: {

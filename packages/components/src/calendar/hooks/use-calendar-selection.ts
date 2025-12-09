@@ -20,6 +20,7 @@ export interface UseCalendarSelectionReturn {
   isRangeStart: (date: Date) => boolean;
   isRangeEnd: (date: Date) => boolean;
   isRangeMiddle: (date: Date) => boolean;
+  isDateDisabled: (date: Date) => boolean;
 }
 
 export const useCalendarSelection = ({
@@ -108,11 +109,17 @@ export const useCalendarSelection = ({
     [mode, selected],
   );
 
+  const checkIsDateDisabled = useCallback(
+    (date: Date) => isDateDisabled(date, disabled),
+    [disabled],
+  );
+
   return {
     selectDate,
     isSelected,
     isRangeStart,
     isRangeEnd,
     isRangeMiddle,
+    isDateDisabled: checkIsDateDisabled,
   };
 };

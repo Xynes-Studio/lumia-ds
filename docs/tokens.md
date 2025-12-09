@@ -70,16 +70,16 @@ Our Tailwind preset (`packages/theme/src/tailwind/tailwind.ts`) maps semantic to
 You can import the generated CSS variables file once in your app root, or use the TypeScript constants if you need the raw values in JS.
 
 **CSS Variables Support:**
-Ensure `@lumia/tokens/dist/css/variables.css` is imported in your global CSS or main entry file.
+Ensure `@lumia-ui/tokens/dist/css/variables.css` is imported in your global CSS or main entry file.
 
 ```tsx
 // main.tsx
-import '@lumia/tokens/dist/css/variables.css';
+import '@lumia-ui/tokens/dist/css/variables.css';
 ```
 
 **TypeScript Constants:**
 ```ts
-import { ColorPrimary } from '@lumia/tokens';
+import { ColorPrimary } from '@lumia-ui/tokens';
 
 const styles = {
   backgroundColor: ColorPrimary, // Returns result of var(--color-primary, #...)

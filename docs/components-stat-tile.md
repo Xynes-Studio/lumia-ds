@@ -1,10 +1,10 @@
-# StatTile (@lumia/components)
+# StatTile (@lumia-ui/components)
 
 Compact KPI tile for dashboards and summary grids. Presents a label, primary metric, optional directional delta, and optional icon.
 
 ## Import
 ```ts
-import { StatTile, type StatTileProps, type StatTileDelta } from '@lumia/components';
+import { StatTile, type StatTileProps, type StatTileDelta } from '@lumia-ui/components';
 ```
 
 ## Props

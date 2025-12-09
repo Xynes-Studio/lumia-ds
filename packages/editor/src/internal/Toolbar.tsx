@@ -8,8 +8,8 @@ import {
   PopoverTrigger,
   Input,
   Select,
-} from '@lumia/components';
-import { Icon } from '@lumia/icons';
+} from '@lumia-ui/components';
+import { Icon } from '@lumia-ui/icons';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';

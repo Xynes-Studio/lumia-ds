@@ -37,7 +37,7 @@ The calendar is built with a mobile-first, responsive approach.
 ## Installation
 
 ```bash
-pnpm add @lumia/components date-fns
+pnpm add @lumia-ui/components date-fns
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ pnpm add @lumia/components date-fns
 Ideal for DatePickers and Popovers.
 
 ```tsx
-import { Calendar } from '@lumia/components';
+import { Calendar } from '@lumia-ui/components';
 import { useState } from 'react';
 
 export const MyDatePicker = () => {
@@ -69,7 +69,7 @@ export const MyDatePicker = () => {
 Ideal for scheduling and admin interfaces.
 
 ```tsx
-import { Calendar } from '@lumia/components';
+import { Calendar } from '@lumia-ui/components';
 
 export const DashboardCalendar = () => {
   return (
@@ -87,7 +87,7 @@ export const DashboardCalendar = () => {
 ### Range Selection
 
 ```tsx
-import { Calendar, DateRange } from '@lumia/components';
+import { Calendar, DateRange } from '@lumia-ui/components';
 
 export const RangePicker = () => {
   const [range, setRange] = useState<DateRange | undefined>();

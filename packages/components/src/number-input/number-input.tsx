@@ -6,7 +6,7 @@ import type {
   KeyboardEventHandler,
 } from 'react';
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import {
   baseFieldClasses,
   buildAriaDescribedBy,

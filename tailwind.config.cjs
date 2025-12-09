@@ -1,4 +1,4 @@
-const { lumiaTailwindPreset } = require('@lumia/theme/tailwind');
+const { lumiaTailwindPreset } = require('@lumia-ui/theme/tailwind');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

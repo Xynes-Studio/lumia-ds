@@ -34,7 +34,7 @@ function runCli(args: string[]): {
   }
 }
 
-describe('@lumia/cli', () => {
+describe('@lumia-ui/cli', () => {
   beforeAll(() => {
     // Ensure CLI is built before running tests
     try {

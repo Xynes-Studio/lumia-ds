@@ -7,7 +7,7 @@ import type {
 } from 'react';
 import { cloneElement, forwardRef, isValidElement, useRef } from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 import {
   getMenuItemIconClassName,

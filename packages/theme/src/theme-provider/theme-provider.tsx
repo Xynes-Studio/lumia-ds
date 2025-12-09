@@ -4,8 +4,8 @@ import {
   useMemo,
   type PropsWithChildren,
 } from 'react';
-import { themeToCSSVars, type ThemeTokens } from '@lumia/tokens';
-import '@lumia/tokens/dist/css/variables.css';
+import { themeToCSSVars, type ThemeTokens } from '@lumia-ui/tokens';
+import '@lumia-ui/tokens/dist/css/variables.css';
 
 type ThemeTarget = HTMLElement | null | undefined;
 

@@ -6,7 +6,7 @@ import type {
 } from 'react';
 import { createContext, forwardRef, useContext, useRef } from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 import { Spinner } from '../spinner/spinner';
 import {

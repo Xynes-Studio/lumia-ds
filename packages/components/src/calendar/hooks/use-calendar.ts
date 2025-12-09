@@ -65,6 +65,7 @@ export const useCalendar = ({
     isRangeStart: selection.isRangeStart,
     isRangeEnd: selection.isRangeEnd,
     isRangeMiddle: selection.isRangeMiddle,
+    isDateDisabled: selection.isDateDisabled,
 
     // View
     view: view.view,

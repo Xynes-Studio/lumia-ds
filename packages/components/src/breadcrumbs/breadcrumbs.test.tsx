@@ -1,7 +1,7 @@
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it, vi } from 'vitest';
-import type { IconId } from '@lumia/icons';
+import type { IconId } from '@lumia-ui/icons';
 import { Breadcrumbs } from './breadcrumbs';
 
 (

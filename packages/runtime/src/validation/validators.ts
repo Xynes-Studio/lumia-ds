@@ -46,8 +46,8 @@ function mapZodIssues(issues: ZodIssue[]): ConfigValidationIssue[] {
 function logValidationError(
   error: PageConfigError | ResourceConfigError | DataSourceError,
 ): void {
-  // eslint-disable-next-line no-undef
-  if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((globalThis as any).process?.env?.NODE_ENV === 'development') {
     console.warn(formatValidationError(error));
   }
 }

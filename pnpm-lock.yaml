@@ -14,10 +14,10 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@22.19.2)
-      '@lumia/theme':
+      '@lumia-ui/theme':
         specifier: workspace:*
         version: link:packages/theme
-      '@lumia/tokens':
+      '@lumia-ui/tokens':
         specifier: workspace:*
         version: link:packages/tokens
       '@playwright/test':
@@ -166,7 +166,7 @@ importers:
 
   packages/components:
     dependencies:
-      '@lumia/icons':
+      '@lumia-ui/icons':
         specifier: workspace:*
         version: link:../icons
       '@radix-ui/react-accordion':
@@ -314,10 +314,10 @@ importers:
       '@lexical/utils':
         specifier: ^0.38.2
         version: 0.38.2
-      '@lumia/components':
+      '@lumia-ui/components':
         specifier: workspace:*
         version: link:../components
-      '@lumia/icons':
+      '@lumia-ui/icons':
         specifier: workspace:*
         version: link:../icons
       lexical:
@@ -372,7 +372,7 @@ importers:
 
   packages/forms:
     dependencies:
-      '@lumia/components':
+      '@lumia-ui/components':
         specifier: workspace:*
         version: link:../components
       zod:
@@ -458,7 +458,7 @@ importers:
 
   packages/layout:
     dependencies:
-      '@lumia/components':
+      '@lumia-ui/components':
         specifier: workspace:*
         version: link:../components
     devDependencies:
@@ -489,13 +489,13 @@ importers:
 
   packages/runtime:
     dependencies:
-      '@lumia/components':
+      '@lumia-ui/components':
         specifier: workspace:*
         version: link:../components
-      '@lumia/forms':
+      '@lumia-ui/forms':
         specifier: workspace:*
         version: link:../forms
-      '@lumia/layout':
+      '@lumia-ui/layout':
         specifier: workspace:*
         version: link:../layout
       react-hook-form:
@@ -532,7 +532,7 @@ importers:
 
   packages/theme:
     dependencies:
-      '@lumia/tokens':
+      '@lumia-ui/tokens':
         specifier: workspace:*
         version: link:../tokens
     devDependencies:

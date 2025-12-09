@@ -1,6 +1,6 @@
 # Icon Import Workflow
 
-Convert raw SVG files into React components and register them in `@lumia/icons`.
+Convert raw SVG files into React components and register them in `@lumia-ui/icons`.
 
 ## Steps
 
@@ -17,7 +17,7 @@ Convert raw SVG files into React components and register them in `@lumia/icons`.
 The `<Icon>` component provides a single API for all icons, automatically choosing the optimal rendering path (sprite vs SVGR).
 
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 
 // Basic usage
 <Icon name="info" />
@@ -70,7 +70,7 @@ import { Icon } from '@lumia/icons';
 For generated icons, you can also import components directly:
 
 ```tsx
-import { IconCheck, IconSparkle } from '@lumia/icons';
+import { IconCheck, IconSparkle } from '@lumia-ui/icons';
 
 <IconCheck className="text-green-500" />;
 ```
@@ -80,7 +80,7 @@ import { IconCheck, IconSparkle } from '@lumia/icons';
 For hot-path icons, the unified `<Icon>` automatically uses the sprite. Add `<IconSprite />` once at your app root:
 
 ```tsx
-import { IconSprite } from '@lumia/icons';
+import { IconSprite } from '@lumia-ui/icons';
 
 function App() {
   return (

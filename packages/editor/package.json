@@ -1,8 +1,12 @@
+
 {
-    "name": "@lumia/editor",
+    "name": "@lumia-ui/editor",
     "type": "module",
-    "version": "0.0.0",
-    "description": "Editor package for Lumia DS",
+    "version": "0.0.1",
+    "description": "Editor components for Lumia DS",
+    "publishConfig": {
+        "access": "public"
+    },
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -51,8 +55,8 @@
         "@lexical/selection": "0.38.2",
         "@lexical/table": "^0.38.2",
         "@lexical/utils": "^0.38.2",
-        "@lumia/components": "workspace:*",
-        "@lumia/icons": "workspace:*",
+        "@lumia-ui/components": "workspace:*",
+        "@lumia-ui/icons": "workspace:*",
         "lexical": "0.38.2"
     }
 }

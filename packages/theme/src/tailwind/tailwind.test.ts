@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
-import * as Tokens from '@lumia/tokens';
+import { defaultTheme, themeToCSSVars } from '@lumia-ui/tokens';
+import * as Tokens from '@lumia-ui/tokens';
 import { createLumiaTailwindConfig, lumiaTailwindPreset } from './tailwind';
 
 const cssVars = themeToCSSVars(defaultTheme);

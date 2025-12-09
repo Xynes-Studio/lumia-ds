@@ -1,6 +1,6 @@
 # Runtime Schemas & Validation
 
-Comprehensive guide to `@lumia/runtime` schema-driven UI: types, validation, and how to extend safely.
+Comprehensive guide to `@lumia-ui/runtime` schema-driven UI: types, validation, and how to extend safely.
 
 ## Table of Contents
 
@@ -121,7 +121,7 @@ import {
   ResourceConfigSchema,
   type BlockSchema,
   type PageSchema,
-} from '@lumia/runtime';
+} from '@lumia-ui/runtime';
 
 // Validate server-driven config at runtime
 const validateBlockConfig = (input: unknown): BlockSchema => {
@@ -177,7 +177,7 @@ import {
   formatValidationError,
   type ValidationResult,
   type ConfigError,
-} from '@lumia/runtime';
+} from '@lumia-ui/runtime';
 
 // Validate page config - returns result discriminated union
 const result = validatePageConfig(json, 'my-page');
@@ -215,7 +215,7 @@ The runtime includes customizable error widgets for graceful degradation:
 Full-page error widget for page/resource validation failures:
 
 ```tsx
-import { PageErrorWidget, type PageConfigError } from '@lumia/runtime';
+import { PageErrorWidget, type PageConfigError } from '@lumia-ui/runtime';
 
 <PageErrorWidget
   error={pageError}
@@ -235,7 +235,7 @@ import { PageErrorWidget, type PageConfigError } from '@lumia/runtime';
 Inline placeholder for blocks that fail validation:
 
 ```tsx
-import { BlockErrorWidget } from '@lumia/runtime';
+import { BlockErrorWidget } from '@lumia-ui/runtime';
 
 <BlockErrorWidget
   blockId="block-1"
@@ -255,7 +255,7 @@ import { BlockErrorWidget } from '@lumia/runtime';
 Individual blocks are validated at render time using `validateBlock()`:
 
 ```typescript
-import { validateBlock, type BlockValidationResult } from '@lumia/runtime';
+import { validateBlock, type BlockValidationResult } from '@lumia-ui/runtime';
 
 const result: BlockValidationResult = validateBlock(blockJson, 'block-id');
 if (result.success) {
@@ -418,13 +418,13 @@ describe('BlockSchemaSchema', () => {
 
 ```bash
 # Run schema tests
-pnpm --filter @lumia/runtime test
+pnpm --filter @lumia-ui/runtime test
 
 # Run lint
 pnpm lint
 
 # Verify build
-pnpm --filter @lumia/runtime build
+pnpm --filter @lumia-ui/runtime build
 ```
 
 ---
@@ -578,7 +578,7 @@ Each block is validated independently at render time:
 For scenarios where you want to fail fast on any invalid block:
 
 ```typescript
-import { PageSchemaSchemaStrict } from '@lumia/runtime';
+import { PageSchemaSchemaStrict } from '@lumia-ui/runtime';
 
 // Validates ALL blocks upfront
 const result = PageSchemaSchemaStrict.safeParse(pageJson);
@@ -621,7 +621,7 @@ JSON fixtures are used to guarantee schema stability and catch breaking changes 
 
 ```typescript
 import validPage from './fixtures/valid-page.json';
-import { PageSchemaSchema } from '@lumia/runtime';
+import { PageSchemaSchema } from '@lumia-ui/runtime';
 
 // Test valid fixture passes
 const result = PageSchemaSchema.safeParse(validPage);
@@ -723,7 +723,7 @@ Grid placement validation failed
 Use `formatValidationError()` for human-readable error messages:
 
 ```typescript
-import { validatePageConfig, formatValidationError } from '@lumia/runtime';
+import { validatePageConfig, formatValidationError } from '@lumia-ui/runtime';
 
 const result = validatePageConfig(config, 'my-page');
 if (!result.success) {
@@ -752,7 +752,7 @@ if (!result.success) {
 - Props: `resourceName`, `screen`, `fetcher`, optional `params`, `permissions`.
 
 ```tsx
-import { ResourcePageRenderer, type DataFetcher } from '@lumia/runtime';
+import { ResourcePageRenderer, type DataFetcher } from '@lumia-ui/runtime';
 
 const fetcher: DataFetcher = {
   getResourceConfig: async (name) => resources[name],
@@ -782,7 +782,7 @@ const fetcher: DataFetcher = {
 - `ListBlock`: card-wrapped data table; props include `data`, `columns`, optional `title`, `description`, `emptyMessage`; supports virtualized mode when `virtualized: true` in `BlockSchema.props`.
 - `DetailBlock`: card-wrapped record view; props `fields`, optional `columns`, `title`, `description`, `emptyMessage`.
 - `FormBlock`: card-wrapped form builder using `ResourceConfig.fields` and `react-hook-form`; props `resource`, `mode`, `initialValues`, `submitLabel`, `emptyMessage`, `onSubmit`, `dataFetcher`.
-- Blocks are exported from `@lumia/runtime` and can be rendered directly.
+- Blocks are exported from `@lumia-ui/runtime` and can be rendered directly.
 
 ```tsx
 import {
@@ -794,8 +794,8 @@ import {
   type FormBlockProps,
   type ListBlockProps,
   type ResourceConfig,
-} from '@lumia/runtime';
-import { required } from '@lumia/forms';
+} from '@lumia-ui/runtime';
+import { required } from '@lumia-ui/forms';
 
 const listSchema: BlockSchema = {
   id: 'users-table',

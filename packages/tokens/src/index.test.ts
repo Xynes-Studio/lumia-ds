@@ -6,7 +6,7 @@ import {
   themeToCSSVars,
 } from './index';
 
-describe('@lumia/tokens', () => {
+describe('@lumia-ui/tokens', () => {
   it('exports tokens in ThemeTokens shape', () => {
     const theme: ThemeTokens = defaultTheme;
 

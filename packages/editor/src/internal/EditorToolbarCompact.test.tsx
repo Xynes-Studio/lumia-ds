@@ -5,14 +5,14 @@ import { EditorToolbarCompact } from './EditorToolbarCompact';
 import { EditorProvider } from '../EditorProvider';
 import { vi, describe, it, expect } from 'vitest';
 
-// Mock @lumia/icons Icon component
-vi.mock('@lumia/icons', () => ({
+// Mock @lumia-ui/icons Icon component
+vi.mock('@lumia-ui/icons', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Icon: ({ name }: any) => <span data-testid={`icon-${name}`} />,
 }));
 
-// Mock @lumia/components
-vi.mock('@lumia/components', () => ({
+// Mock @lumia-ui/components
+vi.mock('@lumia-ui/components', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Button: ({ children, onClick, ...props }: any) => (
     <button onClick={onClick} {...props}>

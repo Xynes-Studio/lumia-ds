@@ -1,11 +1,11 @@
-# @lumia/editor
+# @lumia-ui/editor
 
 The core editor package for Lumia DS, built on top of [Lexical](https://lexical.dev/).
 
 ## Installation
 
 ```bash
-pnpm add @lumia/editor
+pnpm add @lumia-ui/editor
 ```
 
 ## Features
@@ -20,7 +20,7 @@ pnpm add @lumia/editor
 ## Usage
 
 ```tsx
-import { LumiaEditor, LumiaInlineEditor } from '@lumia/editor';
+import { LumiaEditor, LumiaInlineEditor } from '@lumia-ui/editor';
 
 function App() {
   const [value, setValue] = useState(null);
@@ -59,7 +59,7 @@ The editor supports two toolbar variants:
 Control which fonts are available in your editor using the `fonts` prop:
 
 ```tsx
-import { LumiaEditor, type FontConfig } from '@lumia/editor';
+import { LumiaEditor, type FontConfig } from '@lumia-ui/editor';
 
 function AppWithCustomFonts() {
   const [value, setValue] = useState(null);
@@ -131,7 +131,7 @@ const brandFonts: FontConfig = {
 You can access the editor state in child components using `useEditorState` hook. Note that `LumiaEditor` already wraps its children in `EditorProvider`.
 
 ```tsx
-import { LumiaEditor, useEditorState } from '@lumia/editor';
+import { LumiaEditor, useEditorState } from '@lumia-ui/editor';
 
 const WordCount = () => {
   const { json } = useEditorState();
@@ -145,8 +145,8 @@ const WordCount = () => {
 Or use `EditorProvider` directly for custom layouts:
 
 ```tsx
-import { EditorProvider, useEditorState } from '@lumia/editor';
-import { LumiaEditorPrimitive } from '@lumia/editor/internal/LumiaEditorPrimitive'; // Note: internal import
+import { EditorProvider, useEditorState } from '@lumia-ui/editor';
+import { LumiaEditorPrimitive } from '@lumia-ui/editor/internal/LumiaEditorPrimitive'; // Note: internal import
 
 function CustomEditor() {
   return (
@@ -191,7 +191,7 @@ interface FontMeta {
 Returns the default font configuration with curated Google Fonts.
 
 ```typescript
-import { getDefaultFontConfig } from '@lumia/editor';
+import { getDefaultFontConfig } from '@lumia-ui/editor';
 
 const defaultFonts = getDefaultFontConfig();
 // Returns: FontConfig with Inter, Roboto, Lora, Roboto Mono, Playfair Display
@@ -202,7 +202,7 @@ const defaultFonts = getDefaultFontConfig();
 Hook to access the current font configuration. Must be used within `EditorProvider`.
 
 ```typescript
-import { useFontsConfig } from '@lumia/editor';
+import { useFontsConfig } from '@lumia-ui/editor';
 
 function MyComponent() {
   const fontsConfig = useFontsConfig();
@@ -224,7 +224,7 @@ function MyComponent() {
 Normalizes a font configuration to enforce brand restrictions. Automatically maps `defaultFontId` to the first allowed font if it's not in the `allowedFonts` list.
 
 ```typescript
-import { normalizeFontConfig, type FontConfig } from '@lumia/editor';
+import { normalizeFontConfig, type FontConfig } from '@lumia-ui/editor';
 
 const config: FontConfig = {
   allFonts: [/* ... */],

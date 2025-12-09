@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Combobox, type ComboboxOption } from '@lumia/components';
+import { Combobox, type ComboboxOption } from '@lumia-ui/components';
 import type { FontConfig } from '../../font-config';
 
 /**

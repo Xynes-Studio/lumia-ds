@@ -1,11 +1,11 @@
-# @lumia/components
+# @lumia-ui/components
 
-Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia/theme` and `@lumia/tokens`.
+Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia-ui/theme` and `@lumia-ui/tokens`.
 
 ## Install
 
 ```bash
-pnpm add @lumia/components @lumia/theme @lumia/tokens
+pnpm add @lumia-ui/components @lumia-ui/theme @lumia-ui/tokens
 ```
 
 ## Usage (sampler)
@@ -44,7 +44,7 @@ import {
   SheetFooter,
   Flex,
   FlatList,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function Example() {
   return (
@@ -206,7 +206,7 @@ All interactive components (`Button`, `MenuItem`, `ConfirmDialog`, `Select`) sup
 
 ## Storybook
 
-`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006`
+`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia-ui/components storybook -- -p 6006`
 
 More details: see `docs/storybook.md`.
 
@@ -243,5 +243,5 @@ More details: see `docs/storybook.md`.
 
 ## Local development
 
-- Build: `pnpm --filter @lumia/components build`
-- Test (happy-dom): `pnpm --filter @lumia/components test`
+- Build: `pnpm --filter @lumia-ui/components build`
+- Test (happy-dom): `pnpm --filter @lumia-ui/components test`

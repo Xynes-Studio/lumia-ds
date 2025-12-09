@@ -1,11 +1,11 @@
-# @lumia/layout
+# @lumia-ui/layout
 
 Layout primitives for admin-style shells. Components will iterate in follow-up tickets.
 
 ## Install
 
 ```bash
-pnpm add @lumia/layout @lumia/components
+pnpm add @lumia-ui/layout @lumia-ui/components
 ```
 
 ## Components
@@ -34,7 +34,7 @@ import {
     LayoutMain,
     LayoutContent,
     LayoutFooter,
-} from '@lumia/layout';
+} from '@lumia-ui/layout';
 
 export function AdminLayout() {
     return (
@@ -55,7 +55,7 @@ export function AdminLayout() {
 `AdminShell` composes the primitives for you when you just need a header + sidebar + content scaffold:
 
 ```tsx
-import { AdminShell } from '@lumia/layout';
+import { AdminShell } from '@lumia-ui/layout';
 
 export function AdminLayout() {
     return (
@@ -74,8 +74,8 @@ All components accept standard `div` props (`className`, `style`, etc.) for easy
 ### Stacked detail pages
 
 ```tsx
-import { StackLayout } from '@lumia/layout';
-import { Button } from '@lumia/components';
+import { StackLayout } from '@lumia-ui/layout';
+import { Button } from '@lumia-ui/components';
 
 export function AccountDetails() {
     return (
@@ -97,8 +97,8 @@ export function AccountDetails() {
 
 ```tsx
 import { useState } from 'react';
-import { DrawerLayout } from '@lumia/layout';
-import { Button } from '@lumia/components';
+import { DrawerLayout } from '@lumia-ui/layout';
+import { Button } from '@lumia-ui/components';
 
 export function DrawerExample() {
     const [open, setOpen] = useState(false);

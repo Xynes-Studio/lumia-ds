@@ -4,7 +4,7 @@ import type {
   KeyboardEvent,
 } from 'react';
 import { forwardRef, useCallback } from 'react';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type ViewMode = 'grid' | 'list';

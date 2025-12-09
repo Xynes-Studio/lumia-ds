@@ -3,7 +3,7 @@
 Numeric field with increment/decrement controls.
 
 ## Exports
-- `NumberInput` from `@lumia/components`.
+- `NumberInput` from `@lumia-ui/components`.
 
 ## Props
 - `value: number | undefined` – controlled value.
@@ -20,7 +20,7 @@ Numeric field with increment/decrement controls.
 
 ## Usage
 ```tsx
-import { NumberInput } from '@lumia/components';
+import { NumberInput } from '@lumia-ui/components';
 
 export function QuantityField() {
   const [value, setValue] = useState<number | undefined>(3);

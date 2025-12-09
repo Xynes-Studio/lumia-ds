@@ -1,6 +1,6 @@
 # Token CLI Commands
 
-The `@lumia/cli` package includes commands to manage design tokens within the Lumia Design System.
+The `@lumia-ui/cli` package includes commands to manage design tokens within the Lumia Design System.
 
 ## Commands
 

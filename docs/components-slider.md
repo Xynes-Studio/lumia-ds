@@ -3,7 +3,7 @@
 Single-thumb control for picking numeric values.
 
 ## Exports
-- `Slider` from `@lumia/components`.
+- `Slider` from `@lumia-ui/components`.
 
 ## Props
 - `value: number` – controlled value.
@@ -15,7 +15,7 @@ Single-thumb control for picking numeric values.
 
 ## Usage
 ```tsx
-import { Slider } from '@lumia/components';
+import { Slider } from '@lumia-ui/components';
 
 export function VolumeControl() {
   const [volume, setVolume] = useState(64);

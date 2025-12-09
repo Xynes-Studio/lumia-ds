@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import type * as ExternalApi from '@lumia/components';
+import type * as ExternalApi from '@lumia-ui/components';
 import {
   Button,
   buttonStyles,

@@ -1,7 +1,10 @@
 {
-    "name": "@lumia/icons",
-    "version": "0.0.0",
+    "name": "@lumia-ui/icons",
+    "version": "1.0.0",
     "description": "Icon registry utilities for Lumia DS",
+    "publishConfig": {
+        "access": "public"
+    },
     "sideEffects": false,
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",

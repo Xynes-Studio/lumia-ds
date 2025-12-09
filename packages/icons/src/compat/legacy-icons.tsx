@@ -26,7 +26,7 @@ function warnDeprecatedIcon(iconName: string, componentName: string): void {
   ) {
     warnedIcons.add(componentName);
     console.warn(
-      `[@lumia/icons] ${componentName} is deprecated. ` +
+      `[@lumia-ui/icons] ${componentName} is deprecated. ` +
         `Use <Icon name="${iconName}" /> instead. ` +
         `See https://lumia-ds.dev/docs/icon-migration for migration guide.`,
     );

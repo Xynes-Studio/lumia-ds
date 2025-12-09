@@ -1,18 +1,18 @@
-import { NodePlopAPI, ActionType } from 'plop';
-
 interface GeneratorData {
   name: string;
   targetPackage: string;
   features: string[];
 }
 
-export default function (plop: NodePlopAPI) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function (plop: any) {
   plop.setGenerator('component', {
     description: 'Generate a new component',
     prompts: [], // We handle prompts via Inquirer in the CLI command
-    actions: (data) => {
+    actions: (data: unknown) => {
       const generatorData = data as GeneratorData;
-      const actions: ActionType[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const actions: any[] = [];
       const { targetPackage, features } = generatorData;
       const componentDir = `packages/${targetPackage}/src/components/{{pascalCase name}}`;
 

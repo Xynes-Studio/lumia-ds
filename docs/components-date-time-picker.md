@@ -1,4 +1,4 @@
-# Date & Time Pickers (@lumia/components)
+# Date & Time Pickers (@lumia-ui/components)
 
 Single-date and time inputs suited for forms and filters. Both render their surfaces inside the Popover wrapper (Radix-based, shadcn styling) and return focus to the trigger when closed.
 
@@ -9,7 +9,7 @@ import {
   type DatePickerProps,
   TimePicker,
   type TimePickerProps,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 ```
 
 ## DatePicker props

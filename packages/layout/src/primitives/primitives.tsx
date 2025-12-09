@@ -1,4 +1,4 @@
-import { Flex, type FlexProps } from '@lumia/components';
+import { Flex, type FlexProps } from '@lumia-ui/components';
 import type { HTMLAttributes } from 'react';
 import { forwardRef } from 'react';
 

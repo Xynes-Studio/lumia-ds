@@ -20,7 +20,7 @@ import type {
   UseFormReturn as RhfUseFormReturn,
 } from 'react-hook-form';
 
-describe('@lumia/forms', () => {
+describe('@lumia-ui/forms', () => {
   it('supports synchronous validation', async () => {
     const required: ValidationRule<string> = {
       name: 'required',

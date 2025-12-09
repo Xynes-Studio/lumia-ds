@@ -1,7 +1,7 @@
 import { act, useEffect } from 'react';
 import { describe, it, expect } from 'vitest';
 import { createRoot } from 'react-dom/client';
-import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
+import { defaultTheme, themeToCSSVars } from '@lumia-ui/tokens';
 import { ThemeProvider } from '../index';
 import {
   applyCssVarsToTarget,

@@ -1,7 +1,10 @@
 {
-    "name": "@lumia/forms",
-    "version": "0.0.0",
+    "name": "@lumia-ui/forms",
+    "version": "0.1.0",
     "description": "Form validation utilities for Lumia DS",
+    "publishConfig": {
+        "access": "public"
+    },
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -23,7 +26,7 @@
         "react-hook-form": "^7.54.2"
     },
     "dependencies": {
-        "@lumia/components": "workspace:*",
+        "@lumia-ui/components": "workspace:*",
         "zod": "^3.23.8"
     },
     "devDependencies": {

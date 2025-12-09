@@ -1,7 +1,10 @@
 {
-  "name": "@lumia/tokens",
-  "version": "0.0.0",
+  "name": "@lumia-ui/tokens",
+  "version": "1.0.0",
   "description": "Design tokens and theme types for Lumia DS",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

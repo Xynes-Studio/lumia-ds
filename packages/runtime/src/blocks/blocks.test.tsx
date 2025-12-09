@@ -2,7 +2,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Simulate } from 'react-dom/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { required } from '@lumia/forms';
+import { required } from '@lumia-ui/forms';
 import { DetailBlock, FormBlock, ListBlock } from './blocks';
 import type { ResourceConfig } from '../index';
 

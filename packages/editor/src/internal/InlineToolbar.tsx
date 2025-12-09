@@ -8,8 +8,8 @@ import {
   SELECTION_CHANGE_COMMAND,
   LexicalEditor,
 } from 'lexical';
-import { Button, Toolbar as LumiaToolbar } from '@lumia/components';
-import { Icon } from '@lumia/icons';
+import { Button, Toolbar as LumiaToolbar } from '@lumia-ui/components';
+import { Icon } from '@lumia-ui/icons';
 import { mergeRegister } from '@lexical/utils';
 
 const LOW_PRIORITY = 1;

@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type BreadcrumbItem = {

@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import { forwardRef, useMemo, useState } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 type AlertVariant = 'info' | 'success' | 'warning' | 'error';

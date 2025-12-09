@@ -11,17 +11,17 @@ Step-by-step guide (React docs style) for wiring Lumia packages into a React/Nex
 ## Step 1: Install the Lumia packages
 
 ```bash
-pnpm add @lumia/tokens @lumia/theme @lumia/components @lumia/forms @lumia/layout @lumia/runtime react-hook-form
+pnpm add @lumia-ui/tokens @lumia-ui/theme @lumia-ui/components @lumia-ui/forms @lumia-ui/layout @lumia-ui/runtime react-hook-form
 pnpm add -D tailwindcss postcss autoprefixer
 ```
 
 ## Step 2: Configure Tailwind with the Lumia preset
 
-Use the preset from `@lumia/theme` so Tailwind picks up token-driven CSS variables.
+Use the preset from `@lumia-ui/theme` so Tailwind picks up token-driven CSS variables.
 
 ```js
 // tailwind.config.cjs
-const { lumiaTailwindPreset } = require('@lumia/theme');
+const { lumiaTailwindPreset } = require('@lumia-ui/theme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -51,7 +51,7 @@ Add the Tailwind layers to your global stylesheet (e.g., `app/globals.css`):
 
 ```tsx
 // app/layout.tsx or src/App.tsx
-import { ThemeProvider } from '@lumia/theme';
+import { ThemeProvider } from '@lumia-ui/theme';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Defaults to "light" theme (sets data-theme="light")
@@ -71,10 +71,10 @@ import {
   defineResource,
   type DataFetcher,
   type PageSchema,
-} from '@lumia/runtime';
-import { required } from '@lumia/forms';
-import { ThemeProvider } from '@lumia/theme';
-import { defaultTheme } from '@lumia/tokens';
+} from '@lumia-ui/runtime';
+import { required } from '@lumia-ui/forms';
+import { ThemeProvider } from '@lumia-ui/theme';
+import { defaultTheme } from '@lumia-ui/tokens';
 
 const resources = {
   users: defineResource({
@@ -167,7 +167,7 @@ export default function UsersPage() {
 
 ### What this gives you
 
-- Lumia packages installed (`@lumia/tokens`, `@lumia/theme`, `@lumia/components`, `@lumia/forms`, `@lumia/layout`, `@lumia/runtime`).
+- Lumia packages installed (`@lumia-ui/tokens`, `@lumia-ui/theme`, `@lumia-ui/components`, `@lumia-ui/forms`, `@lumia-ui/layout`, `@lumia-ui/runtime`).
 - Tailwind reads token-driven CSS variables from `ThemeProvider` through the Lumia preset.
 - The app is wrapped in `ThemeProvider` so DS components and layouts render correctly.
 - `defineResource` plus `PageSchema` describe the resource and screens.
