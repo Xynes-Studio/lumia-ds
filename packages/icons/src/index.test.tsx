@@ -1,9 +1,11 @@
 import type { SVGProps } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import { IconCheck, IconChatBubble } from './generated';
 import {
   Icon,
-  SparkleIcon,
+  IconSparkle,
   clearIconRegistry,
   getIcon,
   registerIcon,
@@ -93,7 +95,7 @@ describe('generated icon registry', () => {
 
   it('re-exports generated components for direct import', () => {
     const markup = renderToStaticMarkup(
-      <SparkleIcon className="text-accent" />,
+      <IconSparkle className="text-accent" />,
     );
 
     expect(markup).toContain('text-accent');
@@ -130,6 +132,17 @@ describe('<Icon />', () => {
     );
 
     expect(markup).toBe('');
+  });
+
+  it('renders generated IconChatBubble component', () => {
+    const markup = renderToStaticMarkup(<IconChatBubble />);
+    expect(markup).toContain('viewBox="0 0 24 24"');
+  });
+
+  it('renders generated IconCheck component', () => {
+    const markup = renderToStaticMarkup(<IconCheck />);
+    expect(markup).toContain('<svg');
+    expect(markup).toContain('<path');
   });
 
   it('renders a generated icon and respects shared sizing', () => {
