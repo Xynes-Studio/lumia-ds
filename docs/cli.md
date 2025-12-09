@@ -56,7 +56,25 @@ packages/<pkg>/src/components/<Name>/
 └── <Name>.css
 ```
 
-### Icon Commands
+### Docs Commands
+ 
+ #### `docs dev`
+ Starts the documentation development server (Nextra).
+ 
+ **Usage:**
+ ```bash
+ lumia docs dev
+ ```
+ 
+ #### `docs build`
+ Builds the documentation site for production.
+ 
+ **Usage:**
+ ```bash
+ lumia docs build
+ ```
+ 
+ ### Icon Commands
 
 #### `icons build`
 Builds icons from SVGs using SVGR and validates that all source SVGs have corresponding generated components.
