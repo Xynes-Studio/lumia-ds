@@ -1,6 +1,19 @@
 import { defineConfig } from 'vitest/config';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@lumia/tokens/dist/css/variables.css': resolve(
+        __dirname,
+        './test/mocks/variables.css',
+      ),
+      '@lumia/tokens': resolve(__dirname, '../tokens/src/index.ts'),
+    },
+  },
   test: {
     globals: true,
     environment: 'happy-dom',
