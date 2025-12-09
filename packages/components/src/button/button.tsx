@@ -2,6 +2,8 @@ import type { ButtonHTMLAttributes } from 'react';
 import { forwardRef } from 'react';
 import { cn } from '../lib/utils';
 
+import { Spinner } from '../spinner/spinner';
+
 type ButtonVariant =
   | 'primary'
   | 'secondary'
@@ -37,6 +39,8 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -48,6 +52,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       size = 'md',
       fullWidth = false,
       type = 'button',
+      isLoading = false,
+      loadingText,
+      disabled,
       ...props
     },
     ref,
@@ -56,16 +63,41 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={type}
+        disabled={disabled || isLoading}
         className={cn(
           baseButtonClasses,
           variantClasses[variant],
           sizeClasses[size],
           fullWidth && 'w-full',
+          'relative', // Ensure positioning context
           className,
         )}
         {...props}
       >
-        {children}
+        {isLoading && !loadingText && (
+          <div
+            data-loading-spinner
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <Spinner size={16} aria-label="Loading" className="text-current" />
+          </div>
+        )}
+        <span
+          className={cn('contents', isLoading && !loadingText && 'invisible')}
+        >
+          {isLoading && loadingText ? (
+            <>
+              <Spinner
+                size={16}
+                className="mr-2 text-current"
+                aria-label="Loading"
+              />
+              {loadingText}
+            </>
+          ) : (
+            children
+          )}
+        </span>
       </button>
     );
   },

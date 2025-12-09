@@ -157,6 +157,7 @@ describe('Menu', () => {
       document.activeElement?.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
       );
+      await new Promise((resolve) => setTimeout(resolve, 50));
     });
     await act(async () => {});
 
@@ -237,6 +238,44 @@ describe('Menu', () => {
     expect(
       document.body.querySelector('[data-lumia-menu-content]'),
     ).toBeTruthy();
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+  it('renders loading state for menu item', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Menu>
+          <MenuTrigger asChild>
+            <Button type="button">Open menu</Button>
+          </MenuTrigger>
+          <MenuContent>
+            <MenuItem label="Loading item" isLoading />
+          </MenuContent>
+        </Menu>,
+      );
+    });
+
+    const trigger = host.querySelector('button');
+    await act(async () => {
+      trigger?.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true }),
+      );
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await act(async () => {});
+
+    const content = document.body.querySelector('[data-lumia-menu-content]');
+    expect(content).toBeTruthy();
+    const item = content?.querySelector('[data-lumia-menu-item]');
+    expect(item).toBeTruthy();
+
+    // Check spinner
+    const spinner = item?.querySelector('[role="status"]');
+    expect(spinner).toBeTruthy();
+    expect(spinner?.getAttribute('aria-label')).toBe('Loading');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);
