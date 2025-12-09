@@ -37,3 +37,41 @@ import { Icon } from '@lumia/icons';
 - `sideEffects: false` in `package.json` enables tree-shaking.
 - Registries reset when the icons package loads, seeding curated Lucide icons plus generated icons.
 
+## SVG Sprite Icons
+
+For hot-path icons (frequently reused across the app), use the SVG sprite for better performance.
+
+### Setup
+
+Add `<IconSprite />` once at your app root:
+
+```tsx
+import { IconSprite } from '@lumia/icons';
+
+function App() {
+  return (
+    <>
+      <IconSprite />
+      <YourRoutes />
+    </>
+  );
+}
+```
+
+### Usage
+
+```tsx
+import { SpriteIcon } from '@lumia/icons';
+
+<SpriteIcon name="chevron-down" size={24} className="text-primary" />
+```
+
+### Available Sprite Icons
+
+`chevron-down`, `chevron-up`, `check`, `add`, `edit`, `delete`, `info`, `alert`, `search`
+
+### Benefits
+
+- **Reduced DOM**: Each icon is a `<symbol>` defined once, reused via `<use href>`.
+- **Smaller bundle**: No duplicate SVG paths per instance.
+- **Better caching**: Sprite is defined once, browser reuses the symbols.
