@@ -56,6 +56,16 @@ packages/<pkg>/src/components/<Name>/
 └── <Name>.css
 ```
 
+### Icon Commands
+
+#### `icons build`
+Builds icons from SVGs using SVGR and validates that all source SVGs have corresponding generated components.
+
+**Usage:**
+```bash
+lumia icons build
+```
+
 ## Architecture
 
 The CLI is built using **Commander.js** and follows a standard subcommand pattern.

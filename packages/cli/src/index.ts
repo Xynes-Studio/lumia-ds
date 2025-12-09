@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { generateComponent } from './commands/generate/component';
 import { buildTokens, validateTokens } from './commands/tokens/index';
+import { buildIcons } from './commands/icons/index';
 
 // CLI version - read from package.json via tsup banner or hardcoded
 const CLI_VERSION = '0.0.0';
@@ -53,6 +54,21 @@ export function createProgram(): Command {
     .action(async () => {
       try {
         await buildTokens();
+      } catch {
+        process.exit(1);
+      }
+    });
+
+  const icons = program.command('icons').description('Manage icons');
+
+  icons
+    .command('build')
+    .description(
+      'Build icons and generating React components (runs pnpm build:icons)',
+    )
+    .action(async () => {
+      try {
+        await buildIcons();
       } catch {
         process.exit(1);
       }
