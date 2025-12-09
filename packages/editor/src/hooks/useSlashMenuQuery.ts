@@ -1,6 +1,9 @@
 /**
  * useSlashMenuQuery - Hook for tracking query updates in slash menu.
  * Extracted from SlashMenuPlugin for modularity and testability.
+ *
+ * This hook uses the pure processQueryUpdate function from slashMenuUtils
+ * to keep business logic testable.
  */
 import { useEffect } from 'react';
 import { LexicalEditor, NodeKey } from 'lexical';
@@ -11,12 +14,7 @@ import {
   $isTextNode,
   $isElementNode,
 } from 'lexical';
-import {
-  extractQueryWithCursor,
-  isSlashStillPresent,
-  isSelectionInValidNode,
-  getCorrectedSlashIndex,
-} from '../utils/slashMenuUtils';
+import { processQueryUpdate, QueryUpdateInput } from '../utils/slashMenuUtils';
 
 export interface SlashMenuQueryOptions {
   editor: LexicalEditor;
@@ -52,72 +50,56 @@ export function useSlashMenuQuery({
           }
 
           const node = $getNodeByKey(triggerNodeKey);
-          if (!node) {
-            onClose();
-            return;
-          }
 
-          let textNode = node;
-          let slashIndex = triggerOffset;
-
-          // Handle element nodes (e.g., when slash was typed in empty paragraph)
-          if ($isElementNode(node)) {
-            const firstChild = node.getFirstChild();
-            if (!firstChild || !$isTextNode(firstChild)) {
-              // No text child yet, menu should stay open waiting for text
-              return;
-            }
-            textNode = firstChild;
-            slashIndex = getCorrectedSlashIndex(true, triggerOffset);
-          } else if (!$isTextNode(node)) {
-            onClose();
-            return;
-          }
-
-          const textContent = textNode.getTextContent();
-
-          // Check if slash is still there
-          if (!isSlashStillPresent(textContent, slashIndex)) {
-            onClose();
-            return;
-          }
-
-          // Get current selection
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection)) {
-            onClose();
-            return;
-          }
-
-          const anchor = selection.anchor;
-          const anchorNode = anchor.getNode();
-
-          // Validate selection is in expected node
-          const isValid = isSelectionInValidNode(
-            anchorNode.getKey(),
+          // Build input for pure function
+          const input: QueryUpdateInput = {
+            nodeExists: node !== null,
+            isElementNode: node ? $isElementNode(node) : false,
+            hasTextChild: false,
+            textContent: '',
+            triggerOffset,
             triggerNodeKey,
-            $isTextNode(textNode) ? textNode.getKey() : null,
-            $isTextNode(anchorNode),
-          );
+            hasValidSelection: false,
+            selectionNodeKey: '',
+            textNodeKey: null,
+            selectionIsTextNode: false,
+            cursorOffset: 0,
+          };
 
-          if (!isValid) {
-            onClose();
-            return;
+          // Get text node and content if node exists
+          if (node) {
+            if ($isElementNode(node)) {
+              const firstChild = node.getFirstChild();
+              if (firstChild && $isTextNode(firstChild)) {
+                input.hasTextChild = true;
+                input.textContent = firstChild.getTextContent();
+                input.textNodeKey = firstChild.getKey();
+              }
+            } else if ($isTextNode(node)) {
+              input.textContent = node.getTextContent();
+              input.textNodeKey = node.getKey();
+              input.hasTextChild = true;
+            }
           }
 
-          // Extract and validate query
-          const { query, isValid: queryValid } = extractQueryWithCursor(
-            textContent,
-            slashIndex,
-            anchor.offset,
-          );
-
-          if (!queryValid) {
-            onClose();
-            return;
+          // Get selection info
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            input.hasValidSelection = true;
+            const anchorNode = selection.anchor.getNode();
+            input.selectionNodeKey = anchorNode.getKey();
+            input.selectionIsTextNode = $isTextNode(anchorNode);
+            input.cursorOffset = selection.anchor.offset;
           }
 
-          onUpdateQuery(query);
+          // Process using pure function
+          const result = processQueryUpdate(input);
+
+          if (result.shouldClose) {
+            onClose();
+          } else if (result.shouldUpdate) {
+            onUpdateQuery(result.query);
+          }
         });
       },
     );

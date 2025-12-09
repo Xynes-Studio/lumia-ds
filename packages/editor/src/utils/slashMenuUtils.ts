@@ -348,3 +348,133 @@ export function getMenuPositionFromElement(
     left: elementRect.left,
   };
 }
+
+/**
+ * Input for query update processing.
+ * Contains all the data needed to determine query update or menu close.
+ */
+export interface QueryUpdateInput {
+  /** Whether the node was found */
+  nodeExists: boolean;
+  /** Whether the node is an element (vs text) */
+  isElementNode: boolean;
+  /** Whether the element has a text child */
+  hasTextChild: boolean;
+  /** The text content of the relevant node */
+  textContent: string;
+  /** The original trigger offset */
+  triggerOffset: number;
+  /** The trigger node key */
+  triggerNodeKey: string;
+  /** Whether we have a valid range selection */
+  hasValidSelection: boolean;
+  /** The selection anchor node key */
+  selectionNodeKey: string;
+  /** The text node key (if it's a text child of element) */
+  textNodeKey: string | null;
+  /** Whether selection is on a text node */
+  selectionIsTextNode: boolean;
+  /** Current cursor offset */
+  cursorOffset: number;
+}
+
+/**
+ * Result of query update processing.
+ */
+export interface QueryUpdateResult {
+  /** Whether to update the query */
+  shouldUpdate: boolean;
+  /** Whether to close the menu */
+  shouldClose: boolean;
+  /** The new query (if shouldUpdate is true) */
+  query: string;
+  /** Reason for closing (for debugging) */
+  closeReason?: string;
+}
+
+/**
+ * Process a query update from editor state.
+ * This is a pure function that encapsulates all the logic for determining
+ * whether to update the query, close the menu, or do nothing.
+ *
+ * @param input - All the data needed for processing
+ * @returns Result indicating what action to take
+ */
+export function processQueryUpdate(input: QueryUpdateInput): QueryUpdateResult {
+  // No node found - close menu
+  if (!input.nodeExists) {
+    return {
+      shouldUpdate: false,
+      shouldClose: true,
+      query: '',
+      closeReason: 'node_not_found',
+    };
+  }
+
+  // Determine the slash index based on node type
+  let slashIndex = input.triggerOffset;
+
+  if (input.isElementNode) {
+    if (!input.hasTextChild) {
+      // No text child yet, menu should stay open waiting for text
+      return { shouldUpdate: false, shouldClose: false, query: '' };
+    }
+    // For element nodes, slash is at position 0 in the text child
+    slashIndex = getCorrectedSlashIndex(true, input.triggerOffset);
+  }
+
+  // Check if slash is still there
+  if (!isSlashStillPresent(input.textContent, slashIndex)) {
+    return {
+      shouldUpdate: false,
+      shouldClose: true,
+      query: '',
+      closeReason: 'slash_removed',
+    };
+  }
+
+  // Validate selection
+  if (!input.hasValidSelection) {
+    return {
+      shouldUpdate: false,
+      shouldClose: true,
+      query: '',
+      closeReason: 'invalid_selection',
+    };
+  }
+
+  // Check if selection is in valid node
+  const isValid = isSelectionInValidNode(
+    input.selectionNodeKey,
+    input.triggerNodeKey,
+    input.textNodeKey,
+    input.selectionIsTextNode,
+  );
+
+  if (!isValid) {
+    return {
+      shouldUpdate: false,
+      shouldClose: true,
+      query: '',
+      closeReason: 'selection_moved',
+    };
+  }
+
+  // Extract and validate query
+  const { query, isValid: queryValid } = extractQueryWithCursor(
+    input.textContent,
+    slashIndex,
+    input.cursorOffset,
+  );
+
+  if (!queryValid) {
+    return {
+      shouldUpdate: false,
+      shouldClose: true,
+      query: '',
+      closeReason: 'invalid_query',
+    };
+  }
+
+  return { shouldUpdate: true, shouldClose: false, query };
+}

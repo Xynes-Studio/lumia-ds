@@ -22,6 +22,7 @@ import {
   isSelectionInValidNode,
   getMenuPositionFromRect,
   getMenuPositionFromElement,
+  processQueryUpdate,
 } from '../slashMenuUtils';
 
 describe('slashMenuUtils', () => {
@@ -481,6 +482,107 @@ describe('slashMenuUtils', () => {
     test('uses custom line height offset', () => {
       const result = getMenuPositionFromElement({ top: 100, left: 50 }, 30);
       expect(result.top).toBe(130);
+    });
+  });
+
+  describe('processQueryUpdate', () => {
+    const baseInput = {
+      nodeExists: true,
+      isElementNode: false,
+      hasTextChild: true,
+      textContent: '/table',
+      triggerOffset: 0,
+      triggerNodeKey: 'node-1',
+      hasValidSelection: true,
+      selectionNodeKey: 'node-1',
+      textNodeKey: 'node-1',
+      selectionIsTextNode: true,
+      cursorOffset: 6,
+    };
+
+    test('returns shouldUpdate with query when valid', () => {
+      const result = processQueryUpdate(baseInput);
+      expect(result.shouldUpdate).toBe(true);
+      expect(result.shouldClose).toBe(false);
+      expect(result.query).toBe('table');
+    });
+
+    test('closes when node not found', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        nodeExists: false,
+      });
+      expect(result.shouldClose).toBe(true);
+      expect(result.closeReason).toBe('node_not_found');
+    });
+
+    test('stays open when element has no text child yet', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        isElementNode: true,
+        hasTextChild: false,
+      });
+      expect(result.shouldClose).toBe(false);
+      expect(result.shouldUpdate).toBe(false);
+    });
+
+    test('closes when slash removed', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        textContent: 'table',
+      });
+      expect(result.shouldClose).toBe(true);
+      expect(result.closeReason).toBe('slash_removed');
+    });
+
+    test('closes when invalid selection', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        hasValidSelection: false,
+      });
+      expect(result.shouldClose).toBe(true);
+      expect(result.closeReason).toBe('invalid_selection');
+    });
+
+    test('closes when selection moved to different node', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        selectionNodeKey: 'other-node',
+      });
+      expect(result.shouldClose).toBe(true);
+      expect(result.closeReason).toBe('selection_moved');
+    });
+
+    test('closes when query contains space', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        textContent: '/hello world',
+        cursorOffset: 12,
+      });
+      expect(result.shouldClose).toBe(true);
+      expect(result.closeReason).toBe('invalid_query');
+    });
+
+    test('handles element node with text child', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        isElementNode: true,
+        hasTextChild: true,
+        textContent: '/img',
+        cursorOffset: 4,
+      });
+      expect(result.shouldUpdate).toBe(true);
+      expect(result.query).toBe('img');
+    });
+
+    test('returns empty query for cursor right after slash', () => {
+      const result = processQueryUpdate({
+        ...baseInput,
+        textContent: '/',
+        cursorOffset: 1,
+      });
+      expect(result.shouldUpdate).toBe(true);
+      expect(result.query).toBe('');
     });
   });
 });
