@@ -1,4 +1,4 @@
-import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
+import { defaultTheme } from '@lumia/tokens';
 import * as Tokens from '@lumia/tokens';
 
 const PRIMARY_SCALE_STOPS = [
@@ -9,15 +9,13 @@ type PrimaryScaleStop = (typeof PRIMARY_SCALE_STOPS)[number];
 const withFallback = (variableName: string, fallback: string) =>
   `var(${variableName}, ${fallback})`;
 
-const defaultCssVars = themeToCSSVars(defaultTheme);
-
 // Helper to get primary color fallback from the full Tokens object
 // since defaultTheme might not expose the flat scale directly in the same way
 const getPrimaryColorFallback = (stop: PrimaryScaleStop) => {
   const tokenKey = `ColorPrimary${stop}`;
-  // @ts-ignore - Tokens are exported as PascalCase (e.g. ColorPrimary50)
+  // @ts-expect-error - Tokens are exported as PascalCase (e.g. ColorPrimary50)
   if (Tokens && typeof Tokens[tokenKey] !== 'undefined') {
-    // @ts-ignore
+    // @ts-expect-error - Dynamic access to Tokens object
     return Tokens[tokenKey] as string;
   }
   return '#000000';
@@ -55,11 +53,11 @@ const buildTailwindPreset = () => {
           ),
           background: withFallback(
             '--colors-background', // Updated from --color-bg
-            defaultTheme.colors.background
+            defaultTheme.colors.background,
           ),
           foreground: withFallback(
             '--colors-foreground', // Updated from --color-fg
-            defaultTheme.colors.foreground
+            defaultTheme.colors.foreground,
           ),
           border: withFallback(
             '--colors-border', // Updated from --color-border
@@ -95,10 +93,16 @@ const buildTailwindPreset = () => {
         },
         fontFamily: {
           sans: [
-            withFallback('--typography-families-sans', defaultTheme.typography.families.sans),
+            withFallback(
+              '--typography-families-sans',
+              defaultTheme.typography.families.sans,
+            ),
           ],
           mono: [
-            withFallback('--typography-families-mono', defaultTheme.typography.families.mono),
+            withFallback(
+              '--typography-families-mono',
+              defaultTheme.typography.families.mono,
+            ),
           ],
           display: [
             withFallback(

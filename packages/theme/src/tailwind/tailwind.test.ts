@@ -48,12 +48,13 @@ describe('Tailwind preset', () => {
       `var(--colors-mutedForeground, ${cssVars['--colors-mutedForeground']})`,
     );
 
-    expect(colors.ring).toBe(
-      `var(--colors-ring, ${cssVars['--colors-ring']})`,
-    );
+    expect(colors.ring).toBe(`var(--colors-ring, ${cssVars['--colors-ring']})`);
 
     // Destructive is strictly an object now
-    const destructive = colors.destructive as { DEFAULT: string; foreground: string };
+    const destructive = colors.destructive as {
+      DEFAULT: string;
+      foreground: string;
+    };
     expect(destructive.DEFAULT).toBe(
       `var(--colors-destructive, ${cssVars['--colors-destructive']})`,
     );
