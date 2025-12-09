@@ -1,4 +1,6 @@
 import { Command } from 'commander';
+import { generateComponent } from './commands/generate/component';
+import { buildTokens, validateTokens } from './commands/tokens/index';
 
 // CLI version - read from package.json via tsup banner or hardcoded
 const CLI_VERSION = '0.0.0';
@@ -35,13 +37,36 @@ export function createProgram(): Command {
     .description('Generate a new resource (e.g. component)')
     .action(async (type, name, options) => {
       if (type !== 'component') {
-        console.error(`Unknown generator type: ${type}. Supported types: component`);
+        console.error(
+          `Unknown generator type: ${type}. Supported types: component`,
+        );
         process.exit(1);
       }
-      const { generateComponent } = await import(
-        './commands/generate/component'
-      );
       await generateComponent(name, options);
+    });
+
+  const tokens = program.command('tokens').description('Manage design tokens');
+
+  tokens
+    .command('build')
+    .description('Build tokens using Style Dictionary (runs pnpm build:tokens)')
+    .action(async () => {
+      try {
+        await buildTokens();
+      } catch {
+        process.exit(1);
+      }
+    });
+
+  tokens
+    .command('validate [dir]')
+    .description('Validate token JSON files (duplicates, missing types)')
+    .action(async (dir) => {
+      const targetDir = dir || 'tokens'; // Default to 'tokens'
+      const { valid } = await validateTokens(targetDir);
+      if (!valid) {
+        process.exit(1);
+      }
     });
 
   return program;
