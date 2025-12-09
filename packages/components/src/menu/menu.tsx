@@ -124,7 +124,7 @@ export const MenuItem = forwardRef<
     >
       {icon ? (
         <Icon
-          id={icon}
+          name={icon}
           size={18}
           aria-hidden="true"
           className={getMenuItemIconClassName(variant, disabled)}

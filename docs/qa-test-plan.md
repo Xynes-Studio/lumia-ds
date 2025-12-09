@@ -50,6 +50,19 @@ Out of scope: performance benchmarking, backend/service tests.
 - **Browers:** Chrome latest, Firefox latest, Safari 17+, Edge latest.
 - **Entry:** RC Storybook URL or tunneled local build; `pnpm storybook:build` if static is needed.
 - **Focus:** Layout primitives (Stack/Grid), form controls (Input, Select, Checkbox, Radio, Button), Tabs, Modals/Dialogs, critical icons.
+
+### Interaction Testing
+
+**Components Checked**:
+- **Button**: Click events, disabled state, type attributes.
+- **Forms**: Multi-field validation, submission payloads, error handling.
+- **Toast**: Hook invocation, stacking, ARIA roles.
+- **Editor Toolbar**: Formatting toggles (bold, italic, code), block type switching.
+
+**Tooling**:
+- **Vitest** for unit & interaction tests.
+- **@testing-library/react** for simulating user events.
+
 - **Heuristics:** keyboard navigation, focus visibility, text scaling/zoom at 125%, responsive resizing to 375px width, theme switch if available.
 - **Artifacts:** screenshots for visual regressions; video for interaction regressions; log findings in `docs/qa-issue-log.md`.
 - **Status:** Pending execution—run once Atlas access is available and record outcomes in the log.

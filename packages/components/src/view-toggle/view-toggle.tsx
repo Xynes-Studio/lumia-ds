@@ -92,7 +92,7 @@ export const ViewToggle = forwardRef<HTMLDivElement, ViewToggleProps>(
               {...restButtonProps}
             >
               <Icon
-                id={option.icon}
+                name={option.icon}
                 size={18}
                 aria-hidden="true"
                 className="shrink-0"

@@ -49,7 +49,8 @@ describe('LumiaForm', () => {
                     {...field}
                     ref={field.ref}
                     value={field.value ?? ''}
-                    onChange={(next) => field.onChange(next)}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onChange={(next: any) => field.onChange(next)}
                     onBlur={field.onBlur}
                     hint="Full name"
                     errorMessage={fieldState.error?.message}
@@ -79,7 +80,8 @@ describe('LumiaForm', () => {
 
     await act(async () => {
       input.value = 'Ada Lovelace';
-      Simulate.change(input, { target: { value: 'Ada Lovelace' } });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Simulate.change(input, { target: { value: 'Ada Lovelace' } } as any);
       await Promise.resolve();
     });
 
@@ -120,7 +122,8 @@ describe('LumiaForm', () => {
                   {...field}
                   ref={field.ref}
                   value={field.value ?? ''}
-                  onChange={(next) => field.onChange(next)}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onChange={(next: any) => field.onChange(next)}
                   onBlur={field.onBlur}
                   hint="Full name"
                   errorMessage={fieldState.error?.message}
@@ -153,6 +156,110 @@ describe('LumiaForm', () => {
     expect(handleError).toHaveBeenCalledTimes(1);
     expect(host.querySelector('p')?.textContent).toBe('Name is required');
     expect(input.getAttribute('aria-invalid')).toBe('true');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+  it('validates multiple fields and handles successful submission', async () => {
+    const handleSubmit = vi.fn();
+
+    const ComplexForm = () => (
+      <LumiaForm
+        onSubmit={handleSubmit}
+        options={{ defaultValues: { name: '', age: '' } }}
+      >
+        {({ control }) => (
+          <>
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: 'Name is required' }}
+              render={({ field, fieldState }) => (
+                <ValidatedInput
+                  {...field}
+                  hint="Name"
+                  errorMessage={fieldState.error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="age"
+              control={control}
+              rules={{
+                required: 'Age is required',
+                min: { value: 18, message: 'Must be 18+' },
+              }}
+              render={({ field, fieldState }) => (
+                <ValidatedInput
+                  {...field}
+                  type="number"
+                  hint="Age"
+                  errorMessage={fieldState.error?.message}
+                />
+              )}
+            />
+            <button type="submit">Submit</button>
+          </>
+        )}
+      </LumiaForm>
+    );
+
+    const { host, root } = createTestRoot();
+    await act(async () => {
+      root.render(<ComplexForm />);
+    });
+
+    const form = host.querySelector('form') as HTMLFormElement;
+    const inputs = host.querySelectorAll('input');
+    const nameInput = inputs[0];
+    const ageInput = inputs[1];
+
+    // Submit empty
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(host.textContent).toContain('Name is required');
+    expect(host.textContent).toContain('Age is required');
+
+    // Fix name, break age
+    await act(async () => {
+      nameInput.value = 'John';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Simulate.change(nameInput, { target: { value: 'John' } } as any);
+      ageInput.value = '10';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Simulate.change(ageInput, { target: { value: '10' } } as any);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(host.textContent).toContain('Must be 18+');
+
+    // Fix all
+    await act(async () => {
+      ageInput.value = '20';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Simulate.change(ageInput, { target: { value: '20' } } as any);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      Simulate.submit(form);
+      await Promise.resolve();
+    });
+
+    expect(handleSubmit).toHaveBeenCalledWith(
+      { name: 'John', age: '20' },
+      expect.anything(),
+    );
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

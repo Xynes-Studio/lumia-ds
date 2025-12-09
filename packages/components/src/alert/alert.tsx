@@ -145,7 +145,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           )}
         >
           <Icon
-            id={resolvedIcon}
+            name={resolvedIcon}
             size={20}
             aria-hidden="true"
             className={cn('fill-none', iconClass)}
