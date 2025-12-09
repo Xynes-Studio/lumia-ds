@@ -223,4 +223,3 @@ SpriteIcon now supports the \`title\` prop for accessible informative icons:
     },
   },
 };
-
