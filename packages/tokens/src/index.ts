@@ -4,6 +4,8 @@
  * - Figma "Text" tokens map to `colors.foreground`
  * - Figma "Error" maps to `colors.destructive` to match component prop naming
  */
+import * as Tokens from './generated/tokens';
+
 export type ThemeTokens = {
   colors: {
     primary: string;
@@ -65,56 +67,56 @@ export type ThemeTokens = {
 
 export const defaultTheme: ThemeTokens = {
   colors: {
-    primary: '#18181b',
-    secondary: '#f4f4f5',
-    background: '#ffffff',
-    foreground: '#09090b',
-    border: '#e4e4e7',
-    muted: '#f4f4f5',
-    mutedForeground: '#71717a',
-    ring: '#18181b',
-    destructive: '#ef4444',
-    destructiveForeground: '#ffffff',
+    primary: Tokens.ColorPrimary,
+    secondary: Tokens.ColorSecondary,
+    background: Tokens.ColorBackground,
+    foreground: Tokens.ColorForeground,
+    border: Tokens.ColorBorder,
+    muted: Tokens.ColorMuted,
+    mutedForeground: Tokens.ColorMutedForeground,
+    ring: Tokens.ColorRing,
+    destructive: Tokens.ColorDestructive,
+    destructiveForeground: Tokens.ColorDestructiveForeground,
   },
   typography: {
     families: {
-      sans: '"Inter", "Inter Variable", "Helvetica Neue", Arial, sans-serif',
-      mono: '"JetBrains Mono", "SFMono-Regular", "Menlo", "Monaco", Consolas, "Liberation Mono", "Courier New", monospace',
-      display: '"Inter", "Inter Variable", "Helvetica Neue", Arial, sans-serif',
+      sans: Tokens.FontFamilySans,
+      mono: Tokens.FontFamilyMono,
+      display: Tokens.FontFamilyDisplay,
     },
     sizes: {
-      xs: '12px',
-      sm: '14px',
-      md: '16px',
-      lg: '20px',
-      xl: '24px',
-      '2xl': '32px',
+      xs: Tokens.FontSizeXs,
+      sm: Tokens.FontSizeSm,
+      md: Tokens.FontSizeMd,
+      lg: Tokens.FontSizeLg,
+      xl: Tokens.FontSizeXl,
+      '2xl': Tokens.FontSize2xl,
     },
     weights: {
-      regular: 400,
-      medium: 500,
-      semibold: 600,
-      bold: 700,
+      regular: Number(Tokens.FontWeightRegular),
+      medium: Number(Tokens.FontWeightMedium),
+      semibold: Number(Tokens.FontWeightSemibold),
+      bold: Number(Tokens.FontWeightBold),
     },
   },
   radii: {
-    xs: '2px',
+    xs: '2px', // Not yet migrated to JSON
     sm: '4px',
     md: '8px',
     lg: '12px',
     pill: '999px',
   },
   spacing: {
-    xxs: '4px',
-    xs: '8px',
-    sm: '12px',
-    md: '16px',
-    lg: '24px',
-    xl: '32px',
-    '2xl': '40px',
+    xxs: Tokens.SpacingXxs,
+    xs: Tokens.SpacingXs,
+    sm: Tokens.SpacingSm,
+    md: Tokens.SpacingMd,
+    lg: Tokens.SpacingLg,
+    xl: Tokens.SpacingXl,
+    '2xl': Tokens.Spacing2xl,
   },
   shadows: {
-    xs: '0 1px 2px rgba(2, 8, 23, 0.06)',
+    xs: '0 1px 2px rgba(2, 8, 23, 0.06)', // Not yet migrated
     sm: '0 2px 4px rgba(2, 8, 23, 0.08)',
     md: '0 4px 8px rgba(2, 8, 23, 0.12)',
     lg: '0 10px 24px rgba(2, 8, 23, 0.18)',
@@ -123,5 +125,7 @@ export const defaultTheme: ThemeTokens = {
 };
 
 export const tokens = defaultTheme;
+
+export * from './generated/tokens';
 
 export { themeToCSSVars } from './theme-to-css-vars';

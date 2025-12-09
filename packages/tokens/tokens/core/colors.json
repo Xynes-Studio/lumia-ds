@@ -1,0 +1,44 @@
+{
+    "color": {
+        "primary": {
+            "value": "#18181b",
+            "type": "color"
+        },
+        "secondary": {
+            "value": "#f4f4f5",
+            "type": "color"
+        },
+        "background": {
+            "value": "#ffffff",
+            "type": "color"
+        },
+        "foreground": {
+            "value": "#09090b",
+            "type": "color"
+        },
+        "border": {
+            "value": "#e4e4e7",
+            "type": "color"
+        },
+        "muted": {
+            "value": "#f4f4f5",
+            "type": "color"
+        },
+        "mutedForeground": {
+            "value": "#71717a",
+            "type": "color"
+        },
+        "ring": {
+            "value": "#18181b",
+            "type": "color"
+        },
+        "destructive": {
+            "value": "#ef4444",
+            "type": "color"
+        },
+        "destructiveForeground": {
+            "value": "#ffffff",
+            "type": "color"
+        }
+    }
+}

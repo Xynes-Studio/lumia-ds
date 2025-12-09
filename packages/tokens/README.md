@@ -2,6 +2,12 @@
 
 Theme tokens for Lumia DS with helpers to emit CSS variables.
 
+> [!IMPORTANT]
+> The single source of truth for tokens are the JSON files in `tokens/`.
+> This package uses [Style Dictionary](https://amzn.github.io/style-dictionary/) to generate platform-specific assets.
+> Do not edit `dist/` files directly.
+
+
 ## Install
 
 ```bash
