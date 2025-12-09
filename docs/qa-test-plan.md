@@ -2,6 +2,15 @@
 
 P0-quality guardrails for Lumia Design System across components, runtime blocks, icons, layout, and forms. Targets Storybook as the primary surface with Atlas Browser for cross-browser validation.
 
+P0-quality guardrails for Lumia Design System across components, runtime blocks, icons, layout, and forms. Targets Storybook as the primary surface with Atlas Browser for cross-browser validation.
+
+## Visual Regression Testing (INF-501)
+We use **Playwright** to catch visual regressions in core components.
+- **Run tests:** `pnpm test:visual`
+- **Update snapshots:** `pnpm test:visual:update`
+- **CI:** Tests run automatically on PRs via GitHub Actions.
+- **Scope:** Button, Table, Editor, and other core primitives.
+
 ## Goals & Scope
 - Catch visual/interaction regressions before public release.
 - Validate accessibility, responsive behavior, theming, and RTL where applicable.
