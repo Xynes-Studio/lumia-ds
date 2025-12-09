@@ -63,6 +63,10 @@ import { Icon } from '@lumia/icons';
 
 ## Direct Import (Tree-Shakable)
 
+> [!WARNING]
+> Direct component imports are deprecated. Please use `<Icon name="..." />` instead.
+> See the [Icon Migration Guide](./icon-migration.md) for details.
+
 For generated icons, you can also import components directly:
 
 ```tsx
