@@ -137,7 +137,8 @@ export const Interactive: Story = {
   },
   play: async ({ canvasElement }) => {
     // Find the video container and simulate a click
-    const container = canvasElement.querySelector('[data-testid="video-block"]') ||
+    const container =
+      canvasElement.querySelector('[data-testid="video-block"]') ||
       canvasElement.querySelector('.video-block-container') ||
       canvasElement.querySelector('video')?.parentElement;
     if (container) {

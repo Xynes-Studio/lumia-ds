@@ -15,116 +15,116 @@ import { InsertPanelPlugin, INSERT_PANEL_COMMAND } from './InsertPanelPlugin';
 
 let capturedEditor: LexicalEditor | null = null;
 const EditorCapture = () => {
-    const [editor] = useLexicalComposerContext();
-    capturedEditor = editor;
-    return null;
+  const [editor] = useLexicalComposerContext();
+  capturedEditor = editor;
+  return null;
 };
 
 describe('InsertPanelPlugin Integration', () => {
-    beforeEach(() => {
-        capturedEditor = null;
+  beforeEach(() => {
+    capturedEditor = null;
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  const renderEditor = () => {
+    return render(
+      <LexicalComposer
+        initialConfig={{
+          namespace: 'InsertPanelIntegration',
+          nodes: [PanelBlockNode, ParagraphNode],
+          onError: (error) => console.error(error),
+        }}
+      >
+        <RichTextPlugin
+          contentEditable={<ContentEditable />}
+          placeholder={<div>Type here...</div>}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <InsertPanelPlugin />
+        <EditorCapture />
+      </LexicalComposer>,
+    );
+  };
+
+  it('inserts info panel via command', async () => {
+    renderEditor();
+    await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
+
+    capturedEditor!.update(() => {
+      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'info',
+        title: 'Information',
+      });
     });
 
-    afterEach(() => {
-        cleanup();
+    // Wait for update to complete
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    capturedEditor!.read(() => {
+      const root = $getRoot();
+      // Editor should have children after insertion
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
+
+  it('inserts warning panel via command', async () => {
+    renderEditor();
+    await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
+
+    capturedEditor!.update(() => {
+      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'warning',
+        title: 'Warning',
+      });
     });
 
-    const renderEditor = () => {
-        return render(
-            <LexicalComposer
-                initialConfig={{
-                    namespace: 'InsertPanelIntegration',
-                    nodes: [PanelBlockNode, ParagraphNode],
-                    onError: (error) => console.error(error),
-                }}
-            >
-                <RichTextPlugin
-                    contentEditable={<ContentEditable />}
-                    placeholder={<div>Type here...</div>}
-                    ErrorBoundary={LexicalErrorBoundary}
-                />
-                <InsertPanelPlugin />
-                <EditorCapture />
-            </LexicalComposer>,
-        );
-    };
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-    it('inserts info panel via command', async () => {
-        renderEditor();
-        await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
+    capturedEditor!.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
 
-        capturedEditor!.update(() => {
-            capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-                variant: 'info',
-                title: 'Information',
-            });
-        });
+  it('inserts success panel via command', async () => {
+    renderEditor();
+    await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-        // Wait for update to complete
-        await new Promise((resolve) => setTimeout(resolve, 50));
-
-        capturedEditor!.read(() => {
-            const root = $getRoot();
-            // Editor should have children after insertion
-            expect(root.getChildrenSize()).toBeGreaterThan(0);
-        });
+    capturedEditor!.update(() => {
+      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'success',
+        title: 'Success',
+      });
     });
 
-    it('inserts warning panel via command', async () => {
-        renderEditor();
-        await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-        capturedEditor!.update(() => {
-            capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-                variant: 'warning',
-                title: 'Warning',
-            });
-        });
+    capturedEditor!.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
+    });
+  });
 
-        await new Promise((resolve) => setTimeout(resolve, 50));
+  it('inserts panel with custom icon', async () => {
+    renderEditor();
+    await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-        capturedEditor!.read(() => {
-            const root = $getRoot();
-            expect(root.getChildrenSize()).toBeGreaterThan(0);
-        });
+    capturedEditor!.update(() => {
+      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+        variant: 'note',
+        title: 'Note',
+        icon: 'bookmark',
+      });
     });
 
-    it('inserts success panel via command', async () => {
-        renderEditor();
-        await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-        capturedEditor!.update(() => {
-            capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-                variant: 'success',
-                title: 'Success',
-            });
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 50));
-
-        capturedEditor!.read(() => {
-            const root = $getRoot();
-            expect(root.getChildrenSize()).toBeGreaterThan(0);
-        });
+    capturedEditor!.read(() => {
+      const root = $getRoot();
+      expect(root.getChildrenSize()).toBeGreaterThan(0);
     });
-
-    it('inserts panel with custom icon', async () => {
-        renderEditor();
-        await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
-
-        capturedEditor!.update(() => {
-            capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-                variant: 'note',
-                title: 'Note',
-                icon: 'bookmark',
-            });
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 50));
-
-        capturedEditor!.read(() => {
-            const root = $getRoot();
-            expect(root.getChildrenSize()).toBeGreaterThan(0);
-        });
-    });
+  });
 });
