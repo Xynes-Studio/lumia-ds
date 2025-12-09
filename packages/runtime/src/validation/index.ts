@@ -14,3 +14,9 @@ export {
   validateResourceConfig,
   validateDataSourceResult,
 } from './validators';
+
+export {
+  type BlockConfigError,
+  type BlockValidationResult,
+  validateBlock,
+} from './block-validator';

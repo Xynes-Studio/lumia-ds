@@ -138,14 +138,16 @@ describe('PageSchemaSchema', () => {
     ).toThrow(ZodError);
   });
 
-  it('validates nested blocks', () => {
-    expect(() =>
-      PageSchemaSchema.parse({
-        id: 'p1',
-        layout: 'drawer',
-        blocks: [{ id: 'b1' }], // missing kind
-      }),
-    ).toThrow(ZodError);
+  it('accepts any blocks (validated at render time)', () => {
+    // PageSchemaSchema uses lenient blocks array (z.unknown[]) to enable
+    // block-level validation at render time for graceful degradation
+    const result = PageSchemaSchema.parse({
+      id: 'p1',
+      layout: 'drawer',
+      blocks: [{ id: 'b1' }], // missing kind - but page validation passes
+    });
+    expect(result.id).toBe('p1');
+    expect(result.blocks).toHaveLength(1);
   });
 });
 

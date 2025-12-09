@@ -72,32 +72,20 @@ describe('validatePageConfig', () => {
     }
   });
 
-  it('returns error with path ["blocks", 0, "kind"] when block kind is missing', () => {
+  it('passes validation when block kind is missing (validated at render time)', () => {
+    // Page schema uses lenient blocks array - individual blocks are validated
+    // at render time with validateBlock() for graceful degradation
     const result = validatePageConfig(invalidPageMissingBlockKind, 'test-page');
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues).toContainEqual(
-        expect.objectContaining({
-          path: ['blocks', 0, 'kind'],
-          code: 'invalid_type',
-        }),
-      );
-    }
+    expect(result.success).toBe(true);
   });
 
-  it('returns error with path ["blocks", 0, "kind"] for invalid block kind value', () => {
+  it('passes validation when block kind is invalid (validated at render time)', () => {
+    // Page schema uses lenient blocks array - individual blocks are validated
+    // at render time with validateBlock() for graceful degradation
     const result = validatePageConfig(invalidPageBadBlockKind, 'test-page');
 
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues).toContainEqual(
-        expect.objectContaining({
-          path: ['blocks', 0, 'kind'],
-          code: 'invalid_enum_value',
-        }),
-      );
-    }
+    expect(result.success).toBe(true);
   });
 
   it('handles non-object input gracefully', () => {

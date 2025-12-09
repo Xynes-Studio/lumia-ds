@@ -343,8 +343,12 @@ describe('ResourcePageRenderer', () => {
       await flushEffects();
     });
 
+    // Should show PageErrorWidget with testid and alert role
+    expect(
+      host.querySelector('[data-testid="page-error-widget"]'),
+    ).not.toBeNull();
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
-    expect(host.textContent ?? '').toContain('Configuration validation failed');
+    expect(host.textContent ?? '').toContain('Configuration Error');
 
     await act(async () => root.unmount());
     host.remove();
@@ -374,26 +378,40 @@ describe('ResourcePageRenderer', () => {
       await flushEffects();
     });
 
+    // Should show PageErrorWidget with testid and alert role
+    expect(
+      host.querySelector('[data-testid="page-error-widget"]'),
+    ).not.toBeNull();
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
-    expect(host.textContent ?? '').toContain('Configuration validation failed');
+    expect(host.textContent ?? '').toContain('Configuration Error');
 
     await act(async () => root.unmount());
     host.remove();
   });
 
-  it('does not crash when page config has invalid blocks', async () => {
+  it('renders BlockErrorWidget for invalid block while valid blocks render normally', async () => {
     const { host, root } = createTestRoot();
-    // Invalid page: block has invalid 'kind'
-    const invalidPage = {
+    // Page with one valid and one invalid block
+    const mixedPage = {
       id: 'users-list',
       layout: 'stack',
-      blocks: [{ id: 'block-1', kind: 'invalid-kind' }],
+      blocks: [
+        {
+          id: 'valid-block',
+          kind: 'table',
+          props: { columns: [{ key: 'name', label: 'Name' }] },
+        },
+        { id: 'invalid-block', kind: 'invalid-kind' },
+      ],
     };
 
     const fetcher: DataFetcher = {
       getResourceConfig: vi.fn().mockResolvedValue(baseResource),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getPageSchema: vi.fn().mockResolvedValue(invalidPage as any),
+      getPageSchema: vi.fn().mockResolvedValue(mixedPage as any),
+      getDataSource: vi
+        .fn()
+        .mockResolvedValue({ records: [{ name: 'Test User' }] }),
     };
 
     await act(async () => {
@@ -407,9 +425,17 @@ describe('ResourcePageRenderer', () => {
       await flushEffects();
     });
 
-    // Should show validation error, not crash
-    expect(host.querySelector('[role="alert"]')).not.toBeNull();
-    expect(host.textContent ?? '').toContain('Configuration validation failed');
+    // Should NOT show page-level error
+    expect(host.querySelector('[data-testid="page-error-widget"]')).toBeNull();
+
+    // Should show BlockErrorWidget for invalid block
+    expect(
+      host.querySelector('[data-testid="block-error-widget"]'),
+    ).not.toBeNull();
+    expect(host.textContent ?? '').toContain('failed to render');
+
+    // Valid block should still render (ListBlock with table)
+    expect(host.querySelector('table')).not.toBeNull();
 
     await act(async () => root.unmount());
     host.remove();

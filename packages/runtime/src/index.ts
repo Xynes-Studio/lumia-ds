@@ -27,12 +27,23 @@ export {
   type ResourceConfigError,
   type DataSourceError,
   type ConfigError,
+  type BlockConfigError,
+  type BlockValidationResult,
   type ValidationResult,
   formatValidationError,
   validatePageConfig,
   validateResourceConfig,
   validateDataSourceResult,
+  validateBlock,
 } from './validation';
+
+// Re-export error widget components
+export {
+  PageErrorWidget,
+  type PageErrorWidgetProps,
+  BlockErrorWidget,
+  type BlockErrorWidgetProps,
+} from './components';
 
 /**
  * UI primitives the runtime renderer understands.
