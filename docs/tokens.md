@@ -15,8 +15,9 @@ The single source of truth for design tokens are the JSON files located in `pack
 
 Running `pnpm build:tokens` (or `pnpm build`) in `@lumia/tokens` generates:
 
-1.  **CSS Variables**: `dist/css/tokens.css`
-    - Usage: `var(--color-primary-500)`
+1.  **CSS Variables**: `dist/css/variables.css` (exported as `@lumia/tokens/dist/css/variables.css`)
+    - Usage: `import '@lumia/tokens/dist/css/variables.css'`
+    - Usage in CSS: `var(--color-primary-500)`
 2.  **TypeScript Constants**: `dist/ts/tokens.ts` (and `src/generated/tokens.ts`)
     - Usage: `import { ColorPrimary } from '@lumia/tokens'`
 

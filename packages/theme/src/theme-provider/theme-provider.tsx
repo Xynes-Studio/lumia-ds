@@ -5,11 +5,12 @@ import {
   type PropsWithChildren,
 } from 'react';
 import { themeToCSSVars, type ThemeTokens } from '@lumia/tokens';
+import '@lumia/tokens/dist/css/variables.css';
 
 type ThemeTarget = HTMLElement | null | undefined;
 
 export type ThemeProviderProps = PropsWithChildren<{
-  theme: ThemeTokens;
+  theme?: string | ThemeTokens;
   /**
    * Optional element to scope CSS variables to. Defaults to document.documentElement.
    */
@@ -50,17 +51,42 @@ export const applyCssVarsToTarget = (
   };
 };
 
+export const applyThemeToTarget = (target: ThemeTarget, theme: string) => {
+  const element = resolveTarget(target);
+  if (!element) return;
+
+  const previousTheme = element.getAttribute('data-theme');
+  element.setAttribute('data-theme', theme);
+
+  return () => {
+    if (previousTheme) {
+      element.setAttribute('data-theme', previousTheme);
+    } else {
+      element.removeAttribute('data-theme');
+    }
+  };
+};
+
 export const ThemeProvider = ({
-  theme,
+  theme = 'light',
   target,
   children,
 }: ThemeProviderProps) => {
-  const cssVars = useMemo(() => themeToCSSVars(theme), [theme]);
+  const isLegacyTheme = typeof theme === 'object';
+  // Legacy support: calculate CSS vars if theme is an object
+  const cssVars = useMemo(() => {
+    return isLegacyTheme ? themeToCSSVars(theme) : {};
+  }, [theme, isLegacyTheme]);
+
   const useIsomorphicLayoutEffect = getIsomorphicLayoutEffect();
 
   useIsomorphicLayoutEffect(() => {
-    return applyCssVarsToTarget(target, cssVars);
-  }, [cssVars, target]);
+    if (isLegacyTheme) {
+      return applyCssVarsToTarget(target, cssVars);
+    }
+    // New support: set data-theme attribute
+    return applyThemeToTarget(target, theme as string);
+  }, [theme, cssVars, target, isLegacyTheme]);
 
   return <>{children}</>;
 };

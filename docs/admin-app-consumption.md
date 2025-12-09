@@ -52,10 +52,10 @@ Add the Tailwind layers to your global stylesheet (e.g., `app/globals.css`):
 ```tsx
 // app/layout.tsx or src/App.tsx
 import { ThemeProvider } from '@lumia/theme';
-import { defaultTheme } from '@lumia/tokens';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>;
+  // Defaults to "light" theme (sets data-theme="light")
+  return <ThemeProvider>{children}</ThemeProvider>;
 }
 ```
 
@@ -153,7 +153,7 @@ export default function UsersPage() {
   const permissions = useMemo(() => ['admin:users'], []);
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme="light">
       <ResourcePageRenderer
         resourceName="users"
         screen="list"
