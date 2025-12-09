@@ -1,4 +1,5 @@
-import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
+import { defaultTheme } from '@lumia/tokens';
+import * as Tokens from '@lumia/tokens';
 
 const PRIMARY_SCALE_STOPS = [
   50, 100, 200, 300, 400, 500, 600, 700, 800, 900,
@@ -8,14 +9,24 @@ type PrimaryScaleStop = (typeof PRIMARY_SCALE_STOPS)[number];
 const withFallback = (variableName: string, fallback: string) =>
   `var(${variableName}, ${fallback})`;
 
-const defaultCssVars = themeToCSSVars(defaultTheme);
+// Helper to get primary color fallback from the full Tokens object
+// since defaultTheme might not expose the flat scale directly in the same way
+const getPrimaryColorFallback = (stop: PrimaryScaleStop) => {
+  const tokenKey = `ColorPrimary${stop}`;
+  // @ts-expect-error - Tokens are exported as PascalCase (e.g. ColorPrimary50)
+  if (Tokens && typeof Tokens[tokenKey] !== 'undefined') {
+    // @ts-expect-error - Dynamic access to Tokens object
+    return Tokens[tokenKey] as string;
+  }
+  return '#000000';
+};
 
 const createPrimaryScale = () =>
   PRIMARY_SCALE_STOPS.reduce<Record<PrimaryScaleStop, string>>(
     (scale, stop) => {
       scale[stop] = withFallback(
-        `--color-primary-${stop}`,
-        defaultCssVars[`--color-primary-${stop}`],
+        `--colors-primary-${stop}`, // Updated variable name
+        getPrimaryColorFallback(stop),
       );
       return scale;
     },
@@ -32,54 +43,70 @@ const buildTailwindPreset = () => {
           primary: {
             ...primaryScale,
             DEFAULT: withFallback(
-              '--color-primary',
-              defaultCssVars['--color-primary'],
+              '--colors-primary', // Updated from --color-primary
+              defaultTheme.colors.primary,
             ),
           },
           secondary: withFallback(
-            '--color-secondary',
-            defaultCssVars['--color-secondary'],
+            '--colors-secondary', // Updated from --color-secondary
+            defaultTheme.colors.secondary,
           ),
-          background: withFallback('--color-bg', defaultCssVars['--color-bg']),
-          foreground: withFallback('--color-fg', defaultCssVars['--color-fg']),
+          background: withFallback(
+            '--colors-background', // Updated from --color-bg
+            defaultTheme.colors.background,
+          ),
+          foreground: withFallback(
+            '--colors-foreground', // Updated from --color-fg
+            defaultTheme.colors.foreground,
+          ),
           border: withFallback(
-            '--color-border',
-            defaultCssVars['--color-border'],
+            '--colors-border', // Updated from --color-border
+            defaultTheme.colors.border,
           ),
-          muted: withFallback('--color-muted', defaultCssVars['--color-muted']),
-          'muted-foreground': withFallback(
-            '--color-muted-foreground',
-            defaultCssVars['--color-muted-foreground'],
-          ),
-          ring: withFallback('--color-ring', defaultCssVars['--color-ring']),
-          destructive: withFallback(
-            '--color-destructive',
-            defaultCssVars['--color-destructive'],
-          ),
-          'destructive-foreground': withFallback(
-            '--color-destructive-foreground',
-            defaultCssVars['--color-destructive-foreground'],
-          ),
+          muted: {
+            DEFAULT: withFallback('--colors-muted', defaultTheme.colors.muted),
+            foreground: withFallback(
+              '--colors-mutedForeground',
+              defaultTheme.colors.mutedForeground,
+            ),
+          },
+          ring: withFallback('--colors-ring', defaultTheme.colors.ring),
+          destructive: {
+            DEFAULT: withFallback(
+              '--colors-destructive',
+              defaultTheme.colors.destructive,
+            ),
+            foreground: withFallback(
+              '--colors-destructiveForeground',
+              defaultTheme.colors.destructiveForeground,
+            ),
+          },
         },
         borderRadius: {
-          DEFAULT: withFallback('--radius-md', defaultTheme.radii.md),
-          xs: withFallback('--radius-xs', defaultTheme.radii.xs),
-          sm: withFallback('--radius-sm', defaultTheme.radii.sm),
-          md: withFallback('--radius-md', defaultTheme.radii.md),
-          lg: withFallback('--radius-lg', defaultTheme.radii.lg),
-          pill: withFallback('--radius-pill', defaultTheme.radii.pill),
-          full: withFallback('--radius-pill', defaultTheme.radii.pill),
+          DEFAULT: withFallback('--radii-md', defaultTheme.radii.md),
+          xs: withFallback('--radii-xs', defaultTheme.radii.xs),
+          sm: withFallback('--radii-sm', defaultTheme.radii.sm),
+          md: withFallback('--radii-md', defaultTheme.radii.md),
+          lg: withFallback('--radii-lg', defaultTheme.radii.lg),
+          pill: withFallback('--radii-pill', defaultTheme.radii.pill),
+          full: withFallback('--radii-pill', defaultTheme.radii.pill),
         },
         fontFamily: {
           sans: [
-            withFallback('--font-sans', defaultTheme.typography.families.sans),
+            withFallback(
+              '--typography-families-sans',
+              defaultTheme.typography.families.sans,
+            ),
           ],
           mono: [
-            withFallback('--font-mono', defaultTheme.typography.families.mono),
+            withFallback(
+              '--typography-families-mono',
+              defaultTheme.typography.families.mono,
+            ),
           ],
           display: [
             withFallback(
-              '--font-display',
+              '--typography-families-display',
               defaultTheme.typography.families.display,
             ),
           ],
