@@ -9,18 +9,7 @@ import {
   Input,
   Select,
 } from '@lumia/components';
-import {
-  Bold,
-  Italic,
-  Underline,
-  Code,
-  Link as LinkIcon,
-  Trash2,
-  ExternalLink,
-  FileCode,
-  List,
-  ListOrdered,
-} from 'lucide-react';
+import { Icon } from '@lumia/icons';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';
@@ -93,7 +82,7 @@ export function Toolbar() {
           aria-label="Format Bold"
           title="Bold (Cmd+B)"
         >
-          <Bold className="h-4 w-4" />
+          <Icon name="bold" size="sm" />
         </Button>
         <Button
           variant={isItalic ? 'secondary' : 'ghost'}
@@ -105,7 +94,7 @@ export function Toolbar() {
           aria-label="Format Italics"
           title="Italic (Cmd+I)"
         >
-          <Italic className="h-4 w-4" />
+          <Icon name="italic" size="sm" />
         </Button>
         <Button
           variant={isUnderline ? 'secondary' : 'ghost'}
@@ -117,7 +106,7 @@ export function Toolbar() {
           aria-label="Format Underline"
           title="Underline (Cmd+U)"
         >
-          <Underline className="h-4 w-4" />
+          <Icon name="underline" size="sm" />
         </Button>
         <Button
           variant={isCode ? 'secondary' : 'ghost'}
@@ -129,7 +118,7 @@ export function Toolbar() {
           aria-label="Format Code"
           title="Inline Code"
         >
-          <Code className="h-4 w-4" />
+          <Icon name="code" size="sm" />
         </Button>
         <Button
           variant={isCodeBlock ? 'secondary' : 'ghost'}
@@ -141,7 +130,7 @@ export function Toolbar() {
           aria-label="Format Code Block"
           title="Code Block"
         >
-          <FileCode className="h-4 w-4" />
+          <Icon name="file-code" size="sm" />
         </Button>
         <div className="mx-2 h-6 w-px bg-border" />
 
@@ -154,7 +143,7 @@ export function Toolbar() {
           aria-label="Bullet List"
           title="Bullet List"
         >
-          <List className="h-4 w-4" />
+          <Icon name="list" size="sm" />
         </Button>
         <Button
           variant={isNumberedList ? 'secondary' : 'ghost'}
@@ -164,7 +153,7 @@ export function Toolbar() {
           aria-label="Numbered List"
           title="Numbered List"
         >
-          <ListOrdered className="h-4 w-4" />
+          <Icon name="list-ordered" size="sm" />
         </Button>
         <div className="mx-2 h-6 w-px bg-border" />
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -178,7 +167,7 @@ export function Toolbar() {
               aria-label="Insert Link"
               title="Link"
             >
-              <LinkIcon className="h-4 w-4" />
+              <Icon name="link" size="sm" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80 p-3" align="start" side="bottom">
@@ -212,7 +201,7 @@ export function Toolbar() {
                       setIsPopoverOpen(false);
                     }}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <Icon name="trash" size="sm" className="mr-2" />
                     Remove Link
                   </Button>
                   {linkUrl && (
@@ -223,7 +212,7 @@ export function Toolbar() {
                         window.open(linkUrl, '_blank');
                       }}
                     >
-                      <ExternalLink className="mr-2 h-4 w-4" />
+                      <Icon name="external-link" size="sm" className="mr-2" />
                       Open Link
                     </Button>
                   )}
