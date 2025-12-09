@@ -5,15 +5,10 @@ import { EditorToolbarCompact } from './EditorToolbarCompact';
 import { EditorProvider } from '../EditorProvider';
 import { vi, describe, it, expect } from 'vitest';
 
-// Mock Lucide icons to avoid rendering issues
-vi.mock('lucide-react', () => ({
-  Bold: () => <span data-testid="icon-bold" />,
-  Italic: () => <span data-testid="icon-italic" />,
-  Underline: () => <span data-testid="icon-underline" />,
-  Link: () => <span data-testid="icon-link" />,
-  Trash2: () => <span data-testid="icon-trash" />,
-  ExternalLink: () => <span data-testid="icon-external-link" />,
-  List: () => <span data-testid="icon-list" />,
+// Mock @lumia/icons Icon component
+vi.mock('@lumia/icons', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Icon: ({ name }: any) => <span data-testid={`icon-${name}`} />,
 }));
 
 // Mock @lumia/components

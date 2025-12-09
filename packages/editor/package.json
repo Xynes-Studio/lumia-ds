@@ -53,7 +53,6 @@
         "@lexical/utils": "^0.38.2",
         "@lumia/components": "workspace:*",
         "@lumia/icons": "workspace:*",
-        "lexical": "0.38.2",
-        "lucide-react": "^0.474.0"
+        "lexical": "0.38.2"
     }
 }
