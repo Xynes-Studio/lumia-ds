@@ -1,0 +1,5 @@
+{
+    "id": "test-page",
+    "layout": "invalid-layout-type",
+    "blocks": []
+}
