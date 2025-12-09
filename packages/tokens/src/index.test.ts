@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { defaultTheme, tokens, type ThemeTokens, themeToCSSVars } from './index';
+import {
+  defaultTheme,
+  tokens,
+  type ThemeTokens,
+  themeToCSSVars,
+} from './index';
 
 describe('@lumia/tokens', () => {
   it('exports tokens in ThemeTokens shape', () => {
@@ -98,8 +103,8 @@ describe('themeToCSSVars', () => {
         spacing: {
           sm: '4px',
         },
-      } as any,
-      '-'
+      } as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      '-',
     );
 
     expect(vars).toEqual({
@@ -117,7 +122,7 @@ describe('themeToCSSVars', () => {
           fontWeight: 'bold',
         },
       },
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     expect(vars).toEqual({
       '--typography-h1-fontSize': '2rem',
