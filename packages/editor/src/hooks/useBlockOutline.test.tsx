@@ -1,16 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useBlockOutline, BlockOutlineItem } from './useBlockOutline';
+import { useBlockOutline } from './useBlockOutline';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { ParagraphNode, $getRoot, $createParagraphNode, $createTextNode } from 'lexical';
+import { $getRoot, $createParagraphNode, $createTextNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ImageBlockNode, $createImageBlockNode } from '../nodes/ImageBlockNode';
 import { VideoBlockNode, $createVideoBlockNode } from '../nodes/VideoBlockNode';
-import { FileBlockNode, $createFileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
-import { PanelBlockNode, $createPanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
+import {
+  FileBlockNode,
+  $createFileBlockNode,
+} from '../nodes/FileBlockNode/FileBlockNode';
+import {
+  PanelBlockNode,
+  $createPanelBlockNode,
+} from '../nodes/PanelBlockNode/PanelBlockNode';
 import React, { useEffect } from 'react';
 
 const mockNodes = [
@@ -83,7 +89,8 @@ describe('useBlockOutline', () => {
 
   it('should truncate long labels to 30 characters', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -124,7 +131,11 @@ describe('useBlockOutline', () => {
           const root = $getRoot();
           root.clear();
           const para = $createParagraphNode();
-          para.append($createTextNode('This is a very long paragraph that should be truncated'));
+          para.append(
+            $createTextNode(
+              'This is a very long paragraph that should be truncated',
+            ),
+          );
           root.append(para);
         });
       });
@@ -155,7 +166,8 @@ describe('useBlockOutline', () => {
 
   it('should handle image block labels', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -217,7 +229,8 @@ describe('useBlockOutline', () => {
 
   it('should handle video block labels', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -280,7 +293,8 @@ describe('useBlockOutline', () => {
 
   it('should handle file block labels', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -342,7 +356,8 @@ describe('useBlockOutline', () => {
 
   it('should handle panel block labels', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -401,7 +416,8 @@ describe('useBlockOutline', () => {
 
   it('should update outline when editor state changes', async () => {
     vi.useRealTimers();
-    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null = null;
+    let editorRef: ReturnType<typeof useLexicalComposerContext>[0] | null =
+      null;
 
     const EditorCapture = () => {
       const [editor] = useLexicalComposerContext();
@@ -459,4 +475,3 @@ describe('useBlockOutline', () => {
     );
   });
 });
-

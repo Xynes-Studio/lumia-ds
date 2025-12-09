@@ -267,9 +267,7 @@ describe('MediaInsertTabs', () => {
         wrapper: createWrapper(null),
       });
 
-      expect(
-        screen.getByPlaceholderText(/document\.pdf/i),
-      ).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/document\.pdf/i)).toBeInTheDocument();
     });
 
     it('shows file type hint in upload', () => {
@@ -353,8 +351,9 @@ describe('MediaInsertTabs', () => {
       const uploadTab = screen.getByRole('tab', { name: /upload/i });
       fireEvent.click(uploadTab);
 
-      const dropZone = screen.getByText(/drag and drop/i).closest('div')!
-        .parentElement!;
+      const dropZone = screen
+        .getByText(/drag and drop/i)
+        .closest('div')!.parentElement!;
 
       const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
       const dataTransfer = {
@@ -383,7 +382,7 @@ describe('MediaInsertTabs', () => {
     };
 
     it('rejects files with invalid type', async () => {
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => { });
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
       render(<MediaInsertTabs {...defaultProps} mediaType="image" />, {
         wrapper: createWrapper(mediaConfigWithUpload),
@@ -409,7 +408,7 @@ describe('MediaInsertTabs', () => {
     });
 
     it('rejects files exceeding size limit', async () => {
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => { });
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
       render(<MediaInsertTabs {...defaultProps} mediaType="image" />, {
         wrapper: createWrapper(mediaConfigWithUpload),
@@ -420,7 +419,9 @@ describe('MediaInsertTabs', () => {
 
       // Create a file larger than 1MB
       const largeContent = new Array(2 * 1024 * 1024).fill('a').join('');
-      const file = new File([largeContent], 'large.jpg', { type: 'image/jpeg' });
+      const file = new File([largeContent], 'large.jpg', {
+        type: 'image/jpeg',
+      });
       const input = screen.getByTestId('image-upload-input');
 
       Object.defineProperty(input, 'files', { value: [file] });
@@ -523,4 +524,3 @@ describe('MediaInsertTabs', () => {
     });
   });
 });
-

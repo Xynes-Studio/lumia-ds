@@ -170,7 +170,10 @@ export function shouldCloseOnCursorMove(
  * @param slashOffset - Expected slash position
  * @returns True if slash is still at expected position
  */
-export function isSlashStillPresent(text: string, slashOffset: number): boolean {
+export function isSlashStillPresent(
+  text: string,
+  slashOffset: number,
+): boolean {
   return text[slashOffset] === '/';
 }
 
@@ -268,7 +271,10 @@ export function validateQueryUpdate(
   currentOffset: number,
   slashIndex: number,
   query: string,
-): { shouldClose: boolean; reason: 'cursor_before_slash' | 'space_in_query' | 'valid' } {
+): {
+  shouldClose: boolean;
+  reason: 'cursor_before_slash' | 'space_in_query' | 'valid';
+} {
   if (currentOffset <= slashIndex) {
     return { shouldClose: true, reason: 'cursor_before_slash' };
   }
@@ -306,7 +312,8 @@ export function isSelectionInValidNode(
   isTextNode: boolean,
 ): boolean {
   const isInTrigger = selectionNodeKey === triggerNodeKey;
-  const isInTextChild = isTextNode && textNodeKey !== null && selectionNodeKey === textNodeKey;
+  const isInTextChild =
+    isTextNode && textNodeKey !== null && selectionNodeKey === textNodeKey;
   return isInTrigger || isInTextChild;
 }
 

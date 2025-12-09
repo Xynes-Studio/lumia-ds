@@ -19,7 +19,6 @@ import {
   $isInsidePanel,
   $findParentListItem,
   isListItemEmpty,
-  isInsideList,
   getParentList,
   isListSingleItem,
 } from '../utils/panelListUtils';

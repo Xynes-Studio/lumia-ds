@@ -333,7 +333,7 @@ describe('DragDropPastePlugin', () => {
 
   describe('File Size Validation', () => {
     it('rejects files exceeding max size', async () => {
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => { });
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
       const configWithLimit = {
         ...mockMediaConfig,
@@ -349,7 +349,9 @@ describe('DragDropPastePlugin', () => {
 
       // Create a file that's larger than 1MB
       const largeContent = new Array(2 * 1024 * 1024).fill('a').join('');
-      const file = new File([largeContent], 'large.jpg', { type: 'image/jpeg' });
+      const file = new File([largeContent], 'large.jpg', {
+        type: 'image/jpeg',
+      });
       const event = {
         dataTransfer: { files: [file] },
         preventDefault: vi.fn(),
@@ -358,12 +360,9 @@ describe('DragDropPastePlugin', () => {
       await dropHandler(event);
 
       expect(alertSpy).toHaveBeenCalledWith('File size exceeds 1MB');
-      expect(
-        configWithLimit.uploadAdapter.uploadFile,
-      ).not.toHaveBeenCalled();
+      expect(configWithLimit.uploadAdapter.uploadFile).not.toHaveBeenCalled();
 
       alertSpy.mockRestore();
     });
   });
 });
-

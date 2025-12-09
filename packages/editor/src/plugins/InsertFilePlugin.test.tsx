@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createHeadlessEditor } from '@lexical/headless';
 import { $getRoot, ParagraphNode, COMMAND_PRIORITY_EDITOR } from 'lexical';
-import { INSERT_FILE_BLOCK_COMMAND, InsertFilePlugin } from './InsertFilePlugin';
+import {
+  INSERT_FILE_BLOCK_COMMAND,
+  InsertFilePlugin,
+} from './InsertFilePlugin';
 import {
   FileBlockNode,
   $createFileBlockNode,
@@ -258,4 +261,3 @@ describe('INSERT_FILE_BLOCK_COMMAND', () => {
     expect(typeof INSERT_FILE_BLOCK_COMMAND).toBe('object');
   });
 });
-

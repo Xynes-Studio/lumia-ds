@@ -12,10 +12,10 @@ import type { BlockDefinition, BlockType } from '../blocks/types';
  * @returns Filtered blocks with matching action type
  */
 export function filterBlocksByInsertAction(
-    blocks: BlockDefinition[],
-    actionType: 'command' | 'custom',
+  blocks: BlockDefinition[],
+  actionType: 'command' | 'custom',
 ): BlockDefinition[] {
-    return blocks.filter((block) => block.insertAction === actionType);
+  return blocks.filter((block) => block.insertAction === actionType);
 }
 
 /**
@@ -24,7 +24,7 @@ export function filterBlocksByInsertAction(
  * @returns True if block has custom insert action
  */
 export function requiresCustomInput(block: BlockDefinition): boolean {
-    return block.insertAction === 'custom';
+  return block.insertAction === 'custom';
 }
 
 /**
@@ -33,9 +33,9 @@ export function requiresCustomInput(block: BlockDefinition): boolean {
  * @returns Filtered blocks with insertable flag
  */
 export function getInsertableFromBlocks(
-    blocks: BlockDefinition[],
+  blocks: BlockDefinition[],
 ): BlockDefinition[] {
-    return blocks.filter((block) => block.insertable === true);
+  return blocks.filter((block) => block.insertable === true);
 }
 
 /**
@@ -44,17 +44,17 @@ export function getInsertableFromBlocks(
  * @returns Object with block type as key and blocks as value
  */
 export function groupBlocksByType(
-    blocks: BlockDefinition[],
+  blocks: BlockDefinition[],
 ): Record<string, BlockDefinition[]> {
-    const groups: Record<string, BlockDefinition[]> = {};
-    for (const block of blocks) {
-        const category = getBlockCategory(block.type);
-        if (!groups[category]) {
-            groups[category] = [];
-        }
-        groups[category].push(block);
+  const groups: Record<string, BlockDefinition[]> = {};
+  for (const block of blocks) {
+    const category = getBlockCategory(block.type);
+    if (!groups[category]) {
+      groups[category] = [];
     }
-    return groups;
+    groups[category].push(block);
+  }
+  return groups;
 }
 
 /**
@@ -63,14 +63,14 @@ export function groupBlocksByType(
  * @returns Category string
  */
 export function getBlockCategory(type: BlockType): string {
-    const mediaTypes: BlockType[] = ['image', 'video', 'file'];
-    const structureTypes: BlockType[] = ['table', 'panel'];
-    const inlineTypes: BlockType[] = ['status'];
+  const mediaTypes: BlockType[] = ['image', 'video', 'file'];
+  const structureTypes: BlockType[] = ['table', 'panel'];
+  const inlineTypes: BlockType[] = ['status'];
 
-    if (mediaTypes.includes(type)) return 'media';
-    if (structureTypes.includes(type)) return 'structure';
-    if (inlineTypes.includes(type)) return 'inline';
-    return 'basic';
+  if (mediaTypes.includes(type)) return 'media';
+  if (structureTypes.includes(type)) return 'structure';
+  if (inlineTypes.includes(type)) return 'inline';
+  return 'basic';
 }
 
 /**
@@ -79,7 +79,7 @@ export function getBlockCategory(type: BlockType): string {
  * @returns True if block is a media type
  */
 export function isMediaBlock(type: BlockType): boolean {
-    return getBlockCategory(type) === 'media';
+  return getBlockCategory(type) === 'media';
 }
 
 /**
@@ -87,8 +87,10 @@ export function isMediaBlock(type: BlockType): boolean {
  * @param blocks - Array of block definitions
  * @returns Sorted blocks
  */
-export function sortBlocksByLabel(blocks: BlockDefinition[]): BlockDefinition[] {
-    return [...blocks].sort((a, b) => a.label.localeCompare(b.label));
+export function sortBlocksByLabel(
+  blocks: BlockDefinition[],
+): BlockDefinition[] {
+  return [...blocks].sort((a, b) => a.label.localeCompare(b.label));
 }
 
 /**
@@ -98,8 +100,8 @@ export function sortBlocksByLabel(blocks: BlockDefinition[]): BlockDefinition[] 
  * @returns The matching block or undefined
  */
 export function findBlockByType(
-    blocks: BlockDefinition[],
-    type: BlockType,
+  blocks: BlockDefinition[],
+  type: BlockType,
 ): BlockDefinition | undefined {
-    return blocks.find((block) => block.type === type);
+  return blocks.find((block) => block.type === type);
 }

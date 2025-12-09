@@ -11,7 +11,7 @@ import { $createImageBlockNode } from './ImageBlockNode';
 import { $getRoot } from 'lexical';
 
 const meta: Meta<typeof ImageBlockComponent> = {
-  title: 'Nodes/ImageBlockComponent',
+  title: 'Editor/Blocks/Image',
   component: ImageBlockComponent,
   parameters: {
     layout: 'centered',

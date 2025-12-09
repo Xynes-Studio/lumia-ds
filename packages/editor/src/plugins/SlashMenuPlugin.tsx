@@ -19,7 +19,6 @@ import {
   defaultSlashCommands,
   filterSlashCommands,
   SlashCommand,
-  SlashCommandModalType,
 } from '../components/SlashMenu';
 import { MediaInsertTabs } from '../components/MediaInsert';
 import { useMediaContext } from '../EditorProvider';
@@ -30,25 +29,6 @@ import { $createImageBlockNode } from '../nodes/ImageBlockNode/ImageBlockNode';
 import { $createVideoBlockNode } from '../nodes/VideoBlockNode';
 import { $createFileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
 import { useSlashMenuState } from '../hooks/useSlashMenuState';
-import {
-  getMediaType,
-  createOptimisticImagePayload,
-  createOptimisticVideoPayload,
-  createOptimisticFilePayload,
-} from '../hooks/useSlashUpload';
-import {
-  shouldTriggerSlashMenu,
-  getSlashPosition,
-  extractQueryWithCursor,
-  shouldOpenModal,
-  calculateSlashRemoval,
-  validateQueryUpdate,
-  getCorrectedSlashIndex,
-  isSelectionInValidNode,
-  getMenuPositionFromRect,
-  getMenuPositionFromElement,
-  isSlashStillPresent,
-} from '../utils/slashMenuUtils';
 
 /**
  * SlashMenuPlugin - Enables slash command menu for quick insertion of blocks.
@@ -68,8 +48,6 @@ export function SlashMenuPlugin(): React.ReactElement | null {
     closeModal,
   } = useSlashMenuState();
   const mediaConfig = useMediaContext();
-
-
 
   const handleSelectCommand = useCallback(
     (command: SlashCommand) => {
@@ -436,11 +414,7 @@ export function SlashMenuPlugin(): React.ReactElement | null {
                 }
               }
 
-              openMenu(
-                { top, left },
-                anchorNode.getKey(),
-                0,
-              );
+              openMenu({ top, left }, anchorNode.getKey(), 0);
             }
           }
         }

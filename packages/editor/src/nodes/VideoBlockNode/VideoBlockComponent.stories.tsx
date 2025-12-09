@@ -3,7 +3,7 @@ import { VideoBlockComponent } from './VideoBlockComponent';
 import { EditorProvider } from '../../EditorProvider';
 
 const meta: Meta<typeof VideoBlockComponent> = {
-  title: 'Editor/Nodes/VideoBlockComponent',
+  title: 'Editor/Blocks/Video',
   component: VideoBlockComponent,
   parameters: {
     layout: 'centered',

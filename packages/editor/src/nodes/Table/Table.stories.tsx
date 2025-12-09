@@ -3,7 +3,7 @@ import { LumiaEditor } from '../../lumia-editor';
 import type { LumiaEditorStateJSON } from '../../types';
 
 const meta: Meta<typeof LumiaEditor> = {
-  title: 'Table/Basic',
+  title: 'Editor/Blocks/Table',
   component: LumiaEditor,
   parameters: {
     layout: 'centered',

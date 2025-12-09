@@ -225,7 +225,10 @@ describe('PanelListPlugin Node Structure', () => {
     });
 
     const json = editor.getEditorState().toJSON();
-    const panelJson = json.root.children[0] as unknown as { type: string; children: unknown[] };
+    const panelJson = json.root.children[0] as unknown as {
+      type: string;
+      children: unknown[];
+    };
     expect(panelJson.type).toBe('panel-block');
     expect(panelJson.children.length).toBeGreaterThan(0);
   });
@@ -295,7 +298,10 @@ describe('PanelListPlugin Node Structure', () => {
     });
 
     const json = editor.getEditorState().toJSON();
-    const panelJson = json.root.children[0] as unknown as { type: string; children: unknown[] };
+    const panelJson = json.root.children[0] as unknown as {
+      type: string;
+      children: unknown[];
+    };
     expect(panelJson.type).toBe('panel-block');
     expect(panelJson.children.length).toBe(2); // paragraph + list
   });
@@ -396,4 +402,3 @@ describe('PanelActionMenuPlugin Title Editing', () => {
     });
   });
 });
-

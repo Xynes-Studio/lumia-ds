@@ -4,7 +4,7 @@ import { LumiaEditor } from '../../lumia-editor';
 import { LumiaEditorStateJSON } from '../../types';
 
 const meta: Meta<typeof LumiaEditor> = {
-  title: 'Panel/Static',
+  title: 'Editor/Blocks/Panel',
   component: LumiaEditor,
   parameters: {
     layout: 'padded',

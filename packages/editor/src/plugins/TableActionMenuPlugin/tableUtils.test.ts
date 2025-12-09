@@ -821,4 +821,3 @@ describe('tableUtils', () => {
     });
   });
 });
-
