@@ -317,4 +317,101 @@ describe('ResourcePageRenderer', () => {
     await act(async () => root.unmount());
     host.remove();
   });
+
+  it('shows validation error when page config is invalid', async () => {
+    const { host, root } = createTestRoot();
+    // Invalid page: missing required 'layout' field
+    const invalidPage = {
+      id: 'invalid-page',
+      blocks: [],
+    };
+
+    const fetcher: DataFetcher = {
+      getResourceConfig: vi.fn().mockResolvedValue(baseResource),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getPageSchema: vi.fn().mockResolvedValue(invalidPage as any),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    expect(host.querySelector('[role="alert"]')).not.toBeNull();
+    expect(host.textContent ?? '').toContain('Configuration validation failed');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('shows validation error when resource config is invalid', async () => {
+    const { host, root } = createTestRoot();
+    // Invalid resource: missing required 'id' field
+    const invalidResource = {
+      pages: { list: 'users-list' },
+    };
+
+    const fetcher: DataFetcher = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getResourceConfig: vi.fn().mockResolvedValue(invalidResource as any),
+      getPageSchema: vi.fn().mockResolvedValue(basePage),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    expect(host.querySelector('[role="alert"]')).not.toBeNull();
+    expect(host.textContent ?? '').toContain('Configuration validation failed');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('does not crash when page config has invalid blocks', async () => {
+    const { host, root } = createTestRoot();
+    // Invalid page: block has invalid 'kind'
+    const invalidPage = {
+      id: 'users-list',
+      layout: 'stack',
+      blocks: [{ id: 'block-1', kind: 'invalid-kind' }],
+    };
+
+    const fetcher: DataFetcher = {
+      getResourceConfig: vi.fn().mockResolvedValue(baseResource),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getPageSchema: vi.fn().mockResolvedValue(invalidPage as any),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    // Should show validation error, not crash
+    expect(host.querySelector('[role="alert"]')).not.toBeNull();
+    expect(host.textContent ?? '').toContain('Configuration validation failed');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
 });
