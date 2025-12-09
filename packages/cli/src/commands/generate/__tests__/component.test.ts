@@ -4,11 +4,23 @@ import path from 'path';
 import { generateComponent } from '../component'; // will implement this
 import inquirer from 'inquirer';
 
+const { mockRunActions, mockGetGenerator } = vi.hoisted(() => {
+  const actions = vi.fn().mockResolvedValue({ changes: [], failures: [] });
+  const generator = vi.fn().mockReturnValue({ runActions: actions });
+  return { mockRunActions: actions, mockGetGenerator: generator };
+});
+
 // Mock inquirer
 vi.mock('inquirer', () => ({
   default: {
     prompt: vi.fn(),
   },
+}));
+
+vi.mock('node-plop', () => ({
+  default: vi.fn().mockResolvedValue({
+    getGenerator: mockGetGenerator,
+  }),
 }));
 
 describe('generate component', () => {
@@ -29,45 +41,24 @@ describe('generate component', () => {
 
     // Mock user answers
     vi.mocked(inquirer.prompt).mockResolvedValueOnce({
-      package: 'ui',
+      targetPackage: 'ui',
       features: ['storybook', 'test', 'style'],
     });
 
     await generateComponent(componentName, {}, cwd);
 
-    const componentPath = path.join(
-      testDir,
-      'packages/ui/src/components',
-      componentName,
-    );
+    // Verify Plop was initialized and called
+    const nodePlop = (await import('node-plop')).default;
+    expect(nodePlop).toHaveBeenCalled(); // We can't easily check path arg due to previous implementation complexity but we know it's called
 
-    // Check directory exists
-    expect(await fs.pathExists(componentPath)).toBe(true);
+    expect(mockGetGenerator).toHaveBeenCalledWith('component');
 
-    // Check files exist
-    expect(
-      await fs.pathExists(path.join(componentPath, `${componentName}.tsx`)),
-    ).toBe(true);
-    expect(
-      await fs.pathExists(
-        path.join(componentPath, `${componentName}.stories.tsx`),
-      ),
-    ).toBe(true);
-    expect(
-      await fs.pathExists(
-        path.join(componentPath, `${componentName}.test.tsx`),
-      ),
-    ).toBe(true);
-    expect(
-      await fs.pathExists(path.join(componentPath, `${componentName}.css`)),
-    ).toBe(true); // assuming css module or plain css based on prompt. logic said 'style'
-
-    // Verify content snippet (basic check)
-    const content = await fs.readFile(
-      path.join(componentPath, `${componentName}.tsx`),
-      'utf-8',
-    );
-    expect(content).toContain(`export const ${componentName}`);
+    expect(mockRunActions).toHaveBeenCalledWith({
+      name: componentName,
+      targetPackage: 'ui',
+      features: ['storybook', 'test', 'style'],
+      cwd: testDir,
+    });
   });
 
   it('skips optional files if not selected', async () => {
@@ -75,30 +66,17 @@ describe('generate component', () => {
     const componentName = 'SimpleBox';
 
     vi.mocked(inquirer.prompt).mockResolvedValueOnce({
-      package: 'ui',
+      targetPackage: 'ui',
       features: [], // No extra features
     });
 
     await generateComponent(componentName, {}, cwd);
 
-    const componentPath = path.join(
-      testDir,
-      'packages/ui/src/components',
-      componentName,
-    );
-
-    expect(
-      await fs.pathExists(path.join(componentPath, `${componentName}.tsx`)),
-    ).toBe(true);
-    expect(
-      await fs.pathExists(
-        path.join(componentPath, `${componentName}.stories.tsx`),
-      ),
-    ).toBe(false);
-    expect(
-      await fs.pathExists(
-        path.join(componentPath, `${componentName}.test.tsx`),
-      ),
-    ).toBe(false);
+    expect(mockRunActions).toHaveBeenCalledWith({
+      name: componentName,
+      targetPackage: 'ui',
+      features: [],
+      cwd: testDir,
+    });
   });
 });

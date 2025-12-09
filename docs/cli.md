@@ -102,11 +102,26 @@ packages/cli/
 │   └── lumia-resource.js    # Legacy script (to be migrated)
 ├── src/
 │   ├── __tests__/         # Tests
-│   └── index.ts           # Main application logic
+│   ├── index.ts           # Main application logic
+│   └── plopfile.ts        # Generator definitions (bundled to dist)
+├── templates/             # Handlebars templates
+│   └── component/         # Component templates
 ├── dist/                  # Built artifacts
 ├── package.json
 └── tsconfig.json
 ```
+
+### Templates
+
+Templates are stored in `packages/cli/templates` and are powered by **Plop.js**.
+To modify generated code, edit the corresponding `.hbs` files in `templates/`.
+
+### Naming Conventions
+
+The generator enforces standard naming conventions:
+- **Components**: PascalCase (e.g., `MyComponent`).
+- **Files**: PascalCase (e.g., `MyComponent.tsx`).
+- **CSS Classes**: kebab-case with root suffix (e.g., `.my-component-root`).
 
 ## Adding New Commands
 
