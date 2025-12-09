@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { generateComponent } from './commands/generate/component';
 import { buildTokens, validateTokens } from './commands/tokens/index';
 import { buildIcons } from './commands/icons/index';
+import { devDocs, buildDocs } from './commands/docs/index';
 
 // CLI version - read from package.json via tsup banner or hardcoded
 const CLI_VERSION = '0.0.0';
@@ -59,6 +60,17 @@ export function createProgram(): Command {
       }
     });
 
+  tokens
+    .command('validate [dir]')
+    .description('Validate token JSON files (duplicates, missing types)')
+    .action(async (dir) => {
+      const targetDir = dir || 'tokens'; // Default to 'tokens'
+      const { valid } = await validateTokens(targetDir);
+      if (!valid) {
+        process.exit(1);
+      }
+    });
+
   const icons = program.command('icons').description('Manage icons');
 
   icons
@@ -74,13 +86,26 @@ export function createProgram(): Command {
       }
     });
 
-  tokens
-    .command('validate [dir]')
-    .description('Validate token JSON files (duplicates, missing types)')
-    .action(async (dir) => {
-      const targetDir = dir || 'tokens'; // Default to 'tokens'
-      const { valid } = await validateTokens(targetDir);
-      if (!valid) {
+  const docs = program.command('docs').description('Manage documentation');
+
+  docs
+    .command('dev')
+    .description('Start docs development server')
+    .action(async () => {
+      try {
+        await devDocs();
+      } catch {
+        process.exit(1);
+      }
+    });
+
+  docs
+    .command('build')
+    .description('Build documentation')
+    .action(async () => {
+      try {
+        await buildDocs();
+      } catch {
         process.exit(1);
       }
     });

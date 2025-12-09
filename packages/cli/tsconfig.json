@@ -2,11 +2,11 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "./dist",
-        "rootDir": "./src",
         "module": "ESNext",
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "composite": false
     },
     "include": [
         "src/**/*"
