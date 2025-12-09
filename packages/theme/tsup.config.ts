@@ -1,12 +1,9 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/tailwind/tailwind.ts'],
   format: ['cjs', 'esm'],
-  dts: {
-    entry: 'src/index.ts',
-    tsconfig: './tsconfig.json',
-  },
+  dts: true,
   clean: true,
   sourcemap: true,
   tsconfig: './tsconfig.json',

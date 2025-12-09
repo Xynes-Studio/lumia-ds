@@ -15,6 +15,7 @@
     "icons:import": "node packages/cli/bin/lumia-icon-import.js packages/icons/raw packages/icons",
     "coverage:all": "pnpm --filter @lumia/components test && pnpm --filter @lumia/runtime exec vitest run --coverage && pnpm --filter @lumia/forms exec vitest run --coverage && pnpm --filter @lumia/layout exec vitest run --coverage && pnpm --filter @lumia/theme test && pnpm --filter @lumia/tokens test && pnpm --filter @lumia/icons test",
     "storybook": "storybook dev -p 6006 -c .storybook",
+    "storybook:reset": "pnpm --filter @lumia/tokens build && pnpm --filter @lumia/theme build",
     "storybook:build": "storybook build -c .storybook",
     "lumia": "pnpm --filter @lumia/cli exec node ./bin/lumia.js"
   },
