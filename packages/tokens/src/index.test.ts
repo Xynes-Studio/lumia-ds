@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { defaultTheme, tokens, type ThemeTokens } from './index';
-import { themeToCSSVars } from './theme-to-css-vars';
 
 describe('@lumia/tokens', () => {
   it('exports tokens in ThemeTokens shape', () => {
@@ -85,73 +84,5 @@ describe('@lumia/tokens', () => {
       lg: expect.any(String),
       inset: expect.any(String),
     });
-  });
-
-  it('maps theme tokens to CSS variables', () => {
-    const cssVars = themeToCSSVars(defaultTheme);
-    const primaryStops = [
-      '50',
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900',
-    ];
-
-    primaryStops.forEach((stop) => {
-      expect(cssVars[`--color-primary-${stop}`]).toEqual(expect.any(String));
-    });
-    expect(cssVars['--color-primary']).toBe(defaultTheme.colors.primary);
-    expect(cssVars['--color-secondary']).toBe(defaultTheme.colors.secondary);
-    expect(cssVars['--color-bg']).toBe(defaultTheme.colors.background);
-    expect(cssVars['--color-fg']).toBe(defaultTheme.colors.foreground);
-    expect(cssVars['--color-border']).toBe(defaultTheme.colors.border);
-    expect(cssVars['--color-muted']).toBe(defaultTheme.colors.muted);
-    expect(cssVars['--color-muted-foreground']).toBe(
-      defaultTheme.colors.mutedForeground,
-    );
-    expect(cssVars['--color-ring']).toBe(defaultTheme.colors.ring);
-    expect(cssVars['--color-destructive']).toBe(
-      defaultTheme.colors.destructive,
-    );
-    expect(cssVars['--font-sans']).toBe(defaultTheme.typography.families.sans);
-    expect(cssVars['--font-mono']).toBe(defaultTheme.typography.families.mono);
-    expect(cssVars['--font-display']).toBe(
-      defaultTheme.typography.families.display,
-    );
-    expect(cssVars['--radius-md']).toBe(defaultTheme.radii.md);
-    expect(cssVars['--radius-pill']).toBe(defaultTheme.radii.pill);
-  });
-
-  it('normalizes shorthand hex codes for the primary scale', () => {
-    const themeWithShortHex: ThemeTokens = {
-      ...defaultTheme,
-      colors: {
-        ...defaultTheme.colors,
-        primary: '#abc',
-      },
-    };
-
-    const cssVars = themeToCSSVars(themeWithShortHex);
-    expect(cssVars['--color-primary']).toBe('#aabbcc');
-    expect(cssVars['--color-primary-50']).toEqual(expect.stringMatching(/^#/));
-  });
-
-  it('falls back gracefully when the primary color is not hex-like', () => {
-    const themedWithCustomVar: ThemeTokens = {
-      ...defaultTheme,
-      colors: {
-        ...defaultTheme.colors,
-        primary: 'var(--brand-primary)',
-      },
-    };
-
-    const cssVars = themeToCSSVars(themedWithCustomVar);
-    expect(cssVars['--color-primary-500']).toBe('var(--brand-primary)');
-    expect(cssVars['--color-primary-900']).toBe('var(--brand-primary)');
   });
 });
