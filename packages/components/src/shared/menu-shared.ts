@@ -6,6 +6,7 @@ export type MenuItemBase = {
   icon?: IconId;
   variant?: 'default' | 'destructive';
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
 export type MenuItemConfig = MenuItemBase & {

@@ -197,6 +197,13 @@ export function Example() {
 - `showCount` displays a `current / maxLength` counter beside the hint when `maxLength` is provided.
 - Respects invalid state styling for both the field and counter text.
 
+### Loading States
+All interactive components (`Button`, `MenuItem`, `ConfirmDialog`, `Select`) support a standardized `isLoading` prop.
+- **Button**: Replaces/augments content with a spinner; disables interaction.
+- **MenuItem**: Replaces icon with spinner; disables selection.
+- **Select**: Replaces chevron with spinner; disables selection.
+- **ConfirmDialog**: Automatically handles async `onConfirm` loading state.
+
 ## Storybook
 
 `HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006`
