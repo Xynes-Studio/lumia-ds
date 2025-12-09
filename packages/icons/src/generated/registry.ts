@@ -1,4 +1,3 @@
-
 import type { RegisterIconFn } from '../types';
 import IconChatBubble from './ChatBubble';
 import IconCheck from './IconCheck';

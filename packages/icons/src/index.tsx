@@ -1,4 +1,4 @@
-export * from './icon/icon';
+export * from './icon';
 export * from './types';
 export * from './registry';
 export * from './generated';
