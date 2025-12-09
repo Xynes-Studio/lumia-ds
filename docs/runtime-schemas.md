@@ -93,16 +93,73 @@ const page = result.data;
 - Resource config from `getResourceConfig()`
 - Page config from `getPageSchema()`
 - Data source results from `getDataSource()`
+- Individual blocks at render time for graceful degradation
 
-On validation failure, it renders an error message instead of crashing:
+On validation failure, it renders user-friendly error widgets instead of crashing:
+
+**Page-level errors:** Shows `PageErrorWidget` with error details
+**Block-level errors:** Shows `BlockErrorWidget` for invalid blocks while valid blocks render normally
+
+## Error Widgets
+
+The runtime includes customizable error widgets for graceful degradation:
+
+### PageErrorWidget
+
+Full-page error widget for page/resource validation failures:
 
 ```tsx
-// In development, shows issue list:
-<div role="alert">
-  Configuration validation failed
-  • blocks.0.kind: Invalid value
-</div>
+import { PageErrorWidget, type PageConfigError } from '@lumia/runtime';
+
+<PageErrorWidget
+  error={pageError}
+  title="Custom Error Title"       // Optional
+  description="Custom message"     // Optional
+>
+  <button>Retry</button>           // Children slot
+</PageErrorWidget>
 ```
+
+- Uses Lumia `Alert` component with `variant="error"`
+- Shows detailed issues in development mode
+- Customizable via `title`, `description`, and `children` props
+
+### BlockErrorWidget
+
+Inline placeholder for blocks that fail validation:
+
+```tsx
+import { BlockErrorWidget } from '@lumia/runtime';
+
+<BlockErrorWidget
+  blockId="block-1"
+  blockKind="table"                // Optional
+  message="Custom error message"   // Optional
+>
+  <button>Reload</button>          // Children slot
+</BlockErrorWidget>
+```
+
+- Maintains grid layout compatibility
+- Shows block ID and kind
+- Customizable via `message` and `children` props
+
+### Block-Level Validation
+
+Individual blocks are validated at render time using `validateBlock()`:
+
+```typescript
+import { validateBlock, type BlockValidationResult } from '@lumia/runtime';
+
+const result: BlockValidationResult = validateBlock(blockJson, 'block-id');
+if (result.success) {
+  // result.data is the validated BlockSchema
+} else {
+  // result.error is a BlockConfigError with issues
+}
+```
+
+This enables graceful degradation: invalid blocks show `BlockErrorWidget` while valid blocks render normally.
 
 ## Data fetching contract
 

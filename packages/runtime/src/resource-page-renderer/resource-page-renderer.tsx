@@ -2,6 +2,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { AdminShell, DrawerLayout, StackLayout } from '@lumia/layout';
 import { DetailBlock, FormBlock, ListBlock } from '../blocks/blocks';
+import { PageErrorWidget } from '../components/PageErrorWidget';
+import { BlockErrorWidget } from '../components/BlockErrorWidget';
 import type {
   BlockSchema,
   DataFetcher,
@@ -20,6 +22,7 @@ import {
   validatePageConfig,
   validateResourceConfig,
   validateDataSourceResult,
+  validateBlock,
 } from '../validation';
 
 type RendererState =
@@ -118,12 +121,12 @@ const buildPlacementStyle = (
   return style;
 };
 
-const renderBlock = (
+const renderBlockContent = (
   block: BlockSchema,
   resource: ResourceConfig,
   screen: ResourceScreen,
   dataSources: Record<string, DataSourceResult>,
-) => {
+): ReactNode => {
   const baseProps = block.props ?? {};
   const dataSource = block.dataSourceId
     ? dataSources[block.dataSourceId]
@@ -171,21 +174,60 @@ const renderBlock = (
   return null;
 };
 
+/**
+ * Validates and renders a single block.
+ * Returns BlockErrorWidget for invalid blocks, allowing other blocks to render normally.
+ */
+const renderBlock = (
+  block: unknown,
+  blockIndex: number,
+  resource: ResourceConfig,
+  screen: ResourceScreen,
+  dataSources: Record<string, DataSourceResult>,
+): ReactNode => {
+  // Validate the block before rendering
+  const fallbackId = `block-${blockIndex}`;
+  const blockId =
+    typeof block === 'object' && block !== null && 'id' in block
+      ? String((block as { id: unknown }).id)
+      : fallbackId;
+
+  const validation = validateBlock(block, blockId);
+
+  if (!validation.success) {
+    // Return BlockErrorWidget for invalid block
+    const blockKind =
+      typeof block === 'object' && block !== null && 'kind' in block
+        ? String((block as { kind: unknown }).kind)
+        : undefined;
+
+    return <BlockErrorWidget blockId={blockId} blockKind={blockKind} />;
+  }
+
+  return renderBlockContent(validation.data, resource, screen, dataSources);
+};
+
 const renderBlocks = (
   page: PageSchema,
   resource: ResourceConfig,
   screen: ResourceScreen,
   dataSources: Record<string, DataSourceResult>,
 ) => {
-  const rendered = page.blocks.map((block) => {
-    const child = renderBlock(block, resource, screen, dataSources);
+  const rendered = page.blocks.map((block, index) => {
+    const child = renderBlock(block, index, resource, screen, dataSources);
     if (!child) return null;
+
+    // Use block.id if available, fallback to index-based key
+    const blockId =
+      typeof block === 'object' && block !== null && 'id' in block
+        ? String((block as { id: unknown }).id)
+        : `block-${index}`;
 
     return (
       <div
-        key={block.id}
-        data-block-id={block.id}
-        style={buildPlacementStyle(block.id, page.grid)}
+        key={blockId}
+        data-block-id={blockId}
+        style={buildPlacementStyle(blockId, page.grid)}
       >
         {child}
       </div>
@@ -379,23 +421,10 @@ export function ResourcePageRenderer({
   }
 
   if (state.status === 'validation-error') {
-    /* eslint-disable no-undef */
-    const isDev =
-      typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
-    /* eslint-enable no-undef */
     return (
-      <div role="alert" className="text-sm text-destructive">
-        <p>Configuration validation failed</p>
-        {isDev && (
-          <ul className="mt-2 list-disc list-inside text-xs">
-            {state.error.issues.map((issue, i) => (
-              <li key={i}>
-                {issue.path.join('.')}: {issue.message}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <PageErrorWidget
+        error={state.error as Parameters<typeof PageErrorWidget>[0]['error']}
+      />
     );
   }
 
