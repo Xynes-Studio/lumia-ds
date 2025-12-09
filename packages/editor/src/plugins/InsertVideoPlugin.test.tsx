@@ -131,5 +131,23 @@ describe('InsertVideoPlugin', () => {
         expect(node.getTitle()).toBeUndefined();
       });
     });
+
+    it('should detect html5 video from mov extension', () => {
+      expect(detectVideoProvider('https://example.com/video.mov')).toBe(
+        'html5',
+      );
+    });
+
+    it('should handle URL with query params', () => {
+      expect(
+        detectVideoProvider('https://example.com/video.mp4?token=abc'),
+      ).toBe('html5');
+    });
+
+    it('should trim whitespace from URLs', () => {
+      expect(
+        detectVideoProvider('  https://www.youtube.com/watch?v=test  '),
+      ).toBe('youtube');
+    });
   });
 });

@@ -90,4 +90,40 @@ describe('PanelBlockNode', () => {
       expect(node.getTitle()).toBe('Info Panel');
     });
   });
+
+  test('should clone node correctly', () => {
+    const editor = createHeadlessEditor(editorConfig);
+    editor.update(() => {
+      const node = $createPanelBlockNode({
+        variant: 'success',
+        title: 'Clone Test',
+        icon: 'check',
+      });
+      const cloned = PanelBlockNode.clone(node);
+      expect(cloned.__variant).toBe('success');
+      expect(cloned.__title).toBe('Clone Test');
+      expect(cloned.__icon).toBe('check');
+    });
+  });
+
+  test('should return correct type', () => {
+    expect(PanelBlockNode.getType()).toBe('panel-block');
+  });
+
+  test('should default to info variant', () => {
+    const editor = createHeadlessEditor(editorConfig);
+    editor.update(() => {
+      const node = $createPanelBlockNode({});
+      expect(node.getVariant()).toBe('info');
+    });
+  });
+
+  test('should handle undefined icon and title', () => {
+    const editor = createHeadlessEditor(editorConfig);
+    editor.update(() => {
+      const node = $createPanelBlockNode({ variant: 'note' });
+      expect(node.getIcon()).toBeUndefined();
+      expect(node.getTitle()).toBeUndefined();
+    });
+  });
 });

@@ -11,7 +11,7 @@ import { $createImageBlockNode } from './ImageBlockNode';
 import { $getRoot } from 'lexical';
 
 const meta: Meta<typeof ImageBlockComponent> = {
-  title: 'Nodes/ImageBlockComponent',
+  title: 'Editor/Blocks/Image',
   component: ImageBlockComponent,
   parameters: {
     layout: 'centered',
@@ -139,6 +139,66 @@ export const Interactive: Story = {
       description: {
         story:
           'Click the image to reveal the floating toolbar. Use the alignment buttons to align the image. Drag the right handle to resize.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    // Find the image element and simulate a click to select it
+    const canvas = canvasElement;
+    const image = canvas.querySelector('img');
+    if (image) {
+      image.click();
+      // Wait for toolbar to appear
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  },
+};
+
+export const AlignLeft: Story = {
+  render: () => (
+    <StoryEditor
+      src="https://picsum.photos/id/10/500/300"
+      status="uploaded"
+      width={300}
+      alignment="left"
+    />
+  ),
+};
+
+export const AlignCenter: Story = {
+  render: () => (
+    <StoryEditor
+      src="https://picsum.photos/id/11/500/300"
+      status="uploaded"
+      width={300}
+      alignment="center"
+    />
+  ),
+};
+
+export const AlignRight: Story = {
+  render: () => (
+    <StoryEditor
+      src="https://picsum.photos/id/12/500/300"
+      status="uploaded"
+      width={300}
+      alignment="right"
+    />
+  ),
+};
+
+export const FullWidth: Story = {
+  render: () => (
+    <StoryEditor
+      src="https://picsum.photos/id/13/800/400"
+      status="uploaded"
+      alignment="center"
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Full width image without specific width constraint.',
       },
     },
   },

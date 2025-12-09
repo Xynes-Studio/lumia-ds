@@ -3,6 +3,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { Button } from '@lumia/components';
 import { Table2 } from 'lucide-react';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
+import { $toggleTableHeaderRow } from '../../plugins/TableActionMenuPlugin/tableUtils';
 
 /**
  * TableToolbarButton - Toolbar button for inserting a 3×3 table.
@@ -23,10 +24,6 @@ export function TableToolbarButton() {
     // After table insertion, toggle only the first row as header
     setTimeout(() => {
       editor.update(() => {
-        // Import dynamically to avoid circular dependencies
-        const {
-          $toggleTableHeaderRow,
-        } = require('../../plugins/TableActionMenuPlugin/tableUtils');
         $toggleTableHeaderRow(true);
       });
     }, 0);

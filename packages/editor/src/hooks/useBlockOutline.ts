@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LexicalNode, $getRoot, ElementNode, $isElementNode } from 'lexical';
+import { LexicalNode, $getRoot } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $isParagraphNode } from 'lexical';

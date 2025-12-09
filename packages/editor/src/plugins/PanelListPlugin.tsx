@@ -6,7 +6,6 @@ import {
   $createParagraphNode,
   COMMAND_PRIORITY_HIGH,
   KEY_ENTER_COMMAND,
-  LexicalNode,
 } from 'lexical';
 import {
   INSERT_UNORDERED_LIST_COMMAND,
@@ -15,37 +14,14 @@ import {
   $createListNode,
   $isListItemNode,
   $isListNode,
-  ListItemNode,
 } from '@lexical/list';
-import { $isPanelBlockNode } from '../nodes/PanelBlockNode/PanelBlockNode';
-
-/**
- * Helper to check if a node is inside a panel
- */
-function $isInsidePanel(node: LexicalNode): boolean {
-  let current: LexicalNode | null = node;
-  while (current !== null) {
-    if ($isPanelBlockNode(current)) {
-      return true;
-    }
-    current = current.getParent();
-  }
-  return false;
-}
-
-/**
- * Helper to get the panel ancestor
- */
-function $getPanelAncestor(node: LexicalNode): LexicalNode | null {
-  let current: LexicalNode | null = node;
-  while (current !== null) {
-    if ($isPanelBlockNode(current)) {
-      return current;
-    }
-    current = current.getParent();
-  }
-  return null;
-}
+import {
+  $isInsidePanel,
+  $findParentListItem,
+  isListItemEmpty,
+  getParentList,
+  isListSingleItem,
+} from '../utils/panelListUtils';
 
 /**
  * Plugin that handles list commands inside panels.
@@ -72,36 +48,22 @@ export function PanelListPlugin(): null {
           return false;
         }
 
-        // Find the list item we're in
-        let listItem: ListItemNode | null = null;
-        let current: LexicalNode | null = anchorNode;
-        while (current !== null) {
-          if ($isListItemNode(current)) {
-            listItem = current;
-            break;
-          }
-          current = current.getParent();
-        }
-
+        // Find the list item we're in using the util
+        const listItem = $findParentListItem(anchorNode);
         if (!listItem) {
           return false;
         }
 
-        // Check if the list item is empty
-        const isEmpty =
-          listItem.getTextContentSize() === 0 ||
-          (listItem.getChildrenSize() === 1 &&
-            listItem.getFirstChild()?.getTextContentSize() === 0);
-
-        if (!isEmpty) {
+        // Check if the list item is empty using the util
+        if (!isListItemEmpty(listItem)) {
           return false;
         }
 
         // Exit the list: remove this empty item and create a paragraph after the list
         event?.preventDefault();
 
-        const listNode = listItem.getParent();
-        if (!listNode || !$isListNode(listNode)) {
+        const listNode = getParentList(listItem);
+        if (!listNode) {
           return false;
         }
 
@@ -109,7 +71,7 @@ export function PanelListPlugin(): null {
         const paragraph = $createParagraphNode();
 
         // If this is the only item in the list, replace the whole list with paragraph
-        if (listNode.getChildrenSize() === 1) {
+        if (isListSingleItem(listNode)) {
           listNode.replace(paragraph);
         } else {
           // Remove the empty list item and insert paragraph after list

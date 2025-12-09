@@ -252,4 +252,275 @@ describe('MediaInsertTabs', () => {
       expect(screen.getByText(/youtube, vimeo, loom/i)).toBeInTheDocument();
     });
   });
+
+  describe('File Type', () => {
+    it('shows file-specific URL label', () => {
+      render(<MediaInsertTabs {...defaultProps} mediaType="file" />, {
+        wrapper: createWrapper(null),
+      });
+
+      expect(screen.getByText(/file url/i)).toBeInTheDocument();
+    });
+
+    it('shows default file placeholder', () => {
+      render(<MediaInsertTabs {...defaultProps} mediaType="file" />, {
+        wrapper: createWrapper(null),
+      });
+
+      expect(screen.getByPlaceholderText(/document\.pdf/i)).toBeInTheDocument();
+    });
+
+    it('shows file type hint in upload', () => {
+      const mediaConfigWithUpload: EditorMediaConfig = {
+        uploadAdapter: {
+          uploadFile: async (file: File) => ({
+            url: 'https://example.com/uploaded.pdf',
+            mime: file.type,
+            size: file.size,
+          }),
+        },
+        maxFileSizeMB: 10,
+      };
+
+      render(<MediaInsertTabs {...defaultProps} mediaType="file" />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      // Switch to upload tab
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      expect(screen.getByText(/any file up to/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Drag and Drop', () => {
+    const mediaConfigWithUpload: EditorMediaConfig = {
+      uploadAdapter: {
+        uploadFile: async (file: File) => ({
+          url: 'https://example.com/uploaded.jpg',
+          mime: file.type,
+          size: file.size,
+        }),
+      },
+      allowedImageTypes: ['image/jpeg', 'image/png'],
+      maxFileSizeMB: 5,
+    };
+
+    it('handles drag over event', async () => {
+      render(<MediaInsertTabs {...defaultProps} />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      const dropZone = screen.getByText(/drag and drop/i).closest('div')!;
+
+      fireEvent.dragOver(dropZone, {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+      });
+
+      // Should show visual feedback
+      expect(dropZone.parentElement).toHaveClass('border-dashed');
+    });
+
+    it('handles drag leave event', async () => {
+      render(<MediaInsertTabs {...defaultProps} />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      const dropZone = screen.getByText(/drag and drop/i).closest('div')!;
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.dragLeave(dropZone);
+
+      // Visual feedback should be removed
+      expect(dropZone.parentElement).toHaveClass('border-border');
+    });
+
+    it('handles file drop event', async () => {
+      render(<MediaInsertTabs {...defaultProps} />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      const dropZone = screen
+        .getByText(/drag and drop/i)
+        .closest('div')!.parentElement!;
+
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+      const dataTransfer = {
+        files: [file],
+      };
+
+      fireEvent.drop(dropZone, { dataTransfer });
+
+      await waitFor(() => {
+        expect(defaultProps.onInsertFromFile).toHaveBeenCalledWith(file);
+      });
+    });
+  });
+
+  describe('File Validation', () => {
+    const mediaConfigWithUpload: EditorMediaConfig = {
+      uploadAdapter: {
+        uploadFile: async (file: File) => ({
+          url: 'https://example.com/uploaded.jpg',
+          mime: file.type,
+          size: file.size,
+        }),
+      },
+      allowedImageTypes: ['image/jpeg', 'image/png'],
+      maxFileSizeMB: 1,
+    };
+
+    it('rejects files with invalid type', async () => {
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+      render(<MediaInsertTabs {...defaultProps} mediaType="image" />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      const file = new File(['test'], 'test.gif', { type: 'image/gif' });
+      const input = screen.getByTestId('image-upload-input');
+
+      Object.defineProperty(input, 'files', { value: [file] });
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          expect.stringContaining('not allowed'),
+        );
+      });
+
+      expect(defaultProps.onInsertFromFile).not.toHaveBeenCalled();
+      alertSpy.mockRestore();
+    });
+
+    it('rejects files exceeding size limit', async () => {
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+      render(<MediaInsertTabs {...defaultProps} mediaType="image" />, {
+        wrapper: createWrapper(mediaConfigWithUpload),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      // Create a file larger than 1MB
+      const largeContent = new Array(2 * 1024 * 1024).fill('a').join('');
+      const file = new File([largeContent], 'large.jpg', {
+        type: 'image/jpeg',
+      });
+      const input = screen.getByTestId('image-upload-input');
+
+      Object.defineProperty(input, 'files', { value: [file] });
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          expect.stringContaining('exceeds'),
+        );
+      });
+
+      expect(defaultProps.onInsertFromFile).not.toHaveBeenCalled();
+      alertSpy.mockRestore();
+    });
+  });
+
+  describe('Video Upload Tab', () => {
+    const videoMediaConfig: EditorMediaConfig = {
+      uploadAdapter: {
+        uploadFile: async (file: File) => ({
+          url: 'https://example.com/uploaded.mp4',
+          mime: file.type,
+          size: file.size,
+        }),
+      },
+      allowedVideoTypes: ['video/mp4', 'video/webm'],
+      maxFileSizeMB: 50,
+    };
+
+    it('shows video type hint in upload', () => {
+      render(<MediaInsertTabs {...defaultProps} mediaType="video" />, {
+        wrapper: createWrapper(videoMediaConfig),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      expect(screen.getByText(/mp4, webm/i)).toBeInTheDocument();
+    });
+
+    it('accepts video file types', async () => {
+      render(<MediaInsertTabs {...defaultProps} mediaType="video" />, {
+        wrapper: createWrapper(videoMediaConfig),
+      });
+
+      const uploadTab = screen.getByRole('tab', { name: /upload/i });
+      fireEvent.click(uploadTab);
+
+      const file = new File(['video content'], 'test.mp4', {
+        type: 'video/mp4',
+      });
+      const input = screen.getByTestId('video-upload-input');
+
+      Object.defineProperty(input, 'files', { value: [file] });
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(defaultProps.onInsertFromFile).toHaveBeenCalledWith(file);
+      });
+    });
+  });
+
+  describe('Keyboard Navigation', () => {
+    it('inserts from URL on Enter key', () => {
+      render(<MediaInsertTabs {...defaultProps} />, {
+        wrapper: createWrapper(null),
+      });
+
+      const urlInput = screen.getByPlaceholderText(/example\.com/i);
+      fireEvent.change(urlInput, {
+        target: { value: 'https://example.com/image.jpg' },
+      });
+
+      fireEvent.keyDown(urlInput, { key: 'Enter' });
+
+      expect(defaultProps.onInsertFromUrl).toHaveBeenCalledWith(
+        'https://example.com/image.jpg',
+        undefined,
+      );
+    });
+
+    it('inserts from alt text field on Enter key', () => {
+      render(<MediaInsertTabs {...defaultProps} showAltText={true} />, {
+        wrapper: createWrapper(null),
+      });
+
+      const urlInput = screen.getByPlaceholderText(/example\.com/i);
+      fireEvent.change(urlInput, {
+        target: { value: 'https://example.com/image.jpg' },
+      });
+
+      const altInput = screen.getByPlaceholderText(/description/i);
+      fireEvent.change(altInput, { target: { value: 'My image' } });
+      fireEvent.keyDown(altInput, { key: 'Enter' });
+
+      expect(defaultProps.onInsertFromUrl).toHaveBeenCalledWith(
+        'https://example.com/image.jpg',
+        { alt: 'My image' },
+      );
+    });
+  });
 });

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { LumiaEditorStateJSON } from '../../types';
 
 const meta: Meta<typeof BlockInspector> = {
-  title: 'Editor/BlockInspector',
+  title: 'Editor/Features/BlockInspector',
   component: BlockInspector,
   tags: ['autodocs'],
 };

@@ -19,7 +19,7 @@ export const BlockOutline = () => {
         if ($isElementNode(node)) {
           (node as ElementNode).selectStart();
         } else {
-          (node as any).select();
+          node.selectNext();
         }
       }
     });

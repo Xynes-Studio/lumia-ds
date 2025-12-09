@@ -3,7 +3,7 @@ import { VideoBlockComponent } from './VideoBlockComponent';
 import { EditorProvider } from '../../EditorProvider';
 
 const meta: Meta<typeof VideoBlockComponent> = {
-  title: 'Editor/Nodes/VideoBlockComponent',
+  title: 'Editor/Blocks/Video',
   component: VideoBlockComponent,
   parameters: {
     layout: 'centered',
@@ -95,5 +95,55 @@ export const AlignedRight: Story = {
     width: 400,
     alignment: 'right',
     nodeKey: '8',
+  },
+};
+
+export const AlignedLeft: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Left Aligned',
+    width: 400,
+    alignment: 'left',
+    nodeKey: '9',
+  },
+};
+
+export const AlignedCenter: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Center Aligned',
+    width: 400,
+    alignment: 'center',
+    nodeKey: '10',
+  },
+};
+
+export const Interactive: Story = {
+  args: {
+    src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+    provider: 'html5',
+    title: 'Interactive Video',
+    width: 500,
+    nodeKey: '11',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click the video to select it and reveal the floating toolbar.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    // Find the video container and simulate a click
+    const container =
+      canvasElement.querySelector('[data-testid="video-block"]') ||
+      canvasElement.querySelector('.video-block-container') ||
+      canvasElement.querySelector('video')?.parentElement;
+    if (container) {
+      (container as HTMLElement).click();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
   },
 };

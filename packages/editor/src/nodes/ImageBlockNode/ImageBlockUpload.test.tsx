@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -119,16 +119,11 @@ describe('ImageBlockUpload', () => {
       allowedImageTypes: ['image/jpeg', 'image/png'],
     };
 
+    let resolveUpload: (value: unknown) => void;
     mockUploadFile.mockImplementation(
       () =>
         new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              url: 'https://example.com/uploaded.jpg',
-              mime: 'image/jpeg',
-              size: 1024,
-            });
-          }, 100);
+          resolveUpload = resolve;
         }),
     );
 
@@ -144,6 +139,15 @@ describe('ImageBlockUpload', () => {
     const image = await screen.findByRole('img');
     expect(image).toHaveAttribute('src', 'blob:mock-preview-url');
     expect(image).toHaveClass('opacity-50'); // Uploading state
+
+    // Resolve the upload
+    await act(async () => {
+      resolveUpload({
+        url: 'https://example.com/uploaded.jpg',
+        mime: 'image/jpeg',
+        size: 1024,
+      });
+    });
 
     // Wait for upload to complete
     await waitFor(() => {

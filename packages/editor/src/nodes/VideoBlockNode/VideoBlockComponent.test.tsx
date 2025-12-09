@@ -163,10 +163,8 @@ describe('VideoBlockComponent', () => {
       />,
     );
 
-    // Check for the video with opacity class
-    const video = await screen
-      .findByRole('application', { hidden: true })
-      .catch(() => null);
+    // Check for the video with opacity class - we just need to wait for loading
+    await screen.findByRole('application', { hidden: true }).catch(() => null);
     // Since video element may not have a role, let's check for the loading spinner class
     const container = document.querySelector('.video-block-container');
     expect(container).toBeInTheDocument();

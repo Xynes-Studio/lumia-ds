@@ -12,7 +12,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
 const meta: Meta<typeof FileBlockComponent> = {
-  title: 'Nodes/FileBlockComponent',
+  title: 'Editor/Blocks/File',
   component: FileBlockComponent,
   parameters: {
     layout: 'centered',

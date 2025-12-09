@@ -19,6 +19,7 @@ import {
 import { Plus, ChevronDown, LucideIcon } from 'lucide-react';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { getInsertableBlocks, BlockDefinition, BlockType } from '../../blocks';
+import { $toggleTableHeaderRow } from '../../plugins/TableActionMenuPlugin/tableUtils';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
 import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
@@ -126,11 +127,6 @@ function handleSimpleInsert(type: BlockType, editor: LexicalEditor) {
       // After table insertion, toggle only the first row as header
       setTimeout(() => {
         editor.update(() => {
-          // Import dynamically to avoid circular dependencies
-
-          const {
-            $toggleTableHeaderRow,
-          } = require('../../plugins/TableActionMenuPlugin/tableUtils');
           $toggleTableHeaderRow(true);
         });
       }, 0);

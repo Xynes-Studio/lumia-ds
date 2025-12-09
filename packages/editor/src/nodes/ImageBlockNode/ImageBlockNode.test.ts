@@ -60,4 +60,65 @@ describe('ImageBlockNode', () => {
       expect(node.__status).toBe(json.status);
     });
   });
+
+  test('should return correct type', () => {
+    expect(ImageBlockNode.getType()).toBe('image-block');
+  });
+
+  test('should clone correctly', () => {
+    editor.update(() => {
+      const node = new ImageBlockNode(
+        'https://example.com/image.jpg',
+        'Test',
+        'Caption',
+        'inline',
+        400,
+        300,
+        'uploaded',
+      );
+      const cloned = ImageBlockNode.clone(node);
+      expect(cloned.__src).toBe(node.__src);
+      expect(cloned.__alt).toBe(node.__alt);
+      expect(cloned.__layout).toBe(node.__layout);
+    });
+  });
+
+  test('should handle error status', () => {
+    editor.update(() => {
+      const node = new ImageBlockNode(
+        'blob:test',
+        'Error Image',
+        undefined,
+        'inline',
+        undefined,
+        undefined,
+        'error',
+      );
+      expect(node.__status).toBe('error');
+    });
+  });
+
+  test('should support setWidth', () => {
+    editor.update(() => {
+      const node = new ImageBlockNode('https://example.com/test.jpg', 'Test');
+      node.setWidth(640);
+      expect(node.__width).toBe(640);
+    });
+  });
+
+  test('should support setLayout', () => {
+    editor.update(() => {
+      const node = new ImageBlockNode('https://example.com/test.jpg', 'Test');
+      node.setLayout('fullWidth');
+      expect(node.__layout).toBe('fullWidth');
+    });
+  });
+
+  test('should support setCaption', () => {
+    editor.update(() => {
+      const node = new ImageBlockNode('https://example.com/test.jpg', 'Test');
+      node.setCaption('New caption');
+      expect(node.__caption).toBe('New caption');
+    });
+  });
 });

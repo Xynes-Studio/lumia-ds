@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { getTopLevelBlockNode } from './SelectedBlockTrackerPlugin';
-import { ElementNode, LexicalNode, TextNode } from 'lexical';
+import { LexicalNode } from 'lexical';
 
 // Mock Lexical nodes since we are unit testing logic that relies on node traversal
 // We can mock the minimal interface needed: getType, getParent, getKey.
@@ -37,7 +37,6 @@ describe('SelectedBlockTrackerPlugin', () => {
   describe('getTopLevelBlockNode', () => {
     it('should return the node itself if it IS the top level block (parent is root)', () => {
       const rootNode = createMockNode('root', null, 'root');
-      // @ts-ignore
       const paragraphNode = createMockNode('paragraph', rootNode, 'p1');
 
       expect(getTopLevelBlockNode(paragraphNode)).toBe(paragraphNode);
@@ -45,9 +44,7 @@ describe('SelectedBlockTrackerPlugin', () => {
 
     it('should traverse up from a nested text node to find the top level block', () => {
       const rootNode = createMockNode('root', null, 'root');
-      // @ts-ignore
       const paragraphNode = createMockNode('paragraph', rootNode, 'p1');
-      // @ts-ignore
       const textNode = createMockNode('text', paragraphNode, 't1');
 
       expect(getTopLevelBlockNode(textNode)).toBe(paragraphNode);
@@ -67,11 +64,8 @@ describe('SelectedBlockTrackerPlugin', () => {
       // Should return List.
 
       const rootNode = createMockNode('root', null, 'root');
-      // @ts-ignore
       const listNode = createMockNode('list', rootNode, 'list1');
-      // @ts-ignore
       const listItemNode = createMockNode('listitem', listNode, 'li1');
-      // @ts-ignore
       const textNode = createMockNode('text', listItemNode, 't1');
 
       expect(getTopLevelBlockNode(textNode)).toBe(listNode);
@@ -79,8 +73,7 @@ describe('SelectedBlockTrackerPlugin', () => {
     });
 
     it('should return null if node is null', () => {
-      // @ts-ignore
-      expect(getTopLevelBlockNode(null)).toBeNull();
+      expect(getTopLevelBlockNode(null as unknown as LexicalNode)).toBeNull();
     });
 
     it('should return null if node is not attached to root', () => {

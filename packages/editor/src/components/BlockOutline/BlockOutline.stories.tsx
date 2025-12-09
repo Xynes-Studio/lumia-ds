@@ -5,7 +5,7 @@ import { LumiaEditorPrimitive } from '../../internal/LumiaEditorPrimitive';
 import { BlockInspector } from '../BlockInspector/BlockInspector';
 
 const meta: Meta = {
-  title: 'Editor/BlockOutline',
+  title: 'Editor/Features/BlockOutline',
   component: BlockOutline,
   tags: ['autodocs'],
   parameters: {

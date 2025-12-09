@@ -703,3 +703,92 @@ To view the editor components in Storybook:
 ```bash
 pnpm storybook
 ```
+
+## Architecture
+
+The editor package follows a modular architecture:
+
+```
+src/
+├── blocks/           # Block registry and type definitions
+├── components/       # Reusable UI components
+│   ├── BlockInspector/   # Block-specific property editors
+│   ├── BlockOutline/     # Document outline sidebar
+│   ├── Fonts/            # Font selection UI
+│   ├── MediaInsert/      # Media upload/URL insertion
+│   ├── SlashMenu/        # Slash command menu
+│   └── Toolbar/          # Editor toolbar buttons
+├── hooks/            # Custom React hooks
+├── internal/         # Internal implementation (not public API)
+├── nodes/            # Custom Lexical nodes
+│   ├── FileBlockNode/
+│   ├── ImageBlockNode/
+│   ├── PanelBlockNode/
+│   ├── StatusNode/
+│   ├── Table/
+│   └── VideoBlockNode/
+├── plugins/          # Lexical plugins for editor behavior
+└── test/             # Test utilities and setup
+```
+
+### Key Concepts
+
+- **EditorProvider**: Wraps the Lexical editor with contexts for fonts, media, and block selection.
+- **BlockRegistry**: Central registry for all block types, their metadata, and associated components.
+- **Plugins**: React components that register Lexical commands and event handlers.
+- **Nodes**: Custom Lexical nodes that represent block-level content (images, videos, panels, etc.).
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test -- --watch
+
+# Run tests with coverage
+pnpm test -- --coverage
+```
+
+### Test Structure
+
+- **Unit tests**: Located next to source files (e.g., `Button.test.tsx`)
+- **Integration tests**: For testing component compositions and flows
+- **Accessibility tests**: Using `jest-axe` for ARIA compliance
+
+### Writing Tests
+
+```tsx
+import { describe, it, expect } from 'vitest';
+import { createHeadlessEditor } from '@lexical/headless';
+
+describe('MyPlugin', () => {
+  it('should handle command', async () => {
+    const editor = createHeadlessEditor({
+      nodes: [/* ... */],
+    });
+    
+    // Use Promise wrapper for async editor updates
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => { /* ... */ },
+        { onUpdate: resolve },
+      );
+    });
+    
+    editor.read(() => {
+      // assertions
+
+### Coverage Targets
+
+The project aims for **90% test coverage** across all metrics. Crucial components like plugins, nodes, and toolbar buttons must have comprehensive unit tests.
+
+### Mocking Strategy
+
+For components depending on Lexical context:
+1. **Unit Tests**: Mock `useLexicalComposerContext` and other hooks to return minimal stubbed editor instances.
+2. **Integration Tests**: Use `LexicalComposer` wrapper effectively but be mindful of JSDOM limitations with complex event dispatching.
+3. **Registry**: Mock `BlockRegistry` lookups (`getInsertableBlocks`, `getBlockDefinition`) to isolate component rendering logic.
