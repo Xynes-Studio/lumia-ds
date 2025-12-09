@@ -6,6 +6,9 @@ import { IconCheck, IconChatBubble } from './generated';
 import {
   Icon,
   IconSparkle,
+  IconSprite,
+  SpriteIcon,
+  SPRITE_ICONS,
   clearIconRegistry,
   getIcon,
   registerIcon,
@@ -151,5 +154,73 @@ describe('<Icon />', () => {
     expect(markup).toContain('width="20"');
     expect(markup).toContain('height="20"');
     expect(markup).toContain('stroke-width="1.5"');
+  });
+});
+
+describe('<SpriteIcon />', () => {
+  it('renders <use href="#icon-chevron-down">', () => {
+    const markup = renderToStaticMarkup(<SpriteIcon name="chevron-down" />);
+
+    expect(markup).toContain('<use href="#icon-chevron-down"');
+  });
+
+  it('renders with default size of 24', () => {
+    const markup = renderToStaticMarkup(<SpriteIcon name="check" />);
+
+    expect(markup).toContain('width="24"');
+    expect(markup).toContain('height="24"');
+  });
+
+  it('applies custom size', () => {
+    const markup = renderToStaticMarkup(<SpriteIcon name="add" size={32} />);
+
+    expect(markup).toContain('width="32"');
+    expect(markup).toContain('height="32"');
+  });
+
+  it('applies custom className', () => {
+    const markup = renderToStaticMarkup(
+      <SpriteIcon name="search" className="text-primary" />,
+    );
+
+    expect(markup).toContain('text-primary');
+  });
+
+  it('includes aria-hidden for accessibility', () => {
+    const markup = renderToStaticMarkup(<SpriteIcon name="info" />);
+
+    expect(markup).toContain('aria-hidden="true"');
+  });
+});
+
+describe('<IconSprite />', () => {
+  it('renders hidden SVG container', () => {
+    const markup = renderToStaticMarkup(<IconSprite />);
+
+    expect(markup).toContain('display:none');
+    expect(markup).toContain('aria-hidden="true"');
+  });
+
+  it('contains symbol for chevron-down', () => {
+    const markup = renderToStaticMarkup(<IconSprite />);
+
+    expect(markup).toContain('<symbol id="icon-chevron-down"');
+    expect(markup).toContain('viewBox="0 0 24 24"');
+  });
+
+  it('contains all core sprite icons', () => {
+    const markup = renderToStaticMarkup(<IconSprite />);
+
+    SPRITE_ICONS.forEach((name: string) => {
+      expect(markup).toContain(`id="icon-${name}"`);
+    });
+  });
+
+  it('renders valid SVG paths for each symbol', () => {
+    const markup = renderToStaticMarkup(<IconSprite />);
+
+    // Check that symbols have path or circle content
+    expect(markup).toContain('<path');
+    expect(markup).toContain('<circle');
   });
 });
