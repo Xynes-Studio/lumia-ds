@@ -29,5 +29,21 @@ To add or modify a token:
 2.  Run `pnpm build:tokens`.
 3.  Commit the changes.
 
-> [!NOTE]
 > Do not edit generated files in `dist/` or `src/generated/` directly.
+
+## Testing
+
+We use **Vitest** for token regression testing:
+
+- **Snapshot Tests** (`test/tokens.test.ts`): Ensures that the generated token values do not change unexpectedly.
+- **Type Tests** (`test/types.test.ts`): Verifies that the TypeScript interfaces (`Tokens['color']`, etc.) match the expected shape and keys.
+
+Run tests with:
+```bash
+pnpm test
+```
+If you intentionally change tokens, update snapshots with:
+```bash
+pnpm test -u
+```
+

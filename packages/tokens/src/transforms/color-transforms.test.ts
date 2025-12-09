@@ -3,6 +3,7 @@ import {
   generatePrimaryScale,
   hexToRgba,
   contrast,
+  // @ts-ignore
 } from '../../sd-transforms.mjs';
 
 describe('Color Transforms', () => {
