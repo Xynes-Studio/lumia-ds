@@ -30,6 +30,20 @@ export function createProgram(): Command {
       console.log(version);
     });
 
+  program
+    .command('generate <type> <name>')
+    .description('Generate a new resource (e.g. component)')
+    .action(async (type, name, options) => {
+      if (type !== 'component') {
+        console.error(`Unknown generator type: ${type}. Supported types: component`);
+        process.exit(1);
+      }
+      const { generateComponent } = await import(
+        './commands/generate/component'
+      );
+      await generateComponent(name, options);
+    });
+
   return program;
 }
 
