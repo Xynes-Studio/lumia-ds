@@ -50,7 +50,7 @@ const renderContent = (
     <>
       {icon ? (
         <Icon
-          id={icon}
+          name={icon}
           size={18}
           aria-hidden="true"
           className={cn('shrink-0', active && 'text-primary-800')}
