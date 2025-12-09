@@ -1,6 +1,5 @@
 import { useId, useMemo, useState } from 'react';
-import type { Matcher } from 'react-day-picker';
-import { Calendar } from '../calendar/calendar';
+import { Calendar, DisabledMatcher, DateRange } from '../calendar/calendar';
 import {
   baseFieldClasses,
   buildAriaDescribedBy,
@@ -77,7 +76,7 @@ export const DatePicker = ({
   const toDate = useMemo(() => startOfDay(maxDate), [maxDate]);
   const displayValue = formatDisplayDate(normalizedValue) || placeholder;
   const disabledDays = useMemo(() => {
-    const matchers: Matcher[] = [];
+    const matchers: DisabledMatcher[] = [];
     if (fromDate) {
       matchers.push({ before: fromDate });
     }
@@ -87,8 +86,12 @@ export const DatePicker = ({
     return matchers;
   }, [fromDate, toDate]);
 
-  const handleSelect = (next?: Date) => {
-    const normalizedNext = startOfDay(next);
+  const handleSelect = (next?: Date | DateRange) => {
+    // In single mode, next will be Date or undefined.
+    // If it's DateRange (shouldn't happen in single mode), we ignore or handle.
+    // We cast to Date | undefined for this component's logic.
+    const dateVal = next instanceof Date ? next : undefined;
+    const normalizedNext = startOfDay(dateVal);
     onChange(normalizedNext ?? undefined);
     setOpen(false);
   };
@@ -159,7 +162,7 @@ export const DatePicker = ({
             disabled={disabledDays}
             autoFocus
             classNames={{
-               day: 'data-[selected]:rounded-md'
+              day: 'data-[selected]:rounded-md',
             }}
           />
         </PopoverContent>

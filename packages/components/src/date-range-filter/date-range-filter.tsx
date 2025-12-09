@@ -1,14 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Calendar, type DateRange } from '../calendar/calendar';
-// Check if Matcher is exported from calendar. It is not. 
-// I will define Matcher locally or in Calendar. 
-// Actually I will import Matcher from calendar if I export it, OR I will just remove the type annotation 
-// or define a local type since react-day-picker is going away.
-// Let's assume I will remove react-day-picker.
-// So I will define Matcher type here or generic.
-// Let's export Matcher from calendar.tsx first? No, I can't edit calendar.tsx in this tool call.
-// I'll define it locally for now using 'any' to avoid breaking build, or better, the structure used.
-type Matcher = any;
+import {
+  Calendar,
+  type DateRange,
+  type DisabledMatcher as Matcher,
+} from '../calendar/calendar';
 import { Button } from '../button/button';
 import {
   baseFieldClasses,
@@ -366,12 +361,13 @@ export const DateRangeFilter = ({
                   numberOfMonths={2}
                   defaultMonth={parsedFrom ?? normalizedMinDate ?? undefined}
                   selected={selectedRange}
-                  onSelect={(next) =>
+                  onSelect={(next) => {
+                    const range = next as DateRange | undefined;
                     applyChange(
-                      formatInputDate(next?.from),
-                      formatInputDate(next?.to),
-                    )
-                  }
+                      formatInputDate(range?.from),
+                      formatInputDate(range?.to),
+                    );
+                  }}
                   disabled={disabledMatchers}
                   startMonth={normalizedMinDate}
                   endMonth={toMaxCandidate}
