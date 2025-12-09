@@ -32,6 +32,30 @@ Displays help information for commands.
 pnpm lumia --help
 ```
 
+
+### Generator Commands
+
+#### `generate component <Name>`
+Scaffolds a new React component with consistent folder structure.
+
+**Usage:**
+```bash
+lumia generate component Button
+```
+
+**Prompts:**
+- **Package**: Which package does this component belong to? (e.g. `@lumia/ui`)
+- **Features**: Select files to generate (Storybook Story, Test File, Style File).
+
+**Output Structure:**
+```
+packages/<pkg>/src/components/<Name>/
+├── <Name>.tsx
+├── <Name>.stories.tsx
+├── <Name>.test.tsx
+└── <Name>.css
+```
+
 ## Architecture
 
 The CLI is built using **Commander.js** and follows a standard subcommand pattern.
