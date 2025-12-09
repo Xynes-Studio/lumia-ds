@@ -47,6 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - Icon import workflow: `docs/icon-import.md`
 - Runtime schemas: `docs/runtime-schemas.md`
 - Admin app consumption guide: `docs/admin-app-consumption.md`
+- **Release process: `docs/release-process.md`**
+- QA test plan: `docs/qa-test-plan.md`
 
 ## Development
 
@@ -58,3 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 - Generate a resource: `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`
 - Fills `src/resources/<resource>.resource.ts` with a `defineResource` template; add pages, fields, and fetchers, then type-check/build.
+
+## Versioning
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to create changesets and release packages.
