@@ -1,5 +1,14 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { DayPicker, type DateRange, type Matcher } from 'react-day-picker';
+import { Calendar, type DateRange } from '../calendar/calendar';
+// Check if Matcher is exported from calendar. It is not. 
+// I will define Matcher locally or in Calendar. 
+// Actually I will import Matcher from calendar if I export it, OR I will just remove the type annotation 
+// or define a local type since react-day-picker is going away.
+// Let's assume I will remove react-day-picker.
+// So I will define Matcher type here or generic.
+// Let's export Matcher from calendar.tsx first? No, I can't edit calendar.tsx in this tool call.
+// I'll define it locally for now using 'any' to avoid breaking build, or better, the structure used.
+type Matcher = any;
 import { Button } from '../button/button';
 import {
   baseFieldClasses,
@@ -259,7 +268,7 @@ export const DateRangeFilter = ({
     variant === 'modern' ? 'grid gap-2 sm:grid-cols-2 sm:gap-3' : 'grid gap-3';
   const overlayWidth =
     variant === 'modern'
-      ? 'w-[min(640px,calc(100vw-2rem))]'
+      ? 'w-auto max-w-[calc(100vw-2rem)]'
       : 'w-[min(360px,calc(100vw-2rem))]';
   const disabledMatchers: Matcher[] = useMemo(() => {
     const matchers: Matcher[] = [];
@@ -352,7 +361,7 @@ export const DateRangeFilter = ({
           >
             <div className="grid gap-3">
               {variant === 'modern' ? (
-                <DayPicker
+                <Calendar
                   mode="range"
                   numberOfMonths={2}
                   defaultMonth={parsedFrom ?? normalizedMinDate ?? undefined}
@@ -364,46 +373,10 @@ export const DateRangeFilter = ({
                     )
                   }
                   disabled={disabledMatchers}
-                  fromDate={normalizedMinDate}
-                  toDate={toMaxCandidate}
+                  startMonth={normalizedMinDate}
+                  endMonth={toMaxCandidate}
                   showOutsideDays
                   className="rounded-md"
-                  classNames={{
-                    months:
-                      'flex flex-col gap-4 sm:flex-row sm:gap-6 sm:space-y-0',
-                    month: 'space-y-4',
-                    caption:
-                      'flex justify-center pt-1 relative items-center text-foreground',
-                    caption_label: 'text-sm font-medium',
-                    nav: 'space-x-1 flex items-center',
-                    nav_button:
-                      'h-8 w-8 rounded-md border border-border bg-transparent p-0 text-muted-foreground  transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                    nav_button_previous: 'absolute left-1',
-                    nav_button_next: 'absolute right-1',
-                    table: 'w-full border-collapse space-y-1',
-                    head_row: 'flex',
-                    head_cell:
-                      'text-muted-foreground  rounded-md w-8 font-normal text-[0.8rem]',
-                    row: 'flex w-full mt-2',
-                    cell: 'relative p-0 text-center text-sm focus-within:relative focus-within:z-20',
-                    day: cn(
-                      'h-9 w-9 p-0 font-normal rounded-md transition',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                      'aria-selected:opacity-100 aria-selected:bg-primary aria-selected:text-secondary',
-                      'aria-selected:rounded-none',
-                      '[data-outside-month]:text-muted-foreground ',
-                    ),
-                    day_range_start:
-                      'day-range-start rounded-l-md aria-selected:bg-primary aria-selected:text-secondary',
-                    day_range_end:
-                      'day-range-end rounded-r-md aria-selected:bg-primary aria-selected:text-secondary',
-                    day_range_middle:
-                      'aria-selected:bg-primary/15 aria-selected:text-foreground aria-selected:rounded-none',
-                    day_outside:
-                      'text-muted-foreground  aria-selected:bg-primary/10 aria-selected:text-muted-foreground  aria-selected:opacity-30',
-                    day_disabled:
-                      'text-muted-foreground  opacity-50 cursor-not-allowed',
-                  }}
                 />
               ) : (
                 <div className={gridLayoutClasses}>

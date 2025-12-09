@@ -1,6 +1,6 @@
 import { useId, useMemo, useState } from 'react';
 import type { Matcher } from 'react-day-picker';
-import { Calendar, calendarClassNames } from '../calendar/calendar';
+import { Calendar } from '../calendar/calendar';
 import {
   baseFieldClasses,
   buildAriaDescribedBy,
@@ -154,13 +154,12 @@ export const DatePicker = ({
             mode="single"
             selected={normalizedValue}
             onSelect={handleSelect}
-            fromDate={fromDate}
-            toDate={toDate}
+            startMonth={fromDate}
+            endMonth={toDate}
             disabled={disabledDays}
-            initialFocus
+            autoFocus
             classNames={{
-              ...calendarClassNames,
-              day: cn(calendarClassNames.day, 'aria-selected:rounded-md'),
+               day: 'data-[selected]:rounded-md'
             }}
           />
         </PopoverContent>
