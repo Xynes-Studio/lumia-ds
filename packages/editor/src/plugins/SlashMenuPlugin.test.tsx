@@ -19,6 +19,15 @@ vi.mock('lucide-react', async (importOriginal) => {
   return await importOriginal();
 });
 
+vi.mock('./TableActionMenuPlugin/tableUtils', () => ({
+  $toggleTableHeaderRow: vi.fn(),
+}));
+
+// Mock Lexical imports to avoid issues with specialized nodes
+vi.mock('lexical', async (importOriginal) => {
+  return await importOriginal();
+});
+
 // Helper to set up editor with initial content
 // Helper to set up editor with initial content
 function SetupPlugin({
