@@ -68,6 +68,7 @@ export function Icon({
     'aria-hidden': title ? undefined : true,
     'aria-labelledby': title ? `icon-title-${name}` : undefined,
     role: title ? 'img' : undefined,
+    focusable: title ? undefined : 'false',
     ...props,
   };
 

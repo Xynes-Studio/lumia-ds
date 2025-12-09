@@ -316,6 +316,12 @@ describe('<Icon />', () => {
       expect(markup).toContain('aria-hidden="true"');
     });
 
+    it('renders with focusable="false" when no title provided', () => {
+      const markup = renderToStaticMarkup(<Icon name="info" />);
+
+      expect(markup).toContain('focusable="false"');
+    });
+
     it('renders with title and aria-labelledby when title provided', () => {
       const markup = renderToStaticMarkup(
         <Icon name="alert" title="Warning message" />,
@@ -326,6 +332,14 @@ describe('<Icon />', () => {
       expect(markup).toContain('aria-labelledby="icon-title-alert"');
       expect(markup).toContain('role="img"');
       expect(markup).not.toContain('aria-hidden="true"');
+    });
+
+    it('does not render focusable="false" when title is provided', () => {
+      const markup = renderToStaticMarkup(
+        <Icon name="alert" title="Warning message" />,
+      );
+
+      expect(markup).not.toContain('focusable="false"');
     });
 
     it('renders sprite icon with title correctly', () => {
@@ -418,6 +432,56 @@ describe('<SpriteIcon />', () => {
     const markup = renderToStaticMarkup(<SpriteIcon name="info" />);
 
     expect(markup).toContain('aria-hidden="true"');
+  });
+
+  it('includes focusable="false" for decorative icons', () => {
+    const markup = renderToStaticMarkup(<SpriteIcon name="info" />);
+
+    expect(markup).toContain('focusable="false"');
+  });
+
+  describe('accessibility with title', () => {
+    it('renders title element when title prop is provided', () => {
+      const markup = renderToStaticMarkup(
+        <SpriteIcon name="alert" title="Warning" />,
+      );
+
+      expect(markup).toContain(
+        '<title id="sprite-icon-title-alert">Warning</title>',
+      );
+    });
+
+    it('adds aria-labelledby when title is provided', () => {
+      const markup = renderToStaticMarkup(
+        <SpriteIcon name="check" title="Success" />,
+      );
+
+      expect(markup).toContain('aria-labelledby="sprite-icon-title-check"');
+    });
+
+    it('adds role="img" when title is provided', () => {
+      const markup = renderToStaticMarkup(
+        <SpriteIcon name="info" title="Information" />,
+      );
+
+      expect(markup).toContain('role="img"');
+    });
+
+    it('does not include aria-hidden when title is provided', () => {
+      const markup = renderToStaticMarkup(
+        <SpriteIcon name="alert" title="Warning" />,
+      );
+
+      expect(markup).not.toContain('aria-hidden="true"');
+    });
+
+    it('does not include focusable="false" when title is provided', () => {
+      const markup = renderToStaticMarkup(
+        <SpriteIcon name="alert" title="Warning" />,
+      );
+
+      expect(markup).not.toContain('focusable="false"');
+    });
   });
 });
 

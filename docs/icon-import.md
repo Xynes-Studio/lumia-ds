@@ -101,3 +101,48 @@ These icons are automatically rendered via `<use href>` for better performance.
 - `sideEffects: false` in `package.json` enables tree-shaking.
 - Registries reset when the icons package loads, seeding curated Lucide icons plus generated icons.
 - Adding a new icon to the registry automatically exposes it via `<Icon name="..." />`.
+
+## Accessibility (a11y)
+
+Icons must be marked as either **decorative** or **informative** for screen readers.
+
+### Decorative Icons
+
+Used purely for visual enhancement, hidden from assistive technologies:
+
+```tsx
+<Icon name="check" />
+// Output: <svg aria-hidden="true" focusable="false" />
+```
+
+### Informative Icons
+
+Convey meaning and require accessible labels:
+
+```tsx
+<Icon name="alert" title="Warning: Action required" />
+// Output: <svg role="img" aria-labelledby="icon-title-alert">
+//           <title id="icon-title-alert">Warning: Action required</title>
+```
+
+### SpriteIcon Accessibility
+
+Same pattern applies to `SpriteIcon`:
+
+```tsx
+// Decorative (default)
+<SpriteIcon name="chevron-down" />
+
+// Informative
+<SpriteIcon name="alert" title="Warning" />
+```
+
+### Best Practices
+
+| Scenario | Usage |
+|----------|-------|
+| Icon next to text label | Decorative (no `title`) |
+| Icon-only button | Informative (`title` required) |
+| Status indicators | Informative (`title` with status meaning) |
+| Decorative flourishes | Decorative (no `title`) |
+
