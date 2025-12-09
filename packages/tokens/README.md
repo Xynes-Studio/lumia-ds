@@ -13,7 +13,6 @@ Theme tokens for Lumia DS with helpers to emit CSS variables.
 >
 > Do not edit `dist/` files directly.
 
-
 ## Install
 
 ```bash
@@ -23,21 +22,16 @@ pnpm add @lumia/tokens
 ## Usage
 
 ```ts
-import { defaultTheme, tokens, themeToCSSVars, type ThemeTokens } from '@lumia/tokens';
+import { defaultTheme, tokens, type ThemeTokens } from '@lumia/tokens';
 
-const cssVars = themeToCSSVars(defaultTheme);
+// Access tokens directly
+const primaryColor = tokens.colors.primary; // e.g. #18181b
 ```
 
-Example with styled-components:
+Since tokens are already built as CSS variables in `dist/css/variables.css`, you simply need to import that CSS file in your application root:
 
 ```ts
-const GlobalStyles = createGlobalStyle`
-  :root {
-    ${Object.entries(cssVars)
-      .map(([key, value]) => `${key}: ${value};`)
-      .join('\n    ')}
-  }
-`;
+import '@lumia/tokens/dist/css/variables.css';
 ```
 
 ## Token groups

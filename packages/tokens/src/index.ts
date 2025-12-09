@@ -67,7 +67,7 @@ export type ThemeTokens = {
 
 export const defaultTheme: ThemeTokens = {
   colors: {
-    primary: Tokens.ColorPrimary,
+    primary: Tokens.ColorPrimaryBase,
     secondary: Tokens.ColorSecondary,
     background: Tokens.ColorBackground,
     foreground: Tokens.ColorForeground,
@@ -127,5 +127,3 @@ export const defaultTheme: ThemeTokens = {
 export const tokens = defaultTheme;
 
 export * from './generated/tokens';
-
-export { themeToCSSVars } from './theme-to-css-vars';
