@@ -10,7 +10,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    }
+    },
+    "./dist/css/variables.css": "./dist/css/variables.css"
   },
   "scripts": {
     "clean": "rm -rf dist",

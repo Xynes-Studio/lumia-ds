@@ -127,3 +127,26 @@ export const defaultTheme: ThemeTokens = {
 export const tokens = defaultTheme;
 
 export * from './generated/tokens';
+
+export const themeToCSSVars = (
+  theme: ThemeTokens,
+  prefix = '-',
+): Record<string, string> => {
+  const vars: Record<string, string> = {};
+
+  const flatten = (obj: Record<string, unknown>, currentKey: string) => {
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key];
+      const newKey = currentKey ? `${currentKey}-${key}` : key;
+
+      if (typeof value === 'object' && value !== null) {
+        flatten(value as Record<string, unknown>, newKey);
+      } else {
+        vars[`${prefix}-${newKey}`] = String(value);
+      }
+    });
+  };
+
+  flatten(theme, '');
+  return vars;
+};
