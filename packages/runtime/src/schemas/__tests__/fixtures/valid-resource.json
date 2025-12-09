@@ -1,0 +1,19 @@
+{
+    "id": "users",
+    "pages": {
+        "list": "users-list-page",
+        "detail": "user-detail-page",
+        "create": "user-create-page",
+        "update": "user-update-page"
+    },
+    "fields": [
+        {
+            "name": "name",
+            "label": "Name"
+        },
+        {
+            "name": "email",
+            "label": "Email"
+        }
+    ]
+}

@@ -161,6 +161,49 @@ if (result.success) {
 
 This enables graceful degradation: invalid blocks show `BlockErrorWidget` while valid blocks render normally.
 
+## Fixture-Based Schema Testing
+
+JSON fixtures are used to guarantee schema stability and catch breaking changes early. Fixtures live in `src/schemas/__tests__/fixtures/`.
+
+### Available Fixtures
+
+| Fixture | Purpose |
+|---------|---------|
+| `valid-page.json` | Complete page with blocks and grid |
+| `valid-block.json` | Block with all optional fields |
+| `valid-resource.json` | Resource with pages and fields |
+| `invalid-page-missing-id.json` | Page missing required `id` |
+| `invalid-page-bad-layout.json` | Page with invalid layout enum |
+| `invalid-block-missing-kind.json` | Block missing required `kind` |
+| `invalid-block-wrong-type.json` | Block with invalid kind enum |
+| `invalid-resource-missing-id.json` | Resource missing required `id` |
+
+### Using Fixtures
+
+```typescript
+import validPage from './fixtures/valid-page.json';
+import { PageSchemaSchema } from '@lumia/runtime';
+
+// Test valid fixture passes
+const result = PageSchemaSchema.safeParse(validPage);
+expect(result.success).toBe(true);
+
+// Test invalid fixture has expected error path
+import invalidPage from './fixtures/invalid-page-missing-id.json';
+const badResult = PageSchemaSchema.safeParse(invalidPage);
+expect(badResult.success).toBe(false);
+expect(badResult.error.issues[0].path).toEqual(['id']);
+```
+
+### Schema Stability Contract
+
+The fixture tests enforce:
+- Required field presence (`id`, `layout`, `blocks`, `kind`)
+- Enum value validity (`ComponentKind`, layout types)
+- Error path and code accuracy for debugging
+
+CI will fail if schemas change in a way that breaks existing fixtures, ensuring deliberate schema evolution.
+
 ## Data fetching contract
 
 - `getResourceConfig(resourceName)` → `ResourceConfig` (required)
