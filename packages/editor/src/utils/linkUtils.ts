@@ -97,3 +97,22 @@ export function sanitizeUrl(url: string): string {
   }
   return trimmed;
 }
+
+/**
+ * Check if key is a command key (Meta/Control).
+ * @param key - The key pressed
+ * @returns True if it's a command key
+ */
+export function isCommandKey(key: string): boolean {
+  return key === 'Meta' || key === 'Control';
+}
+
+/**
+ * Determine if link should open based on modifier keys.
+ * @param metaKey - Whether meta key is pressed
+ * @param ctrlKey - Whether ctrl key is pressed
+ * @returns True if link should open
+ */
+export function shouldOpenLink(metaKey: boolean, ctrlKey: boolean): boolean {
+  return metaKey || ctrlKey;
+}

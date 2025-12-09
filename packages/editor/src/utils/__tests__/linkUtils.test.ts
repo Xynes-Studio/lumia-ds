@@ -7,6 +7,8 @@ import {
   getLinkDisplayText,
   needsHttpsUpgrade,
   sanitizeUrl,
+  isCommandKey,
+  shouldOpenLink,
 } from '../linkUtils';
 
 describe('linkUtils', () => {
@@ -121,6 +123,41 @@ describe('linkUtils', () => {
       expect(sanitizeUrl('  https://example.com  ')).toBe(
         'https://example.com',
       );
+    });
+  });
+
+  describe('isCommandKey', () => {
+    test('returns true for Meta key', () => {
+      expect(isCommandKey('Meta')).toBe(true);
+    });
+
+    test('returns true for Control key', () => {
+      expect(isCommandKey('Control')).toBe(true);
+    });
+
+    test('returns false for other keys', () => {
+      expect(isCommandKey('Shift')).toBe(false);
+      expect(isCommandKey('Alt')).toBe(false);
+      expect(isCommandKey('a')).toBe(false);
+      expect(isCommandKey('Enter')).toBe(false);
+    });
+  });
+
+  describe('shouldOpenLink', () => {
+    test('returns true when metaKey is pressed', () => {
+      expect(shouldOpenLink(true, false)).toBe(true);
+    });
+
+    test('returns true when ctrlKey is pressed', () => {
+      expect(shouldOpenLink(false, true)).toBe(true);
+    });
+
+    test('returns true when both are pressed', () => {
+      expect(shouldOpenLink(true, true)).toBe(true);
+    });
+
+    test('returns false when neither is pressed', () => {
+      expect(shouldOpenLink(false, false)).toBe(false);
     });
   });
 });
