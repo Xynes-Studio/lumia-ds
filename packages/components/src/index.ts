@@ -44,3 +44,4 @@ export * from './slider/slider';
 export * from './date-picker/date-picker';
 export * from './time-picker/time-picker';
 export * from './file-upload/file-upload';
+export * from './calendar';

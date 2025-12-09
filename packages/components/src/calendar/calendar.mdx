@@ -1,0 +1,42 @@
+
+import { Canvas, Meta, Story, Controls } from '@storybook/blocks';
+import * as CalendarStories from './calendar.stories';
+
+<Meta of={CalendarStories} />
+
+# Calendar
+
+The Calendar component is a flexible date picker that supports single date and date range selection. It comes with two variants: `compact` (default) for dropdowns/popovers and `full` for full-screen management interfaces.
+
+## Features
+- **Variants**: Compact and Full-screen modes.
+- **Selection Modes**: Single date, Date range.
+- **Customization**: Fully customizable day rendering via `renderDay`.
+- **Navigation**: Interactive header with month/year selection.
+- **Localization**: Built on top of `date-fns` and supports localization.
+
+## Examples
+
+### Default (Compact)
+Standard month view suitable for date pickers.
+
+<Canvas of={CalendarStories.Default} />
+
+### Range Selection
+Select a start and end date.
+
+<Canvas of={CalendarStories.RangeSelection} />
+
+### Full Variant
+A full-screen calendar with view switching (Month/Week/Day).
+
+<Canvas of={CalendarStories.FullVariant} />
+
+### Custom Day Rendering
+Customize the appearance of day cells, e.g., adding event indicators.
+
+<Canvas of={CalendarStories.CustomDayRendering} />
+
+## Props
+
+<Controls />

@@ -237,7 +237,7 @@ describe('DateRangeFilter', () => {
       trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    const tables = host.querySelectorAll('table');
+    const tables = host.querySelectorAll('[role="grid"]');
     expect(tables.length).toBeGreaterThanOrEqual(2);
 
     const disabledDate = host.querySelector(
