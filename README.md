@@ -58,3 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 - Generate a resource: `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`
 - Fills `src/resources/<resource>.resource.ts` with a `defineResource` template; add pages, fields, and fetchers, then type-check/build.
+
+## Versioning
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to create changesets and release packages.
