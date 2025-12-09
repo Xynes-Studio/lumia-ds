@@ -12,9 +12,58 @@ Convert raw SVG files into React components and register them in `@lumia/icons`.
    This runs SVGR to generate React components under `packages/icons/src/generated/`.
 3. Generated exports live in `packages/icons/src/generated/index.ts`, and registration happens in `packages/icons/src/generated/registry.ts`. These files are auto-written—do not edit by hand.
 
-## Use the Icons
+## Unified Icon Component (Recommended)
 
-### Direct Import (Tree-Shakable)
+The `<Icon>` component provides a single API for all icons, automatically choosing the optimal rendering path (sprite vs SVGR).
+
+```tsx
+import { Icon } from '@lumia/icons';
+
+// Basic usage
+<Icon name="info" />
+
+// With size preset (sm=16px, md=24px, lg=32px)
+<Icon name="check" size="lg" />
+
+// With custom size
+<Icon name="search" size={48} />
+
+// With color preset
+<Icon name="alert" color="danger" />
+
+// With custom color
+<Icon name="info" color="#ff5500" />
+
+// With accessible title
+<Icon name="warning" title="Warning message" />
+```
+
+### Icon Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | — | Icon name from registry |
+| `size` | `'sm' \| 'md' \| 'lg' \| number` | `'md'` | Size preset or pixel value |
+| `color` | `'default' \| 'muted' \| 'primary' \| 'danger' \| string` | `'default'` | Color preset or CSS value |
+| `title` | `string` | — | Accessible title for screen readers |
+| `className` | `string` | — | Additional CSS classes |
+
+### Size Presets
+
+- `sm` = 16px
+- `md` = 24px (default)
+- `lg` = 32px
+
+### Color Presets
+
+- `default` → `text-foreground`
+- `muted` → `text-muted-foreground`
+- `primary` → `text-primary`
+- `danger` → `text-destructive`
+
+## Direct Import (Tree-Shakable)
+
+For generated icons, you can also import components directly:
 
 ```tsx
 import { IconCheck, IconSparkle } from '@lumia/icons';
@@ -22,28 +71,9 @@ import { IconCheck, IconSparkle } from '@lumia/icons';
 <IconCheck className="text-green-500" />;
 ```
 
-### Via Icon Registry
+## SVG Sprite Setup
 
-```tsx
-import { Icon } from '@lumia/icons';
-
-<Icon id="icon-check" size={24} className="text-primary-600" />;
-```
-
-## Notes
-
-- SVGO optimizes SVGs (e.g., converts `polyline` to `path`).
-- JSX props are camelCased automatically.
-- `sideEffects: false` in `package.json` enables tree-shaking.
-- Registries reset when the icons package loads, seeding curated Lucide icons plus generated icons.
-
-## SVG Sprite Icons
-
-For hot-path icons (frequently reused across the app), use the SVG sprite for better performance.
-
-### Setup
-
-Add `<IconSprite />` once at your app root:
+For hot-path icons, the unified `<Icon>` automatically uses the sprite. Add `<IconSprite />` once at your app root:
 
 ```tsx
 import { IconSprite } from '@lumia/icons';
@@ -58,20 +88,16 @@ function App() {
 }
 ```
 
-### Usage
-
-```tsx
-import { SpriteIcon } from '@lumia/icons';
-
-<SpriteIcon name="chevron-down" size={24} className="text-primary" />
-```
-
-### Available Sprite Icons
+### Sprite Icons
 
 `chevron-down`, `chevron-up`, `check`, `add`, `edit`, `delete`, `info`, `alert`, `search`
 
-### Benefits
+These icons are automatically rendered via `<use href>` for better performance.
 
-- **Reduced DOM**: Each icon is a `<symbol>` defined once, reused via `<use href>`.
-- **Smaller bundle**: No duplicate SVG paths per instance.
-- **Better caching**: Sprite is defined once, browser reuses the symbols.
+## Notes
+
+- SVGO optimizes SVGs (e.g., converts `polyline` to `path`).
+- JSX props are camelCased automatically.
+- `sideEffects: false` in `package.json` enables tree-shaking.
+- Registries reset when the icons package loads, seeding curated Lucide icons plus generated icons.
+- Adding a new icon to the registry automatically exposes it via `<Icon name="..." />`.

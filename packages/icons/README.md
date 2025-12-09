@@ -1,6 +1,6 @@
 # @lumia/icons
 
-Icon registry utilities and the `Icon` React component for Lumia DS.
+Icon registry utilities and the unified `<Icon>` React component for Lumia DS.
 
 ## Install
 
@@ -8,36 +8,60 @@ Icon registry utilities and the `Icon` React component for Lumia DS.
 pnpm add @lumia/icons
 ```
 
-## Base icons
+## Unified Icon Component
 
-A curated set of Lucide icons is pre-registered:
-
-`home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`
-
-Custom icons generated from raw SVGs are also registered by default:
-
-`sparkle`, `chat-bubble`
-
-## Usage
+The `<Icon>` component provides a single API for all icons:
 
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon, IconSprite } from '@lumia/icons';
 
-export function Example() {
+// Add sprite once at app root
+function App() {
   return (
-    <div className="flex items-center gap-2 text-primary-600">
-      <Icon id="user" />
-      <span>Profile</span>
-    </div>
+    <>
+      <IconSprite />
+      <YourRoutes />
+    </>
   );
 }
+
+// Use anywhere
+<Icon name="info" />
+<Icon name="check" size="lg" color="primary" />
+<Icon name="alert" color="danger" title="Warning" />
 ```
 
-- `id`: icon id from the registry
-- `size` (optional): number, defaults to `24`
-- `className` (optional): merged with `fill-current` so color inherits from text
+### Props
 
-## Registering custom icons
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | — | Icon name from registry |
+| `size` | `'sm' \| 'md' \| 'lg' \| number` | `'md'` | Size preset or pixels |
+| `color` | `'default' \| 'muted' \| 'primary' \| 'danger' \| string` | `'default'` | Color preset or CSS |
+| `title` | `string` | — | Accessible title |
+
+### Size Presets
+
+- `sm` = 16px
+- `md` = 24px (default)
+- `lg` = 32px
+
+### Color Presets
+
+- `default` → text-foreground
+- `muted` → text-muted-foreground
+- `primary` → text-primary
+- `danger` → text-destructive
+
+## Available Icons
+
+**Curated Lucide icons:** `home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`
+
+**Custom icons:** `sparkle`, `chat-bubble`
+
+**Sprite icons (hot-path):** `chevron-down`, `chevron-up`, `check`, `add`, `edit`, `delete`, `info`, `alert`, `search`
+
+## Registering Custom Icons
 
 ```tsx
 import { registerIcon } from '@lumia/icons';
@@ -49,6 +73,7 @@ const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 registerIcon('bell', CustomBell);
+// Now use: <Icon name="bell" />
 ```
 
 ## Building Icons from SVG
@@ -59,27 +84,12 @@ Add SVG files to `packages/icons/svg/` and run:
 pnpm build:icons
 ```
 
-- Source SVGs: `packages/icons/svg/`
-- Generated components: `packages/icons/src/generated/`
-- Icons are exported from `@lumia/icons` and auto-registered.
+Generated components are exported from `@lumia/icons` and auto-registered.
 
-### Direct Import (Tree-Shakable)
+## Direct Import (Tree-Shakable)
 
 ```tsx
 import { IconCheck, IconSparkle } from '@lumia/icons';
 
-export function Example() {
-  return <IconCheck className="text-green-500" />;
-}
+<IconCheck className="text-green-500" />
 ```
-
-### Via Icon Registry
-
-```tsx
-import { Icon } from '@lumia/icons';
-
-export function Example() {
-  return <Icon id="icon-check" size={20} />;
-}
-```
-
