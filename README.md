@@ -47,6 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - Icon import workflow: `docs/icon-import.md`
 - Runtime schemas: `docs/runtime-schemas.md`
 - Admin app consumption guide: `docs/admin-app-consumption.md`
+- **Release process: `docs/release-process.md`**
+- QA test plan: `docs/qa-test-plan.md`
 
 ## Development
 
