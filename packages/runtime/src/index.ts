@@ -1,6 +1,25 @@
 import type { FieldValues } from '@lumia/forms';
 import type { FieldConfig, FormDataFetcher } from './blocks/blocks';
 
+// Re-export Zod schemas and their inferred types
+export {
+  // Schemas
+  BlockSchemaSchema,
+  ComponentKindSchema,
+  DataQueryContextSchema,
+  DataSourceResultSchema,
+  GridPlacementSchema,
+  PageGridSchema,
+  PageSchemaSchema,
+  ResourceConfigSchema,
+  ResourcePageRefsSchema,
+  ResourceScreenSchema,
+  // Inferred types (alternative exports)
+  type ResourceConfigInferred,
+  type DataQueryContextInferred,
+  type DataSourceResultInferred,
+} from './schemas';
+
 /**
  * UI primitives the runtime renderer understands.
  */
