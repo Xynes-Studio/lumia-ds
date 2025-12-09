@@ -23,6 +23,7 @@ import {
   getMenuPositionFromRect,
   getMenuPositionFromElement,
   processQueryUpdate,
+  processKeyboardTrigger,
 } from '../slashMenuUtils';
 
 describe('slashMenuUtils', () => {
@@ -583,6 +584,78 @@ describe('slashMenuUtils', () => {
       });
       expect(result.shouldUpdate).toBe(true);
       expect(result.query).toBe('');
+    });
+  });
+
+  describe('processKeyboardTrigger', () => {
+    const baseInput = {
+      key: '/',
+      hasValidSelection: true,
+      isTextNode: true,
+      isElementNode: false,
+      anchorOffset: 0,
+      textBeforeCursor: '',
+    };
+
+    test('triggers on slash at start of text node', () => {
+      const result = processKeyboardTrigger(baseInput);
+      expect(result.shouldTrigger).toBe(true);
+      expect(result.isEmptyElement).toBe(false);
+    });
+
+    test('triggers on slash after whitespace', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        anchorOffset: 6,
+        textBeforeCursor: 'Hello ',
+      });
+      expect(result.shouldTrigger).toBe(true);
+    });
+
+    test('does not trigger on non-slash key', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        key: 'a',
+      });
+      expect(result.shouldTrigger).toBe(false);
+    });
+
+    test('does not trigger without valid selection', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        hasValidSelection: false,
+      });
+      expect(result.shouldTrigger).toBe(false);
+    });
+
+    test('does not trigger mid-word', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        anchorOffset: 3,
+        textBeforeCursor: 'foo',
+      });
+      expect(result.shouldTrigger).toBe(false);
+    });
+
+    test('triggers on empty element node', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        isTextNode: false,
+        isElementNode: true,
+        anchorOffset: 0,
+      });
+      expect(result.shouldTrigger).toBe(true);
+      expect(result.isEmptyElement).toBe(true);
+    });
+
+    test('does not trigger on element with non-zero offset', () => {
+      const result = processKeyboardTrigger({
+        ...baseInput,
+        isTextNode: false,
+        isElementNode: true,
+        anchorOffset: 1,
+      });
+      expect(result.shouldTrigger).toBe(false);
     });
   });
 });

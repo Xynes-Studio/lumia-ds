@@ -478,3 +478,68 @@ export function processQueryUpdate(input: QueryUpdateInput): QueryUpdateResult {
 
   return { shouldUpdate: true, shouldClose: false, query };
 }
+
+/**
+ * Input for keyboard trigger processing.
+ */
+export interface KeyboardTriggerInput {
+  /** The key pressed */
+  key: string;
+  /** Whether selection is range and collapsed */
+  hasValidSelection: boolean;
+  /** Whether anchor is a text node */
+  isTextNode: boolean;
+  /** Whether anchor is an element node */
+  isElementNode: boolean;
+  /** The anchor offset */
+  anchorOffset: number;
+  /** Text content before cursor (for text nodes) */
+  textBeforeCursor: string;
+}
+
+/**
+ * Result of keyboard trigger processing.
+ */
+export interface KeyboardTriggerResult {
+  /** Whether to trigger the slash menu */
+  shouldTrigger: boolean;
+  /** Whether this is an empty element trigger (needs fallback positioning) */
+  isEmptyElement: boolean;
+}
+
+/**
+ * Process a keyboard event to determine if slash menu should trigger.
+ * This is a pure function that encapsulates the trigger detection logic.
+ *
+ * @param input - Keyboard event data
+ * @returns Result indicating whether to trigger menu
+ */
+export function processKeyboardTrigger(
+  input: KeyboardTriggerInput,
+): KeyboardTriggerResult {
+  // Only trigger on '/' key
+  if (input.key !== '/') {
+    return { shouldTrigger: false, isEmptyElement: false };
+  }
+
+  // Must have valid collapsed selection
+  if (!input.hasValidSelection) {
+    return { shouldTrigger: false, isEmptyElement: false };
+  }
+
+  // Handle text nodes - check if at start or after whitespace
+  if (input.isTextNode) {
+    const shouldTrigger = shouldTriggerSlashMenu(
+      input.anchorOffset,
+      input.textBeforeCursor,
+    );
+    return { shouldTrigger, isEmptyElement: false };
+  }
+
+  // Handle empty element nodes (e.g., empty paragraphs)
+  if (input.isElementNode && input.anchorOffset === 0) {
+    return { shouldTrigger: true, isEmptyElement: true };
+  }
+
+  return { shouldTrigger: false, isEmptyElement: false };
+}
