@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { defaultTheme, tokens, type ThemeTokens } from './index';
+import { defaultTheme, tokens, type ThemeTokens, themeToCSSVars } from './index';
 
 describe('@lumia/tokens', () => {
   it('exports tokens in ThemeTokens shape', () => {
@@ -83,6 +83,45 @@ describe('@lumia/tokens', () => {
       md: expect.any(String),
       lg: expect.any(String),
       inset: expect.any(String),
+    });
+  });
+});
+
+describe('themeToCSSVars', () => {
+  it('flattens theme object into CSS variables', () => {
+    const vars = themeToCSSVars(
+      {
+        colors: {
+          primary: '#000',
+          background: '#fff',
+        },
+        spacing: {
+          sm: '4px',
+        },
+      } as any,
+      '-'
+    );
+
+    expect(vars).toEqual({
+      '--colors-primary': '#000',
+      '--colors-background': '#fff',
+      '--spacing-sm': '4px',
+    });
+  });
+
+  it('handles nested objects correctly', () => {
+    const vars = themeToCSSVars({
+      typography: {
+        h1: {
+          fontSize: '2rem',
+          fontWeight: 'bold',
+        },
+      },
+    } as any);
+
+    expect(vars).toEqual({
+      '--typography-h1-fontSize': '2rem',
+      '--typography-h1-fontWeight': 'bold',
     });
   });
 });
