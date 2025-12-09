@@ -3,7 +3,7 @@ import {
   generatePrimaryScale,
   hexToRgba,
   contrast,
-  // @ts-ignore
+  // @ts-expect-error - Testing invalid input
 } from '../../sd-transforms.mjs';
 
 describe('Color Transforms', () => {

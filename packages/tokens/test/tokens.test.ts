@@ -20,16 +20,13 @@ describe('Token Regression Tests', () => {
         'ColorNeutral950',
         'ColorPrimaryBase',
         'ColorDestructive',
-      ])
+      ]),
     );
   });
 
   it('contains expected spacing tokens', () => {
     expect(Object.keys(Tokens)).toEqual(
-      expect.arrayContaining([
-        'SpacingXs',
-        'SpacingXl',
-      ])
+      expect.arrayContaining(['SpacingXs', 'SpacingXl']),
     );
   });
 });
