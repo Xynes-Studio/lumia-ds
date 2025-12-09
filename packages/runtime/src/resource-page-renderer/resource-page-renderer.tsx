@@ -15,11 +15,18 @@ import type {
   FormBlockProps,
   ListBlockProps,
 } from '../index';
+import {
+  type ConfigError,
+  validatePageConfig,
+  validateResourceConfig,
+  validateDataSourceResult,
+} from '../validation';
 
 type RendererState =
   | { status: 'loading' }
   | { status: 'forbidden' }
   | { status: 'error'; message: string }
+  | { status: 'validation-error'; error: ConfigError }
   | {
       status: 'ready';
       resource: ResourceConfig;
@@ -67,7 +74,15 @@ const collectDataSourceResults = async (
   const results = await Promise.all(
     ids.map(async (id) => {
       const data = await fetcher.getDataSource?.(id, context);
-      return [id, data ?? {}] as const;
+      if (!data) {
+        return [id, {}] as const;
+      }
+      const validation = validateDataSourceResult(data, id);
+      if (!validation.success) {
+        // Log validation failure but continue with empty data
+        return [id, {}] as const;
+      }
+      return [id, validation.data] as const;
     }),
   );
 
@@ -242,6 +257,21 @@ export function ResourcePageRenderer({
           return;
         }
 
+        // Validate resource config
+        const resourceValidation = validateResourceConfig(
+          resource,
+          resourceName,
+        );
+        if (!resourceValidation.success) {
+          if (!cancelled) {
+            setState({
+              status: 'validation-error',
+              error: resourceValidation.error,
+            });
+          }
+          return;
+        }
+
         const pageId = resolvePageId(resource.pages, screen);
         if (!pageId) {
           if (!cancelled) {
@@ -264,6 +294,19 @@ export function ResourcePageRenderer({
           return;
         }
 
+        // Validate page config
+        const pageValidation = validatePageConfig(page, pageId);
+        if (!pageValidation.success) {
+          if (!cancelled) {
+            setState({
+              status: 'validation-error',
+              error: pageValidation.error,
+            });
+          }
+          return;
+        }
+        const validatedPage = pageValidation.data;
+
         const context: DataQueryContext = {
           resource,
           screen,
@@ -278,15 +321,24 @@ export function ResourcePageRenderer({
           return;
         }
 
-        const dataSources = await collectDataSourceResults(page, fetcher, {
-          resource,
-          screen,
-          params,
-          permissions,
-        });
+        const dataSources = await collectDataSourceResults(
+          validatedPage,
+          fetcher,
+          {
+            resource,
+            screen,
+            params,
+            permissions,
+          },
+        );
 
         if (!cancelled) {
-          setState({ status: 'ready', resource, page, dataSources });
+          setState({
+            status: 'ready',
+            resource,
+            page: validatedPage,
+            dataSources,
+          });
         }
       } catch (error) {
         if (!cancelled) {
@@ -322,6 +374,27 @@ export function ResourcePageRenderer({
     return (
       <div role="alert" className="text-sm text-destructive">
         {state.message}
+      </div>
+    );
+  }
+
+  if (state.status === 'validation-error') {
+    /* eslint-disable no-undef */
+    const isDev =
+      typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
+    /* eslint-enable no-undef */
+    return (
+      <div role="alert" className="text-sm text-destructive">
+        <p>Configuration validation failed</p>
+        {isDev && (
+          <ul className="mt-2 list-disc list-inside text-xs">
+            {state.error.issues.map((issue, i) => (
+              <li key={i}>
+                {issue.path.join('.')}: {issue.message}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   }

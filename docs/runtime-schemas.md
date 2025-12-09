@@ -50,6 +50,60 @@ if (result.success) {
 | `DataQueryContextSchema` | `DataQueryContextInferred` | Data fetch context |
 | `DataSourceResultSchema` | `DataSourceResultInferred` | Data source result |
 
+## Validation Layer
+
+The runtime package includes a validation layer that wraps config fetches with Zod `safeParse`. This catches invalid server configs before they reach the UI.
+
+### Error Types
+
+| Type | Description |
+|------|-------------|
+| `PageConfigError` | Invalid page configuration |
+| `ResourceConfigError` | Invalid resource configuration |
+| `DataSourceError` | Invalid data source result |
+| `ConfigValidationIssue` | Single validation issue with path, message, code |
+
+### Validation Functions
+
+```typescript
+import {
+  validatePageConfig,
+  validateResourceConfig,
+  validateDataSourceResult,
+  formatValidationError,
+  type ValidationResult,
+  type ConfigError,
+} from '@lumia/runtime';
+
+// Validate page config - returns result discriminated union
+const result = validatePageConfig(json, 'my-page');
+if (!result.success) {
+  console.log(formatValidationError(result.error));
+  // Page config validation failed for "my-page"
+  //   - layout: Required (invalid_type)
+}
+
+// Use validated data
+const page = result.data;
+```
+
+### ResourcePageRenderer Integration
+
+`ResourcePageRenderer` automatically validates:
+- Resource config from `getResourceConfig()`
+- Page config from `getPageSchema()`
+- Data source results from `getDataSource()`
+
+On validation failure, it renders an error message instead of crashing:
+
+```tsx
+// In development, shows issue list:
+<div role="alert">
+  Configuration validation failed
+  • blocks.0.kind: Invalid value
+</div>
+```
+
 ## Data fetching contract
 
 - `getResourceConfig(resourceName)` → `ResourceConfig` (required)

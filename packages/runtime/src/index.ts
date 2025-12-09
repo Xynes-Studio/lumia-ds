@@ -20,6 +20,20 @@ export {
   type DataSourceResultInferred,
 } from './schemas';
 
+// Re-export validation layer
+export {
+  type ConfigValidationIssue,
+  type PageConfigError,
+  type ResourceConfigError,
+  type DataSourceError,
+  type ConfigError,
+  type ValidationResult,
+  formatValidationError,
+  validatePageConfig,
+  validateResourceConfig,
+  validateDataSourceResult,
+} from './validation';
+
 /**
  * UI primitives the runtime renderer understands.
  */
