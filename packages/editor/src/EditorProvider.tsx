@@ -15,26 +15,44 @@ import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ImageBlockNode } from './nodes/ImageBlockNode';
+import { VideoBlockNode } from './nodes/VideoBlockNode';
+import { FileBlockNode } from './nodes/FileBlockNode/FileBlockNode';
+import { PanelBlockNode } from './nodes/PanelBlockNode/PanelBlockNode';
+import { StatusNode } from './nodes/StatusNode';
 import {
   FontConfig,
   getDefaultFontConfig,
   normalizeFontConfig,
 } from './font-config';
+import { EditorMediaConfig, getEffectiveMediaConfig } from './media-config';
+
+export interface SelectedBlock {
+  nodeKey: string;
+  blockType: string;
+}
 
 interface EditorContextType {
   editor: LexicalEditor | null;
   editorState: LumiaEditorStateJSON | null;
+  selectedBlock: SelectedBlock | null;
 }
 
 const EditorContext = createContext<EditorContextType>({
   editor: null,
   editorState: null,
+  selectedBlock: null,
 });
 
 export const useEditorContext = () => useContext(EditorContext);
 
 // FontsContext to provide font configuration throughout the editor
 export const FontsContext = createContext<FontConfig | null>(null);
+
+// MediaContext to provide media configuration throughout the editor
+export const MediaContext = createContext<EditorMediaConfig | null>(null);
+
+export const useMediaContext = () => useContext(MediaContext);
 
 function EditorStatePlugin({
   onChange,
@@ -69,10 +87,12 @@ function EditorStatePlugin({
 // Internal context to update state from inside LexicalComposer
 const InternalEditorContext = createContext<{
   setEditorState: (state: LumiaEditorStateJSON) => void;
+  setSelectedBlock: (block: SelectedBlock | null) => void;
 }>({
   setEditorState: () => {},
+  setSelectedBlock: () => {},
 });
-const useInternalEditorContext = () => useContext(InternalEditorContext);
+export const useInternalEditorContext = () => useContext(InternalEditorContext);
 
 function ContextUpdaterPlugin({
   setEditor,
@@ -94,6 +114,7 @@ interface EditorProviderProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
   fonts?: FontConfig;
+  media?: EditorMediaConfig;
 }
 
 export function EditorProvider({
@@ -103,15 +124,21 @@ export function EditorProvider({
   readOnly,
   theme = {},
   fonts,
+  media,
 }: EditorProviderProps) {
   // Use provided fonts config or default, then normalize
   const fontsConfig = useMemo(
     () => normalizeFontConfig(fonts || getDefaultFontConfig()),
     [fonts],
   );
+
+  const mediaConfig = useMemo(() => getEffectiveMediaConfig(media), [media]);
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<LumiaEditorStateJSON | null>(
     value || null,
+  );
+  const [selectedBlock, setSelectedBlock] = useState<SelectedBlock | null>(
+    null,
   );
 
   const initialConfig = {
@@ -161,6 +188,13 @@ export function EditorProvider({
         ol: 'editor-list-ol',
         listitem: 'editor-listitem',
       },
+      table: 'editor-table',
+      tableCell: 'editor-table-cell',
+      tableCellHeader: 'editor-table-cell-header',
+      tableRow: 'editor-table-row',
+      tableSelection: 'editor-table-cell-selected',
+      panel: 'panel-node',
+      status: 'status-node',
       ...theme,
     },
     onError: (error: Error) => console.error(error),
@@ -176,6 +210,11 @@ export function EditorProvider({
       TableRowNode,
       AutoLinkNode,
       LinkNode,
+      ImageBlockNode,
+      VideoBlockNode,
+      FileBlockNode,
+      PanelBlockNode,
+      StatusNode,
     ],
     editorState: value ? JSON.stringify(value) : undefined,
     editable: !readOnly,
@@ -185,13 +224,15 @@ export function EditorProvider({
     () => ({
       editor,
       editorState,
+      selectedBlock,
     }),
-    [editor, editorState],
+    [editor, editorState, selectedBlock],
   );
 
   const internalContextValue = useMemo(
     () => ({
       setEditorState,
+      setSelectedBlock,
     }),
     [],
   );
@@ -199,13 +240,15 @@ export function EditorProvider({
   return (
     <EditorContext.Provider value={contextValue}>
       <FontsContext.Provider value={fontsConfig}>
-        <LexicalComposer initialConfig={initialConfig}>
-          <InternalEditorContext.Provider value={internalContextValue}>
-            <ContextUpdaterPlugin setEditor={setEditor} />
-            <EditorStatePlugin onChange={onChange} />
-            {children}
-          </InternalEditorContext.Provider>
-        </LexicalComposer>
+        <MediaContext.Provider value={mediaConfig}>
+          <LexicalComposer initialConfig={initialConfig}>
+            <InternalEditorContext.Provider value={internalContextValue}>
+              <ContextUpdaterPlugin setEditor={setEditor} />
+              <EditorStatePlugin onChange={onChange} />
+              {children}
+            </InternalEditorContext.Provider>
+          </LexicalComposer>
+        </MediaContext.Provider>
       </FontsContext.Provider>
     </EditorContext.Provider>
   );

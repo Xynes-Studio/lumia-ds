@@ -14,6 +14,7 @@ vi.mock('lucide-react', () => ({
   Trash2: () => <span data-testid="icon-trash" />,
   ExternalLink: () => <span data-testid="icon-external-link" />,
   List: () => <span data-testid="icon-list" />,
+  FileUp: () => <span data-testid="icon-file-up" />,
 }));
 
 // Mock @lumia/components

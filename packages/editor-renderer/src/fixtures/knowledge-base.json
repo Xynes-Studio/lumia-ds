@@ -1,0 +1,221 @@
+{
+    "root": {
+        "children": [
+            {
+                "type": "heading",
+                "tag": "h1",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "How to Configure Single Sign-On (SSO)",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "children": [
+                    {
+                        "type": "status",
+                        "text": "Verified",
+                        "color": "success",
+                        "version": 1
+                    },
+                    {
+                        "type": "text",
+                        "text": "  Updated 2 days ago",
+                        "format": 2,
+                        "mode": "normal",
+                        "style": "color: #666",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ],
+                "format": "",
+                "indent": 0,
+                "version": 1
+            },
+            {
+                "type": "panel-block",
+                "variant": "info",
+                "title": "Prerequisites",
+                "version": 1,
+                "children": [
+                    {
+                        "type": "paragraph",
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "You must be an Organization Administrator to perform these actions.",
+                                "format": 0,
+                                "version": 1,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0
+                            }
+                        ],
+                        "format": "",
+                        "indent": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "SSO allows your team to log in using your existing identity provider. Follow these steps to set it up:",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "list",
+                "listType": "number",
+                "listStyleType": "decimal",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 1,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Navigate to Settings > Security.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 2,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Click on 'Enable SAML 2.0'.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "listitem",
+                        "version": 1,
+                        "value": 3,
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Copy the Metadata URL provided.",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "panel-block",
+                "variant": "warning",
+                "title": "Important",
+                "version": 1,
+                "children": [
+                    {
+                        "type": "paragraph",
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Do not close the window until you have verified the connection test.",
+                                "format": 0,
+                                "version": 1,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0
+                            }
+                        ],
+                        "format": "",
+                        "indent": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "tag": "h3",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "text",
+                        "text": "Related Articles",
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "detail": 0,
+                        "version": 1
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                    {
+                        "type": "link",
+                        "url": "#",
+                        "children": [
+                            {
+                                "type": "text",
+                                "text": "Troubleshooting SSO errors",
+                                "format": 0,
+                                "mode": "normal",
+                                "style": "",
+                                "detail": 0,
+                                "version": 1
+                            }
+                        ],
+                        "version": 1,
+                        "rel": "noreferrer",
+                        "target": null
+                    }
+                ]
+            }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "root",
+        "version": 1
+    }
+}

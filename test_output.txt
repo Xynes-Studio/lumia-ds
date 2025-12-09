@@ -1,0 +1,550 @@
+
+> test
+> pnpm -r --if-present test -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+
+Scope: 10 of 11 workspace projects
+packages/icons test$ vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/tokens test$ vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/icons test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/tokens test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/icons test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/icons
+packages/icons test:       Coverage enabled with v8
+packages/tokens test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/tokens
+packages/tokens test:       Coverage enabled with v8
+packages/tokens test:  ✓ src/index.test.ts (8 tests) 3ms
+packages/tokens test:  Test Files  1 passed (1)
+packages/tokens test:       Tests  8 passed (8)
+packages/tokens test:    Start at  20:20:26
+packages/tokens test:    Duration  561ms (transform 47ms, setup 0ms, collect 64ms, tests 3ms, environment 0ms, prepare 52ms)
+packages/tokens test:  % Coverage report from v8
+packages/tokens test: -------------------|---------|----------|---------|---------|-------------------
+packages/tokens test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/tokens test: -------------------|---------|----------|---------|---------|-------------------
+packages/tokens test: All files          |     100 |      100 |     100 |     100 |                   
+packages/tokens test:  index.ts          |     100 |      100 |     100 |     100 |                   
+packages/tokens test:  ...to-css-vars.ts |     100 |      100 |     100 |     100 |                   
+packages/tokens test: -------------------|---------|----------|---------|---------|-------------------
+packages/tokens test: Done
+packages/icons test:  ✓ src/index.test.tsx (10 tests) 5ms
+packages/icons test:  Test Files  1 passed (1)
+packages/icons test:       Tests  10 passed (10)
+packages/icons test:    Start at  20:20:26
+packages/icons test:    Duration  867ms (transform 54ms, setup 0ms, collect 316ms, tests 5ms, environment 0ms, prepare 141ms)
+packages/icons test:  % Coverage report from v8
+packages/icons test: -------------------|---------|----------|---------|---------|-------------------
+packages/icons test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/icons test: -------------------|---------|----------|---------|---------|-------------------
+packages/icons test: All files          |     100 |      100 |     100 |     100 |                   
+packages/icons test:  src               |     100 |      100 |     100 |     100 |                   
+packages/icons test:   default-icons.ts |     100 |      100 |     100 |     100 |                   
+packages/icons test:   index.tsx        |     100 |      100 |     100 |     100 |                   
+packages/icons test:   registry.ts      |     100 |      100 |     100 |     100 |                   
+packages/icons test:   types.ts         |       0 |        0 |       0 |       0 |                   
+packages/icons test:  src/generated     |     100 |      100 |     100 |     100 |                   
+packages/icons test:   index.ts         |     100 |      100 |     100 |     100 |                   
+packages/icons test:   registry.ts      |     100 |      100 |     100 |     100 |                   
+packages/icons test:  ...enerated/icons |     100 |      100 |     100 |     100 |                   
+packages/icons test:   ...ubbleIcon.tsx |     100 |      100 |     100 |     100 |                   
+packages/icons test:   SparkleIcon.tsx  |     100 |      100 |     100 |     100 |                   
+packages/icons test:  src/icon          |     100 |      100 |     100 |     100 |                   
+packages/icons test:   icon.tsx         |     100 |      100 |     100 |     100 |                   
+packages/icons test: -------------------|---------|----------|---------|---------|-------------------
+packages/icons test: Done
+packages/components test$ vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/theme test$ vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/theme test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/components test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/theme test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/theme
+packages/theme test:       Coverage enabled with v8
+packages/components test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/components
+packages/components test:       Coverage enabled with v8
+packages/theme test:  ✓ src/tailwind/tailwind.test.ts (3 tests) 2ms
+packages/theme test:  ✓ src/theme-provider/theme-provider.test.tsx (4 tests) 15ms
+packages/theme test:  Test Files  2 passed (2)
+packages/theme test:       Tests  7 passed (7)
+packages/theme test:    Start at  20:20:27
+packages/theme test:    Duration  950ms (transform 69ms, setup 0ms, collect 135ms, tests 18ms, environment 655ms, prepare 239ms)
+packages/theme test:  % Coverage report from v8
+packages/theme test: -------------------|---------|----------|---------|---------|-------------------
+packages/theme test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/theme test: -------------------|---------|----------|---------|---------|-------------------
+packages/theme test: All files          |     100 |      100 |     100 |     100 |                   
+packages/theme test:  src               |     100 |      100 |     100 |     100 |                   
+packages/theme test:   index.ts         |     100 |      100 |     100 |     100 |                   
+packages/theme test:  src/tailwind      |     100 |      100 |     100 |     100 |                   
+packages/theme test:   tailwind.ts      |     100 |      100 |     100 |     100 |                   
+packages/theme test:  ...theme-provider |     100 |      100 |     100 |     100 |                   
+packages/theme test:   ...-provider.tsx |     100 |      100 |     100 |     100 |                   
+packages/theme test: -------------------|---------|----------|---------|---------|-------------------
+packages/components test:  ✓ src/input/input.test.tsx (5 tests) 42ms
+packages/theme test: Done
+packages/components test:  ✓ src/flat-list/flat-list.test.tsx (4 tests) 55ms
+packages/components test:  ✓ src/file-upload/file-upload.test.tsx (5 tests) 48ms
+packages/components test:  ✓ src/flex/flex.test.tsx (4 tests) 36ms
+packages/components test:  ✓ src/table/table.test.tsx (9 tests) 85ms
+packages/components test:  ✓ src/sheet/sheet.test.tsx (3 tests) 204ms
+packages/components test:  ✓ src/combobox/combobox.test.tsx (5 tests | 1 skipped) 268ms
+packages/components test:  ✓ src/date-range-filter/date-range-filter.test.tsx (6 tests) 181ms
+packages/components test:  ✓ src/toolbar/toolbar.test.tsx (3 tests) 20ms
+packages/components test:  ✓ src/tabs/tabs.test.tsx (3 tests) 29ms
+packages/components test:  ✓ src/filter-bar/filter-bar.test.tsx (3 tests) 32ms
+packages/components test:  ✓ src/accordion/accordion.test.tsx (3 tests) 78ms
+packages/components test:  ✓ src/confirm-dialog/confirm-dialog.test.tsx (3 tests) 122ms
+packages/components test:  ✓ src/context-menu/context-menu.test.tsx (2 tests) 182ms
+packages/components test:  ✓ src/menu/menu.test.tsx (3 tests) 182ms
+packages/components test:  ✓ src/card/card.test.tsx (3 tests) 35ms
+packages/components test:  ✓ src/tooltip/tooltip.test.tsx (2 tests) 186ms
+packages/components test:  ✓ src/index.test.ts (3 tests) 4ms
+packages/components test:  ✓ src/dialog/dialog.test.tsx (2 tests) 96ms
+packages/components test:  ✓ src/pagination/pagination.test.tsx (4 tests) 24ms
+packages/components test:  ✓ src/popover/popover.test.tsx (2 tests) 91ms
+packages/components test:  ✓ src/time-picker/time-picker.test.tsx (2 tests) 108ms
+packages/components test:  ✓ src/slider/slider.test.tsx (3 tests) 54ms
+packages/components test:  ✓ src/date-picker/date-picker.test.tsx (2 tests) 212ms
+packages/components test:  ✓ src/toast/toast.test.tsx (2 tests) 58ms
+packages/components test:  ✓ src/input-group/input-group.test.tsx (2 tests) 13ms
+packages/components test:  ✓ src/number-input/number-input.test.tsx (2 tests) 31ms
+packages/components test:  ✓ src/avatar/avatar.test.tsx (4 tests) 24ms
+packages/components test:  ✓ src/empty-state/empty-state.test.tsx (4 tests) 33ms
+packages/components test:  ✓ src/alert/alert.test.tsx (3 tests) 63ms
+packages/components test:  ✓ src/switch/switch.test.tsx (2 tests) 81ms
+packages/components test:  ✓ src/breadcrumbs/breadcrumbs.test.tsx (3 tests) 49ms
+packages/components test:  ✓ src/select/select.test.tsx (2 tests) 29ms
+packages/components test:  ✓ src/page-header/page-header.test.tsx (2 tests) 27ms
+packages/components test:  ✓ src/segmented-control/segmented-control.test.tsx (2 tests) 28ms
+packages/components test:  ✓ src/radio/radio.test.tsx (2 tests) 17ms
+packages/components test:  ✓ src/tag/tag.test.tsx (3 tests) 33ms
+packages/components test:  ✓ src/checkbox/checkbox.test.tsx (2 tests) 23ms
+packages/components test:  ✓ src/progress-bar/progress-bar.test.tsx (2 tests) 17ms
+packages/components test:  ✓ src/spinner/spinner.test.tsx (2 tests) 32ms
+packages/components test:  ✓ src/view-toggle/view-toggle.test.tsx (2 tests) 40ms
+packages/components test:  ✓ src/side-nav-item/side-nav-item.test.tsx (3 tests) 38ms
+packages/components test:  ✓ src/stat-tile/stat-tile.test.tsx (2 tests) 19ms
+packages/components test:  ✓ src/status-pill/status-pill.test.tsx (2 tests) 11ms
+packages/components test:  ✓ src/skeleton/skeleton.test.tsx (2 tests) 12ms
+packages/components test:  ✓ src/badge/badge.test.tsx (2 tests) 10ms
+packages/components test:  ✓ src/button/button.test.tsx (2 tests) 13ms
+packages/components test:  Test Files  47 passed (47)
+packages/components test:       Tests  137 passed | 1 skipped (138)
+packages/components test:    Start at  20:20:27
+packages/components test:    Duration  4.10s (transform 1.22s, setup 0ms, collect 11.99s, tests 3.08s, environment 12.40s, prepare 3.80s)
+packages/components test:  % Coverage report from v8
+packages/components test: -------------------|---------|----------|---------|---------|-------------------
+packages/components test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/components test: -------------------|---------|----------|---------|---------|-------------------
+packages/components test: All files          |   94.12 |     84.3 |   87.53 |   94.12 |                   
+packages/components test:  src               |     100 |      100 |     100 |     100 |                   
+packages/components test:   index.test.ts    |     100 |      100 |     100 |     100 |                   
+packages/components test:   index.ts         |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/accordion     |     100 |    92.59 |     100 |     100 |                   
+packages/components test:   ...dion.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   accordion.tsx    |     100 |       80 |     100 |     100 | 53-54             
+packages/components test:  src/alert         |   98.71 |    88.37 |     100 |   98.71 |                   
+packages/components test:   alert.test.tsx   |     100 |      100 |     100 |     100 |                   
+packages/components test:   alert.tsx        |   97.81 |    80.76 |     100 |   97.81 | 154,161,166       
+packages/components test:  src/avatar        |    98.5 |    76.08 |   66.66 |    98.5 |                   
+packages/components test:   avatar.test.tsx  |     100 |    93.75 |     100 |     100 | 29                
+packages/components test:   avatar.tsx       |   97.54 |    66.66 |      60 |   97.54 | 107,125,155       
+packages/components test:  src/badge         |     100 |      100 |     100 |     100 |                   
+packages/components test:   badge.test.tsx   |     100 |      100 |     100 |     100 |                   
+packages/components test:   badge.tsx        |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/breadcrumbs   |     100 |    88.63 |     100 |     100 |                   
+packages/components test:   ...umbs.test.tsx |     100 |     92.3 |     100 |     100 | 75                
+packages/components test:   breadcrumbs.tsx  |     100 |    87.09 |     100 |     100 | 38,128,141,151    
+packages/components test:  src/button        |     100 |      100 |     100 |     100 |                   
+packages/components test:   button.test.tsx  |     100 |      100 |     100 |     100 |                   
+packages/components test:   button.tsx       |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/calendar      |     100 |      100 |     100 |     100 |                   
+packages/components test:   calendar.tsx     |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/card          |     100 |      100 |     100 |     100 |                   
+packages/components test:   card.test.tsx    |     100 |      100 |     100 |     100 |                   
+packages/components test:   card.tsx         |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/checkbox      |   98.02 |    85.18 |     100 |   98.02 |                   
+packages/components test:   ...kbox.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   checkbox.tsx     |   97.08 |    78.94 |     100 |   97.08 | 63,65-66          
+packages/components test:  src/combobox      |   74.56 |    81.34 |   62.96 |   74.56 |                   
+packages/components test:   ...obox.test.tsx |   76.13 |      100 |    62.5 |   76.13 | 84-97,149-205     
+packages/components test:   combobox.tsx     |    73.8 |    73.95 |   63.15 |    73.8 | ...21-523,531,588 
+packages/components test:  ...confirm-dialog |   96.31 |     92.3 |   88.88 |   96.31 |                   
+packages/components test:   ...alog.test.tsx |   98.48 |    95.65 |     100 |   98.48 | 15-16             
+packages/components test:   ...rm-dialog.tsx |   92.94 |     87.5 |   83.33 |   92.94 | 109-113,120       
+packages/components test:  src/context-menu  |    96.6 |    75.43 |     100 |    96.6 |                   
+packages/components test:   ...menu.test.tsx |   97.14 |     90.9 |     100 |   97.14 | 15-16,45-46       
+packages/components test:   context-menu.tsx |      96 |    54.16 |     100 |      96 | 79,104,137-139    
+packages/components test:  src/date-picker   |    92.8 |    73.52 |     100 |    92.8 |                   
+packages/components test:   ...cker.test.tsx |   97.29 |    86.66 |     100 |   97.29 | 14-15,129         
+packages/components test:   date-picker.tsx  |    89.2 |    63.15 |     100 |    89.2 | ...99-107,169-174 
+packages/components test:  ...e-range-filter |   93.57 |    88.88 |   81.81 |   93.57 |                   
+packages/components test:   ...lter.test.tsx |   99.47 |    94.28 |     100 |   99.47 | 151               
+packages/components test:   ...ge-filter.tsx |   90.84 |       87 |      80 |   90.84 | ...64,484,490-495 
+packages/components test:  src/dialog        |   97.02 |    86.48 |     100 |   97.02 |                   
+packages/components test:   dialog.test.tsx  |   98.18 |       90 |     100 |   98.18 | 23-24             
+packages/components test:   dialog.tsx       |      96 |    82.35 |     100 |      96 | 19-20,55,57-58    
+packages/components test:  src/empty-state   |   92.08 |    88.88 |   83.33 |   92.08 |                   
+packages/components test:   ...tate.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   empty-state.tsx  |    87.5 |    80.95 |      80 |    87.5 | ...75,193,200-209 
+packages/components test:  src/file-upload   |   91.93 |     84.5 |   58.82 |   91.93 |                   
+packages/components test:   ...load.test.tsx |     100 |      100 |   33.33 |     100 |                   
+packages/components test:   file-upload.tsx  |   86.84 |    77.55 |   64.28 |   86.84 | ...06,124,194-196 
+packages/components test:  src/filter-bar    |   98.27 |    86.04 |   85.71 |   98.27 |                   
+packages/components test:   ...-bar.test.tsx |     100 |      100 |      50 |     100 |                   
+packages/components test:   filter-bar.tsx   |   96.03 |    77.77 |     100 |   96.03 | 77,104,151,157    
+packages/components test:  src/flat-list     |   94.49 |       80 |     100 |   94.49 |                   
+packages/components test:   ...list.test.tsx |     100 |    89.28 |     100 |     100 | 75,123,179        
+packages/components test:   flat-list.tsx    |    90.1 |    72.97 |     100 |    90.1 | ...63-168,204-205 
+packages/components test:  src/flex          |   99.65 |     92.1 |     100 |   99.65 |                   
+packages/components test:   flex.test.tsx    |     100 |      100 |     100 |     100 |                   
+packages/components test:   flex.tsx         |   99.38 |     87.5 |     100 |   99.38 | 94                
+packages/components test:  src/input         |   94.33 |    76.92 |   72.72 |   94.33 |                   
+packages/components test:   input.test.tsx   |   98.49 |    84.61 |   33.33 |   98.49 | 135-136           
+packages/components test:   input.tsx        |   91.01 |    73.07 |    87.5 |   91.01 | ...48,164-170,203 
+packages/components test:  src/input-group   |     100 |    86.36 |     100 |     100 |                   
+packages/components test:   ...roup.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   input-group.tsx  |     100 |    78.57 |     100 |     100 | 12,72-73          
+packages/components test:  src/lib           |     100 |      100 |     100 |     100 |                   
+packages/components test:   utils.ts         |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/menu          |   97.65 |    77.04 |     100 |   97.65 |                   
+packages/components test:   menu.test.tsx    |   98.93 |    79.06 |     100 |   98.93 | 22-23             
+packages/components test:   menu.tsx         |   95.49 |    72.22 |     100 |   95.49 | 26-27,64,66-67    
+packages/components test:  src/number-input  |   83.93 |    59.61 |   82.35 |   83.93 |                   
+packages/components test:   ...nput.test.tsx |     100 |    86.66 |     100 |     100 | 106,122           
+packages/components test:   number-input.tsx |   76.98 |    48.64 |   78.57 |   76.98 | ...64-265,311-316 
+packages/components test:  src/page-header   |   98.42 |     91.3 |     100 |   98.42 |                   
+packages/components test:   ...ader.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   page-header.tsx  |   96.61 |    85.71 |     100 |   96.61 | 31,71             
+packages/components test:  src/pagination    |     100 |    85.29 |   66.66 |     100 |                   
+packages/components test:   ...tion.test.tsx |     100 |    94.44 |      25 |     100 | 29                
+packages/components test:   pagination.tsx   |     100 |       75 |     100 |     100 | 43-45,50-52       
+packages/components test:  src/popover       |   96.42 |       80 |     100 |   96.42 |                   
+packages/components test:   popover.test.tsx |   98.19 |    86.66 |     100 |   98.19 | 15-16             
+packages/components test:   popover.tsx      |   94.11 |    73.33 |     100 |   94.11 | 17-18,78,80-81    
+packages/components test:  src/progress-bar  |     100 |      100 |     100 |     100 |                   
+packages/components test:   ...-bar.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   progress-bar.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/radio         |   99.23 |       90 |     100 |   99.23 |                   
+packages/components test:   radio.test.tsx   |     100 |      100 |     100 |     100 |                   
+packages/components test:   radio.tsx        |   98.57 |    83.33 |     100 |   98.57 | 82                
+packages/components test:  ...mented-control |   86.34 |    69.23 |     100 |   86.34 |                   
+packages/components test:   ...trol.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   ...d-control.tsx |   80.62 |       60 |     100 |   80.62 | ...33,141,197-202 
+packages/components test:  src/select        |     100 |       95 |     100 |     100 |                   
+packages/components test:   select.test.tsx  |     100 |      100 |     100 |     100 |                   
+packages/components test:   select.tsx       |     100 |    91.66 |     100 |     100 | 47                
+packages/components test:  src/shared        |     100 |      100 |     100 |     100 |                   
+packages/components test:   field.ts         |     100 |      100 |     100 |     100 |                   
+packages/components test:   menu-shared.ts   |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/sheet         |   97.56 |    86.95 |     100 |   97.56 |                   
+packages/components test:   sheet.test.tsx   |   98.59 |    92.85 |     100 |   98.59 | 23-24             
+packages/components test:   sheet.tsx        |   96.57 |    77.77 |     100 |   96.57 | 22-23,69,71-72    
+packages/components test:  src/side-nav-item |   98.01 |    91.17 |     100 |   98.01 |                   
+packages/components test:   ...item.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   ...-nav-item.tsx |   96.42 |    86.36 |     100 |   96.42 | 78,80-81          
+packages/components test:  src/skeleton      |     100 |    66.66 |     100 |     100 |                   
+packages/components test:   ...eton.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   skeleton.tsx     |     100 |       40 |     100 |     100 | 22,31-48          
+packages/components test:  src/slider        |     100 |      100 |     100 |     100 |                   
+packages/components test:   slider.test.tsx  |     100 |      100 |     100 |     100 |                   
+packages/components test:   slider.tsx       |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/spinner       |     100 |      100 |     100 |     100 |                   
+packages/components test:   spinner.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   spinner.tsx      |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/stat-tile     |     100 |      100 |     100 |     100 |                   
+packages/components test:   ...tile.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   stat-tile.tsx    |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/status-pill   |     100 |      100 |     100 |     100 |                   
+packages/components test:   ...pill.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   status-pill.tsx  |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/switch        |   98.21 |    88.23 |     100 |   98.21 |                   
+packages/components test:   switch.test.tsx  |     100 |      100 |     100 |     100 |                   
+packages/components test:   switch.tsx       |   94.11 |    33.33 |     100 |   94.11 | 43-44             
+packages/components test:  src/table         |   96.25 |    87.13 |   74.19 |   96.25 |                   
+packages/components test:   table.test.tsx   |     100 |      100 |     100 |     100 |                   
+packages/components test:   table.tsx        |   94.39 |    84.17 |   73.33 |   94.39 | ...27-532,537,564 
+packages/components test:  src/tabs          |   91.33 |    77.14 |     100 |   91.33 |                   
+packages/components test:   tabs.test.tsx    |     100 |      100 |     100 |     100 |                   
+packages/components test:   tabs.tsx         |   88.12 |    70.37 |     100 |   88.12 | ...90,292-294,296 
+packages/components test:  src/tag           |     100 |      100 |     100 |     100 |                   
+packages/components test:   tag.test.tsx     |     100 |      100 |     100 |     100 |                   
+packages/components test:   tag.tsx          |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/time-picker   |   79.64 |    76.47 |   78.57 |   79.64 |                   
+packages/components test:   ...cker.test.tsx |   98.21 |    93.75 |     100 |   98.21 | 14-15             
+packages/components test:   time-picker.tsx  |   72.24 |    71.15 |      75 |   72.24 | ...06,316,338-343 
+packages/components test:  src/toast         |   90.82 |    86.66 |      90 |   90.82 |                   
+packages/components test:   toast.test.tsx   |     100 |      100 |     100 |     100 |                   
+packages/components test:   toast.tsx        |      85 |       75 |   83.33 |      85 | ...38,176,186-189 
+packages/components test:  src/toolbar       |     100 |      100 |     100 |     100 |                   
+packages/components test:   toolbar.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   toolbar.tsx      |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/tooltip       |   98.77 |       90 |     100 |   98.77 |                   
+packages/components test:   tooltip.test.tsx |    98.3 |    88.23 |     100 |    98.3 | 20-21             
+packages/components test:   tooltip.tsx      |     100 |      100 |     100 |     100 |                   
+packages/components test:  src/view-toggle   |   99.31 |    86.95 |     100 |   99.31 |                   
+packages/components test:   ...ggle.test.tsx |     100 |      100 |     100 |     100 |                   
+packages/components test:   view-toggle.tsx  |   98.76 |    72.72 |     100 |   98.76 | 55                
+packages/components test: -------------------|---------|----------|---------|---------|-------------------
+packages/components test: Done
+packages/editor test$ vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/forms test$ vitest run -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/layout test$ vitest run -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts
+packages/layout test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/forms test: [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+packages/forms test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/forms
+packages/layout test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/layout
+packages/editor test:  RUN  v2.1.9 /Users/archanray/lumia-ds/packages/editor
+packages/editor test:       Coverage enabled with v8
+packages/editor test: warn - The `content` option in your Tailwind CSS configuration is missing or empty.
+packages/editor test: warn - Configure your content sources or your generated CSS will be missing styles.
+packages/editor test: warn - https://tailwindcss.com/docs/content-configuration
+packages/editor test:  ✓ src/font-config.test.ts (15 tests) 18ms
+packages/editor test:  ✓ src/components/Fonts/FontCombobox.test.tsx (6 tests | 3 skipped) 96ms
+packages/forms test:  ✓ src/index.test.ts (13 tests) 7ms
+packages/forms test:  ✓ src/validated-input/validated-input.test.tsx (3 tests) 42ms
+packages/editor test: stderr | src/internal/EditorToolbarCompact.test.tsx > EditorToolbarCompact > renders essential buttons
+packages/editor test: Error: Uncaught [Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test: ]
+packages/editor test:     at reportException (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+packages/editor test:     at HTMLUnknownElementImpl._dispatch (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+packages/editor test:     at HTMLUnknownElementImpl.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+packages/editor test:     at HTMLUnknownElement.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+packages/editor test:     at Object.invokeGuardedCallbackDev (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+packages/editor test:     at invokeGuardedCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+packages/editor test:     at beginWork$1 (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+packages/editor test:     at performUnitOfWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test:     at VitestMocker.createError (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+packages/editor test:     at Object.get (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:44:10)
+packages/editor test:     at renderWithHooks (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+packages/editor test:     at mountIndeterminateComponent (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+packages/editor test:     at beginWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+packages/editor test:     at HTMLUnknownElement.callCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+packages/editor test:     at HTMLUnknownElement.callTheUserObjectsOperation (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+packages/editor test:   codeFrame: 'vi.mock(import("lucide-react"), async (importOriginal) => {\n' +
+packages/editor test:     '  const actual = await importOriginal()\n' +
+packages/editor test:     '  return {\n' +
+packages/editor test:     '    ...actual,\n' +
+packages/editor test:     '    // your mocked methods\n' +
+packages/editor test:     '  }\n' +
+packages/editor test:     '})'
+packages/editor test: }
+packages/editor test: Error: Uncaught [Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test: ]
+packages/editor test:     at reportException (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+packages/editor test:     at HTMLUnknownElementImpl._dispatch (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+packages/editor test:     at HTMLUnknownElementImpl.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+packages/editor test:     at HTMLUnknownElement.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+packages/editor test:     at Object.invokeGuardedCallbackDev (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+packages/editor test:     at invokeGuardedCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+packages/editor test:     at beginWork$1 (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+packages/editor test:     at performUnitOfWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test:     at VitestMocker.createError (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+packages/editor test:     at Object.get (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:44:10)
+packages/editor test:     at renderWithHooks (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+packages/editor test:     at mountIndeterminateComponent (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+packages/editor test:     at beginWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+packages/editor test:     at HTMLUnknownElement.callCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+packages/editor test:     at HTMLUnknownElement.callTheUserObjectsOperation (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+packages/editor test:   codeFrame: 'vi.mock(import("lucide-react"), async (importOriginal) => {\n' +
+packages/editor test:     '  const actual = await importOriginal()\n' +
+packages/editor test:     '  return {\n' +
+packages/editor test:     '    ...actual,\n' +
+packages/editor test:     '    // your mocked methods\n' +
+packages/editor test:     '  }\n' +
+packages/editor test:     '})'
+packages/editor test: }
+packages/editor test: The above error occurred in the <FileToolbarButton> component:
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:14:42)
+packages/editor test:     at div
+packages/editor test:     at div
+packages/editor test:     at Toolbar (/Users/archanray/lumia-ds/packages/editor/src/internal/EditorToolbarCompact.test.tsx:47:15)
+packages/editor test:     at EditorToolbarCompact (/Users/archanray/lumia-ds/packages/editor/src/internal/EditorToolbarCompact.tsx:31:29)
+packages/editor test:     at LexicalComposer (file:///Users/archanray/lumia-ds/node_modules/.pnpm/@lexical+react@0.38.2_react-dom@18.3.1_react@18.3.1__react@18.3.1_yjs@13.6.27/node_modules/@lexical/react/LexicalComposer.dev.mjs:50:3)
+packages/editor test:     at EditorProvider (/Users/archanray/lumia-ds/packages/editor/src/EditorProvider.tsx:80:3)
+packages/editor test:     at LexicalComposer (file:///Users/archanray/lumia-ds/node_modules/.pnpm/@lexical+react@0.38.2_react-dom@18.3.1_react@18.3.1__react@18.3.1_yjs@13.6.27/node_modules/@lexical/react/LexicalComposer.dev.mjs:50:3)
+packages/editor test:     at TestEditor
+packages/editor test: Consider adding an error boundary to your tree to customize error handling behavior.
+packages/editor test: Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+packages/editor test: stderr | src/internal/EditorToolbarCompact.test.tsx > EditorToolbarCompact > does not render block type or font controls
+packages/editor test: Error: Uncaught [Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test: ]
+packages/editor test:     at reportException (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+packages/editor test:     at HTMLUnknownElementImpl._dispatch (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+packages/editor test:     at HTMLUnknownElementImpl.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+packages/editor test:     at HTMLUnknownElement.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+packages/editor test:     at Object.invokeGuardedCallbackDev (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+packages/editor test:     at invokeGuardedCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+packages/editor test:     at beginWork$1 (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+packages/editor test:     at performUnitOfWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test:     at VitestMocker.createError (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+packages/editor test:     at Object.get (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:44:10)
+packages/editor test:     at renderWithHooks (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+packages/editor test:     at mountIndeterminateComponent (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+packages/editor test:     at beginWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+packages/editor test:     at HTMLUnknownElement.callCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+packages/editor test:     at HTMLUnknownElement.callTheUserObjectsOperation (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+packages/editor test:   codeFrame: 'vi.mock(import("lucide-react"), async (importOriginal) => {\n' +
+packages/editor test:     '  const actual = await importOriginal()\n' +
+packages/editor test:     '  return {\n' +
+packages/editor test:     '    ...actual,\n' +
+packages/editor test:     '    // your mocked methods\n' +
+packages/editor test:     '  }\n' +
+packages/editor test:     '})'
+packages/editor test: }
+packages/editor test: Error: Uncaught [Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test: ]
+packages/editor test:     at reportException (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+packages/editor test:     at HTMLUnknownElementImpl._dispatch (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+packages/editor test:     at HTMLUnknownElementImpl.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+packages/editor test:     at HTMLUnknownElement.dispatchEvent (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+packages/editor test:     at Object.invokeGuardedCallbackDev (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+packages/editor test:     at invokeGuardedCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+packages/editor test:     at beginWork$1 (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+packages/editor test:     at performUnitOfWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test:     at VitestMocker.createError (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:321:19)
+packages/editor test:     at Object.get (file:///Users/archanray/lumia-ds/node_modules/.pnpm/vitest@2.1.9_@types+node@20.19.25_happy-dom@20.0.10_jsdom@25.0.0_terser@5.44.1/node_modules/vitest/dist/chunks/execute.2pr0rHgK.js:389:22)
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:44:10)
+packages/editor test:     at renderWithHooks (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+packages/editor test:     at mountIndeterminateComponent (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+packages/editor test:     at beginWork (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+packages/editor test:     at HTMLUnknownElement.callCallback (/Users/archanray/lumia-ds/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+packages/editor test:     at HTMLUnknownElement.callTheUserObjectsOperation (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+packages/editor test:     at innerInvokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+packages/editor test:     at invokeEventListeners (/Users/archanray/lumia-ds/node_modules/.pnpm/jsdom@25.0.0/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+packages/editor test:   codeFrame: 'vi.mock(import("lucide-react"), async (importOriginal) => {\n' +
+packages/editor test:     '  const actual = await importOriginal()\n' +
+packages/editor test:     '  return {\n' +
+packages/editor test:     '    ...actual,\n' +
+packages/editor test:     '    // your mocked methods\n' +
+packages/editor test:     '  }\n' +
+packages/editor test:     '})'
+packages/editor test: }
+packages/editor test: The above error occurred in the <FileToolbarButton> component:
+packages/editor test:     at FileToolbarButton (/Users/archanray/lumia-ds/packages/editor/src/components/Toolbar/FileToolbarButton.tsx:14:42)
+packages/editor test:     at div
+packages/editor test:     at div
+packages/editor test:     at Toolbar (/Users/archanray/lumia-ds/packages/editor/src/internal/EditorToolbarCompact.test.tsx:47:15)
+packages/editor test:     at EditorToolbarCompact (/Users/archanray/lumia-ds/packages/editor/src/internal/EditorToolbarCompact.tsx:31:29)
+packages/editor test:     at LexicalComposer (file:///Users/archanray/lumia-ds/node_modules/.pnpm/@lexical+react@0.38.2_react-dom@18.3.1_react@18.3.1__react@18.3.1_yjs@13.6.27/node_modules/@lexical/react/LexicalComposer.dev.mjs:50:3)
+packages/editor test:     at EditorProvider (/Users/archanray/lumia-ds/packages/editor/src/EditorProvider.tsx:80:3)
+packages/editor test:     at LexicalComposer (file:///Users/archanray/lumia-ds/node_modules/.pnpm/@lexical+react@0.38.2_react-dom@18.3.1_react@18.3.1__react@18.3.1_yjs@13.6.27/node_modules/@lexical/react/LexicalComposer.dev.mjs:50:3)
+packages/editor test:     at TestEditor
+packages/editor test: Consider adding an error boundary to your tree to customize error handling behavior.
+packages/editor test: Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+packages/editor test:  ❯ src/internal/EditorToolbarCompact.test.tsx (2 tests | 2 failed) 40ms
+packages/editor test:    × EditorToolbarCompact > renders essential buttons 26ms
+packages/editor test:      → [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test:    × EditorToolbarCompact > does not render block type or font controls 14ms
+packages/editor test:      → [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/layout test:  ✓ src/stack-layout/stack-layout.test.tsx (2 tests) 31ms
+packages/layout test:  ✓ src/admin-shell/admin-shell.test.tsx (2 tests) 40ms
+packages/layout test:  ✓ src/drawer-layout/drawer-layout.test.tsx (2 tests) 72ms
+packages/layout test:  Test Files  3 passed (3)
+packages/layout test:       Tests  6 passed (6)
+packages/layout test:    Start at  20:20:31
+packages/layout test:    Duration  3.13s (transform 586ms, setup 0ms, collect 6.57s, tests 143ms, environment 1.47s, prepare 498ms)
+packages/layout test: Done
+packages/forms test:  ✓ src/form/form.test.tsx (2 tests) 140ms
+packages/forms test:  Test Files  3 passed (3)
+packages/forms test:       Tests  18 passed (18)
+packages/forms test:    Start at  20:20:31
+packages/forms test:    Duration  3.44s (transform 627ms, setup 0ms, collect 6.70s, tests 189ms, environment 1.46s, prepare 280ms)
+packages/forms test: Done
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockComponent.test.tsx > ImageBlockComponent > renders image and caption
+packages/editor test: ImageBlockNode decorate { src: 'http://example.com/image.jpg', status: undefined }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockComponent.test.tsx > ImageBlockComponent > toggles selection styling on click
+packages/editor test: ImageBlockNode decorate { src: 'http://example.com/image.jpg', status: undefined }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload Baseline > renders image and caption
+packages/editor test: ImageBlockNode decorate { src: 'http://example.com/image.jpg', status: undefined }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > renders upload button when src is empty and adapter exists
+packages/editor test: ImageBlockNode decorate { src: '', status: undefined }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > handles file selection and optimistic preview
+packages/editor test: ImageBlockNode decorate { src: '', status: undefined }
+packages/editor test:  ✓ src/nodes/ImageBlockNode/ImageBlockComponent.test.tsx (2 tests) 107ms
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > handles file selection and optimistic preview
+packages/editor test: ImageBlockNode decorate { src: 'blob:mock-preview-url', status: 'uploading' }
+packages/editor test:  ✓ src/media-config.test.ts (7 tests) 7ms
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > handles file selection and optimistic preview
+packages/editor test: ImageBlockNode decorate { src: 'https://example.com/uploaded.jpg', status: 'uploaded' }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > handles upload error
+packages/editor test: ImageBlockNode decorate { src: '', status: undefined }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > handles upload error
+packages/editor test: ImageBlockNode decorate { src: 'blob:mock-preview-url', status: 'uploading' }
+packages/editor test: ImageBlockNode decorate { src: 'blob:mock-preview-url', status: 'error' }
+packages/editor test: stdout | src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx > ImageBlockUpload > validates file size
+packages/editor test: ImageBlockNode decorate { src: '', status: undefined }
+packages/editor test:  ✓ src/nodes/ImageBlockNode/ImageBlockUpload.test.tsx (5 tests) 308ms
+packages/editor test:  ✓ src/fonts-config.test.tsx (4 tests) 26ms
+packages/editor test:  ✓ src/EditorProvider.test.tsx (2 tests) 32ms
+packages/editor test:  ✓ src/rich-text.test.tsx (2 tests) 126ms
+packages/editor test:  ✓ src/test/link.test.tsx (2 tests | 1 skipped) 106ms
+packages/editor test:  ✓ src/lumia-editor.test.tsx (4 tests) 306ms
+packages/editor test:  ✓ src/nodes/ImageBlockNode/image-layout-utils.test.ts (7 tests) 2ms
+packages/editor test:  ✓ src/nodes/VideoBlockNode/VideoBlockNode.test.ts (3 tests) 3ms
+packages/editor test:  ✓ src/LumiaInlineEditor.test.tsx (3 tests) 136ms
+packages/editor test:  ✓ src/nodes/FileBlockNode/FileBlockNode.test.ts (2 tests) 2ms
+packages/editor test:  ✓ src/plugins/InsertImagePlugin.test.tsx (2 tests) 3ms
+packages/editor test:  ✓ src/nodes/ImageBlockNode/ImageBlockNode.test.ts (2 tests) 2ms
+packages/editor test:  ✓ src/blocks/registry.test.ts (3 tests) 1ms
+packages/editor test:  ✓ src/accessibility.test.tsx (2 tests) 138ms
+packages/editor test:  ✓ src/toolbar.test.tsx (5 tests) 1647ms
+packages/editor test:    ✓ Toolbar > toggles italic formatting with keyboard shortcut 1142ms
+packages/editor test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+packages/editor test:  FAIL  src/internal/EditorToolbarCompact.test.tsx > EditorToolbarCompact > renders essential buttons
+packages/editor test:  FAIL  src/internal/EditorToolbarCompact.test.tsx > EditorToolbarCompact > does not render block type or font controls
+packages/editor test: Error: [vitest] No "FileUp" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+packages/editor test: If you need to partially mock a module, you can use "importOriginal" helper inside:
+packages/editor test: vi.mock(import("lucide-react"), async (importOriginal) => {
+packages/editor test:   const actual = await importOriginal()
+packages/editor test:   return {
+packages/editor test:     ...actual,
+packages/editor test:     // your mocked methods
+packages/editor test:   }
+packages/editor test: })
+packages/editor test:  ❯ FileToolbarButton src/components/Toolbar/FileToolbarButton.tsx:44:10
+packages/editor test:      42|         title="Insert File"
+packages/editor test:      43|       >
+packages/editor test:      44|         <FileUp className="h-4 w-4" />
+packages/editor test:        |          ^
+packages/editor test:      45|       </Button>
+packages/editor test:      46|     </>
+packages/editor test:  ❯ renderWithHooks ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:15486:18
+packages/editor test:  ❯ mountIndeterminateComponent ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:20103:13
+packages/editor test:  ❯ beginWork ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:21626:16
+packages/editor test:  ❯ beginWork$1 ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:27465:14
+packages/editor test:  ❯ performUnitOfWork ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26599:12
+packages/editor test:  ❯ workLoopSync ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26505:5
+packages/editor test:  ❯ renderRootSync ../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/cjs/react-dom.development.js:26473:7
+packages/editor test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+packages/editor test:  Test Files  1 failed | 19 passed (20)
+packages/editor test:       Tests  2 failed | 74 passed | 4 skipped (80)
+packages/editor test:    Start at  20:20:31
+packages/editor test:    Duration  5.73s (transform 1.41s, setup 5.62s, collect 22.80s, tests 3.10s, environment 14.31s, prepare 2.51s)
+packages/editor test: Failed
+/Users/archanray/lumia-ds/packages/editor:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @lumia/editor@0.0.0 test: `vitest run --coverage -- --coverage packages/editor/src/nodes/VideoBlockNode/VideoBlockNode.test.ts`
+Exit status 1

@@ -22,8 +22,10 @@ import {
   ListOrdered,
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
+
 import { FontCombobox } from '../components/Fonts';
 import { useToolbarState } from './useToolbarState';
+import { InsertBlockMenu } from '../components/Toolbar/InsertBlockMenu';
 
 export function Toolbar() {
   const {
@@ -232,6 +234,8 @@ export function Toolbar() {
             </div>
           </PopoverContent>
         </Popover>
+        <div className="mx-2 h-6 w-px bg-border" />
+        <InsertBlockMenu />
       </div>
     </LumiaToolbar>
   );

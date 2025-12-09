@@ -1,0 +1,1 @@
+export { MediaResizer } from './MediaResizer';

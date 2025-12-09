@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useToolbarState } from './useToolbarState';
+import { FileToolbarButton } from '../components/Toolbar/FileToolbarButton';
 
 export function EditorToolbarCompact() {
   const {
@@ -166,6 +167,8 @@ export function EditorToolbarCompact() {
             </div>
           </PopoverContent>
         </Popover>
+        <div className="mx-1 h-4 w-px bg-border" />
+        <FileToolbarButton />
       </div>
     </LumiaToolbar>
   );
