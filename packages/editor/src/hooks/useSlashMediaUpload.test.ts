@@ -7,9 +7,15 @@ import { ParagraphNode, TextNode } from 'lexical';
 import { ImageBlockNode } from '../nodes/ImageBlockNode/ImageBlockNode';
 import { VideoBlockNode } from '../nodes/VideoBlockNode';
 import { FileBlockNode } from '../nodes/FileBlockNode/FileBlockNode';
-
-// Import pure functions for testing
 import { EditorMediaConfig } from '../media-config';
+import {
+  hasUploadAdapter,
+  normalizeUploadError,
+  buildSuccessStatusUpdates,
+  buildErrorStatusUpdates,
+  extractFilenameFromUrl,
+  buildImageNodePayload,
+} from '../utils/mediaUploadUtils';
 
 describe('useSlashMediaUpload', () => {
   const createEditor = () =>
@@ -148,6 +154,68 @@ describe('useSlashMediaUpload', () => {
       mediaConfig.callbacks?.onUploadProgress?.(file, 50);
 
       expect(onUploadProgress).toHaveBeenCalledWith(file, 50);
+    });
+  });
+
+  describe('Pure function integration', () => {
+    it('hasUploadAdapter returns false for null config', () => {
+      expect(hasUploadAdapter(null)).toBe(false);
+    });
+
+    it('hasUploadAdapter returns false for missing adapter', () => {
+      expect(hasUploadAdapter({ uploadAdapter: undefined })).toBe(false);
+    });
+
+    it('hasUploadAdapter returns true for valid adapter', () => {
+      expect(hasUploadAdapter({ uploadAdapter: {} })).toBe(true);
+    });
+
+    it('normalizeUploadError wraps non-Error objects', () => {
+      const result = normalizeUploadError('string error');
+      expect(result.error).toBeInstanceOf(Error);
+      expect(result.message).toBe('Upload failed');
+    });
+
+    it('normalizeUploadError preserves Error objects', () => {
+      const original = new Error('Test error');
+      const result = normalizeUploadError(original);
+      expect(result.error).toBe(original);
+    });
+
+    it('buildSuccessStatusUpdates returns correct keys for image', () => {
+      const result = buildSuccessStatusUpdates({ url: 'test.jpg' }, 'image');
+      expect(result.__src).toBe('test.jpg');
+      expect(result.__status).toBe('uploaded');
+    });
+
+    it('buildSuccessStatusUpdates returns correct keys for file', () => {
+      const result = buildSuccessStatusUpdates({ url: 'test.pdf' }, 'file');
+      expect(result.__url).toBe('test.pdf');
+      expect(result.__status).toBe('uploaded');
+    });
+
+    it('buildErrorStatusUpdates returns error status', () => {
+      const result = buildErrorStatusUpdates();
+      expect(result.__status).toBe('error');
+    });
+
+    it('extractFilenameFromUrl extracts filename correctly', () => {
+      expect(extractFilenameFromUrl('https://example.com/path/file.pdf')).toBe(
+        'file.pdf',
+      );
+    });
+
+    it('extractFilenameFromUrl uses fallback for empty path', () => {
+      expect(extractFilenameFromUrl('https://example.com/', 'unknown')).toBe(
+        'unknown',
+      );
+    });
+
+    it('buildImageNodePayload creates correct structure', () => {
+      const result = buildImageNodePayload('blob:preview', 'photo.jpg');
+      expect(result.src).toBe('blob:preview');
+      expect(result.alt).toBe('photo.jpg');
+      expect(result.status).toBe('uploading');
     });
   });
 });
