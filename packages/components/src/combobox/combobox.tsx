@@ -55,6 +55,8 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     const listId = useId();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const requestIdRef = useRef(0);
+    const isPointerDownRef = useRef(false);
+    const ignoreFocusRef = useRef(false);
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState(value?.label ?? '');
     const [options, setOptions] = useState<ComboboxOption[]>([]);
@@ -143,6 +145,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         resetQueryToValue();
       } else {
         updateContentWidth();
+        triggerLoad(query);
       }
     };
 
@@ -150,7 +153,15 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       if (disabled) return;
 
       updateContentWidth();
-      setOpen(true);
+
+      if (ignoreFocusRef.current) {
+        ignoreFocusRef.current = false;
+        return;
+      }
+
+      if (!isPointerDownRef.current) {
+        setOpen(true);
+      }
       triggerLoad(query);
     };
 
@@ -162,6 +173,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     };
 
     const selectOption = (option: ComboboxOption | null) => {
+      ignoreFocusRef.current = true;
       onChange(option);
       setOpen(false);
       setHighlightedIndex(-1);
@@ -233,8 +245,14 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               disabled={disabled}
               value={query}
               placeholder={placeholder}
-              className={cn(baseFieldClasses, 'pr-9', className)}
+              className={cn(baseFieldClasses, 'pr-9 bg-background', className)}
               onFocus={handleFocus}
+              onPointerDown={() => {
+                isPointerDownRef.current = true;
+              }}
+              onPointerUp={() => {
+                isPointerDownRef.current = false;
+              }}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               {...inputProps}
@@ -290,37 +308,37 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             ) : null}
             {!loading
               ? options.map((option, index) => {
-                  const isSelected = value?.value === option.value;
-                  const isActive = highlightedIndex === index;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      role="option"
-                      id={`${listId}-option-${index}`}
-                      aria-selected={isSelected}
-                      className={cn(
-                        'flex w-full cursor-pointer select-none items-center justify-between rounded-none px-3 py-2 text-left text-sm transition-colors',
-                        isActive && 'bg-muted text-foreground',
-                        !isActive && 'text-foreground hover:bg-muted',
-                        isSelected && 'font-semibold',
-                      )}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => selectOption(option)}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                    >
-                      <span className="truncate">{option.label}</span>
-                      {isSelected ? (
-                        <span
-                          aria-hidden="true"
-                          className="text-primary-600 dark:text-primary-500"
-                        >
-                          •
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })
+                const isSelected = value?.value === option.value;
+                const isActive = highlightedIndex === index;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    id={`${listId}-option-${index}`}
+                    aria-selected={isSelected}
+                    className={cn(
+                      'flex w-full cursor-pointer select-none items-center justify-between rounded-none px-3 py-2 text-left text-sm transition-colors',
+                      isActive && 'bg-muted text-foreground',
+                      !isActive && 'text-foreground hover:bg-muted',
+                      isSelected && 'font-semibold',
+                    )}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => selectOption(option)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                  >
+                    <span className="truncate">{option.label}</span>
+                    {isSelected ? (
+                      <span
+                        aria-hidden="true"
+                        className="text-primary-600 dark:text-primary-500"
+                      >
+                        •
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })
               : null}
           </div>
         </PopoverContent>
@@ -346,6 +364,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
     const inputRef = useRef<HTMLInputElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const requestIdRef = useRef(0);
+    const isPointerDownRef = useRef(false);
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [options, setOptions] = useState<ComboboxOption[]>([]);
@@ -422,7 +441,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
       if (disabled) return;
 
       updateContentWidth();
-      setOpen(true);
+      if (!isPointerDownRef.current) {
+        setOpen(true);
+      }
       triggerLoad(query);
     };
 
@@ -513,10 +534,16 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
               ref={triggerRef}
               className={cn(
                 baseFieldClasses,
-                'flex min-h-10 cursor-text flex-wrap items-center gap-1 pr-9 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 focus-within:ring-offset-background',
+                'flex min-h-10 cursor-text flex-wrap items-center gap-1 pr-9 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 focus-within:ring-offset-background bg-background',
                 disabled && 'cursor-not-allowed opacity-50',
                 className,
               )}
+              onPointerDown={() => {
+                isPointerDownRef.current = true;
+              }}
+              onPointerUp={() => {
+                isPointerDownRef.current = false;
+              }}
               onClick={() => {
                 if (disabled) return;
                 inputRef.current?.focus();
@@ -530,11 +557,11 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
                     disabled
                       ? undefined
                       : () =>
-                          onChange(
-                            value.filter(
-                              (selected) => selected.value !== option.value,
-                            ),
-                          )
+                        onChange(
+                          value.filter(
+                            (selected) => selected.value !== option.value,
+                          ),
+                        )
                   }
                 />
               ))}
@@ -609,57 +636,57 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
             ) : null}
             {!loading
               ? options.map((option, index) => {
-                  const isSelected = selectedValues.has(option.value);
-                  const isActive = highlightedIndex === index;
+                const isSelected = selectedValues.has(option.value);
+                const isActive = highlightedIndex === index;
 
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      role="option"
-                      id={`${listId}-option-${index}`}
-                      aria-selected={isSelected}
-                      className={cn(
-                        'flex w-full cursor-pointer select-none items-center justify-between rounded-none px-3 py-2 text-left text-sm transition-colors',
-                        isActive && 'bg-muted text-foreground',
-                        !isActive && 'text-foreground hover:bg-muted',
-                        isSelected && 'font-semibold',
-                      )}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => toggleOption(option)}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                    >
-                      <span className="flex items-center gap-2 truncate">
-                        <span
-                          aria-hidden="true"
-                          className={cn(
-                            'flex h-4 w-4 items-center justify-center rounded border border-input',
-                            isSelected &&
-                              'border-primary-500 bg-primary-50 text-primary-600 dark:border-primary-500/80 dark:bg-primary-500/10 dark:text-primary-400',
-                          )}
-                        >
-                          {isSelected ? (
-                            <svg
-                              aria-hidden="true"
-                              viewBox="0 0 16 16"
-                              className="h-3 w-3"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path
-                                d="M3.5 8l3 3 6-6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          ) : null}
-                        </span>
-                        <span className="truncate">{option.label}</span>
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    id={`${listId}-option-${index}`}
+                    aria-selected={isSelected}
+                    className={cn(
+                      'flex w-full cursor-pointer select-none items-center justify-between rounded-none px-3 py-2 text-left text-sm transition-colors',
+                      isActive && 'bg-muted text-foreground',
+                      !isActive && 'text-foreground hover:bg-muted',
+                      isSelected && 'font-semibold',
+                    )}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => toggleOption(option)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          'flex h-4 w-4 items-center justify-center rounded border border-input',
+                          isSelected &&
+                          'border-primary-500 bg-primary-50 text-primary-600 dark:border-primary-500/80 dark:bg-primary-500/10 dark:text-primary-400',
+                        )}
+                      >
+                        {isSelected ? (
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 16 16"
+                            className="h-3 w-3"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path
+                              d="M3.5 8l3 3 6-6"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ) : null}
                       </span>
-                    </button>
-                  );
-                })
+                      <span className="truncate">{option.label}</span>
+                    </span>
+                  </button>
+                );
+              })
               : null}
           </div>
         </PopoverContent>

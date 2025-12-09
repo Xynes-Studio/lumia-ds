@@ -118,7 +118,7 @@ describe('Combobox', () => {
       root.render(
         <Combobox
           value={null}
-          onChange={() => {}}
+          onChange={() => { }}
           loadOptions={loadOptions}
           placeholder="Pick a value"
         />,
@@ -145,7 +145,7 @@ describe('Combobox', () => {
     expect(loadOptions).toHaveBeenLastCalledWith('alp');
   });
 
-  it.skip('navigates options with arrows and selects with Enter', async () => {
+  it('navigates options with arrows and selects with Enter', async () => {
     const loadOptions = vi.fn().mockResolvedValue([
       { label: 'Alpha', value: 'alpha' },
       { label: 'Beta', value: 'beta' },
@@ -193,7 +193,7 @@ describe('Combobox', () => {
       Simulate.keyDown(input, { key: 'Enter' });
       await Promise.resolve();
     });
-    await act(async () => {});
+    await act(async () => { });
 
     expect(handleChange).toHaveBeenCalledWith({
       label: 'Beta',
@@ -216,7 +216,7 @@ describe('Combobox', () => {
 
     await act(async () => {
       root.render(
-        <Combobox value={null} onChange={() => {}} loadOptions={loadOptions} />,
+        <Combobox value={null} onChange={() => { }} loadOptions={loadOptions} />,
       );
     });
 
@@ -233,9 +233,103 @@ describe('Combobox', () => {
     await act(async () => {
       resolveOptions?.();
     });
-    await act(async () => {});
+    await act(async () => { });
 
     expect(document.body.textContent?.includes('No results')).toBe(true);
+  });
+
+  it('does not close when clicking immediately after focus (simulating user click)', async () => {
+    const loadOptions = vi.fn().mockResolvedValue([]);
+    await act(async () => {
+      root.render(
+        <Combobox
+          value={null}
+          onChange={() => { }}
+          loadOptions={loadOptions}
+        />,
+      );
+    });
+
+    const input = host.querySelector('input') as HTMLInputElement;
+
+    // User click sequence: PointerDown -> Focus -> PointerUp -> Click
+    await act(async () => {
+      Simulate.pointerDown(input);
+      Simulate.focus(input);
+      Simulate.pointerUp(input);
+      Simulate.click(input);
+    });
+    // In buggy implementation with race condition, this might toggle it CLOSED.
+
+    // We want it to be OPEN.
+    expect(document.body.querySelector('[role="listbox"]')).toBeTruthy();
+  });
+  it('reopens the popover and loads options when clicking input after selection', async () => {
+    const loadOptions = vi.fn().mockResolvedValue([
+      { label: 'Alpha', value: 'alpha' },
+      { label: 'Beta', value: 'beta' },
+    ]);
+    const handleChange = vi.fn();
+
+    const Harness = () => {
+      const [selected, setSelected] = useState<ComboboxOption | null>(null);
+      return (
+        <Combobox
+          value={selected}
+          onChange={(val) => {
+            setSelected(val);
+            handleChange(val);
+          }}
+          loadOptions={loadOptions}
+        />
+      );
+    };
+
+    await act(async () => {
+      root.render(<Harness />);
+    });
+
+    const input = host.querySelector('input') as HTMLInputElement;
+
+    // 1. Open and Select 'Alpha'
+    await act(async () => {
+      Simulate.focus(input);
+      await Promise.resolve();
+    });
+    // Wait for options to load
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const options = document.body.querySelectorAll('[role="option"]');
+    await act(async () => {
+      Simulate.click(options[0]); // Select Alpha
+      await Promise.resolve();
+    });
+
+    expect(handleChange).toHaveBeenCalledWith({ label: 'Alpha', value: 'alpha' });
+    // Should be closed
+    expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+
+    // 2. Click input again to re-open
+    // Note: In a real browser, clicking a focused input doesn't necessarily fire focus again,
+    // but the PopoverTrigger handles click events to toggle.
+    // We simulate a click on the input (which is inside the trigger).
+    // The PopoverTrigger logic in our mock/implementation toggles open state.
+    await act(async () => {
+      Simulate.click(input);
+      await Promise.resolve();
+    });
+
+    // Should be open again
+    expect(document.body.querySelector('[role="listbox"]')).toBeTruthy();
+
+    // CRITICAL: loadOptions should be called again with the CURRENT query (which is 'Alpha')
+    // The count will be: 
+    // 1. Initial focus ('')
+    // 2. Selection closes it.
+    // 3. Re-open click ('Alpha')
+    expect(loadOptions).toHaveBeenLastCalledWith('Alpha');
   });
 });
 
