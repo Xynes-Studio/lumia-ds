@@ -148,7 +148,7 @@ const StateShell = forwardRef<HTMLDivElement, StateProps>(function StateShell(
     <div ref={ref} className={cn(container, className)} {...props}>
       {icon ? (
         <div className={iconWrapper}>
-          <Icon id={icon} size={iconSize} aria-hidden="true" />
+          <Icon name={icon} size={iconSize} aria-hidden="true" />
         </div>
       ) : null}
 
@@ -190,7 +190,7 @@ const ActionButton = ({ action, variant, size }: ActionButtonProps) => {
   const content = (
     <>
       {action.icon ? (
-        <Icon id={action.icon} size={16} className="shrink-0" />
+        <Icon name={action.icon} size={16} className="shrink-0" />
       ) : null}
       <span>{action.label}</span>
     </>

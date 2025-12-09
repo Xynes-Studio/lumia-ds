@@ -294,7 +294,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               onClick={() => applyStep(1)}
               disabled={isDisabled}
             >
-              <Icon id="chevron-up" className="h-4 w-4" aria-hidden />
+              <Icon name="chevron-up" className="h-4 w-4" aria-hidden />
             </button>
             <button
               type="button"
@@ -303,7 +303,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               onClick={() => applyStep(-1)}
               disabled={isDisabled}
             >
-              <Icon id="chevron-down" className="h-4 w-4" aria-hidden />
+              <Icon name="chevron-down" className="h-4 w-4" aria-hidden />
             </button>
           </div>
         </div>

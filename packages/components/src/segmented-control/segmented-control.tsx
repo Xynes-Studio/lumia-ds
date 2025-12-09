@@ -195,7 +195,7 @@ export const SegmentedControl = forwardRef<
           >
             {option.icon ? (
               <Icon
-                id={option.icon}
+                name={option.icon}
                 size={16}
                 aria-hidden="true"
                 className="shrink-0"

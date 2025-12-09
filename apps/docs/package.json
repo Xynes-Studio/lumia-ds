@@ -1,0 +1,24 @@
+{
+    "name": "@lumia/docs",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "nextdev=$(which next); if [ -z \"$nextdev\" ]; then pnpm exec next dev; else next dev; fi",
+        "build": "nextbuild=$(which next); if [ -z \"$nextbuild\" ]; then pnpm exec next build; else next build; fi",
+        "start": "nextstart=$(which next); if [ -z \"$nextstart\" ]; then pnpm exec next start; else next start; fi",
+        "lint": "nextlint=$(which next); if [ -z \"$nextlint\" ]; then pnpm exec next lint; else next lint; fi"
+    },
+    "dependencies": {
+        "next": "^14.0.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "nextra": "^2.13.2",
+        "nextra-theme-docs": "^2.13.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "typescript": "^5.0.0"
+    }
+}
