@@ -24,6 +24,8 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       '@lumia/theme': path.resolve(__dirname, '../packages/theme/src'),
+      // The CSS file must be resolved from dist, not src - order matters, more specific alias first
+      '@lumia/tokens/dist': path.resolve(__dirname, '../packages/tokens/dist'),
       '@lumia/tokens': path.resolve(__dirname, '../packages/tokens/src'),
       '@lumia/components': path.resolve(__dirname, '../packages/components/src'),
       '@lumia/layout': path.resolve(__dirname, '../packages/layout/src'),
