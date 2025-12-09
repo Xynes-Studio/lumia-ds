@@ -51,20 +51,35 @@ const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
 registerIcon('bell', CustomBell);
 ```
 
-## Importing SVGs with the CLI
+## Building Icons from SVG
 
-Run the workspace script to convert raw SVG files into React components and register them:
-
-```bash
-pnpm icons:import
-```
-
-- Source SVGs live in `packages/icons/raw` (or pass a different folder to `lumia-icon-import`).
-- Components are generated under `packages/icons/src/generated/icons` and exported from `@lumia/icons`.
-- Registration happens automatically through `packages/icons/src/generated/registry.ts`, so `Icon` can reference the new ids immediately.
-
-The CLI is provided by `@lumia/cli` and can be invoked directly as well:
+Add SVG files to `packages/icons/svg/` and run:
 
 ```bash
-node packages/cli/bin/lumia-icon-import.js path/to/svg/folder packages/icons
+pnpm build:icons
 ```
+
+- Source SVGs: `packages/icons/svg/`
+- Generated components: `packages/icons/src/generated/`
+- Icons are exported from `@lumia/icons` and auto-registered.
+
+### Direct Import (Tree-Shakable)
+
+```tsx
+import { IconCheck, IconSparkle } from '@lumia/icons';
+
+export function Example() {
+  return <IconCheck className="text-green-500" />;
+}
+```
+
+### Via Icon Registry
+
+```tsx
+import { Icon } from '@lumia/icons';
+
+export function Example() {
+  return <Icon id="icon-check" size={20} />;
+}
+```
+
