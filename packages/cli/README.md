@@ -18,6 +18,9 @@ pnpm lumia [command]
 
 - `lumia --help`: Show help
 - `lumia version`: Show version
+- `lumia generate`: Generator commands
+- `lumia tokens build`: Build tokens (runs Style Dictionary)
+- `lumia tokens validate`: Validate token JSON integrity
 
 ## Architecture
 
