@@ -10,6 +10,46 @@ Types and renderer entry points from `@lumia/runtime` for describing resource-dr
 - `ResourceConfig<TValues>`: `{ id, pages?, fields?, dataFetcher? }`
 - `ResourcePageRefs`: `{ list?, detail?, create?, edit?, update? }`
 
+## Zod Runtime Validation
+
+All core types are backed by Zod schemas for runtime validation. Each schema is named with a `Schema` suffix and exported alongside its inferred TypeScript type.
+
+```typescript
+import {
+  BlockSchemaSchema,
+  PageSchemaSchema,
+  ResourceConfigSchema,
+  type BlockSchema,
+  type PageSchema,
+} from '@lumia/runtime';
+
+// Validate server-driven config at runtime
+const validateBlockConfig = (input: unknown): BlockSchema => {
+  return BlockSchemaSchema.parse(input); // throws ZodError if invalid
+};
+
+// Safe parsing (non-throwing)
+const result = PageSchemaSchema.safeParse(untrustedData);
+if (result.success) {
+  const page: PageSchema = result.data;
+}
+```
+
+### Available Schemas
+
+| Schema | Type | Description |
+|--------|------|-------------|
+| `ComponentKindSchema` | `ComponentKind` | Valid component kind enum |
+| `BlockSchemaSchema` | `BlockSchema` | Block configuration |
+| `PageSchemaSchema` | `PageSchema` | Page with layout and blocks |
+| `GridPlacementSchema` | `GridPlacement` | Grid placement metadata |
+| `PageGridSchema` | `PageGrid` | Grid definition |
+| `ResourcePageRefsSchema` | `ResourcePageRefs` | Page references by lifecycle |
+| `ResourceConfigSchema` | `ResourceConfigInferred` | Resource configuration |
+| `ResourceScreenSchema` | `ResourceScreen` | Screen type enum |
+| `DataQueryContextSchema` | `DataQueryContextInferred` | Data fetch context |
+| `DataSourceResultSchema` | `DataSourceResultInferred` | Data source result |
+
 ## Data fetching contract
 
 - `getResourceConfig(resourceName)` → `ResourceConfig` (required)
