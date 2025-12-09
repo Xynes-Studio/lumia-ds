@@ -1,0 +1,52 @@
+{
+    "color": {
+        "primary": {
+            "value": "{color.neutral.900}",
+            "type": "color"
+        },
+        "secondary": {
+            "value": "{color.neutral.100}",
+            "type": "color"
+        },
+        "background": {
+            "value": "{color.white}",
+            "type": "color"
+        },
+        "foreground": {
+            "value": "{color.neutral.950}",
+            "type": "color"
+        },
+        "border": {
+            "value": "{color.neutral.200}",
+            "type": "color"
+        },
+        "muted": {
+            "value": "{color.neutral.100}",
+            "type": "color",
+            "foreground": {
+                "value": "{color.neutral.500}",
+                "type": "color"
+            }
+        },
+        "mutedForeground": {
+            "value": "{color.neutral.500}",
+            "type": "color"
+        },
+        "ring": {
+            "value": "{color.neutral.900}",
+            "type": "color"
+        },
+        "destructive": {
+            "value": "{color.danger.500}",
+            "type": "color",
+            "foreground": {
+                "value": "{color.white}",
+                "type": "color"
+            }
+        },
+        "destructiveForeground": {
+            "value": "{color.white}",
+            "type": "color"
+        }
+    }
+}
