@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import { forwardRef } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { Card } from '../card/card';
 import { cn } from '../lib/utils';
 
@@ -62,7 +62,7 @@ export const StatTile = forwardRef<HTMLDivElement, StatTileProps>(
                     )}
                   >
                     <Icon
-                      id={
+                      name={
                         delta.direction === 'up' ? 'chevron-up' : 'chevron-down'
                       }
                       size={16}
@@ -78,7 +78,7 @@ export const StatTile = forwardRef<HTMLDivElement, StatTileProps>(
             </div>
             {icon ? (
               <span className={iconWrapperClasses} aria-hidden="true">
-                <Icon id={icon} size={20} className="fill-none" />
+                <Icon name={icon} size={20} className="fill-none" />
               </span>
             ) : null}
           </div>

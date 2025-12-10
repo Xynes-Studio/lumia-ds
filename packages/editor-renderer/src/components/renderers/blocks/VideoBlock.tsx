@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@lumia/components';
+import { Card } from '@lumia-ui/components';
 
 export interface VideoBlockProps {
   node: {

@@ -3,7 +3,7 @@
 Inline alert banners for contextual info, success, warning, and error messaging. Works as a page-top banner or inside surfaces like `Card`.
 
 ## Exports
-- `Alert` (also exported as `InlineAlert`) from `@lumia/components`.
+- `Alert` (also exported as `InlineAlert`) from `@lumia-ui/components`.
 
 ## Props
 - `variant?: 'info' | 'success' | 'warning' | 'error'` (default `info`).
@@ -17,8 +17,8 @@ Inline alert banners for contextual info, success, warning, and error messaging.
 
 ## Usage
 ```tsx
-import type { IconId } from '@lumia/icons';
-import { Alert, Card, CardContent } from '@lumia/components';
+import type { IconId } from '@lumia-ui/icons';
+import { Alert, Card, CardContent } from '@lumia-ui/components';
 
 export function PageBanner() {
   return (

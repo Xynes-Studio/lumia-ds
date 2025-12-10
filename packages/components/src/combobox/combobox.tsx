@@ -55,6 +55,8 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     const listId = useId();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const requestIdRef = useRef(0);
+    const isPointerDownRef = useRef(false);
+    const ignoreFocusRef = useRef(false);
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState(value?.label ?? '');
     const [options, setOptions] = useState<ComboboxOption[]>([]);
@@ -143,6 +145,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         resetQueryToValue();
       } else {
         updateContentWidth();
+        triggerLoad(query);
       }
     };
 
@@ -150,7 +153,15 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       if (disabled) return;
 
       updateContentWidth();
-      setOpen(true);
+
+      if (ignoreFocusRef.current) {
+        ignoreFocusRef.current = false;
+        return;
+      }
+
+      if (!isPointerDownRef.current) {
+        setOpen(true);
+      }
       triggerLoad(query);
     };
 
@@ -162,6 +173,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     };
 
     const selectOption = (option: ComboboxOption | null) => {
+      ignoreFocusRef.current = true;
       onChange(option);
       setOpen(false);
       setHighlightedIndex(-1);
@@ -233,8 +245,14 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               disabled={disabled}
               value={query}
               placeholder={placeholder}
-              className={cn(baseFieldClasses, 'pr-9', className)}
+              className={cn(baseFieldClasses, 'pr-9 bg-background', className)}
               onFocus={handleFocus}
+              onPointerDown={() => {
+                isPointerDownRef.current = true;
+              }}
+              onPointerUp={() => {
+                isPointerDownRef.current = false;
+              }}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               {...inputProps}
@@ -346,6 +364,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
     const inputRef = useRef<HTMLInputElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const requestIdRef = useRef(0);
+    const isPointerDownRef = useRef(false);
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [options, setOptions] = useState<ComboboxOption[]>([]);
@@ -422,7 +441,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
       if (disabled) return;
 
       updateContentWidth();
-      setOpen(true);
+      if (!isPointerDownRef.current) {
+        setOpen(true);
+      }
       triggerLoad(query);
     };
 
@@ -513,10 +534,16 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
               ref={triggerRef}
               className={cn(
                 baseFieldClasses,
-                'flex min-h-10 cursor-text flex-wrap items-center gap-1 pr-9 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 focus-within:ring-offset-background',
+                'flex min-h-10 cursor-text flex-wrap items-center gap-1 pr-9 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 focus-within:ring-offset-background bg-background',
                 disabled && 'cursor-not-allowed opacity-50',
                 className,
               )}
+              onPointerDown={() => {
+                isPointerDownRef.current = true;
+              }}
+              onPointerUp={() => {
+                isPointerDownRef.current = false;
+              }}
               onClick={() => {
                 if (disabled) return;
                 inputRef.current?.focus();

@@ -5,7 +5,7 @@ import type {
   MutableRefObject,
 } from 'react';
 import { forwardRef } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 type SideNavItemBase = {
@@ -50,7 +50,7 @@ const renderContent = (
     <>
       {icon ? (
         <Icon
-          id={icon}
+          name={icon}
           size={18}
           aria-hidden="true"
           className={cn('shrink-0', active && 'text-primary-800')}

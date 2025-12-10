@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { forwardRef } from 'react';
-import { Flex } from '@lumia/components';
+import { Flex } from '@lumia-ui/components';
 import {
   LayoutBody,
   LayoutContent,

@@ -3,7 +3,7 @@
 Accessible on/off toggle built on the shadcn/Radix Switch with Lumia tokens for track/knob states.
 
 ## Exports
-- `Switch`, `SwitchProps` from `@lumia/components`.
+- `Switch`, `SwitchProps` from `@lumia-ui/components`.
 
 ## Props
 - `checked: boolean` — controlled on/off state.
@@ -14,7 +14,7 @@ Accessible on/off toggle built on the shadcn/Radix Switch with Lumia tokens for 
 ## Usage
 ```tsx
 import { useState } from 'react';
-import { Switch } from '@lumia/components';
+import { Switch } from '@lumia-ui/components';
 
 export function NotificationsToggle() {
   const [enabled, setEnabled] = useState(false);

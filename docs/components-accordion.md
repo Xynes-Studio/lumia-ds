@@ -3,7 +3,7 @@
 Radix-based accordion/disclosure for collapsible sections with DS styling.
 
 ## Exports
-- `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent` from `@lumia/components`.
+- `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent` from `@lumia-ui/components`.
 
 ## Props & behavior
 - `Accordion` mirrors Radix root props; supports `type="single"` (default) or `type="multiple"`, `defaultValue`/`value`, and passes through `collapsible`.
@@ -17,7 +17,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function ProjectDetails() {
   return (

@@ -1,11 +1,11 @@
-# @lumia/components
+# @lumia-ui/components
 
-Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia/theme` and `@lumia/tokens`.
+Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia-ui/theme` and `@lumia-ui/tokens`.
 
 ## Install
 
 ```bash
-pnpm add @lumia/components @lumia/theme @lumia/tokens
+pnpm add @lumia-ui/components @lumia-ui/theme @lumia-ui/tokens
 ```
 
 ## Usage (sampler)
@@ -44,7 +44,7 @@ import {
   SheetFooter,
   Flex,
   FlatList,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function Example() {
   return (
@@ -197,9 +197,16 @@ export function Example() {
 - `showCount` displays a `current / maxLength` counter beside the hint when `maxLength` is provided.
 - Respects invalid state styling for both the field and counter text.
 
+### Loading States
+All interactive components (`Button`, `MenuItem`, `ConfirmDialog`, `Select`) support a standardized `isLoading` prop.
+- **Button**: Replaces/augments content with a spinner; disables interaction.
+- **MenuItem**: Replaces icon with spinner; disables selection.
+- **Select**: Replaces chevron with spinner; disables selection.
+- **ConfirmDialog**: Automatically handles async `onConfirm` loading state.
+
 ## Storybook
 
-`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006`
+`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia-ui/components storybook -- -p 6006`
 
 More details: see `docs/storybook.md`.
 
@@ -236,5 +243,5 @@ More details: see `docs/storybook.md`.
 
 ## Local development
 
-- Build: `pnpm --filter @lumia/components build`
-- Test (happy-dom): `pnpm --filter @lumia/components test`
+- Build: `pnpm --filter @lumia-ui/components build`
+- Test (happy-dom): `pnpm --filter @lumia-ui/components test`

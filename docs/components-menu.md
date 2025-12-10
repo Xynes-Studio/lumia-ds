@@ -3,7 +3,7 @@
 Dropdown menu wrapper around Radix/`shadcn` primitives with DS spacing, icons, and state styling.
 
 ## Exports
-- `Menu`, `MenuTrigger`, `MenuContent`, `MenuItem`, `MenuLabel`, `MenuSeparator` from `@lumia/components`.
+- `Menu`, `MenuTrigger`, `MenuContent`, `MenuItem`, `MenuLabel`, `MenuSeparator` from `@lumia-ui/components`.
 
 ## Props
 - `Menu` uses Radix `DropdownMenuProps`.
@@ -15,7 +15,7 @@ Dropdown menu wrapper around Radix/`shadcn` primitives with DS spacing, icons, a
 
 ## Usage
 ```tsx
-import { Button, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@lumia/components';
+import { Button, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@lumia-ui/components';
 
 export function ActionsMenu() {
   return (
@@ -47,7 +47,7 @@ export function ActionsMenu() {
 Right-click / long-press menus reuse the same spacing, icons, and focus handling as the dropdown `Menu`.
 
 ### Exports
-- `ContextMenu` from `@lumia/components`.
+- `ContextMenu` from `@lumia-ui/components`.
 - `MenuItemConfig` type for `items`.
 
 ### Props
@@ -57,7 +57,7 @@ Right-click / long-press menus reuse the same spacing, icons, and focus handling
 
 ### Usage
 ```tsx
-import { ContextMenu, type MenuItemConfig } from '@lumia/components';
+import { ContextMenu, type MenuItemConfig } from '@lumia-ui/components';
 
 const items: MenuItemConfig[] = [
   { id: 'edit', label: 'Edit', icon: 'user' },

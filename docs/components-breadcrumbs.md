@@ -3,7 +3,7 @@
 Navigation trail component for deep navigation paths.
 
 ## Exports
-- `Breadcrumbs` from `@lumia/components`.
+- `Breadcrumbs` from `@lumia-ui/components`.
 
 ## Props
 - `items: { label: string; href?: string; onClick?: () => void; icon?: IconId }[]` – ordered crumbs; last item is treated as current.
@@ -12,8 +12,8 @@ Navigation trail component for deep navigation paths.
 
 ## Usage
 ```tsx
-import type { IconId } from '@lumia/icons';
-import { Breadcrumbs } from '@lumia/components';
+import type { IconId } from '@lumia-ui/icons';
+import { Breadcrumbs } from '@lumia-ui/components';
 
 const homeIcon = 'home' as IconId;
 

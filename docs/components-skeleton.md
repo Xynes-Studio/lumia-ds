@@ -3,7 +3,7 @@
 Loading placeholder for pending content, built on the shadcn skeleton pattern.
 
 ## Export
-- `Skeleton` from `@lumia/components`.
+- `Skeleton` from `@lumia-ui/components`.
 
 ## Props
 - `width?: number | string` — optional width; numbers resolve to `px`, default `100%`.
@@ -14,7 +14,7 @@ Loading placeholder for pending content, built on the shadcn skeleton pattern.
 
 ## Usage
 ```tsx
-import { Skeleton } from '@lumia/components';
+import { Skeleton } from '@lumia-ui/components';
 
 // Inline text placeholder
 <Skeleton width="40%" height={12} />;

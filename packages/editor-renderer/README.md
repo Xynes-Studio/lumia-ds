@@ -1,18 +1,18 @@
-# @lumia/editor-renderer
+# @lumia-ui/editor-renderer
 
 A standalone, read-only renderer for Lumia Editor documents (Lexical JSON).
 
 ## Installation
 
 ```bash
-pnpm add @lumia/editor-renderer
+pnpm add @lumia-ui/editor-renderer
 ```
 
 ## Usage
 
 ```tsx
-import { LumiaDocument } from '@lumia/editor-renderer';
-import type { LumiaEditorStateJSON } from '@lumia/editor-renderer';
+import { LumiaDocument } from '@lumia-ui/editor-renderer';
+import type { LumiaEditorStateJSON } from '@lumia-ui/editor-renderer';
 
 const json: LumiaEditorStateJSON = {
   // ... your editor state

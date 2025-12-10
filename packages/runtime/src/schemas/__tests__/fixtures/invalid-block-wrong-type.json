@@ -1,0 +1,4 @@
+{
+    "id": "block-wrong-kind",
+    "kind": "not-a-valid-component-kind"
+}

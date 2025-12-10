@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { defaultTheme, themeToCSSVars } from '@lumia/tokens';
+import { defaultTheme, themeToCSSVars } from '@lumia-ui/tokens';
+import * as Tokens from '@lumia-ui/tokens';
 import { createLumiaTailwindConfig, lumiaTailwindPreset } from './tailwind';
 
 const cssVars = themeToCSSVars(defaultTheme);
@@ -20,28 +21,45 @@ describe('Tailwind preset', () => {
     ).extend.colors;
 
     expect((colors.primary as Record<string, string>)['500']).toBe(
-      `var(--color-primary-500, ${cssVars['--color-primary-500']})`,
+      `var(--colors-primary-500, ${Tokens.ColorPrimary500})`, // Manual fallback check
     );
     expect((colors.primary as Record<string, string>).DEFAULT).toBe(
-      `var(--color-primary, ${cssVars['--color-primary']})`,
+      `var(--colors-primary, ${cssVars['--colors-primary']})`,
     );
     expect(colors.secondary).toBe(
-      `var(--color-secondary, ${cssVars['--color-secondary']})`,
+      `var(--colors-secondary, ${cssVars['--colors-secondary']})`,
     );
-    expect(colors.background).toBe(`var(--color-bg, ${cssVars['--color-bg']})`);
-    expect(colors.foreground).toBe(`var(--color-fg, ${cssVars['--color-fg']})`);
+    expect(colors.background).toBe(
+      `var(--colors-background, ${cssVars['--colors-background']})`,
+    );
+    expect(colors.foreground).toBe(
+      `var(--colors-foreground, ${cssVars['--colors-foreground']})`,
+    );
     expect(colors.border).toBe(
-      `var(--color-border, ${cssVars['--color-border']})`,
+      `var(--colors-border, ${cssVars['--colors-border']})`,
     );
-    expect(colors.muted).toBe(
-      `var(--color-muted, ${cssVars['--color-muted']})`,
+
+    // Muted is strictly an object now in our implementation
+    const muted = colors.muted as { DEFAULT: string; foreground: string };
+    expect(muted.DEFAULT).toBe(
+      `var(--colors-muted, ${cssVars['--colors-muted']})`,
     );
-    expect(colors['muted-foreground']).toBe(
-      `var(--color-muted-foreground, ${cssVars['--color-muted-foreground']})`,
+    expect(muted.foreground).toBe(
+      `var(--colors-mutedForeground, ${cssVars['--colors-mutedForeground']})`,
     );
-    expect(colors.ring).toBe(`var(--color-ring, ${cssVars['--color-ring']})`);
-    expect(colors.destructive).toBe(
-      `var(--color-destructive, ${cssVars['--color-destructive']})`,
+
+    expect(colors.ring).toBe(`var(--colors-ring, ${cssVars['--colors-ring']})`);
+
+    // Destructive is strictly an object now
+    const destructive = colors.destructive as {
+      DEFAULT: string;
+      foreground: string;
+    };
+    expect(destructive.DEFAULT).toBe(
+      `var(--colors-destructive, ${cssVars['--colors-destructive']})`,
+    );
+    expect(destructive.foreground).toBe(
+      `var(--colors-destructiveForeground, ${cssVars['--colors-destructiveForeground']})`,
     );
   });
 
@@ -57,21 +75,21 @@ describe('Tailwind preset', () => {
     ).extend;
 
     expect(borderRadius.DEFAULT).toBe(
-      `var(--radius-md, ${defaultTheme.radii.md})`,
+      `var(--radii-md, ${defaultTheme.radii.md})`,
     );
-    expect(borderRadius.sm).toBe(`var(--radius-sm, ${defaultTheme.radii.sm})`);
+    expect(borderRadius.sm).toBe(`var(--radii-sm, ${defaultTheme.radii.sm})`);
     expect(borderRadius.pill).toBe(
-      `var(--radius-pill, ${defaultTheme.radii.pill})`,
+      `var(--radii-pill, ${defaultTheme.radii.pill})`,
     );
 
     expect(fontFamily.sans[0]).toBe(
-      `var(--font-sans, ${defaultTheme.typography.families.sans})`,
+      `var(--typography-families-sans, ${defaultTheme.typography.families.sans})`,
     );
     expect(fontFamily.mono[0]).toBe(
-      `var(--font-mono, ${defaultTheme.typography.families.mono})`,
+      `var(--typography-families-mono, ${defaultTheme.typography.families.mono})`,
     );
     expect(fontFamily.display[0]).toBe(
-      `var(--font-display, ${defaultTheme.typography.families.display})`,
+      `var(--typography-families-display, ${defaultTheme.typography.families.display})`,
     );
   });
 });

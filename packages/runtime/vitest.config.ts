@@ -7,9 +7,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      '@lumia/components': resolve(__dirname, '../components/src'),
-      '@lumia/forms': resolve(__dirname, '../forms/src'),
-      '@lumia/layout': resolve(__dirname, '../layout/src'),
+      '@lumia-ui/components': resolve(__dirname, '../components/src'),
+      '@lumia-ui/forms': resolve(__dirname, '../forms/src'),
+      '@lumia-ui/layout': resolve(__dirname, '../layout/src'),
     },
   },
   test: {
@@ -18,6 +18,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.stories.tsx'],
+      thresholds: {
+        statements: 75,
+        branches: 70,
+        functions: 75,
+        lines: 75,
+      },
     },
   },
 });

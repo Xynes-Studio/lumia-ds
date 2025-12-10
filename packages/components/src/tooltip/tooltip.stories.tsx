@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { Button } from '../button/button';
 import {
   Tooltip,

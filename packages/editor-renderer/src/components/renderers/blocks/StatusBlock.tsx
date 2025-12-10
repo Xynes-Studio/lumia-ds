@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusPill } from '@lumia/components';
+import { StatusPill } from '@lumia-ui/components';
 
 export const StatusBlock = ({
   node,

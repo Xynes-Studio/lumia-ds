@@ -3,7 +3,7 @@
 Single clickable row for vertical side navigation with icon support, active styling, and optional badge counts.
 
 ## Exports
-- `SideNavItem` from `@lumia/components`.
+- `SideNavItem` from `@lumia-ui/components`.
 
 ## Props
 - `label: string` — visible text.
@@ -14,7 +14,7 @@ Single clickable row for vertical side navigation with icon support, active styl
 
 ## Usage
 ```tsx
-import { SideNavItem } from '@lumia/components';
+import { SideNavItem } from '@lumia-ui/components';
 
 export function AppSidebar() {
   return (

@@ -24,7 +24,7 @@ type PopoverContextValue = {
 const PopoverContext = createContext<PopoverContextValue | null>(null);
 
 // Mock the Lumia components Combobox
-vi.mock('@lumia/components', () => {
+vi.mock('@lumia-ui/components', () => {
   const Popover = ({
     open,
     defaultOpen,

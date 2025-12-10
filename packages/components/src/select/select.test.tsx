@@ -72,4 +72,26 @@ describe('Select component', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+  it('renders loading state', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Select label="Loading" isLoading>
+          <option>Option</option>
+        </Select>,
+      );
+    });
+
+    const select = host.querySelector('select');
+    expect(select?.disabled).toBe(true);
+
+    // Check for spinner
+    const spinner = host.querySelector('[role="status"]'); // Select wrapper renders spinner
+    expect(spinner).toBeTruthy();
+    expect(spinner?.getAttribute('aria-label')).toBe('Loading');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });

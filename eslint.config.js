@@ -41,6 +41,7 @@ module.exports = [
   },
   {
     files: ['**/*.ts', '**/*.tsx'],
+    ignores: ['packages/cli/**/*.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -49,6 +50,25 @@ module.exports = [
       },
       globals: {
         ...globals.browser,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+    },
+  },
+  {
+    files: ['packages/cli/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.node,
       },
     },
     plugins: {

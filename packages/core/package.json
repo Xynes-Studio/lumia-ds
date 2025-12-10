@@ -1,7 +1,10 @@
 {
-    "name": "@lumia-ds/core",
-    "version": "0.0.0",
+    "name": "@lumia-ui/core",
+    "version": "0.1.0",
     "description": "Core package for Lumia DS",
+    "publishConfig": {
+        "access": "public"
+    },
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",

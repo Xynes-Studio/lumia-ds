@@ -11,9 +11,12 @@ import {
 } from '../shared/field';
 import { cn } from '../lib/utils';
 
+import { Spinner } from '../spinner/spinner';
+
 export type SelectProps = SelectHTMLAttributes<HTMLSelectElement> &
   FieldProps & {
     label?: string;
+    isLoading?: boolean;
   };
 
 const selectAdditionalClasses = 'appearance-none pr-10 cursor-pointer';
@@ -25,6 +28,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       hint,
       label,
       invalid = false,
+      isLoading = false,
       id,
       'aria-describedby': describedBy,
       ...props
@@ -35,7 +39,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const controlId = id ?? generatedId;
     const hintId = hint ? `${controlId}-hint` : undefined;
     const ariaDescribedBy = buildAriaDescribedBy(describedBy, hintId);
-    const isDisabled = props.disabled ?? false;
+    const isDisabled = props.disabled || isLoading;
 
     return (
       <div className={fieldWrapperClasses}>
@@ -54,6 +58,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             id={controlId}
+            disabled={isDisabled}
             aria-invalid={invalid || undefined}
             aria-describedby={ariaDescribedBy}
             className={cn(
@@ -65,20 +70,24 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             {...props}
           />
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 20 20"
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path
-                d="M6 8l4 4 4-4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {isLoading ? (
+              <Spinner size={16} aria-label="Loading" />
+            ) : (
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  d="M6 8l4 4 4-4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
           </span>
         </div>
         {hint ? (

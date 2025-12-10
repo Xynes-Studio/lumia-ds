@@ -7,7 +7,7 @@ import type {
 } from 'react';
 import { cloneElement, forwardRef, isValidElement, useRef } from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 import {
   getMenuItemIconClassName,
@@ -71,7 +71,7 @@ const ContextMenuItem = forwardRef<
     >
       {icon ? (
         <Icon
-          id={icon}
+          name={icon}
           size={18}
           aria-hidden="true"
           className={getMenuItemIconClassName(variant, disabled)}

@@ -163,4 +163,50 @@ describe('ConfirmDialog', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+  it('shows loading state during async confirm', async () => {
+    const { root, host } = createTestRoot();
+    let resolveConfirm: () => void;
+    const onConfirm = vi.fn().mockImplementation(() => {
+      return new Promise<void>((resolve) => {
+        resolveConfirm = resolve;
+      });
+    });
+
+    await act(async () => {
+      root.render(
+        <ConfirmDialog
+          defaultOpen
+          title="Async action"
+          onConfirm={onConfirm}
+        />,
+      );
+    });
+
+    const confirmButton = findButtonByText('Confirm');
+    const cancelButton = findButtonByText('Cancel');
+
+    await act(async () => {
+      confirmButton?.click();
+    });
+
+    // Check loading state
+    expect(confirmButton?.disabled).toBe(true);
+    expect(cancelButton?.disabled).toBe(true);
+    // Button text content will be "LoadingConfirm" because of our Button implementation
+    expect(confirmButton?.textContent).toBe('LoadingConfirm');
+
+    // Resolve promise
+    await act(async () => {
+      resolveConfirm!();
+    });
+
+    expect(onConfirm).toHaveBeenCalled();
+    // Dialog should be closed
+    expect(document.body.querySelector('[data-lumia-dialog-content]')).toBe(
+      null,
+    );
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });

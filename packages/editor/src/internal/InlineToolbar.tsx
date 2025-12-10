@@ -8,8 +8,8 @@ import {
   SELECTION_CHANGE_COMMAND,
   LexicalEditor,
 } from 'lexical';
-import { Button, Toolbar as LumiaToolbar } from '@lumia/components';
-import { Bold, Italic } from 'lucide-react';
+import { Button, Toolbar as LumiaToolbar } from '@lumia-ui/components';
+import { Icon } from '@lumia-ui/icons';
 import { mergeRegister } from '@lexical/utils';
 
 const LOW_PRIORITY = 1;
@@ -101,7 +101,7 @@ function FloatingToolbar({
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
           }}
         >
-          <Bold className="h-4 w-4" />
+          <Icon name="bold" size="sm" />
         </Button>
         <Button
           variant={isItalic ? 'secondary' : 'ghost'}
@@ -111,7 +111,7 @@ function FloatingToolbar({
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
           }}
         >
-          <Italic className="h-4 w-4" />
+          <Icon name="italic" size="sm" />
         </Button>
       </LumiaToolbar>
     </div>,

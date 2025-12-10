@@ -6,8 +6,9 @@ import type {
 } from 'react';
 import { createContext, forwardRef, useContext, useRef } from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { Spinner } from '../spinner/spinner';
 import {
   getMenuItemIconClassName,
   menuItemBaseClasses,
@@ -110,21 +111,36 @@ export const MenuItem = forwardRef<
   ElementRef<typeof DropdownMenuPrimitive.Item>,
   MenuItemProps
 >(function MenuItem(
-  { className, icon, label, children, variant = 'default', disabled, ...props },
+  {
+    className,
+    icon,
+    label,
+    children,
+    variant = 'default',
+    disabled,
+    isLoading = false,
+    ...props
+  },
   ref,
 ) {
   return (
     <DropdownMenuPrimitive.Item
       ref={ref}
       data-lumia-menu-item
-      aria-disabled={disabled || undefined}
-      disabled={disabled}
+      aria-disabled={isLoading || disabled ? true : undefined}
+      disabled={isLoading || disabled ? true : undefined}
       className={cn(menuItemBaseClasses, menuItemVariants[variant], className)}
       {...props}
     >
-      {icon ? (
+      {isLoading ? (
+        <Spinner
+          size={16}
+          aria-label="Loading"
+          className="shrink-0 text-muted-foreground"
+        />
+      ) : icon ? (
         <Icon
-          id={icon}
+          name={icon}
           size={18}
           aria-hidden="true"
           className={getMenuItemIconClassName(variant, disabled)}

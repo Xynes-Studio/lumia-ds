@@ -3,7 +3,7 @@
 Compose inputs with leading/trailing adornments like icons, text, or buttons.
 
 ## Exports
-- `InputGroup`, `InputGroupInput`, `InputGroupPrefix`, `InputGroupSuffix` from `@lumia/components`.
+- `InputGroup`, `InputGroupInput`, `InputGroupPrefix`, `InputGroupSuffix` from `@lumia-ui/components`.
 
 ## Structure
 - `InputGroup`: flex container that handles border, radius, and focus ring.
@@ -23,8 +23,8 @@ import {
   InputGroupInput,
   InputGroupPrefix,
   InputGroupSuffix,
-} from '@lumia/components';
-import { Icon } from '@lumia/icons';
+} from '@lumia-ui/components';
+import { Icon } from '@lumia-ui/icons';
 
 export function SearchField() {
   return (

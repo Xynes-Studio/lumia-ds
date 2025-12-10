@@ -3,7 +3,7 @@
 Reusable empty state pattern for screens with no data yet. Works within a Card or full-page container.
 
 ## Exports
-- `EmptyState` and `NoResults` from `@lumia/components`.
+- `EmptyState` and `NoResults` from `@lumia-ui/components`.
 
 ## Props
 - `title: string` – required headline.
@@ -16,8 +16,8 @@ Reusable empty state pattern for screens with no data yet. Works within a Card o
 
 ## Usage
 ```tsx
-import type { IconId } from '@lumia/icons';
-import { Card, CardContent, EmptyState, NoResults } from '@lumia/components';
+import type { IconId } from '@lumia-ui/icons';
+import { Card, CardContent, EmptyState, NoResults } from '@lumia-ui/components';
 
 const sparkle = 'sparkle' as IconId;
 

@@ -3,7 +3,7 @@
 Structured surface for grouping related content with optional header and footer affordances.
 
 ## Exports
-- `Card`, `CardHeader`, `CardTitle`, `CardSubtitle` (alias: `CardDescription`), `CardContent`, `CardFooter` from `@lumia/components`.
+- `Card`, `CardHeader`, `CardTitle`, `CardSubtitle` (alias: `CardDescription`), `CardContent`, `CardFooter` from `@lumia-ui/components`.
 
 ## Header
 - `icon?: ReactNode` — renders a left-aligned 40px container (muted background) for an icon or avatar.
@@ -21,7 +21,7 @@ Structured surface for grouping related content with optional header and footer 
 
 ## Usage
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import {
   Button,
   Card,
@@ -30,7 +30,7 @@ import {
   CardHeader,
   CardSubtitle,
   CardTitle,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function BillingCard() {
   return (

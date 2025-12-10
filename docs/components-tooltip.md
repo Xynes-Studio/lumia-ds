@@ -3,7 +3,7 @@
 Radix-based tooltip primitive with DS tokens for background, text, and rounded corners.
 
 ## Exports
-- `TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent` from `@lumia/components`.
+- `TooltipProvider`, `Tooltip`, `TooltipTrigger`, `TooltipContent` from `@lumia-ui/components`.
 
 ## Props & defaults
 - `TooltipProvider` passes through Radix props; defaults to `delayDuration=150ms` and `disableHoverableContent=true` for quick, non-sticky hints.
@@ -19,7 +19,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function Example() {
   return (

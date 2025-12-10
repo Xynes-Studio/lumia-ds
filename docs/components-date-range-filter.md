@@ -1,4 +1,4 @@
-# DateRangeFilter (@lumia/components)
+# DateRangeFilter (@lumia-ui/components)
 
 Reusable date range input intended for FilterBar-style controls. Ships with optional quick presets and keyboard-friendly behavior out of the box.
 
@@ -9,7 +9,7 @@ import {
   type DateRangeFilterProps,
   type DateRangeValue,
   type DateRangePreset,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 ```
 
 ## Props

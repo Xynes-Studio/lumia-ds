@@ -1,4 +1,4 @@
-# PageHeader (@lumia/components)
+# PageHeader (@lumia-ui/components)
 
 Composable page or section header that pairs breadcrumbs, a title stack, and primary/secondary actions. Built on the `Breadcrumbs` and `Toolbar` primitives so it can sit at the top of a full page or inside a `Card`.
 
@@ -9,7 +9,7 @@ import {
   type PageHeaderProps,
   type BreadcrumbItem,
   Button,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 ```
 
 ## Props

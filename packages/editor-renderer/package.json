@@ -1,5 +1,5 @@
 {
-    "name": "@lumia/editor-renderer",
+    "name": "@lumia-ui/editor-renderer",
     "type": "module",
     "version": "0.0.0",
     "description": "Read-only renderer for Lumia Lexical documents",
@@ -38,8 +38,8 @@
         "lexical": "0.38.2"
     },
     "dependencies": {
-        "@lumia/components": "workspace:*",
-        "@lumia/icons": "workspace:*",
+        "@lumia-ui/components": "workspace:*",
+        "@lumia-ui/icons": "workspace:*",
         "clsx": "^2.1.1",
         "lucide-react": "^0.474.0",
         "tailwind-merge": "^2.3.0"

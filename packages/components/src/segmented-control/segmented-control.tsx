@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type SegmentedControlOption = {
@@ -195,7 +195,7 @@ export const SegmentedControl = forwardRef<
           >
             {option.icon ? (
               <Icon
-                id={option.icon}
+                name={option.icon}
                 size={16}
                 aria-hidden="true"
                 className="shrink-0"

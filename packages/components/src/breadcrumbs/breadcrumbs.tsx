@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'react';
-import { Icon, type IconId } from '@lumia/icons';
+import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type BreadcrumbItem = {
@@ -107,7 +107,7 @@ const Crumb = ({ item, isCurrent, isInteractive }: CrumbProps) => {
   const content = (
     <>
       {item.icon ? (
-        <Icon id={item.icon} size={16} className="shrink-0" />
+        <Icon name={item.icon} size={16} className="shrink-0" />
       ) : null}
       <span>{item.label}</span>
     </>

@@ -3,7 +3,7 @@
 Inline label pill for selected items and statuses, built on the shadcn badge base with Lumia tokens. Used by `MultiSelect` and any dense filter rows.
 
 ## Export
-- `Tag`, `TagVariant` from `@lumia/components`.
+- `Tag`, `TagVariant` from `@lumia-ui/components`.
 
 ## Props
 - `label: string` – text inside the chip.
@@ -14,7 +14,7 @@ Inline label pill for selected items and statuses, built on the shadcn badge bas
 
 ## Usage
 ```tsx
-import { Tag } from '@lumia/components';
+import { Tag } from '@lumia-ui/components';
 
 // Static chip
 <Tag label="Active" variant="success" />;

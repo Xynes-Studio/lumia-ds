@@ -3,7 +3,7 @@
 Drag-and-drop file picker with a controlled list of selected files and image previews.
 
 ## Exports
-- `FileUpload`, `type FileUploadProps`, `type UploadedFile` from `@lumia/components`.
+- `FileUpload`, `type FileUploadProps`, `type UploadedFile` from `@lumia-ui/components`.
 
 ## Props
 - `files: (File | UploadedFile)[]` — controlled list; accepts raw `File` objects or existing uploads with `name` and `size`.
@@ -17,7 +17,7 @@ Drag-and-drop file picker with a controlled list of selected files and image pre
 ## Usage
 ```tsx
 import { useState } from 'react';
-import { FileUpload, type UploadedFile } from '@lumia/components';
+import { FileUpload, type UploadedFile } from '@lumia-ui/components';
 
 const seededFiles: UploadedFile[] = [
   { name: 'proposal.pdf', size: 182_000 },

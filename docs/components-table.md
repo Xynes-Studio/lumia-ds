@@ -3,7 +3,7 @@
 Design-system table wrapper around Shadcn primitives with DS tokens and a minimal API. Supports optional column configs and sortable headers; data ordering remains the caller’s responsibility.
 
 ## Exports
-- `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`, `TableRowActions` from `@lumia/components`.
+- `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`, `TableRowActions` from `@lumia-ui/components`.
 
 ## Props
 - `Table`
@@ -40,7 +40,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function UsersTable() {
   return (
@@ -76,7 +76,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function SelectableUsers({
   rows,
@@ -137,8 +137,8 @@ export function SelectableUsers({
 ### With generated sortable headers
 ```tsx
 import { useMemo, useState } from 'react';
-import type { TableColumn, TableSortState } from '@lumia/components';
-import { Table, TableBody, TableCell, TableRow } from '@lumia/components';
+import type { TableColumn, TableSortState } from '@lumia-ui/components';
+import { Table, TableBody, TableCell, TableRow } from '@lumia-ui/components';
 
 const columns: TableColumn[] = [
   { id: 'name', label: 'Name', sortable: true },
@@ -180,14 +180,14 @@ export function SortableRoster({ rows }: { rows: { name: string; role: string; s
 ### Inline row actions (actions column + overflow menu)
 ```tsx
 import type React from 'react';
-import type { TableColumn } from '@lumia/components';
+import type { TableColumn } from '@lumia-ui/components';
 import {
   Table,
   TableBody,
   TableCell,
   TableRow,
   TableRowActions,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 type Row = { id: string; name: string; role: string; location: string };
 

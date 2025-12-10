@@ -13,7 +13,7 @@ import {
   Textarea,
   type FlatListProps,
   type CardProps,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import {
   Controller,
   LumiaForm,
@@ -25,7 +25,7 @@ import {
   type UseControllerProps,
   type UseFormReturn,
   type ValidationRule,
-} from '@lumia/forms';
+} from '@lumia-ui/forms';
 import type { ResourceConfig } from '../index';
 
 type Alignment = 'start' | 'center' | 'end';

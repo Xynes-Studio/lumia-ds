@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { AdminShell } from '@lumia/layout';
+import { AdminShell } from '@lumia-ui/layout';
 import {
   Button,
   Card,
@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Flex,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 const meta = {
   title: 'Runtime/AdminShell',

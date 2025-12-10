@@ -3,7 +3,7 @@
 Shadcn/Radix-based toast system for lightweight notifications.
 
 ## Exports
-- `ToastProvider`, `ToastViewport`, `useToast`, `ToastOptions`, `ToastVariant`, `ToastAction` from `@lumia/components`.
+- `ToastProvider`, `ToastViewport`, `useToast`, `ToastOptions`, `ToastVariant`, `ToastAction` from `@lumia-ui/components`.
 
 ## Props
 - `ToastProvider`: accepts Radix `ToastProviderProps` plus `maxVisible?: number` (defaults to 3) to cap stacked toasts. `duration` configures auto-dismiss in milliseconds.
@@ -13,7 +13,7 @@ Shadcn/Radix-based toast system for lightweight notifications.
 
 ## Usage
 ```tsx
-import { Button, ToastProvider, useToast } from '@lumia/components';
+import { Button, ToastProvider, useToast } from '@lumia-ui/components';
 
 function SaveButton() {
   const { show } = useToast();

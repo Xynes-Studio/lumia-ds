@@ -3,7 +3,7 @@
 Inline pill-style tabs for quick filtering, built on the shadcn-style button base and keyboard roving focus.
 
 ## Exports
-- `SegmentedControl`, `SegmentedControlOption`, `SegmentedControlProps` from `@lumia/components`.
+- `SegmentedControl`, `SegmentedControlOption`, `SegmentedControlProps` from `@lumia-ui/components`.
 
 ## Props
 - `options: { value: string; label: string; icon?: IconId }[]` — segments to render.
@@ -14,7 +14,7 @@ Inline pill-style tabs for quick filtering, built on the shadcn-style button bas
 ## Usage
 ```tsx
 import { useState } from 'react';
-import { SegmentedControl } from '@lumia/components';
+import { SegmentedControl } from '@lumia-ui/components';
 
 const options = [
   { value: 'all', label: 'All' },
@@ -38,5 +38,5 @@ export function Filters() {
 
 ## Notes
 - Uses `role="radiogroup"` / `role="radio"` with roving `tabIndex` so the group is reached once via Tab. Arrow keys move focus; Enter/Space selects.
-- Icons use the DS registry from `@lumia/icons` when provided.
+- Icons use the DS registry from `@lumia-ui/icons` when provided.
 - Compact pills align with toolbar usage; the active state uses background, border, and ring tokens consistent with tabs.

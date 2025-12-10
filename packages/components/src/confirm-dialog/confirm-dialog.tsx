@@ -94,10 +94,24 @@ export const ConfirmDialog = ({
     handleOpenChange(false);
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleConfirm = async (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
-    await Promise.resolve(onConfirm());
-    handleOpenChange(false);
+    setIsLoading(true);
+    try {
+      await Promise.resolve(onConfirm());
+      handleOpenChange(false);
+    } finally {
+      if (open) {
+        // Only reset if still open (though we close it on success, but if onConfirm fails we might want to stay open)
+        // Actually if we close it, unmount happens or just hidden.
+        // If unmounted, state update might warn.
+        // But ConfirmDialog keeps state.
+        // Let's safe guard.
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -120,7 +134,12 @@ export const ConfirmDialog = ({
             ) : null}
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleCancel}
+              disabled={isLoading}
+            >
               {cancelLabel}
             </Button>
             <Button
@@ -128,6 +147,7 @@ export const ConfirmDialog = ({
               type="submit"
               variant={destructive ? 'destructive' : 'primary'}
               autoFocus
+              isLoading={isLoading}
             >
               {confirmLabel}
             </Button>

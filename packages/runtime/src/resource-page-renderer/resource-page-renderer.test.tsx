@@ -317,4 +317,127 @@ describe('ResourcePageRenderer', () => {
     await act(async () => root.unmount());
     host.remove();
   });
+
+  it('shows validation error when page config is invalid', async () => {
+    const { host, root } = createTestRoot();
+    // Invalid page: missing required 'layout' field
+    const invalidPage = {
+      id: 'invalid-page',
+      blocks: [],
+    };
+
+    const fetcher: DataFetcher = {
+      getResourceConfig: vi.fn().mockResolvedValue(baseResource),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getPageSchema: vi.fn().mockResolvedValue(invalidPage as any),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    // Should show PageErrorWidget with testid and alert role
+    expect(
+      host.querySelector('[data-testid="page-error-widget"]'),
+    ).not.toBeNull();
+    expect(host.querySelector('[role="alert"]')).not.toBeNull();
+    expect(host.textContent ?? '').toContain('Configuration Error');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('shows validation error when resource config is invalid', async () => {
+    const { host, root } = createTestRoot();
+    // Invalid resource: missing required 'id' field
+    const invalidResource = {
+      pages: { list: 'users-list' },
+    };
+
+    const fetcher: DataFetcher = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getResourceConfig: vi.fn().mockResolvedValue(invalidResource as any),
+      getPageSchema: vi.fn().mockResolvedValue(basePage),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    // Should show PageErrorWidget with testid and alert role
+    expect(
+      host.querySelector('[data-testid="page-error-widget"]'),
+    ).not.toBeNull();
+    expect(host.querySelector('[role="alert"]')).not.toBeNull();
+    expect(host.textContent ?? '').toContain('Configuration Error');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('renders BlockErrorWidget for invalid block while valid blocks render normally', async () => {
+    const { host, root } = createTestRoot();
+    // Page with one valid and one invalid block
+    const mixedPage = {
+      id: 'users-list',
+      layout: 'stack',
+      blocks: [
+        {
+          id: 'valid-block',
+          kind: 'table',
+          props: { columns: [{ key: 'name', label: 'Name' }] },
+        },
+        { id: 'invalid-block', kind: 'invalid-kind' },
+      ],
+    };
+
+    const fetcher: DataFetcher = {
+      getResourceConfig: vi.fn().mockResolvedValue(baseResource),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getPageSchema: vi.fn().mockResolvedValue(mixedPage as any),
+      getDataSource: vi
+        .fn()
+        .mockResolvedValue({ records: [{ name: 'Test User' }] }),
+    };
+
+    await act(async () => {
+      root.render(
+        <ResourcePageRenderer
+          resourceName="users"
+          screen="list"
+          fetcher={fetcher}
+        />,
+      );
+      await flushEffects();
+    });
+
+    // Should NOT show page-level error
+    expect(host.querySelector('[data-testid="page-error-widget"]')).toBeNull();
+
+    // Should show BlockErrorWidget for invalid block
+    expect(
+      host.querySelector('[data-testid="block-error-widget"]'),
+    ).not.toBeNull();
+    expect(host.textContent ?? '').toContain('failed to render');
+
+    // Valid block should still render (ListBlock with table)
+    expect(host.querySelector('table')).not.toBeNull();
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
 });

@@ -3,7 +3,7 @@
 Lightweight confirmation wrapper on top of the DS `Dialog` with sensible keyboard defaults (Enter confirms, Esc cancels).
 
 ## Exports
-- `ConfirmDialog` and `useConfirmDialog` from `@lumia/components`.
+- `ConfirmDialog` and `useConfirmDialog` from `@lumia-ui/components`.
 
 ## Props
 - `title: string` and `description?: string` render the dialog copy.
@@ -16,7 +16,7 @@ Lightweight confirmation wrapper on top of the DS `Dialog` with sensible keyboar
 
 ## Usage
 ```tsx
-import { Button, ConfirmDialog, useConfirmDialog } from '@lumia/components';
+import { Button, ConfirmDialog, useConfirmDialog } from '@lumia-ui/components';
 
 export function DeleteProjectButton() {
   const dialog = useConfirmDialog();

@@ -3,7 +3,7 @@
 Compact grid/list switcher built on the shadcn-style icon button wrapper with clear pressed state and keyboard activation.
 
 ## Exports
-- `ViewToggle`, `ViewToggleProps`, `ViewMode` from `@lumia/components`.
+- `ViewToggle`, `ViewToggleProps`, `ViewMode` from `@lumia-ui/components`.
 
 ## Props
 - `mode: 'grid' | 'list'` — controlled current view.
@@ -14,7 +14,7 @@ Compact grid/list switcher built on the shadcn-style icon button wrapper with cl
 ## Usage
 ```tsx
 import { useState } from 'react';
-import { ViewToggle } from '@lumia/components';
+import { ViewToggle } from '@lumia-ui/components';
 
 export function ViewChooser() {
   const [mode, setMode] = useState<'grid' | 'list'>('grid');

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from './card';
 import { Button } from '../button/button';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 
 const meta = {
   title: 'Components/Card',

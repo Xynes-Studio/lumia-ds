@@ -3,8 +3,8 @@
 Visual indicators for loading and progress states.
 
 ## Exports
-- `ProgressBar` from `@lumia/components`.
-- `Spinner` from `@lumia/components`.
+- `ProgressBar` from `@lumia-ui/components`.
+- `Spinner` from `@lumia-ui/components`.
 
 ## Props
 - `ProgressBar`: `value: number` (clamped 0-100), `indeterminate?: boolean`, `className?: string`, and standard `HTMLAttributes<HTMLDivElement>` for aria labels and data hooks. Sets `role="progressbar"` with `aria-valuemin`/`aria-valuemax`; `aria-valuenow` is omitted when `indeterminate` is true.
@@ -12,7 +12,7 @@ Visual indicators for loading and progress states.
 
 ## Usage
 ```tsx
-import { ProgressBar, Spinner } from '@lumia/components';
+import { ProgressBar, Spinner } from '@lumia-ui/components';
 
 export function SavingState({
   progress,

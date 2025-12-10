@@ -1,4 +1,4 @@
-import type { IconId } from '@lumia/icons';
+import type { IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type MenuItemBase = {
@@ -6,6 +6,7 @@ export type MenuItemBase = {
   icon?: IconId;
   variant?: 'default' | 'destructive';
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
 export type MenuItemConfig = MenuItemBase & {

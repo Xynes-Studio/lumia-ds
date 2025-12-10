@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { AdminShell, DrawerLayout, StackLayout } from '@lumia/layout';
+import { AdminShell, DrawerLayout, StackLayout } from '@lumia-ui/layout';
 import { DetailBlock, FormBlock, ListBlock } from '../blocks/blocks';
+import { PageErrorWidget } from '../components/PageErrorWidget';
+import { BlockErrorWidget } from '../components/BlockErrorWidget';
 import type {
   BlockSchema,
   DataFetcher,
@@ -15,11 +17,19 @@ import type {
   FormBlockProps,
   ListBlockProps,
 } from '../index';
+import {
+  type ConfigError,
+  validatePageConfig,
+  validateResourceConfig,
+  validateDataSourceResult,
+  validateBlock,
+} from '../validation';
 
 type RendererState =
   | { status: 'loading' }
   | { status: 'forbidden' }
   | { status: 'error'; message: string }
+  | { status: 'validation-error'; error: ConfigError }
   | {
       status: 'ready';
       resource: ResourceConfig;
@@ -67,7 +77,15 @@ const collectDataSourceResults = async (
   const results = await Promise.all(
     ids.map(async (id) => {
       const data = await fetcher.getDataSource?.(id, context);
-      return [id, data ?? {}] as const;
+      if (!data) {
+        return [id, {}] as const;
+      }
+      const validation = validateDataSourceResult(data, id);
+      if (!validation.success) {
+        // Log validation failure but continue with empty data
+        return [id, {}] as const;
+      }
+      return [id, validation.data] as const;
     }),
   );
 
@@ -103,12 +121,12 @@ const buildPlacementStyle = (
   return style;
 };
 
-const renderBlock = (
+const renderBlockContent = (
   block: BlockSchema,
   resource: ResourceConfig,
   screen: ResourceScreen,
   dataSources: Record<string, DataSourceResult>,
-) => {
+): ReactNode => {
   const baseProps = block.props ?? {};
   const dataSource = block.dataSourceId
     ? dataSources[block.dataSourceId]
@@ -156,21 +174,60 @@ const renderBlock = (
   return null;
 };
 
+/**
+ * Validates and renders a single block.
+ * Returns BlockErrorWidget for invalid blocks, allowing other blocks to render normally.
+ */
+const renderBlock = (
+  block: unknown,
+  blockIndex: number,
+  resource: ResourceConfig,
+  screen: ResourceScreen,
+  dataSources: Record<string, DataSourceResult>,
+): ReactNode => {
+  // Validate the block before rendering
+  const fallbackId = `block-${blockIndex}`;
+  const blockId =
+    typeof block === 'object' && block !== null && 'id' in block
+      ? String((block as { id: unknown }).id)
+      : fallbackId;
+
+  const validation = validateBlock(block, blockId);
+
+  if (!validation.success) {
+    // Return BlockErrorWidget for invalid block
+    const blockKind =
+      typeof block === 'object' && block !== null && 'kind' in block
+        ? String((block as { kind: unknown }).kind)
+        : undefined;
+
+    return <BlockErrorWidget blockId={blockId} blockKind={blockKind} />;
+  }
+
+  return renderBlockContent(validation.data, resource, screen, dataSources);
+};
+
 const renderBlocks = (
   page: PageSchema,
   resource: ResourceConfig,
   screen: ResourceScreen,
   dataSources: Record<string, DataSourceResult>,
 ) => {
-  const rendered = page.blocks.map((block) => {
-    const child = renderBlock(block, resource, screen, dataSources);
+  const rendered = page.blocks.map((block, index) => {
+    const child = renderBlock(block, index, resource, screen, dataSources);
     if (!child) return null;
+
+    // Use block.id if available, fallback to index-based key
+    const blockId =
+      typeof block === 'object' && block !== null && 'id' in block
+        ? String((block as { id: unknown }).id)
+        : `block-${index}`;
 
     return (
       <div
-        key={block.id}
-        data-block-id={block.id}
-        style={buildPlacementStyle(block.id, page.grid)}
+        key={blockId}
+        data-block-id={blockId}
+        style={buildPlacementStyle(blockId, page.grid)}
       >
         {child}
       </div>
@@ -242,6 +299,21 @@ export function ResourcePageRenderer({
           return;
         }
 
+        // Validate resource config
+        const resourceValidation = validateResourceConfig(
+          resource,
+          resourceName,
+        );
+        if (!resourceValidation.success) {
+          if (!cancelled) {
+            setState({
+              status: 'validation-error',
+              error: resourceValidation.error,
+            });
+          }
+          return;
+        }
+
         const pageId = resolvePageId(resource.pages, screen);
         if (!pageId) {
           if (!cancelled) {
@@ -264,6 +336,19 @@ export function ResourcePageRenderer({
           return;
         }
 
+        // Validate page config
+        const pageValidation = validatePageConfig(page, pageId);
+        if (!pageValidation.success) {
+          if (!cancelled) {
+            setState({
+              status: 'validation-error',
+              error: pageValidation.error,
+            });
+          }
+          return;
+        }
+        const validatedPage = pageValidation.data as PageSchema;
+
         const context: DataQueryContext = {
           resource,
           screen,
@@ -278,15 +363,24 @@ export function ResourcePageRenderer({
           return;
         }
 
-        const dataSources = await collectDataSourceResults(page, fetcher, {
-          resource,
-          screen,
-          params,
-          permissions,
-        });
+        const dataSources = await collectDataSourceResults(
+          validatedPage,
+          fetcher,
+          {
+            resource,
+            screen,
+            params,
+            permissions,
+          },
+        );
 
         if (!cancelled) {
-          setState({ status: 'ready', resource, page, dataSources });
+          setState({
+            status: 'ready',
+            resource,
+            page: validatedPage,
+            dataSources,
+          });
         }
       } catch (error) {
         if (!cancelled) {
@@ -323,6 +417,14 @@ export function ResourcePageRenderer({
       <div role="alert" className="text-sm text-destructive">
         {state.message}
       </div>
+    );
+  }
+
+  if (state.status === 'validation-error') {
+    return (
+      <PageErrorWidget
+        error={state.error as Parameters<typeof PageErrorWidget>[0]['error']}
+      />
     );
   }
 

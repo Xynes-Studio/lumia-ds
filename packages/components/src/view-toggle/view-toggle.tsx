@@ -4,7 +4,7 @@ import type {
   KeyboardEvent,
 } from 'react';
 import { forwardRef, useCallback } from 'react';
-import { Icon } from '@lumia/icons';
+import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
 
 export type ViewMode = 'grid' | 'list';
@@ -92,7 +92,7 @@ export const ViewToggle = forwardRef<HTMLDivElement, ViewToggleProps>(
               {...restButtonProps}
             >
               <Icon
-                id={option.icon}
+                name={option.icon}
                 size={18}
                 aria-hidden="true"
                 className="shrink-0"

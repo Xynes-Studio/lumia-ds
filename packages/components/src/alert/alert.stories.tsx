@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import type { IconId } from '@lumia/icons';
+import type { IconId } from '@lumia-ui/icons';
 import { Alert } from './alert';
 import { Card, CardContent } from '../card/card';
 import { Button } from '../button/button';
