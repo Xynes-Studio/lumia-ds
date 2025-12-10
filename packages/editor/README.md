@@ -10,7 +10,7 @@ pnpm add @lumia-ui/editor
 
 ## Features
 
-- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks.
+- **Rich Text**: Paragraphs, Headings (H1-H3), Lists (Bullet, Numbered), Quotes, Code Blocks, Images (Upload & URL), Tables.
 - **Text Formatting**: Bold, Italic, Underline, Inline Code (with keyboard shortcuts), Links (Cmd+K, Smart Paste).
 - **History**: Undo/Redo support.
 - **Inline Editor**: Dedicated component for titles and single-line text with bubble toolbar.
@@ -125,6 +125,82 @@ const brandFonts: FontConfig = {
 
 **Auto-Normalization**: If `defaultFontId` is not in `allowedFonts`, the editor automatically uses the first font in `allowedFonts` as the default. This ensures brand compliance without requiring manual configuration updates.
 
+### Media Configuration
+
+Configure media upload behavior for images, videos, and files using the `media` prop:
+
+```tsx
+import { LumiaEditor, type EditorMediaConfig } from '@lumia/editor';
+
+const mediaConfig: EditorMediaConfig = {
+  // Upload adapter for handling file uploads
+  uploadAdapter: {
+    uploadFile: async (file, options) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        // Report progress updates
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const progress = Math.round((e.loaded / e.total) * 100);
+            options?.onProgress?.(progress);
+          }
+        };
+        
+        xhr.onload = () => {
+          const data = JSON.parse(xhr.responseText);
+          resolve({ url: data.url, mime: data.mime, size: data.size });
+        };
+        
+        xhr.onerror = () => reject(new Error('Upload failed'));
+        xhr.open('POST', '/api/upload');
+        xhr.send(formData);
+      });
+    },
+  },
+  
+  // Lifecycle callbacks for upload events
+  callbacks: {
+    onUploadStart: (file, type) => console.log(`Uploading ${type}:`, file.name),
+    onUploadProgress: (file, progress) => console.log(`Progress: ${progress}%`),
+    onUploadComplete: (file, result) => console.log('Done:', result.url),
+    onUploadError: (file, error) => console.error('Failed:', error),
+  },
+  
+  // File type restrictions
+  allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  allowedVideoTypes: ['video/mp4', 'video/webm'],
+  maxFileSizeMB: 10,
+};
+
+function App() {
+  return (
+    <LumiaEditor
+      media={mediaConfig}
+      // ... other props
+    />
+  );
+}
+```
+
+**Upload Flow:**
+1. User selects file via toolbar button, Insert menu, or slash command
+2. Local preview rendered immediately using `URL.createObjectURL()`
+3. `onUploadStart` callback invoked
+4. File uploaded via `uploadAdapter.uploadFile()`
+5. `onUploadProgress` called with progress updates (0-100)
+6. On success: `onUploadComplete` called, node updated with API URL
+7. On error: `onUploadError` called, error state shown with Retry/Remove options
+
+**Retry Support:**
+If upload fails, clicking Retry will retry with the same file (no need to re-select).
+
+**No Adapter:**
+If no `uploadAdapter` is provided, only URL-based insertion is available.
+
 
 ### Advanced Usage
 
@@ -238,6 +314,377 @@ const normalized = normalizeFontConfig(config);
 
 **Note**: The editor automatically normalizes font configurations on initialization. You typically don't need to call this function directly unless you're building custom font configuration logic.
 
+### Block Registry
+
+The editor includes a block registry system to manage different block types (e.g., paragraph, heading, image, video). This is the single source of truth for block metadata.
+
+#### `BlockType`
+
+Union type of all available block types:
+
+```typescript
+type BlockType = 
+  | 'paragraph' 
+  | 'heading' 
+  | 'image' 
+  | 'video' 
+  | 'file' 
+  | 'table' 
+  | 'panel' 
+  | 'status' 
+  | 'code';
+```
+
+#### `BlockDefinition`
+
+Interface for block metadata:
+
+```typescript
+interface BlockDefinition {
+  type: BlockType;
+  label: string;
+  icon: React.ComponentType;
+  nodeClass: Klass<LexicalNode>;
+  inspector?: React.ComponentType<{ nodeKey: NodeKey }>;
+  description?: string;       // Description shown in slash menu
+  keywords?: string[];        // Keywords for slash menu filtering
+  slashCommand?: string;      // Custom slash command name
+}
+```
+
+#### `getBlockDefinition(type)`
+
+Retrieve a single block definition by type:
+
+```typescript
+import { getBlockDefinition } from '@lumia/editor/blocks';
+
+const imageBlock = getBlockDefinition('image');
+// Returns BlockDefinition for 'image'
+```
+
+#### `getBlockDefinitions()`
+
+Retrieve all registered block definitions:
+
+```typescript
+import { getBlockDefinitions } from '@lumia/editor/blocks';
+
+const allBlocks = getBlockDefinitions();
+// Returns BlockDefinition[] with all 9 core block types
+```
+
+#### `getInsertableBlocks()`
+
+Retrieve only block definitions that can be inserted via the Insert menu:
+
+```typescript
+import { getInsertableBlocks } from '@lumia/editor/blocks';
+
+const insertableBlocks = getInsertableBlocks();
+// Returns BlockDefinition[] with insertable: true
+```
+
+### Insert Menu
+
+The editor toolbar includes an **Insert** dropdown menu that is dynamically generated from the BlockRegistry. Blocks with `insertable: true` appear in this menu.
+
+To make a custom block appear in the Insert menu, add these fields to your BlockDefinition:
+
+```typescript
+const customBlock: BlockDefinition = {
+  type: 'custom',
+  label: 'Custom Block',
+  icon: CustomIcon,
+  nodeClass: CustomNode,
+  insertable: true,         // Appear in Insert menu
+  insertAction: 'command',  // 'command' for simple insert, 'custom' for dialog
+};
+```
+
+**Insert Action Types:**
+- `'command'` - Dispatches insert command directly (e.g., table, status)
+- `'custom'` - Opens a dialog/popover for additional input (e.g., image URL, panel variant)
+
+
+### Image Block
+
+The editor supports image blocks with optional captions and selection styling.
+
+```tsx
+import { $createImageBlockNode } from '@lumia/editor/nodes/ImageBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createImageBlockNode({
+    src: 'https://example.com/image.jpg',
+    alt: 'Alt text',
+    caption: 'Optional caption',
+    width: 500,
+    height: 300,
+  });
+  $insertNodes([node]);
+});
+
+### Image Block
+- **Insert Image**: Use the toolbar button to insert an image from a URL. If an `uploadAdapter` is configured, inserting an image block without a URL will display an upload UI, allowing users to select a file from their device.
+- **Layouts**: Click on an image to see the layout toolbar.
+    - **Inline**: Default layout, respects width percentage.
+    - **Breakout**: Wider than the text column.
+    - **Full Width**: Spans the entire editor width (100%).
+- **Resizing**: Use the percentage buttons (25%, 50%, 75%, 100%) in the overlay toolbar to resize the image.
+
+
+### File Block
+The editor supports file attachments with a card UI.
+
+```tsx
+import { $createFileBlockNode } from '@lumia/editor/nodes/FileBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createFileBlockNode({
+    url: 'https://example.com/document.pdf',
+    filename: 'document.pdf',
+    size: 1024 * 1024, // 1MB
+    mime: 'application/pdf',
+  });
+  $insertNodes([node]);
+});
+```
+
+- **Insert File**: Use the toolbar button to insert a file. If an `uploadAdapter` is configured, selecting a file will trigger the upload flow, showing an optimistic preview and progress state.
+
+
+### Video Block
+The editor supports embedded videos from YouTube, Vimeo, Loom, and HTML5 video files.
+
+```tsx
+import { $createVideoBlockNode } from '@lumia/editor/nodes/VideoBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createVideoBlockNode({
+    src: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    provider: 'youtube',
+    title: 'Rick Roll',
+  });
+  $insertNodes([node]);
+});
+```
+
+- **Supported Providers**: 'youtube', 'vimeo', 'loom', 'html5'.
+- **Rendering**: Renders as an `iframe` for embed providers and `<video>` tag for HTML5.
+- **Auto-Embed**: When you paste a YouTube, Vimeo, or Loom URL, it is automatically converted to a VideoBlockNode embed. The plugin intercepts paste events and creates an embedded video block if the pasted content is a valid video URL.
+- **Insert Video (Toolbar)**: Use the Video button in the toolbar to open a dialog where you can enter a video URL and optionally override the provider detection (Auto-detect, YouTube, Vimeo, Loom, HTML5).
+- **Insert Video (Slash Menu)**: Type `/video` at the start of a line or after a space to insert a video block via the slash menu.
+
+### Slash Menu
+
+The editor supports a slash menu for quick block insertion.
+
+- **Trigger**: Type `/` at the start of a line or after whitespace to open the menu.
+- **Navigation**: Use arrow keys (↑/↓) to navigate, Enter or Tab to select, Escape to close.
+- **Powered by BlockRegistry**: Commands are dynamically generated from blocks with `slashEnabled: true`.
+- **Available Commands**:
+  - `/image` - Insert an image block (prompts for URL)
+  - `/video` - Insert a video block (prompts for URL)
+  - `/file` - Attach a file
+  - `/table` - Insert a 3×3 table
+  - `/panel` - Insert an info panel
+  - `/status` - Insert a status pill
+
+
+### Table
+The editor supports tables via the `@lexical/table` integration.
+
+**Inserting Tables**:
+- **Toolbar**: Click the Table button in the toolbar to insert a 3×3 table at the current selection.
+- **Slash Menu**: Type `/table` at the start of a line or after a space to insert a 3×3 table.
+
+**Row & Column Controls**:
+When your cursor is inside a table cell, a floating toolbar appears above the table with the following controls:
+- **Header row** (checkbox): Toggle the first row as a header row (bold text, contrast background)
+- **Insert Row Above**: Add a new row above the current row
+- **Insert Row Below**: Add a new row below the current row
+- **Delete Row**: Remove the current row (disabled if only one row remains)
+- **Insert Column Left**: Add a new column to the left of the current column
+- **Insert Column Right**: Add a new column to the right of the current column
+- **Delete Column**: Remove the current column (disabled if only one column remains)
+
+**Header Row Toggle**:
+Use the "Header row" checkbox in the table toolbar to toggle the styling of the first row:
+- When enabled, first row cells are styled as headers with bold text and a contrast background
+- When disabled, first row cells revert to normal data cell styling
+- Cell content is preserved when toggling
+- Header state persists in JSON (`headerState: 1` for headers)
+
+**Keyboard Navigation**:
+- Press `Tab` to move to the next cell
+- Press `Shift+Tab` to move to the previous cell
+
+Tables are rendered with proper styling including:
+- Cell borders and padding
+- Header cell styling (with `headerState`)
+- Selection highlighting
+- Focus outlines for accessibility
+
+```tsx
+// Example table JSON structure
+const tableJSON = {
+  type: 'table',
+  children: [
+    {
+      type: 'tablerow',
+      children: [
+        { type: 'tablecell', headerState: 1, children: [...] }, // Header cell
+        { type: 'tablecell', headerState: 1, children: [...] },
+      ]
+    },
+    {
+      type: 'tablerow', 
+      children: [
+        { type: 'tablecell', headerState: 0, children: [...] }, // Data cell
+        { type: 'tablecell', headerState: 0, children: [...] },
+      ]
+    }
+  ]
+};
+```
+
+To view a demo table, navigate to the `Table / Basic` story in Storybook. To test table controls, navigate to `Table / With Controls`.
+
+### Panel Block
+The editor supports panel blocks (callouts) to highlight information, warnings, success messages, or notes.
+
+```tsx
+import { $createPanelBlockNode } from '@lumia/editor/nodes/PanelBlockNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createPanelBlockNode({
+    variant: 'info', // 'info' | 'warning' | 'success' | 'note'
+    title: 'Information',
+    icon: 'info', // Optional icon key
+  });
+  // Add content
+  const paragraph = $createParagraphNode();
+  paragraph.append($createTextNode('This is an info panel.'));
+  node.append(paragraph);
+  
+  $insertNodes([node]);
+});
+```
+
+- **Variants**: Supports `info`, `warning`, `success`, and `note`.
+- **Styling**: Styles match the Lumia UI Alert component.
+- **Content**: Supports nested rich-text (paragraphs, lists, etc.) as children.
+- **Insert Panel (Toolbar)**: Use the Panel button in the toolbar to insert a panel with a selected variant.
+- **Insert Panel (Slash Menu)**: Type `/panel` to insert an info panel.
+- **Variant Switching**: Click inside a panel, then use the gear icon (⚙️) to switch variant.
+- **Title Editing**: Click the gear icon (⚙️) to edit the panel title via the popover input.
+- **Lists Inside Panels**: Create bullet or numbered lists inside panels. Press Enter on an empty list item to exit the list and create a paragraph.
+
+To view panel demos, navigate to the `Panel / Static` story in Storybook.
+
+### Status Node
+The editor supports inline status lozenges (pills) to indicate status text with a color variant.
+
+```tsx
+import { $createStatusNode } from '@lumia/editor/nodes/StatusNode';
+
+// Programmatic insertion
+editor.update(() => {
+  const node = $createStatusNode({
+    text: 'In Progress',
+    color: 'warning', // 'success' | 'warning' | 'error' | 'info'
+  });
+  $insertNodes([node]);
+});
+```
+
+- **Variants**: Supports `success`, `warning`, `error`, and `info`.
+- **Inline**: Renders inline with text, compatible with paragraphs.
+- **Styling**: Uses Lumia UI StatusPill component.
+- **Serialization**: Fully supports JSON import/export.
+
+### Block Inspector
+
+The `BlockInspector` component provides a context-aware property inspector for the currently selected block. It renders specific inspector controls based on the selected block type (e.g., Image settings when an image is selected).
+
+```tsx
+import { BlockInspector, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+        <div className="w-80 border-l">
+          {/* Automatically shows controls for the selected block */}
+          <BlockInspector />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Registry-Driven**: Inspectors are defined in the `BlockRegistry` via the `inspector` property.
+- **Custom Inspectors**: You can provide custom inspector components when registering custom blocks.
+- **Fallback**: Displays "No block selected" or "No configurable properties" when appropriate.
+
+### Supported Inspectors
+
+The following core blocks now have dedicated inspectors:
+
+- **Image**:
+    - **Alt Text**: Update the alt text for accessibility.
+    - **Layout**: Switch between Inline, Breakout, and Full Width layouts.
+    - **Width**: Adjust image width percentage via slider.
+- **Video**:
+    - **URL**: Update the video source URL.
+    - **Provider**: Switch provider type (YouTube, Vimeo, Loom, HTML5).
+    - **Title**: Update the video title.
+- **Panel**:
+    - **Variant**: Change panel style (Info, Warning, Success, Note).
+    - **Title**: Update the panel title.
+- **Status**:
+    - **Text**: Update the status label.
+    - **Color**: Change the status color (Info, Success, Warning, Error).
+
+
+
+
+### Block Outline
+
+The `BlockOutline` component provides a sidebar navigation listing all top-level blocks in the document. It allows users to quickly jump to specific sections or content blocks.
+
+```tsx
+import { BlockOutline, LumiaEditor, EditorProvider } from '@lumia/editor';
+
+function App() {
+  return (
+    <EditorProvider>
+      <div className="flex">
+        <div className="w-64 border-r">
+          {/* Shows a list of blocks and updates automatically */}
+          <BlockOutline />
+        </div>
+        <div className="flex-1">
+          <LumiaEditor />
+        </div>
+      </div>
+    </EditorProvider>
+  );
+}
+```
+
+- **Live Updates**: The outline updates in real-time as content changes (throttled).
+- **Navigation**: Clicking an item scrolls the editor to that block and selects it.
+- **Active State**: The current block in view is highlighted in the outline.
 
 ## Performance Testing
 
@@ -256,3 +703,92 @@ To view the editor components in Storybook:
 ```bash
 pnpm storybook
 ```
+
+## Architecture
+
+The editor package follows a modular architecture:
+
+```
+src/
+├── blocks/           # Block registry and type definitions
+├── components/       # Reusable UI components
+│   ├── BlockInspector/   # Block-specific property editors
+│   ├── BlockOutline/     # Document outline sidebar
+│   ├── Fonts/            # Font selection UI
+│   ├── MediaInsert/      # Media upload/URL insertion
+│   ├── SlashMenu/        # Slash command menu
+│   └── Toolbar/          # Editor toolbar buttons
+├── hooks/            # Custom React hooks
+├── internal/         # Internal implementation (not public API)
+├── nodes/            # Custom Lexical nodes
+│   ├── FileBlockNode/
+│   ├── ImageBlockNode/
+│   ├── PanelBlockNode/
+│   ├── StatusNode/
+│   ├── Table/
+│   └── VideoBlockNode/
+├── plugins/          # Lexical plugins for editor behavior
+└── test/             # Test utilities and setup
+```
+
+### Key Concepts
+
+- **EditorProvider**: Wraps the Lexical editor with contexts for fonts, media, and block selection.
+- **BlockRegistry**: Central registry for all block types, their metadata, and associated components.
+- **Plugins**: React components that register Lexical commands and event handlers.
+- **Nodes**: Custom Lexical nodes that represent block-level content (images, videos, panels, etc.).
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test -- --watch
+
+# Run tests with coverage
+pnpm test -- --coverage
+```
+
+### Test Structure
+
+- **Unit tests**: Located next to source files (e.g., `Button.test.tsx`)
+- **Integration tests**: For testing component compositions and flows
+- **Accessibility tests**: Using `jest-axe` for ARIA compliance
+
+### Writing Tests
+
+```tsx
+import { describe, it, expect } from 'vitest';
+import { createHeadlessEditor } from '@lexical/headless';
+
+describe('MyPlugin', () => {
+  it('should handle command', async () => {
+    const editor = createHeadlessEditor({
+      nodes: [/* ... */],
+    });
+    
+    // Use Promise wrapper for async editor updates
+    await new Promise<void>((resolve) => {
+      editor.update(
+        () => { /* ... */ },
+        { onUpdate: resolve },
+      );
+    });
+    
+    editor.read(() => {
+      // assertions
+
+### Coverage Targets
+
+The project aims for **90% test coverage** across all metrics. Crucial components like plugins, nodes, and toolbar buttons must have comprehensive unit tests.
+
+### Mocking Strategy
+
+For components depending on Lexical context:
+1. **Unit Tests**: Mock `useLexicalComposerContext` and other hooks to return minimal stubbed editor instances.
+2. **Integration Tests**: Use `LexicalComposer` wrapper effectively but be mindful of JSDOM limitations with complex event dispatching.
+3. **Registry**: Mock `BlockRegistry` lookups (`getInsertableBlocks`, `getBlockDefinition`) to isolate component rendering logic.

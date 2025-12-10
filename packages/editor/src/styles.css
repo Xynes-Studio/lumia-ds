@@ -1,165 +1,546 @@
 .editor-container {
-    position: relative;
-    line-height: 20px;
-    color: #444;
-    font-weight: 400;
-    text-align: left;
-    border-radius: 4px;
-    background: #fff;
+  position: relative;
+  line-height: 20px;
+  color: #444;
+  font-weight: 400;
+  text-align: left;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.editor-input-wrapper {
+  position: relative;
 }
 
 .editor-input {
-    min-height: 150px;
-    resize: none;
-    font-size: 15px;
-    caret-color: #444;
-    position: relative;
-    tab-size: 1;
-    outline: 0;
-    padding: 10px;
+  min-height: 150px;
+  resize: none;
+  font-size: 15px;
+  caret-color: #444;
+  position: relative;
+  tab-size: 1;
+  outline: 0;
+  padding: 10px;
 }
 
 .editor-placeholder {
-    color: #999;
-    overflow: hidden;
-    position: absolute;
-    text-overflow: ellipsis;
-    top: 10px;
-    left: 10px;
-    font-size: 15px;
-    user-select: none;
-    display: inline-block;
-    pointer-events: none;
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 10px;
+  left: 10px;
+  font-size: 15px;
+  user-select: none;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .editor-paragraph {
-    margin: 0 0 8px;
-    position: relative;
+  margin: 0 0 8px;
+  position: relative;
 }
 
 .editor-heading-h1 {
-    font-size: 24px;
-    color: #333;
-    font-weight: bold;
-    margin: 0 0 12px;
-    padding: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+  margin: 0 0 12px;
+  padding: 0;
 }
 
 .editor-heading-h2 {
-    font-size: 15px;
-    color: #333;
-    font-weight: bold;
-    margin: 10px 0;
-    padding: 0;
-    text-transform: uppercase;
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 0;
+  text-transform: uppercase;
 }
 
 .editor-heading-h3 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 600;
-    margin: 8px 0;
-    padding: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+  margin: 8px 0;
+  padding: 0;
 }
 
 .editor-quote {
-    margin: 0 0 0 20px;
-    font-size: 15px;
-    color: rgb(101, 103, 107);
-    border-left-color: rgb(206, 208, 212);
-    border-left-width: 4px;
-    border-left-style: solid;
-    padding-left: 16px;
+  margin: 0 0 0 20px;
+  font-size: 15px;
+  color: rgb(101, 103, 107);
+  border-left-color: rgb(206, 208, 212);
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding-left: 16px;
 }
 
 .editor-list-ol {
-    padding: 0;
-    margin: 0;
-    padding-left: 24px;
-    list-style-type: decimal;
+  padding: 0;
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: decimal;
 }
 
 .editor-list-ul {
-    padding: 0;
-    margin: 0;
-    padding-left: 24px;
-    list-style-type: disc;
+  padding: 0;
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: disc;
 }
 
 .editor-listitem {
-    margin: 8px 32px 8px 32px;
+  margin: 4px 16px 4px 16px;
+}
+
+/* Reduced indentation for lists inside panels */
+.panel-node .editor-listitem {
+  margin: 4px 8px 4px 8px;
+}
+
+.panel-node .editor-list-ul,
+.panel-node .editor-list-ol {
+  padding-left: 16px;
 }
 
 .editor-link {
-    color: rgb(33, 111, 219);
-    text-decoration: underline;
+  color: rgb(33, 111, 219);
+  text-decoration: underline;
 }
 
 .cmd-pressed .editor-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .editor-code {
-    background-color: rgb(240, 242, 245);
-    font-family: Menlo, Consolas, Monaco, monospace;
-    display: block;
-    padding: 8px 8px 8px 52px;
-    line-height: 1.53;
-    font-size: 13px;
-    margin: 0;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    tab-size: 2;
-    overflow-x: auto;
-    position: relative;
+  background-color: rgb(240, 242, 245);
+  font-family: Menlo, Consolas, Monaco, monospace;
+  display: block;
+  padding: 8px 8px 8px 52px;
+  line-height: 1.53;
+  font-size: 13px;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  tab-size: 2;
+  overflow-x: auto;
+  position: relative;
 }
 
 .editor-code:before {
-    content: attr(data-gutter);
-    position: absolute;
-    background-color: #eee;
-    left: 0;
-    top: 0;
-    border-right: 1px solid #ccc;
-    padding: 8px;
-    color: #777;
-    white-space: pre-wrap;
-    text-align: right;
-    min-width: 25px;
+  content: attr(data-gutter);
+  position: absolute;
+  background-color: #eee;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  color: #777;
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
 }
 
 .editor-tokenComment {
-    color: slategray;
+  color: slategray;
 }
 
 .editor-tokenPunctuation {
-    color: #999;
+  color: #999;
 }
 
 .editor-tokenProperty {
-    color: #905;
+  color: #905;
 }
 
 .editor-tokenSelector {
-    color: #690;
+  color: #690;
 }
 
 .editor-tokenOperator {
-    color: #9a6e3a;
+  color: #9a6e3a;
 }
 
 .editor-tokenAttr {
-    color: #07a;
+  color: #07a;
 }
 
 .editor-tokenVariable {
-    color: #e90;
+  color: #e90;
 }
 
 .editor-tokenFunction {
-    color: #dd4a68;
+  color: #dd4a68;
 }
 
 .editor-tokenString {
-    color: #690;
+  color: #690;
+}
+
+/* Image Block Layouts */
+.image-block-container {
+  display: flex;
+  justify-content: center;
+  /* Default centered? Or left? */
+  margin: 10px 0;
+}
+
+.image-block-container.layout-inline {
+  /* Respects width */
+  display: inline-flex;
+}
+
+.image-block-container.layout-fullWidth {
+  width: 100%;
+}
+
+.image-block-container.layout-breakout {
+  width: 120%;
+  /* Example breakout */
+  margin-left: -10%;
+}
+
+/* Slash Menu Styles */
+.slash-menu {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  min-width: 220px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.slash-menu-content {
+  padding: 4px;
+}
+
+.slash-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.slash-menu-item:hover,
+.slash-menu-item-selected {
+  background-color: #f3f4f6;
+}
+
+.slash-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.slash-menu-item-selected .slash-menu-item-icon {
+  background-color: #e5e7eb;
+}
+
+.slash-menu-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.slash-menu-item-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.slash-menu-item-description {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Table Styles */
+.editor-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+  table-layout: fixed;
+}
+
+.editor-table td,
+.editor-table th {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 75px;
+}
+
+/* Style header cells - Lexical applies editor-table-cell-header class to header cells */
+.editor-table-cell-header {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Also support th elements for static rendering */
+.editor-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.editor-table td:focus,
+.editor-table th:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.editor-table-cell-selected {
+  background-color: #dbeafe;
+}
+
+.editor-table-cell-resizer {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.editor-table-cell-resizer:hover {
+  background-color: #3b82f6;
+}
+
+/* Table Action Menu */
+.table-action-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.table-action-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.table-action-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e5e7eb;
+  margin: 0 4px;
+}
+
+.table-action-button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px !important;
+  min-width: auto;
+  height: 28px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.table-action-button:hover {
+  background-color: #f3f4f6;
+}
+
+.table-action-delete:not(:disabled):hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.table-action-delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.table-action-delete-table:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Table Header Row Toggle */
+.table-action-header-group {
+  padding: 0 4px;
+}
+
+.table-header-checkbox {
+  font-size: 12px;
+  gap: 6px;
+}
+
+.table-header-checkbox span:first-of-type {
+  width: 16px;
+  height: 16px;
+}
+
+
+/* Panel Block Node */
+.panel-node {
+  position: relative;
+  width: 100%;
+  border-radius: 0.5rem;
+  /* rounded-lg */
+  border-width: 1px;
+  padding: 0.75rem 1rem;
+  /* py-3 px-4 */
+  padding-left: 3.5rem;
+  /* space for icon */
+  font-size: 0.875rem;
+  /* text-sm */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  /* shadow-sm */
+  display: flex;
+  flex-direction: column;
+  /* To stack title and content */
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.panel-node.info {
+  border-color: rgba(191, 219, 254, 0.8);
+  /* border-blue-200/80 */
+  background-color: #eff6ff;
+  /* bg-blue-50 */
+  color: #1e3a8a;
+  /* text-blue-900 */
+}
+
+.panel-node.success {
+  border-color: rgba(167, 243, 208, 0.8);
+  /* border-emerald-200/80 */
+  background-color: #ecfdf5;
+  /* bg-emerald-50 */
+  color: #064e3b;
+  /* text-emerald-900 */
+}
+
+.panel-node.warning {
+  border-color: rgba(253, 230, 138, 0.8);
+  /* border-amber-200/80 */
+  background-color: #fffbeb;
+  /* bg-amber-50 */
+  color: #78350f;
+  /* text-amber-900 */
+}
+
+.panel-node.note {
+  border-color: rgba(229, 231, 235, 0.8);
+  /* border-gray-200/80 */
+  background-color: #f9fafb;
+  /* bg-gray-50 */
+  color: #1f2937;
+  /* text-gray-900 */
+}
+
+.panel-icon {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* 
+ * Map data-icon attributes to SVGs using pseudo-elements with background-image.
+ * Note: SVGs must be URL encoded. 
+ * Alternatively, we can assume standard icons.
+ */
+.panel-node.info .panel-icon::before {
+  /* Info icon (blue) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.success .panel-icon::before {
+  /* Check icon (green) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.warning .panel-icon::before {
+  /* Alert Triangle icon (amber) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-node.note .panel-icon::before {
+  /* File/Note icon (gray) */
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.panel-title {
+  font-weight: 600;
+  line-height: 1.5rem;
+  margin-bottom: 0.25rem;
+  pointer-events: none;
+}
+
+/* Status Node Popover Styles */
+.status-color-swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.status-color-swatch:hover {
+  transform: scale(1.05);
+}
+
+.status-color-swatch-selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.status-color-swatch:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
