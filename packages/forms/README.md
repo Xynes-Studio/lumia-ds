@@ -1,17 +1,17 @@
-# @lumia/forms
+# @lumia-ui/forms
 
 Validation helpers and React Hook Form wiring for Lumia components.
 
 ## Install
 
 ```bash
-pnpm add @lumia/forms react-hook-form
+pnpm add @lumia-ui/forms react-hook-form
 ```
 
 ## ValidationRule
 
 ```ts
-import type { ValidationRule, ValidationContext } from '@lumia/forms';
+import type { ValidationRule, ValidationContext } from '@lumia-ui/forms';
 
 type EmailCtx = ValidationContext & { blockedDomains: string[] };
 
@@ -39,7 +39,7 @@ import {
     email,
     regex,
     zodRule,
-} from '@lumia/forms';
+} from '@lumia-ui/forms';
 import { z } from 'zod';
 
 // All helpers accept an optional custom message
@@ -60,7 +60,7 @@ const mustMatchSchema = zodRule(z.object({ name: z.string().min(1) }));
 
 ## LumiaForm (react-hook-form)
 
-`@lumia/forms` ships a `<LumiaForm>` wrapper and re-exports React Hook Form helpers to wire DS inputs into `react-hook-form`.
+`@lumia-ui/forms` ships a `<LumiaForm>` wrapper and re-exports React Hook Form helpers to wire DS inputs into `react-hook-form`.
 
 ```tsx
 import {
@@ -70,7 +70,7 @@ import {
     ValidatedInput,
     required,
     useForm,
-} from '@lumia/forms';
+} from '@lumia-ui/forms';
 
 type ProfileForm = { email: string };
 
@@ -109,14 +109,14 @@ const onSubmit: SubmitHandler<ProfileForm> = (values) => {
 ```
 
 - `LumiaForm` wraps `FormProvider` under the hood and wires `onSubmit`/`onError` into `handleSubmit`.
-- Types such as `SubmitHandler` plus utilities like `useForm` and `Controller` are re-exported from `@lumia/forms`.
+- Types such as `SubmitHandler` plus utilities like `useForm` and `Controller` are re-exported from `@lumia-ui/forms`.
 
 ## ValidatedInput
 
 `ValidatedInput` wraps the DS `Input` component and runs a list of `ValidationRule`s on change/blur, showing the first failing rule's message as the error hint.
 
 ```tsx
-import { ValidatedInput, required, minLength } from '@lumia/forms';
+import { ValidatedInput, required, minLength } from '@lumia-ui/forms';
 
 const rules = [required('Name is required'), minLength(3, 'Too short')];
 

@@ -4,24 +4,24 @@ React/Next.js-first design system for admin and internal tools, published as ind
 
 ## Packages at a glance
 
-- `@lumia/tokens` – typed theme tokens and helpers
-- `@lumia/theme` – `ThemeProvider` and Tailwind preset
-- `@lumia/components` – React primitives (buttons, inputs, overlays, tabs, layout helpers)
-- `@lumia/forms` – validation rules and React Hook Form wiring
-- `@lumia/layout` – admin shells, stack layout, drawer layout
-- `@lumia/runtime` – schemas and renderer for resource-driven pages
-- `@lumia/icons` – icon registry and generated SVG React components
+- `@lumia-ui/tokens` – typed theme tokens and helpers
+- `@lumia-ui/theme` – `ThemeProvider` and Tailwind preset
+- `@lumia-ui/components` – React primitives (buttons, inputs, overlays, tabs, layout helpers)
+- `@lumia-ui/forms` – validation rules and React Hook Form wiring
+- `@lumia-ui/layout` – admin shells, stack layout, drawer layout
+- `@lumia-ui/runtime` – schemas and renderer for resource-driven pages
+- `@lumia-ui/icons` – icon registry and generated SVG React components
 
 ## Quick start (consumer app)
 
 ```bash
-pnpm add @lumia/tokens @lumia/theme @lumia/components @lumia/forms @lumia/layout @lumia/runtime @lumia/icons react-hook-form
+pnpm add @lumia-ui/tokens @lumia-ui/theme @lumia-ui/components @lumia-ui/forms @lumia-ui/layout @lumia-ui/runtime @lumia-ui/icons react-hook-form
 pnpm add -D tailwindcss postcss autoprefixer
 ```
 
 ```js
 // tailwind.config.cjs
-const { lumiaTailwindPreset } = require('@lumia/theme');
+const { lumiaTailwindPreset } = require('@lumia-ui/theme');
 
 module.exports = {
   presets: [lumiaTailwindPreset],
@@ -31,8 +31,8 @@ module.exports = {
 
 ```tsx
 // app/layout.tsx or src/App.tsx
-import { ThemeProvider } from '@lumia/theme';
-import { defaultTheme } from '@lumia/tokens';
+import { ThemeProvider } from '@lumia-ui/theme';
+import { defaultTheme } from '@lumia-ui/tokens';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>;
@@ -42,9 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Docs and guides
 
 - Storybook usage: `docs/storybook.md`
+- Table wrapper usage: `docs/components-table.md`
+- Pagination usage: `docs/components-pagination.md`
 - Icon import workflow: `docs/icon-import.md`
 - Runtime schemas: `docs/runtime-schemas.md`
 - Admin app consumption guide: `docs/admin-app-consumption.md`
+- **Release process: `docs/release-process.md`**
+- QA test plan: `docs/qa-test-plan.md`
 
 ## Development
 
@@ -54,5 +58,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## Resource scaffolding CLI
 
-- Generate a resource: `pnpm --filter @lumia/cli exec lumia-resource <resource-name>`
+- Generate a resource: `pnpm --filter @lumia-ui/cli exec lumia-resource <resource-name>`
 - Fills `src/resources/<resource>.resource.ts` with a `defineResource` template; add pages, fields, and fetchers, then type-check/build.
+
+## Versioning
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to create changesets and release packages.

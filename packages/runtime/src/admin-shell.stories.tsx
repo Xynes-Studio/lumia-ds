@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { AdminShell } from '@lumia/layout';
+import { AdminShell } from '@lumia-ui/layout';
 import {
   Button,
   Card,
@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Flex,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 const meta = {
   title: 'Runtime/AdminShell',
@@ -26,7 +26,7 @@ type Story = StoryObj<typeof AdminShell>;
 const Sidebar = () => (
   <nav className="flex flex-col gap-3 text-sm">
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground ">
         Navigation
       </p>
       <div className="mt-2 flex flex-col gap-1 text-foreground">
@@ -45,7 +45,7 @@ const Sidebar = () => (
       </div>
     </div>
 
-    <div className="rounded-lg border border-border/70 bg-background/80 p-3 text-xs text-muted">
+    <div className="rounded-lg border border-border/70 bg-background/80 p-3 text-xs text-muted-foreground ">
       <p className="font-semibold text-foreground">Tip</p>
       <p>Sidebar and header are simple slots—drop in your own nav here.</p>
     </div>
@@ -60,7 +60,9 @@ const Header = () => (
         <p className="text-base font-semibold leading-6 tracking-tight">
           Lumia Admin
         </p>
-        <p className="text-xs text-muted">Header placeholder content</p>
+        <p className="text-xs text-muted-foreground ">
+          Header placeholder content
+        </p>
       </div>
     </div>
 
@@ -86,7 +88,7 @@ export const PlaceholderScaffold: Story = {
                   {index === 0 ? '1,284' : index === 1 ? '42' : '78%'}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted">
+              <CardContent className="text-sm text-muted-foreground ">
                 Updated just now · placeholder data.
               </CardContent>
             </Card>
@@ -111,7 +113,7 @@ export const PlaceholderScaffold: Story = {
                 <p className="text-sm font-semibold text-foreground">
                   Replace these placeholders
                 </p>
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground ">
                   Swap in your navigation, breadcrumbs, and user menus.
                 </p>
               </div>
@@ -120,7 +122,7 @@ export const PlaceholderScaffold: Story = {
               </Button>
             </Flex>
 
-            <p className="text-sm text-muted">
+            <p className="text-sm text-muted-foreground ">
               Content area below uses standard spacing so routed pages feel
               consistent.
             </p>

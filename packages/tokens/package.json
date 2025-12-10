@@ -1,26 +1,34 @@
 {
-    "name": "@lumia/tokens",
-    "version": "0.0.0",
-    "description": "Design tokens and theme types for Lumia DS",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.js"
-        }
+  "name": "@lumia-ui/tokens",
+  "version": "1.0.0",
+  "description": "Design tokens and theme types for Lumia DS",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
-    "scripts": {
-        "build": "tsup",
-        "dev": "tsup --watch",
-        "test": "vitest run --coverage"
-    },
-    "devDependencies": {
-        "@vitest/coverage-v8": "^2.1.9",
-        "tsup": "^8.0.0",
-        "vite": "^7.2.4",
-        "vitest": "^2.1.9"
-    }
+    "./dist/css/variables.css": "./dist/css/variables.css"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "pnpm clean && pnpm build:tokens && tsup",
+    "build:tokens": "node build.mjs",
+    "dev": "tsup --watch",
+    "test": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9",
+    "lru-cache": "^11.2.4",
+    "style-dictionary": "^5.1.1",
+    "tsup": "^8.0.0",
+    "vite": "^7.2.4",
+    "vitest": "^2.1.9"
+  }
 }

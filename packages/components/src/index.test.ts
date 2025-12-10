@@ -1,22 +1,51 @@
 import type { ComponentProps } from 'react';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import type * as ExternalApi from '@lumia/components';
+import type * as ExternalApi from '@lumia-ui/components';
 import {
   Button,
   buttonStyles,
   type ButtonProps,
+  Badge,
+  badgeStyles,
+  type BadgeProps,
+  type BadgeVariant,
+  Tag,
+  tagStyles,
+  type TagProps,
+  type TagVariant,
+  StatusPill,
+  statusPillStyles,
+  type StatusPillProps,
+  type StatusPillVariant,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  type AccordionContentProps,
+  type AccordionItemProps,
+  type AccordionProps,
+  type AccordionTriggerProps,
+  ConfirmDialog,
+  useConfirmDialog,
+  type ConfirmDialogProps,
+  type UseConfirmDialogResult,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
+  CardSubtitle,
   CardTitle,
   type CardContentProps,
   type CardDescriptionProps,
   type CardFooterProps,
   type CardHeaderProps,
   type CardProps,
+  type CardSubtitleProps,
   type CardTitleProps,
+  StatTile,
+  type StatTileDelta,
+  type StatTileProps,
   Checkbox,
   type CheckboxProps,
   Dialog,
@@ -33,10 +62,36 @@ import {
   type DialogProps,
   type DialogTitleProps,
   type DialogTriggerProps,
+  DateRangeFilter,
+  type DateRangeFilterProps,
+  type DateRangePreset,
+  type DateRangeValue,
+  EmptyState,
+  type EmptyStateAction,
+  type EmptyStateProps,
+  NoResults,
+  type NoResultsProps,
   Input,
+  InputGroup,
+  InputGroupInput,
+  InputGroupPrefix,
+  InputGroupSuffix,
   Textarea,
+  NumberInput,
+  Combobox,
+  MultiSelect,
   type InputProps,
+  type InputGroupAddonProps,
+  type InputGroupInputProps,
+  type InputGroupProps,
   type TextareaProps,
+  type NumberInputProps,
+  type ComboboxProps,
+  type MultiSelectProps,
+  type ComboboxOption,
+  FileUpload,
+  type FileUploadProps,
+  type UploadedFile,
   Radio,
   type RadioProps,
   Select,
@@ -55,6 +110,21 @@ import {
   type SheetProps,
   type SheetTitleProps,
   type SheetTriggerProps,
+  ContextMenu,
+  type ContextMenuProps,
+  type MenuItemConfig,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuTrigger,
+  type MenuContentProps,
+  type MenuItemProps,
+  type MenuLabelProps,
+  type MenuProps,
+  type MenuSeparatorProps,
+  type MenuTriggerProps,
   Tabs,
   TabsContent,
   TabsList,
@@ -63,33 +133,89 @@ import {
   type TabsListProps,
   type TabsProps,
   type TabsTriggerProps,
+  SegmentedControl,
+  type SegmentedControlOption,
+  type SegmentedControlProps,
   Flex,
   type FlexProps,
+  Toolbar,
+  type ToolbarProps,
+  PageHeader,
+  type PageHeaderProps,
   FlatList,
   type FlatListProps,
+  Pagination,
+  type PaginationProps,
+  SideNavItem,
+  type SideNavItemProps,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+  type TableBodyProps,
+  type TableCellProps,
+  type TableHeaderProps,
+  type TableColumn,
+  type TableSortDirection,
+  type TableSortState,
+  type TableProps,
+  type TableRowProps,
+  ToastProvider,
+  ToastViewport,
+  useToast,
+  type ToastAction,
+  type ToastOptions,
+  type ToastProviderProps,
+  type ToastVariant,
+  Skeleton,
+  type SkeletonProps,
 } from './index';
 
 describe('components index barrel', () => {
   it('exports all primitives and helpers', () => {
     expect(Button).toBeDefined();
     expect(buttonStyles.base).toBeDefined();
+    expect(Badge).toBeDefined();
+    expect(badgeStyles.base).toBeDefined();
+    expect(Tag).toBeDefined();
+    expect(tagStyles.base).toBeDefined();
+    expect(StatusPill).toBeDefined();
+    expect(statusPillStyles.base).toBeDefined();
     expect(Input).toBeDefined();
+    expect(InputGroup).toBeDefined();
+    expect(InputGroupInput).toBeDefined();
+    expect(InputGroupPrefix).toBeDefined();
+    expect(InputGroupSuffix).toBeDefined();
     expect(Textarea).toBeDefined();
+    expect(NumberInput).toBeDefined();
+    expect(Combobox).toBeDefined();
+    expect(MultiSelect).toBeDefined();
     expect(Select).toBeDefined();
     expect(Checkbox).toBeDefined();
     expect(Radio).toBeDefined();
+    expect(FileUpload).toBeDefined();
+    expect(DateRangeFilter).toBeDefined();
 
     expect(Card).toBeDefined();
     expect(CardHeader).toBeDefined();
     expect(CardTitle).toBeDefined();
+    expect(CardSubtitle).toBeDefined();
     expect(CardDescription).toBeDefined();
     expect(CardContent).toBeDefined();
     expect(CardFooter).toBeDefined();
+    expect(StatTile).toBeDefined();
+
+    expect(Accordion).toBeDefined();
+    expect(AccordionItem).toBeDefined();
+    expect(AccordionTrigger).toBeDefined();
+    expect(AccordionContent).toBeDefined();
 
     expect(Tabs).toBeDefined();
     expect(TabsList).toBeDefined();
     expect(TabsTrigger).toBeDefined();
     expect(TabsContent).toBeDefined();
+    expect(SegmentedControl).toBeDefined();
 
     expect(Dialog).toBeDefined();
     expect(DialogTrigger).toBeDefined();
@@ -98,6 +224,8 @@ describe('components index barrel', () => {
     expect(DialogTitle).toBeDefined();
     expect(DialogDescription).toBeDefined();
     expect(DialogFooter).toBeDefined();
+    expect(ConfirmDialog).toBeDefined();
+    expect(useConfirmDialog).toBeDefined();
 
     expect(Sheet).toBeDefined();
     expect(SheetTrigger).toBeDefined();
@@ -107,21 +235,86 @@ describe('components index barrel', () => {
     expect(SheetDescription).toBeDefined();
     expect(SheetFooter).toBeDefined();
 
+    expect(ContextMenu).toBeDefined();
+    expect(Menu).toBeDefined();
+    expect(MenuTrigger).toBeDefined();
+    expect(MenuContent).toBeDefined();
+    expect(MenuItem).toBeDefined();
+    expect(MenuLabel).toBeDefined();
+    expect(MenuSeparator).toBeDefined();
+
     expect(Flex).toBeDefined();
+    expect(Toolbar).toBeDefined();
+    expect(PageHeader).toBeDefined();
     expect(FlatList).toBeDefined();
+    expect(Pagination).toBeDefined();
+    expect(SideNavItem).toBeDefined();
+    expect(Table).toBeDefined();
+    expect(TableHeader).toBeDefined();
+    expect(TableBody).toBeDefined();
+    expect(TableRow).toBeDefined();
+    expect(TableCell).toBeDefined();
+    expect(EmptyState).toBeDefined();
+    expect(NoResults).toBeDefined();
+    expect(ToastProvider).toBeDefined();
+    expect(ToastViewport).toBeDefined();
+    expect(useToast).toBeDefined();
+    expect(Skeleton).toBeDefined();
   });
 
   it('provides consumer friendly prop types', () => {
     expectTypeOf<ButtonProps>().toMatchTypeOf<ComponentProps<typeof Button>>();
+    expectTypeOf<BadgeProps>().toMatchTypeOf<ComponentProps<typeof Badge>>();
+    expectTypeOf<BadgeVariant>().toEqualTypeOf<
+      'default' | 'outline' | 'subtle'
+    >();
+    expectTypeOf<TagProps>().toMatchTypeOf<ComponentProps<typeof Tag>>();
+    expectTypeOf<TagVariant>().toEqualTypeOf<
+      'default' | 'success' | 'warning' | 'error'
+    >();
+    expectTypeOf<StatusPillProps>().toMatchTypeOf<
+      ComponentProps<typeof StatusPill>
+    >();
+    expectTypeOf<StatusPillVariant>().toEqualTypeOf<
+      'success' | 'warning' | 'error' | 'info'
+    >();
     expectTypeOf<InputProps>().toMatchTypeOf<ComponentProps<typeof Input>>();
+    expectTypeOf<InputGroupProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroup>
+    >();
+    expectTypeOf<InputGroupInputProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroupInput>
+    >();
+    expectTypeOf<InputGroupAddonProps>().toMatchTypeOf<
+      ComponentProps<typeof InputGroupPrefix>
+    >();
     expectTypeOf<TextareaProps>().toMatchTypeOf<
       ComponentProps<typeof Textarea>
     >();
+    expectTypeOf<NumberInputProps>().toMatchTypeOf<
+      ComponentProps<typeof NumberInput>
+    >();
+    expectTypeOf<ComboboxProps>().toMatchTypeOf<
+      ComponentProps<typeof Combobox>
+    >();
+    expectTypeOf<MultiSelectProps>().toMatchTypeOf<
+      ComponentProps<typeof MultiSelect>
+    >();
+    expectTypeOf<ComboboxOption>().toMatchTypeOf<ComboboxOption>();
+    expectTypeOf<FileUploadProps>().toMatchTypeOf<
+      ComponentProps<typeof FileUpload>
+    >();
+    expectTypeOf<UploadedFile>().toMatchTypeOf<UploadedFile>();
     expectTypeOf<SelectProps>().toMatchTypeOf<ComponentProps<typeof Select>>();
     expectTypeOf<CheckboxProps>().toMatchTypeOf<
       ComponentProps<typeof Checkbox>
     >();
     expectTypeOf<RadioProps>().toMatchTypeOf<ComponentProps<typeof Radio>>();
+    expectTypeOf<DateRangeFilterProps>().toMatchTypeOf<
+      ComponentProps<typeof DateRangeFilter>
+    >();
+    expectTypeOf<DateRangeValue>().toMatchTypeOf<DateRangeValue>();
+    expectTypeOf<DateRangePreset>().toMatchTypeOf<DateRangePreset>();
 
     expectTypeOf<CardProps>().toMatchTypeOf<ComponentProps<typeof Card>>();
     expectTypeOf<CardHeaderProps>().toMatchTypeOf<
@@ -129,6 +322,9 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<CardTitleProps>().toMatchTypeOf<
       ComponentProps<typeof CardTitle>
+    >();
+    expectTypeOf<CardSubtitleProps>().toMatchTypeOf<
+      ComponentProps<typeof CardSubtitle>
     >();
     expectTypeOf<CardDescriptionProps>().toMatchTypeOf<
       ComponentProps<typeof CardDescription>
@@ -138,6 +334,23 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<CardFooterProps>().toMatchTypeOf<
       ComponentProps<typeof CardFooter>
+    >();
+    expectTypeOf<StatTileProps>().toMatchTypeOf<
+      ComponentProps<typeof StatTile>
+    >();
+    expectTypeOf<StatTileDelta>().toMatchTypeOf<StatTileDelta>();
+
+    expectTypeOf<AccordionProps>().toMatchTypeOf<
+      ComponentProps<typeof Accordion>
+    >();
+    expectTypeOf<AccordionItemProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionItem>
+    >();
+    expectTypeOf<AccordionTriggerProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionTrigger>
+    >();
+    expectTypeOf<AccordionContentProps>().toMatchTypeOf<
+      ComponentProps<typeof AccordionContent>
     >();
 
     expectTypeOf<TabsProps>().toMatchTypeOf<ComponentProps<typeof Tabs>>();
@@ -150,6 +363,10 @@ describe('components index barrel', () => {
     expectTypeOf<TabsContentProps>().toMatchTypeOf<
       ComponentProps<typeof TabsContent>
     >();
+    expectTypeOf<SegmentedControlProps>().toMatchTypeOf<
+      ComponentProps<typeof SegmentedControl>
+    >();
+    expectTypeOf<SegmentedControlOption>().toMatchTypeOf<SegmentedControlOption>();
 
     expectTypeOf<DialogProps>().toMatchTypeOf<ComponentProps<typeof Dialog>>();
     expectTypeOf<DialogTriggerProps>().toMatchTypeOf<
@@ -169,6 +386,12 @@ describe('components index barrel', () => {
     >();
     expectTypeOf<DialogFooterProps>().toMatchTypeOf<
       ComponentProps<typeof DialogFooter>
+    >();
+    expectTypeOf<ConfirmDialogProps>().toMatchTypeOf<
+      ComponentProps<typeof ConfirmDialog>
+    >();
+    expectTypeOf<UseConfirmDialogResult>().toMatchTypeOf<
+      ReturnType<typeof useConfirmDialog>
     >();
 
     expectTypeOf<SheetProps>().toMatchTypeOf<ComponentProps<typeof Sheet>>();
@@ -190,31 +413,146 @@ describe('components index barrel', () => {
     expectTypeOf<SheetFooterProps>().toMatchTypeOf<
       ComponentProps<typeof SheetFooter>
     >();
+    expectTypeOf<ContextMenuProps>().toMatchTypeOf<
+      ComponentProps<typeof ContextMenu>
+    >();
+    expectTypeOf<MenuProps>().toMatchTypeOf<ComponentProps<typeof Menu>>();
+    expectTypeOf<MenuTriggerProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuTrigger>
+    >();
+    expectTypeOf<MenuContentProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuContent>
+    >();
+    expectTypeOf<MenuItemProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuItem>
+    >();
+    expectTypeOf<MenuLabelProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuLabel>
+    >();
+    expectTypeOf<MenuSeparatorProps>().toMatchTypeOf<
+      ComponentProps<typeof MenuSeparator>
+    >();
+    expectTypeOf<MenuItemConfig>().toMatchTypeOf<MenuItemConfig>();
 
     expectTypeOf<FlexProps>().toMatchTypeOf<ComponentProps<typeof Flex>>();
+    expectTypeOf<ToolbarProps>().toMatchTypeOf<
+      ComponentProps<typeof Toolbar>
+    >();
+    expectTypeOf<PageHeaderProps>().toMatchTypeOf<
+      ComponentProps<typeof PageHeader>
+    >();
     expectTypeOf<FlatListProps<string>>().toMatchTypeOf<
       Parameters<typeof FlatList>[0]
+    >();
+    expectTypeOf<PaginationProps>().toMatchTypeOf<
+      ComponentProps<typeof Pagination>
+    >();
+    expectTypeOf<SideNavItemProps>().toMatchTypeOf<
+      ComponentProps<typeof SideNavItem>
+    >();
+    expectTypeOf<TableProps>().toMatchTypeOf<ComponentProps<typeof Table>>();
+    expectTypeOf<TableColumn>().toMatchTypeOf<TableColumn>();
+    expectTypeOf<TableSortDirection>().toMatchTypeOf<TableSortDirection>();
+    expectTypeOf<TableSortState>().toMatchTypeOf<TableSortState>();
+    expectTypeOf<TableHeaderProps>().toMatchTypeOf<
+      ComponentProps<typeof TableHeader>
+    >();
+    expectTypeOf<TableBodyProps>().toMatchTypeOf<
+      ComponentProps<typeof TableBody>
+    >();
+    expectTypeOf<TableRowProps>().toMatchTypeOf<
+      ComponentProps<typeof TableRow>
+    >();
+    expectTypeOf<TableCellProps>().toMatchTypeOf<
+      ComponentProps<typeof TableCell>
+    >();
+    expectTypeOf<EmptyStateProps>().toMatchTypeOf<
+      ComponentProps<typeof EmptyState>
+    >();
+    expectTypeOf<EmptyStateAction>().toMatchTypeOf<EmptyStateAction>();
+    expectTypeOf<NoResultsProps>().toMatchTypeOf<
+      ComponentProps<typeof NoResults>
+    >();
+    expectTypeOf<ToastProviderProps>().toMatchTypeOf<
+      ComponentProps<typeof ToastProvider>
+    >();
+    expectTypeOf<ToastOptions>().toMatchTypeOf<ToastOptions>();
+    expectTypeOf<ToastVariant>().toEqualTypeOf<
+      'default' | 'success' | 'warning' | 'error'
+    >();
+    expectTypeOf<ToastAction>().toMatchTypeOf<ToastAction>();
+    expectTypeOf<SkeletonProps>().toMatchTypeOf<
+      ComponentProps<typeof Skeleton>
     >();
   });
 
   it('mirrors the external package entrypoint', () => {
     expectTypeOf<typeof ExternalApi.Button>().toEqualTypeOf<typeof Button>();
     expectTypeOf<ExternalApi.ButtonProps>().toEqualTypeOf<ButtonProps>();
+    expectTypeOf<typeof ExternalApi.Badge>().toEqualTypeOf<typeof Badge>();
+    expectTypeOf<ExternalApi.BadgeProps>().toEqualTypeOf<BadgeProps>();
+    expectTypeOf<ExternalApi.BadgeVariant>().toEqualTypeOf<BadgeVariant>();
+    expectTypeOf<typeof ExternalApi.Tag>().toEqualTypeOf<typeof Tag>();
+    expectTypeOf<ExternalApi.TagProps>().toEqualTypeOf<TagProps>();
+    expectTypeOf<ExternalApi.TagVariant>().toEqualTypeOf<TagVariant>();
+    expectTypeOf<typeof ExternalApi.StatusPill>().toEqualTypeOf<
+      typeof StatusPill
+    >();
+    expectTypeOf<ExternalApi.StatusPillProps>().toEqualTypeOf<StatusPillProps>();
+    expectTypeOf<ExternalApi.StatusPillVariant>().toEqualTypeOf<StatusPillVariant>();
+    expectTypeOf<ExternalApi.InputGroup>().toEqualTypeOf<typeof InputGroup>();
+    expectTypeOf<ExternalApi.InputGroupProps>().toEqualTypeOf<InputGroupProps>();
+    expectTypeOf<ExternalApi.InputGroupInput>().toEqualTypeOf<
+      typeof InputGroupInput
+    >();
+    expectTypeOf<ExternalApi.InputGroupInputProps>().toEqualTypeOf<InputGroupInputProps>();
+    expectTypeOf<ExternalApi.InputGroupPrefix>().toEqualTypeOf<
+      typeof InputGroupPrefix
+    >();
+    expectTypeOf<ExternalApi.InputGroupSuffix>().toEqualTypeOf<
+      typeof InputGroupSuffix
+    >();
+    expectTypeOf<ExternalApi.InputGroupAddonProps>().toEqualTypeOf<InputGroupAddonProps>();
     expectTypeOf<ExternalApi.InputProps>().toEqualTypeOf<InputProps>();
     expectTypeOf<ExternalApi.TextareaProps>().toEqualTypeOf<TextareaProps>();
+    expectTypeOf<ExternalApi.NumberInput>().toEqualTypeOf<typeof NumberInput>();
+    expectTypeOf<ExternalApi.NumberInputProps>().toEqualTypeOf<NumberInputProps>();
+    expectTypeOf<ExternalApi.Combobox>().toEqualTypeOf<typeof Combobox>();
+    expectTypeOf<ExternalApi.ComboboxProps>().toEqualTypeOf<ComboboxProps>();
+    expectTypeOf<ExternalApi.ComboboxOption>().toEqualTypeOf<ComboboxOption>();
+    expectTypeOf<ExternalApi.MultiSelect>().toEqualTypeOf<typeof MultiSelect>();
+    expectTypeOf<ExternalApi.MultiSelectProps>().toEqualTypeOf<MultiSelectProps>();
+    expectTypeOf<ExternalApi.FileUpload>().toEqualTypeOf<typeof FileUpload>();
+    expectTypeOf<ExternalApi.FileUploadProps>().toEqualTypeOf<FileUploadProps>();
+    expectTypeOf<ExternalApi.UploadedFile>().toEqualTypeOf<UploadedFile>();
     expectTypeOf<ExternalApi.SelectProps>().toEqualTypeOf<SelectProps>();
     expectTypeOf<ExternalApi.CheckboxProps>().toEqualTypeOf<CheckboxProps>();
     expectTypeOf<ExternalApi.RadioProps>().toEqualTypeOf<RadioProps>();
+    expectTypeOf<ExternalApi.DateRangeFilter>().toEqualTypeOf<
+      typeof DateRangeFilter
+    >();
+    expectTypeOf<ExternalApi.DateRangeFilterProps>().toEqualTypeOf<DateRangeFilterProps>();
+    expectTypeOf<ExternalApi.DateRangeValue>().toEqualTypeOf<DateRangeValue>();
+    expectTypeOf<ExternalApi.DateRangePreset>().toEqualTypeOf<DateRangePreset>();
     expectTypeOf<ExternalApi.CardProps>().toEqualTypeOf<CardProps>();
     expectTypeOf<ExternalApi.CardHeaderProps>().toEqualTypeOf<CardHeaderProps>();
     expectTypeOf<ExternalApi.CardTitleProps>().toEqualTypeOf<CardTitleProps>();
+    expectTypeOf<ExternalApi.CardSubtitleProps>().toEqualTypeOf<CardSubtitleProps>();
     expectTypeOf<ExternalApi.CardDescriptionProps>().toEqualTypeOf<CardDescriptionProps>();
     expectTypeOf<ExternalApi.CardContentProps>().toEqualTypeOf<CardContentProps>();
     expectTypeOf<ExternalApi.CardFooterProps>().toEqualTypeOf<CardFooterProps>();
+    expectTypeOf<ExternalApi.StatTile>().toEqualTypeOf<typeof StatTile>();
+    expectTypeOf<ExternalApi.StatTileProps>().toEqualTypeOf<StatTileProps>();
+    expectTypeOf<ExternalApi.StatTileDelta>().toEqualTypeOf<StatTileDelta>();
     expectTypeOf<ExternalApi.TabsProps>().toEqualTypeOf<TabsProps>();
     expectTypeOf<ExternalApi.TabsListProps>().toEqualTypeOf<TabsListProps>();
     expectTypeOf<ExternalApi.TabsTriggerProps>().toEqualTypeOf<TabsTriggerProps>();
     expectTypeOf<ExternalApi.TabsContentProps>().toEqualTypeOf<TabsContentProps>();
+    expectTypeOf<ExternalApi.SegmentedControl>().toEqualTypeOf<
+      typeof SegmentedControl
+    >();
+    expectTypeOf<ExternalApi.SegmentedControlProps>().toEqualTypeOf<SegmentedControlProps>();
+    expectTypeOf<ExternalApi.SegmentedControlOption>().toEqualTypeOf<SegmentedControlOption>();
     expectTypeOf<ExternalApi.DialogProps>().toEqualTypeOf<DialogProps>();
     expectTypeOf<ExternalApi.DialogTriggerProps>().toEqualTypeOf<DialogTriggerProps>();
     expectTypeOf<ExternalApi.DialogContentProps>().toEqualTypeOf<DialogContentProps>();
@@ -222,6 +560,14 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.DialogTitleProps>().toEqualTypeOf<DialogTitleProps>();
     expectTypeOf<ExternalApi.DialogDescriptionProps>().toEqualTypeOf<DialogDescriptionProps>();
     expectTypeOf<ExternalApi.DialogFooterProps>().toEqualTypeOf<DialogFooterProps>();
+    expectTypeOf<typeof ExternalApi.ConfirmDialog>().toEqualTypeOf<
+      typeof ConfirmDialog
+    >();
+    expectTypeOf<ExternalApi.ConfirmDialogProps>().toEqualTypeOf<ConfirmDialogProps>();
+    expectTypeOf<ExternalApi.useConfirmDialog>().toEqualTypeOf<
+      typeof useConfirmDialog
+    >();
+    expectTypeOf<ExternalApi.UseConfirmDialogResult>().toEqualTypeOf<UseConfirmDialogResult>();
     expectTypeOf<ExternalApi.SheetProps>().toEqualTypeOf<SheetProps>();
     expectTypeOf<ExternalApi.SheetTriggerProps>().toEqualTypeOf<SheetTriggerProps>();
     expectTypeOf<ExternalApi.SheetContentProps>().toEqualTypeOf<SheetContentProps>();
@@ -229,12 +575,68 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.SheetTitleProps>().toEqualTypeOf<SheetTitleProps>();
     expectTypeOf<ExternalApi.SheetDescriptionProps>().toEqualTypeOf<SheetDescriptionProps>();
     expectTypeOf<ExternalApi.SheetFooterProps>().toEqualTypeOf<SheetFooterProps>();
+    expectTypeOf<ExternalApi.ContextMenu>().toEqualTypeOf<typeof ContextMenu>();
+    expectTypeOf<ExternalApi.ContextMenuProps>().toEqualTypeOf<ContextMenuProps>();
+    expectTypeOf<ExternalApi.Menu>().toEqualTypeOf<typeof Menu>();
+    expectTypeOf<ExternalApi.MenuProps>().toEqualTypeOf<MenuProps>();
+    expectTypeOf<ExternalApi.MenuTrigger>().toEqualTypeOf<typeof MenuTrigger>();
+    expectTypeOf<ExternalApi.MenuTriggerProps>().toEqualTypeOf<MenuTriggerProps>();
+    expectTypeOf<ExternalApi.MenuContent>().toEqualTypeOf<typeof MenuContent>();
+    expectTypeOf<ExternalApi.MenuContentProps>().toEqualTypeOf<MenuContentProps>();
+    expectTypeOf<ExternalApi.MenuItem>().toEqualTypeOf<typeof MenuItem>();
+    expectTypeOf<ExternalApi.MenuItemProps>().toEqualTypeOf<MenuItemProps>();
+    expectTypeOf<ExternalApi.MenuLabel>().toEqualTypeOf<typeof MenuLabel>();
+    expectTypeOf<ExternalApi.MenuLabelProps>().toEqualTypeOf<MenuLabelProps>();
+    expectTypeOf<ExternalApi.MenuSeparator>().toEqualTypeOf<
+      typeof MenuSeparator
+    >();
+    expectTypeOf<ExternalApi.MenuSeparatorProps>().toEqualTypeOf<MenuSeparatorProps>();
+    expectTypeOf<ExternalApi.MenuItemConfig>().toEqualTypeOf<MenuItemConfig>();
 
     expectTypeOf<ExternalApi.Flex>().toEqualTypeOf<typeof Flex>();
     expectTypeOf<ExternalApi.FlexProps>().toEqualTypeOf<FlexProps>();
+    expectTypeOf<ExternalApi.Toolbar>().toEqualTypeOf<typeof Toolbar>();
+    expectTypeOf<ExternalApi.ToolbarProps>().toEqualTypeOf<ToolbarProps>();
+    expectTypeOf<ExternalApi.PageHeader>().toEqualTypeOf<typeof PageHeader>();
+    expectTypeOf<ExternalApi.PageHeaderProps>().toEqualTypeOf<PageHeaderProps>();
     expectTypeOf<ExternalApi.FlatList>().toEqualTypeOf<typeof FlatList>();
     expectTypeOf<ExternalApi.FlatListProps<string>>().toEqualTypeOf<
       FlatListProps<string>
     >();
+    expectTypeOf<ExternalApi.Pagination>().toEqualTypeOf<typeof Pagination>();
+    expectTypeOf<ExternalApi.PaginationProps>().toEqualTypeOf<PaginationProps>();
+    expectTypeOf<ExternalApi.SideNavItem>().toEqualTypeOf<typeof SideNavItem>();
+    expectTypeOf<ExternalApi.SideNavItemProps>().toEqualTypeOf<SideNavItemProps>();
+    expectTypeOf<ExternalApi.Table>().toEqualTypeOf<typeof Table>();
+    expectTypeOf<ExternalApi.TableProps>().toEqualTypeOf<TableProps>();
+    expectTypeOf<ExternalApi.TableColumn>().toEqualTypeOf<TableColumn>();
+    expectTypeOf<ExternalApi.TableSortDirection>().toEqualTypeOf<TableSortDirection>();
+    expectTypeOf<ExternalApi.TableSortState>().toEqualTypeOf<TableSortState>();
+    expectTypeOf<ExternalApi.TableHeader>().toEqualTypeOf<typeof TableHeader>();
+    expectTypeOf<ExternalApi.TableHeaderProps>().toEqualTypeOf<TableHeaderProps>();
+    expectTypeOf<ExternalApi.TableBody>().toEqualTypeOf<typeof TableBody>();
+    expectTypeOf<ExternalApi.TableBodyProps>().toEqualTypeOf<TableBodyProps>();
+    expectTypeOf<ExternalApi.TableRow>().toEqualTypeOf<typeof TableRow>();
+    expectTypeOf<ExternalApi.TableRowProps>().toEqualTypeOf<TableRowProps>();
+    expectTypeOf<ExternalApi.TableCell>().toEqualTypeOf<typeof TableCell>();
+    expectTypeOf<ExternalApi.TableCellProps>().toEqualTypeOf<TableCellProps>();
+    expectTypeOf<ExternalApi.EmptyState>().toEqualTypeOf<typeof EmptyState>();
+    expectTypeOf<ExternalApi.EmptyStateProps>().toEqualTypeOf<EmptyStateProps>();
+    expectTypeOf<ExternalApi.EmptyStateAction>().toEqualTypeOf<EmptyStateAction>();
+    expectTypeOf<ExternalApi.NoResults>().toEqualTypeOf<typeof NoResults>();
+    expectTypeOf<ExternalApi.NoResultsProps>().toEqualTypeOf<NoResultsProps>();
+    expectTypeOf<ExternalApi.ToastProvider>().toEqualTypeOf<
+      typeof ToastProvider
+    >();
+    expectTypeOf<ExternalApi.ToastProviderProps>().toEqualTypeOf<ToastProviderProps>();
+    expectTypeOf<ExternalApi.ToastViewport>().toEqualTypeOf<
+      typeof ToastViewport
+    >();
+    expectTypeOf<ExternalApi.ToastVariant>().toEqualTypeOf<ToastVariant>();
+    expectTypeOf<ExternalApi.ToastAction>().toEqualTypeOf<ToastAction>();
+    expectTypeOf<ExternalApi.ToastOptions>().toEqualTypeOf<ToastOptions>();
+    expectTypeOf<ExternalApi.useToast>().toEqualTypeOf<typeof useToast>();
+    expectTypeOf<ExternalApi.Skeleton>().toEqualTypeOf<typeof Skeleton>();
+    expectTypeOf<ExternalApi.SkeletonProps>().toEqualTypeOf<SkeletonProps>();
   });
 });

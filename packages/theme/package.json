@@ -1,7 +1,11 @@
 {
-    "name": "@lumia/theme",
-    "version": "0.0.0",
+    "name": "@lumia-ui/theme",
+    "version": "0.1.0",
     "description": "React ThemeProvider for applying Lumia token CSS variables",
+    "publishConfig": {
+        "access": "public"
+    },
+
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -10,6 +14,11 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.mjs",
             "require": "./dist/index.js"
+        },
+        "./tailwind": {
+            "types": "./dist/tailwind/tailwind.d.ts",
+            "import": "./dist/tailwind/tailwind.mjs",
+            "require": "./dist/tailwind/tailwind.js"
         }
     },
     "scripts": {
@@ -22,7 +31,7 @@
         "react-dom": "^18.3.1"
     },
     "dependencies": {
-        "@lumia/tokens": "workspace:*"
+        "@lumia-ui/tokens": "workspace:*"
     },
     "devDependencies": {
         "@types/react": "^18.3.12",

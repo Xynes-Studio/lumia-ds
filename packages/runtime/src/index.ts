@@ -1,5 +1,49 @@
-import type { FieldValues } from '@lumia/forms';
-import type { FieldConfig, FormDataFetcher } from './blocks';
+import type { FieldValues } from '@lumia-ui/forms';
+import type { FieldConfig, FormDataFetcher } from './blocks/blocks';
+
+// Re-export Zod schemas and their inferred types
+export {
+  // Schemas
+  BlockSchemaSchema,
+  ComponentKindSchema,
+  DataQueryContextSchema,
+  DataSourceResultSchema,
+  GridPlacementSchema,
+  PageGridSchema,
+  PageSchemaSchema,
+  ResourceConfigSchema,
+  ResourcePageRefsSchema,
+  ResourceScreenSchema,
+  // Inferred types (alternative exports)
+  type ResourceConfigInferred,
+  type DataQueryContextInferred,
+  type DataSourceResultInferred,
+} from './schemas';
+
+// Re-export validation layer
+export {
+  type ConfigValidationIssue,
+  type PageConfigError,
+  type ResourceConfigError,
+  type DataSourceError,
+  type ConfigError,
+  type BlockConfigError,
+  type BlockValidationResult,
+  type ValidationResult,
+  formatValidationError,
+  validatePageConfig,
+  validateResourceConfig,
+  validateDataSourceResult,
+  validateBlock,
+} from './validation';
+
+// Re-export error widget components
+export {
+  PageErrorWidget,
+  type PageErrorWidgetProps,
+  BlockErrorWidget,
+  type BlockErrorWidgetProps,
+} from './components';
 
 /**
  * UI primitives the runtime renderer understands.
@@ -111,7 +155,7 @@ export type DataFetcher<TFieldValues extends FieldValues = FieldValues> = {
   ) => boolean | Promise<boolean>;
 };
 
-export { DetailBlock, FormBlock, ListBlock } from './blocks';
+export { DetailBlock, FormBlock, ListBlock } from './blocks/blocks';
 export type {
   DetailBlockConfig,
   DetailBlockField,
@@ -125,5 +169,6 @@ export type {
   ListBlockColumn,
   ListBlockConfig,
   ListBlockProps,
-} from './blocks';
-export { ResourcePageRenderer } from './resource-page-renderer';
+} from './blocks/blocks';
+export * from './blocks/blocks';
+export * from './resource-page-renderer/resource-page-renderer';

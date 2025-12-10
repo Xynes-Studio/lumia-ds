@@ -1,31 +1,37 @@
-# @lumia/tokens
+# @lumia-ui/tokens
 
 Theme tokens for Lumia DS with helpers to emit CSS variables.
+
+> [!IMPORTANT]
+> The single source of truth for tokens are the JSON files in `tokens/`.
+> This package uses [Style Dictionary](https://amzn.github.io/style-dictionary/) to generate platform-specific assets.
+>
+> ## Token Structure
+>
+> - **Core Tokens** (`tokens/core/`): Raw value definitions (e.g., palettes like Zinc, Red).
+> - **Semantic Tokens** (`tokens/semantic/`): Functional aliases referencing core tokens (e.g., `primary`, `destructive`).
+>
+> Do not edit `dist/` files directly.
 
 ## Install
 
 ```bash
-pnpm add @lumia/tokens
+pnpm add @lumia-ui/tokens
 ```
 
 ## Usage
 
 ```ts
-import { defaultTheme, tokens, themeToCSSVars, type ThemeTokens } from '@lumia/tokens';
+import { defaultTheme, tokens, type ThemeTokens } from '@lumia-ui/tokens';
 
-const cssVars = themeToCSSVars(defaultTheme);
+// Access tokens directly
+const primaryColor = tokens.colors.primary; // e.g. #18181b
 ```
 
-Example with styled-components:
+Since tokens are already built as CSS variables in `dist/css/variables.css`, you simply need to import that CSS file in your application root:
 
 ```ts
-const GlobalStyles = createGlobalStyle`
-  :root {
-    ${Object.entries(cssVars)
-      .map(([key, value]) => `${key}: ${value};`)
-      .join('\n    ')}
-  }
-`;
+import '@lumia-ui/tokens/dist/css/variables.css';
 ```
 
 ## Token groups

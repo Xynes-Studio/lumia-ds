@@ -5,6 +5,7 @@ const config: StorybookConfig = {
   stories: [
     '../packages/components/src/**/*.stories.@(ts|tsx)',
     '../packages/runtime/src/**/*.stories.@(ts|tsx)',
+    '../packages/editor/src/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
     '@storybook/addon-essentials',
@@ -22,11 +23,15 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      '@lumia/theme': path.resolve(__dirname, '../packages/theme/src'),
-      '@lumia/tokens': path.resolve(__dirname, '../packages/tokens/src'),
-      '@lumia/components': path.resolve(__dirname, '../packages/components/src'),
-      '@lumia/layout': path.resolve(__dirname, '../packages/layout/src'),
-      '@lumia/forms': path.resolve(__dirname, '../packages/forms/src'),
+      '@lumia-ui/theme': path.resolve(__dirname, '../packages/theme/src'),
+      // The CSS file must be resolved from dist, not src - order matters, more specific alias first
+      '@lumia-ui/tokens/dist': path.resolve(__dirname, '../packages/tokens/dist'),
+      '@lumia-ui/tokens': path.resolve(__dirname, '../packages/tokens/src'),
+      '@lumia-ui/components': path.resolve(__dirname, '../packages/components/src'),
+      '@lumia-ui/layout': path.resolve(__dirname, '../packages/layout/src'),
+      '@lumia-ui/forms': path.resolve(__dirname, '../packages/forms/src'),
+      '@lumia-ui/icons': path.resolve(__dirname, '../packages/icons/src'),
+      '@lumia-ui/editor': path.resolve(__dirname, '../packages/editor/src'),
     };
 
     return config;

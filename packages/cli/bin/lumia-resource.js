@@ -39,7 +39,7 @@ fs.mkdirSync(resourcesDir, { recursive: true });
 
 const resourceConstName = `${toPascalCase(resourceName)}Resource`;
 
-const template = `import { defineResource } from '@lumia/runtime';
+const template = `import { defineResource } from '@lumia-ui/runtime';
 
 export const ${resourceConstName} = defineResource({
   id: '${resourceName}',

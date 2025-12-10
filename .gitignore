@@ -9,3 +9,4 @@ build
 storybook-static
 **/storybook-static
 .eslintcache
+*.tsbuildinfo

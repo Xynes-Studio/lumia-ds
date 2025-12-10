@@ -1,0 +1,109 @@
+{
+  "color": {
+    "primary": {
+      "base": {
+        "value": "{color.neutral.900}",
+        "type": "color"
+      },
+      "50": {
+        "value": "{color.primary.base}",
+        "stop": "50",
+        "type": "color"
+      },
+      "100": {
+        "value": "{color.primary.base}",
+        "stop": "100",
+        "type": "color"
+      },
+      "200": {
+        "value": "{color.primary.base}",
+        "stop": "200",
+        "type": "color"
+      },
+      "300": {
+        "value": "{color.primary.base}",
+        "stop": "300",
+        "type": "color"
+      },
+      "400": {
+        "value": "{color.primary.base}",
+        "stop": "400",
+        "type": "color"
+      },
+      "500": {
+        "value": "{color.primary.base}",
+        "stop": "500",
+        "type": "color"
+      },
+      "600": {
+        "value": "{color.primary.base}",
+        "stop": "600",
+        "type": "color"
+      },
+      "700": {
+        "value": "{color.primary.base}",
+        "stop": "700",
+        "type": "color"
+      },
+      "800": {
+        "value": "{color.primary.base}",
+        "stop": "800",
+        "type": "color"
+      },
+      "900": {
+        "value": "{color.primary.base}",
+        "stop": "900",
+        "type": "color"
+      }
+    },
+    "secondary": {
+      "value": "{color.neutral.100}",
+      "type": "color"
+    },
+    "background": {
+      "value": "{color.white}",
+      "type": "color"
+    },
+    "foreground": {
+      "value": "{color.neutral.950}",
+      "type": "color"
+    },
+    "border": {
+      "value": "{color.neutral.200}",
+      "type": "color"
+    },
+    "muted": {
+      "value": "{color.neutral.100}",
+      "type": "color",
+      "foreground": {
+        "value": "{color.neutral.500}",
+        "type": "color"
+      }
+    },
+    "mutedForeground": {
+      "value": "{color.neutral.500}",
+      "type": "color"
+    },
+    "ring": {
+      "value": "{color.neutral.900}",
+      "type": "color"
+    },
+    "destructive": {
+      "value": "{color.danger.500}",
+      "type": "color",
+      "foreground": {
+        "value": "{color.white}",
+        "type": "color"
+      }
+    },
+    "destructiveForeground": {
+      "value": "{color.white}",
+      "type": "color"
+    },
+    "on-primary": {
+      "value": "{color.primary.500}",
+      "isContrast": true,
+      "type": "color"
+    }
+  }
+}

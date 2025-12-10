@@ -1,11 +1,11 @@
-# @lumia/layout
+# @lumia-ui/layout
 
 Layout primitives for admin-style shells. Components will iterate in follow-up tickets.
 
 ## Install
 
 ```bash
-pnpm add @lumia/layout @lumia/components
+pnpm add @lumia-ui/layout @lumia-ui/components
 ```
 
 ## Components
@@ -34,7 +34,7 @@ import {
     LayoutMain,
     LayoutContent,
     LayoutFooter,
-} from '@lumia/layout';
+} from '@lumia-ui/layout';
 
 export function AdminLayout() {
     return (
@@ -55,7 +55,7 @@ export function AdminLayout() {
 `AdminShell` composes the primitives for you when you just need a header + sidebar + content scaffold:
 
 ```tsx
-import { AdminShell } from '@lumia/layout';
+import { AdminShell } from '@lumia-ui/layout';
 
 export function AdminLayout() {
     return (
@@ -74,19 +74,19 @@ All components accept standard `div` props (`className`, `style`, etc.) for easy
 ### Stacked detail pages
 
 ```tsx
-import { StackLayout } from '@lumia/layout';
-import { Button } from '@lumia/components';
+import { StackLayout } from '@lumia-ui/layout';
+import { Button } from '@lumia-ui/components';
 
 export function AccountDetails() {
     return (
         <StackLayout title="Account details" actions={<Button size="sm">Save changes</Button>}>
             <section className="rounded-lg border border-border bg-background/80 p-5 shadow-sm">
                 <h2 className="text-base font-semibold leading-6">Profile</h2>
-                <p className="text-sm text-muted">Name, email, and contact information.</p>
+                <p className="text-sm text-muted-foreground ">Name, email, and contact information.</p>
             </section>
             <section className="rounded-lg border border-border bg-background/80 p-5 shadow-sm">
                 <h2 className="text-base font-semibold leading-6">Security</h2>
-                <p className="text-sm text-muted">Passwords, MFA, and devices.</p>
+                <p className="text-sm text-muted-foreground ">Passwords, MFA, and devices.</p>
             </section>
         </StackLayout>
     );
@@ -97,8 +97,8 @@ export function AccountDetails() {
 
 ```tsx
 import { useState } from 'react';
-import { DrawerLayout } from '@lumia/layout';
-import { Button } from '@lumia/components';
+import { DrawerLayout } from '@lumia-ui/layout';
+import { Button } from '@lumia-ui/components';
 
 export function DrawerExample() {
     const [open, setOpen] = useState(false);
@@ -109,7 +109,7 @@ export function DrawerExample() {
             <DrawerLayout isOpen={open} onClose={() => setOpen(false)}>
                 <div className="space-y-3">
                     <h2 className="text-lg font-semibold leading-6">Filters</h2>
-                    <p className="text-sm text-muted">Place your filter controls or secondary flows here.</p>
+                    <p className="text-sm text-muted-foreground ">Place your filter controls or secondary flows here.</p>
                 </div>
             </DrawerLayout>
         </>

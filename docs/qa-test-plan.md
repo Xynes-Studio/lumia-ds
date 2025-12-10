@@ -2,6 +2,15 @@
 
 P0-quality guardrails for Lumia Design System across components, runtime blocks, icons, layout, and forms. Targets Storybook as the primary surface with Atlas Browser for cross-browser validation.
 
+P0-quality guardrails for Lumia Design System across components, runtime blocks, icons, layout, and forms. Targets Storybook as the primary surface with Atlas Browser for cross-browser validation.
+
+## Visual Regression Testing (INF-501)
+We use **Playwright** to catch visual regressions in core components.
+- **Run tests:** `pnpm test:visual`
+- **Update snapshots:** `pnpm test:visual:update`
+- **CI:** Tests run automatically on PRs via GitHub Actions.
+- **Scope:** Button, Table, Editor, and other core primitives.
+
 ## Goals & Scope
 - Catch visual/interaction regressions before public release.
 - Validate accessibility, responsive behavior, theming, and RTL where applicable.
@@ -41,6 +50,19 @@ Out of scope: performance benchmarking, backend/service tests.
 - **Browers:** Chrome latest, Firefox latest, Safari 17+, Edge latest.
 - **Entry:** RC Storybook URL or tunneled local build; `pnpm storybook:build` if static is needed.
 - **Focus:** Layout primitives (Stack/Grid), form controls (Input, Select, Checkbox, Radio, Button), Tabs, Modals/Dialogs, critical icons.
+
+### Interaction Testing
+
+**Components Checked**:
+- **Button**: Click events, disabled state, type attributes.
+- **Forms**: Multi-field validation, submission payloads, error handling.
+- **Toast**: Hook invocation, stacking, ARIA roles.
+- **Editor Toolbar**: Formatting toggles (bold, italic, code), block type switching.
+
+**Tooling**:
+- **Vitest** for unit & interaction tests.
+- **@testing-library/react** for simulating user events.
+
 - **Heuristics:** keyboard navigation, focus visibility, text scaling/zoom at 125%, responsive resizing to 375px width, theme switch if available.
 - **Artifacts:** screenshots for visual regressions; video for interaction regressions; log findings in `docs/qa-issue-log.md`.
 - **Status:** Pending execution—run once Atlas access is available and record outcomes in the log.

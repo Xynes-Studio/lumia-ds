@@ -1,0 +1,46 @@
+{
+    "id": "users-list-page",
+    "layout": "admin-shell",
+    "blocks": [
+        {
+            "id": "users-table",
+            "kind": "table",
+            "title": "Users List",
+            "dataSourceId": "users-datasource",
+            "props": {
+                "columns": [
+                    {
+                        "key": "name",
+                        "label": "Name"
+                    },
+                    {
+                        "key": "email",
+                        "label": "Email"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "stats-block",
+            "kind": "stat",
+            "title": "User Statistics"
+        }
+    ],
+    "grid": {
+        "columns": 2,
+        "gap": 16,
+        "placements": [
+            {
+                "blockId": "users-table",
+                "column": 1,
+                "row": 1,
+                "columnSpan": 2
+            },
+            {
+                "blockId": "stats-block",
+                "column": 1,
+                "row": 2
+            }
+        ]
+    }
+}

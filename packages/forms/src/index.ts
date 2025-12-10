@@ -1,6 +1,6 @@
-export * from './validation';
-export * from './validated-input';
-export * from './form';
+export * from './form/form';
+export * from './validated-input/validated-input';
+export * from './validation/validation';
 
 export {
   Controller,

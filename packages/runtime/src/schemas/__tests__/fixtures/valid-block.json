@@ -1,0 +1,23 @@
+{
+    "id": "detail-block-1",
+    "kind": "detail",
+    "title": "User Details",
+    "dataSourceId": "user-detail-source",
+    "props": {
+        "fields": [
+            {
+                "key": "name",
+                "label": "Full Name"
+            },
+            {
+                "key": "email",
+                "label": "Email Address"
+            },
+            {
+                "key": "role",
+                "label": "Role"
+            }
+        ],
+        "columns": 2
+    }
+}

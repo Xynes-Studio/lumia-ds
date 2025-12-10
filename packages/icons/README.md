@@ -1,46 +1,91 @@
-# @lumia/icons
+# @lumia-ui/icons
 
-Icon registry utilities and the `Icon` React component for Lumia DS.
+Icon registry utilities and the unified `<Icon>` React component for Lumia DS.
 
 ## Install
 
 ```bash
-pnpm add @lumia/icons
+pnpm add @lumia-ui/icons
 ```
 
-## Base icons
+## Unified Icon Component
 
-A curated set of Lucide icons is pre-registered:
-
-`home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`
-
-Custom icons generated from raw SVGs are also registered by default:
-
-`sparkle`, `chat-bubble`
-
-## Usage
+The `<Icon>` component provides a single API for all icons:
 
 ```tsx
-import { Icon } from '@lumia/icons';
+import { Icon, IconSprite } from '@lumia-ui/icons';
 
-export function Example() {
+// Add sprite once at app root
+function App() {
   return (
-    <div className="flex items-center gap-2 text-primary-600">
-      <Icon id="user" />
-      <span>Profile</span>
-    </div>
+    <>
+      <IconSprite />
+      <YourRoutes />
+    </>
   );
 }
+
+// Use anywhere
+<Icon name="info" />
+<Icon name="check" size="lg" color="primary" />
+<Icon name="alert" color="danger" title="Warning" />
 ```
 
-- `id`: icon id from the registry
-- `size` (optional): number, defaults to `24`
-- `className` (optional): merged with `fill-current` so color inherits from text
+### Props
 
-## Registering custom icons
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | — | Icon name from registry |
+| `size` | `'sm' \| 'md' \| 'lg' \| number` | `'md'` | Size preset or pixels |
+| `color` | `'default' \| 'muted' \| 'primary' \| 'danger' \| string` | `'default'` | Color preset or CSS |
+| `title` | `string` | — | Accessible title |
+
+### Size Presets
+
+- `sm` = 16px
+- `md` = 24px (default)
+- `lg` = 32px
+
+### Color Presets
+
+- `default` → text-foreground
+- `muted` → text-muted-foreground
+- `primary` → text-primary
+- `danger` → text-destructive
+
+### Accessibility
+
+Icons support both decorative and informative semantics:
+
+**Decorative icons** (default) are hidden from screen readers:
+```tsx
+<Icon name="check" />
+// Output: <svg aria-hidden="true" focusable="false" />
+```
+
+**Informative icons** convey meaning via the `title` prop:
+```tsx
+<Icon name="alert" title="Warning: Action required" />
+// Output: <svg role="img" aria-labelledby="icon-title-alert"><title>...</title>
+```
+
+Same pattern works for `SpriteIcon`:
+```tsx
+<SpriteIcon name="info" title="More information" />
+```
+
+## Available Icons
+
+**Curated Lucide icons:** `home`, `user`, `users`, `settings`, `reports`, `add`, `edit`, `delete`, `filter`, `search`, `check`, `alert`, `info`
+
+**Custom icons:** `sparkle`, `chat-bubble`
+
+**Sprite icons (hot-path):** `chevron-down`, `chevron-up`, `check`, `add`, `edit`, `delete`, `info`, `alert`, `search`
+
+## Registering Custom Icons
 
 ```tsx
-import { registerIcon } from '@lumia/icons';
+import { registerIcon } from '@lumia-ui/icons';
 
 const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" {...props}>
@@ -49,22 +94,23 @@ const CustomBell = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 registerIcon('bell', CustomBell);
+// Now use: <Icon name="bell" />
 ```
 
-## Importing SVGs with the CLI
+## Building Icons from SVG
 
-Run the workspace script to convert raw SVG files into React components and register them:
+Add SVG files to `packages/icons/svg/` and run:
 
 ```bash
-pnpm icons:import
+pnpm build:icons
 ```
 
-- Source SVGs live in `packages/icons/raw` (or pass a different folder to `lumia-icon-import`).
-- Components are generated under `packages/icons/src/generated/icons` and exported from `@lumia/icons`.
-- Registration happens automatically through `packages/icons/src/generated/registry.ts`, so `Icon` can reference the new ids immediately.
+Generated components are exported from `@lumia-ui/icons` and auto-registered.
 
-The CLI is provided by `@lumia/cli` and can be invoked directly as well:
+## Direct Import (Tree-Shakable)
 
-```bash
-node packages/cli/bin/lumia-icon-import.js path/to/svg/folder packages/icons
+```tsx
+import { IconCheck, IconSparkle } from '@lumia-ui/icons';
+
+<IconCheck className="text-green-500" />
 ```

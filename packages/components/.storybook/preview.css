@@ -1,14 +1,26 @@
 :root {
-  --color-primary: #0f172a;
-  --color-primary-500: #1e293b;
-  --color-primary-700: #0c1426;
-  --color-primary-800: #09101f;
-  --color-secondary: #f1f5f9;
-  --color-background: #ffffff;
-  --color-foreground: #020817;
-  --color-border: #e2e8f0;
-  --color-muted: #f1f5f9;
-  --color-destructive: #ef4444;
+  --color-primary: #18181b;
+  --color-primary-50: #fafafa;
+  --color-primary-100: #f4f4f5;
+  --color-primary-200: #e4e4e7;
+  --color-primary-300: #d4d4d8;
+  --color-primary-400: #a1a1aa;
+  --color-primary-500: #71717a;
+  --color-primary-600: #52525b;
+  --color-primary-700: #3f3f46;
+  --color-primary-800: #27272a;
+  --color-primary-900: #18181b;
+  --color-secondary: #f4f4f5;
+  --color-bg: #ffffff;
+  --color-background: var(--color-bg);
+  --color-fg: #09090b;
+  --color-foreground: var(--color-fg);
+  --color-border: #e4e4e7;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-destructive: 239 68 68;
+  --color-destructive-foreground: 255 255 255;
+  --color-ring: 24 24 27;
   --radius-md: 8px;
 }
 
@@ -19,8 +31,8 @@
 body {
   margin: 0;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--color-bg);
+  color: var(--color-fg);
 }
 
 .inline-flex {
@@ -74,7 +86,7 @@ body {
 }
 
 .bg-background {
-  background-color: var(--color-background);
+  background-color: var(--color-bg);
 }
 
 .bg-muted {
@@ -90,15 +102,20 @@ body {
 }
 
 .text-foreground {
-  color: var(--color-foreground);
+  color: var(--color-fg);
 }
 
 .text-background {
-  color: var(--color-background);
+  color: var(--color-bg);
 }
 
 .text-primary {
   color: var(--color-primary);
+}
+
+.text-muted-foreground ,
+.text-muted-foreground -foreground {
+  color: var(--color-muted-foreground);
 }
 
 .border {
@@ -108,6 +125,10 @@ body {
 
 .border-border {
   border-color: var(--color-border);
+}
+
+.border-muted-foreground {
+  border-color: var(--color-muted-foreground);
 }
 
 .hover\:bg-primary-700:hover {
@@ -135,11 +156,9 @@ body {
 }
 
 .hover\:bg-destructive\/90:hover {
-  background-color: color-mix(
-    in srgb,
-    var(--color-destructive) 90%,
-    transparent
-  );
+  background-color: color-mix(in srgb,
+      var(--color-destructive) 90%,
+      transparent);
 }
 
 .active\:bg-destructive:active {
@@ -155,11 +174,15 @@ body {
 }
 
 .ring-offset-background {
-  --ring-offset-color: var(--color-background);
+  --ring-offset-color: var(--color-bg);
 }
 
 .focus-visible\:ring-primary-500:focus-visible {
   --ring-color: var(--color-primary-500);
+}
+
+.focus-visible\:ring-ring:focus-visible {
+  --ring-color: var(--color-ring);
 }
 
 .focus-visible\:ring-2:focus-visible {
@@ -168,7 +191,7 @@ body {
 
 .focus-visible\:ring-offset-2:focus-visible {
   box-shadow:
-    0 0 0 2px var(--ring-offset-color, var(--color-background)),
+    0 0 0 2px var(--ring-offset-color, var(--color-bg)),
     0 0 0 4px var(--ring-color, var(--color-primary-500));
 }
 

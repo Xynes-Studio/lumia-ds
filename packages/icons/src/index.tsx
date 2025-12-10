@@ -1,11 +1,7 @@
-export { Icon } from './icon';
-export type { IconProps } from './icon';
-export {
-  clearIconRegistry,
-  getIcon,
-  registerIcon,
-  resetIconRegistry,
-} from './registry';
-export { defaultIconComponents } from './default-icons';
-export type { IconComponent, IconId, RegisterIconFn } from './types';
+export * from './icon';
+export * from './types';
+export * from './registry';
 export * from './generated';
+export * from './sprite';
+export * from './compat';
+export { defaultIconComponents } from './default-icons';

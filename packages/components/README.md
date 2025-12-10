@@ -1,11 +1,11 @@
-# @lumia/components
+# @lumia-ui/components
 
-Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia/theme` and `@lumia/tokens`.
+Lumia React components (buttons, inputs, overlays, tabs, layout helpers) themed via `@lumia-ui/theme` and `@lumia-ui/tokens`.
 
 ## Install
 
 ```bash
-pnpm add @lumia/components @lumia/theme @lumia/tokens
+pnpm add @lumia-ui/components @lumia-ui/theme @lumia-ui/tokens
 ```
 
 ## Usage (sampler)
@@ -15,9 +15,9 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
+  CardSubtitle,
   CardTitle,
   Checkbox,
   Input,
@@ -44,7 +44,7 @@ import {
   SheetFooter,
   Flex,
   FlatList,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 
 export function Example() {
   return (
@@ -63,14 +63,16 @@ export function Example() {
 
       <Textarea
         placeholder="Describe the issue"
-        invalid
-        hint="Please add more detail"
+        autoResize
+        maxLength={240}
+        showCount
+        hint="Auto-resizes and shows a counter"
       />
 
       <Card className="max-w-md">
         <CardHeader>
           <CardTitle>Billing overview</CardTitle>
-          <CardDescription>Quick stats for this month</CardDescription>
+          <CardSubtitle>Quick stats for this month</CardSubtitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-foreground">
@@ -97,17 +99,17 @@ export function Example() {
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             High level summary content lives here.
           </p>
         </TabsContent>
         <TabsContent value="usage">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             Best practices, copy, and quick references.
           </p>
         </TabsContent>
         <TabsContent value="history">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground ">
             Changes or notes for this section.
           </p>
         </TabsContent>
@@ -162,9 +164,9 @@ export function Example() {
         justify="between"
         gap="sm"
       >
-        <p className="text-sm text-muted">Flex layout primitive</p>
+        <p className="text-sm text-muted-foreground ">Flex layout primitive</p>
         <Flex align="center" gap="xs">
-          <span className="text-xs uppercase text-muted">Direction</span>
+          <span className="text-xs uppercase text-muted-foreground ">Direction</span>
           <code className="rounded bg-muted px-2 py-1 text-xs">row</code>
         </Flex>
       </Flex>
@@ -189,9 +191,22 @@ export function Example() {
 }
 ```
 
+### Textarea options
+
+- `autoResize` automatically grows height until it hits the max height (defaults to `320px`, respects a custom `style.maxHeight`).
+- `showCount` displays a `current / maxLength` counter beside the hint when `maxLength` is provided.
+- Respects invalid state styling for both the field and counter text.
+
+### Loading States
+All interactive components (`Button`, `MenuItem`, `ConfirmDialog`, `Select`) support a standardized `isLoading` prop.
+- **Button**: Replaces/augments content with a spinner; disables interaction.
+- **MenuItem**: Replaces icon with spinner; disables selection.
+- **Select**: Replaces chevron with spinner; disables selection.
+- **ConfirmDialog**: Automatically handles async `onConfirm` loading state.
+
 ## Storybook
 
-`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia/components storybook -- -p 6006`
+`HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia-ui/components storybook -- -p 6006`
 
 More details: see `docs/storybook.md`.
 
@@ -228,5 +243,5 @@ More details: see `docs/storybook.md`.
 
 ## Local development
 
-- Build: `pnpm --filter @lumia/components build`
-- Test (happy-dom): `pnpm --filter @lumia/components test`
+- Build: `pnpm --filter @lumia-ui/components build`
+- Test (happy-dom): `pnpm --filter @lumia-ui/components test`
