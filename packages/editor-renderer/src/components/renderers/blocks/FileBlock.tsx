@@ -1,6 +1,6 @@
 import React from 'react';
 import { File as FileIcon } from 'lucide-react';
-import { Card } from '@lumia/components';
+import { Card } from '@lumia-ui/components';
 
 export interface FileBlockProps {
   node: {
