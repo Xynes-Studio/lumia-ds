@@ -14,7 +14,7 @@ vi.mock('../../EditorProvider', () => ({
   useMediaContext: vi.fn(),
 }));
 
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: ({
     children,
     onClick,

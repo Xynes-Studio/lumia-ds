@@ -13,7 +13,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import {
   Info,
   AlertTriangle,

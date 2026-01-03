@@ -5,7 +5,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import { Image as ImageIcon } from 'lucide-react';
 import { INSERT_IMAGE_BLOCK_COMMAND } from '../../plugins/InsertImagePlugin';
 import { MediaInsertTabs } from '../MediaInsert';

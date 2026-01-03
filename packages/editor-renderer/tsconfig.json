@@ -1,13 +1,14 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
+        "jsx": "react-jsx",
+        "composite": false,
         "outDir": "./dist",
         "rootDir": "./src",
-        "jsx": "react-jsx",
         "resolveJsonModule": true
     },
     "include": [
-        "src/**/*",
-        "src/**/*.json"
+        "src/**/*.ts",
+        "src/**/*.tsx"
     ]
 }

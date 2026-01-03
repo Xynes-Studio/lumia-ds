@@ -2,7 +2,7 @@ import React from 'react';
 import { useEditorContext } from '../../EditorProvider';
 import { getBlockDefinition } from '../../blocks/registry';
 import { BlockType } from '../../blocks/types';
-import { Card, CardContent } from '@lumia/components';
+import { Card, CardContent } from '@lumia-ui/components';
 
 export interface BlockInspectorProps {
   className?: string;

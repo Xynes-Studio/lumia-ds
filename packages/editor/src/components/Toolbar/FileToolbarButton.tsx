@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Button } from '@lumia/components';
+import { Button } from '@lumia-ui/components';
 import { FileUp } from 'lucide-react';
 import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
 

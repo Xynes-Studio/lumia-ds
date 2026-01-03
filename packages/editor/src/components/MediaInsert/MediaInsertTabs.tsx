@@ -6,7 +6,7 @@ import {
   TabsTrigger,
   Button,
   Input,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import { Upload, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { useMediaContext } from '../../EditorProvider';
 

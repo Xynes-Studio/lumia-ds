@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select } from '@lumia/components';
+import { Input, Select } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isPanelBlockNode, PanelVariant } from './PanelBlockNode';
 

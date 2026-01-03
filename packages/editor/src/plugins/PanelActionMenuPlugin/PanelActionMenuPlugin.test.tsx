@@ -15,7 +15,7 @@ vi.mock('lucide-react', async (importOriginal) => {
 });
 
 // Mock UI components to simplify testing structure
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: ({
     children,
     onClick,

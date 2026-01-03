@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection, LexicalNode } from 'lexical';
 import { $isTableNode, TableNode } from '@lexical/table';
-import { Button, Checkbox } from '@lumia/components';
+import { Button, Checkbox } from '@lumia-ui/components';
 import {
   Plus,
   Minus,

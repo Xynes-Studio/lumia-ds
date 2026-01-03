@@ -14,7 +14,7 @@ vi.mock('../../plugins/TableActionMenuPlugin/tableUtils', () => ({
   $toggleTableHeaderRow: vi.fn(),
 }));
 
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: ({
     children,
     onClick,

@@ -11,7 +11,7 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { Card } from '@lumia/components';
+import { Card } from '@lumia-ui/components';
 import { FileIcon, Download, Upload, RefreshCw, Trash2 } from 'lucide-react';
 import { $isFileBlockNode } from './FileBlockNode';
 import { useMediaContext } from '../../EditorProvider';

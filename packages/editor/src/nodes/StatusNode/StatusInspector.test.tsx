@@ -18,7 +18,7 @@ vi.mock('./StatusNode', () => ({
 }));
 
 // Mock Lumia components
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Input: ({
     value,
     onChange,

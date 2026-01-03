@@ -8,8 +8,8 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
-} from '@lumia/components';
-import { StatusPill, StatusPillVariant } from '@lumia/components';
+} from '@lumia-ui/components';
+import { StatusPill, StatusPillVariant } from '@lumia-ui/components';
 import { $isStatusNode, StatusColor } from './StatusNode';
 
 export interface StatusNodePopoverProps {

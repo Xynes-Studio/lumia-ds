@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import { Plus, ChevronDown, LucideIcon } from 'lucide-react';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { getInsertableBlocks, BlockDefinition, BlockType } from '../../blocks';

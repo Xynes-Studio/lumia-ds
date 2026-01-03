@@ -11,7 +11,7 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { Card } from '@lumia/components';
+import { Card } from '@lumia-ui/components';
 import { $isImageBlockNode } from './ImageBlockNode';
 import type { ImageBlockAlignment } from './ImageBlockNode';
 import { useMediaContext } from '../../EditorProvider';

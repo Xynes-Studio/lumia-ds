@@ -16,7 +16,7 @@ vi.mock('../../blocks/registry', () => ({
 }));
 
 // Mock Lumia components
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Card: ({
     children,
     className,

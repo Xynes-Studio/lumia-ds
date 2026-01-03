@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Button } from '@lumia/components';
+import { Button } from '@lumia-ui/components';
 import { Table2 } from 'lucide-react';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { $toggleTableHeaderRow } from '../../plugins/TableActionMenuPlugin/tableUtils';

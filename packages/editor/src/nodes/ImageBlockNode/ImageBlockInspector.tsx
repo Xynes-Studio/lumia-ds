@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select, Slider } from '@lumia/components';
+import { Input, Select, Slider } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isImageBlockNode } from './ImageBlockNode';
 

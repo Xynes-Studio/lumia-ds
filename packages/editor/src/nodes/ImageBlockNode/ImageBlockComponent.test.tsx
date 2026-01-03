@@ -7,7 +7,7 @@ import { $insertNodes } from 'lexical';
 import React, { useEffect } from 'react';
 
 // Mock dependencies
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Card: ({ children, className }: any) => (
     <div className={`mock-card ${className}`} data-testid="image-card">

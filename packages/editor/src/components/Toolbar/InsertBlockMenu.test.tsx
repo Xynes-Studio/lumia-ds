@@ -23,7 +23,7 @@ import { FileBlockNode } from '../../nodes/FileBlockNode/FileBlockNode';
 import { PanelBlockNode } from '../../nodes/PanelBlockNode/PanelBlockNode';
 import { StatusNode } from '../../nodes/StatusNode';
 
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: React.forwardRef(
     (
       { children, onClick, ...props }: React.ComponentProps<'button'>,

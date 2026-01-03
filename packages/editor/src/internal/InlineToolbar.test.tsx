@@ -24,7 +24,7 @@ vi.mock('@lexical/utils', () => ({
   }),
 }));
 
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: ({
     children,
     onClick,

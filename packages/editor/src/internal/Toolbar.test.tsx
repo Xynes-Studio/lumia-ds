@@ -27,7 +27,7 @@ vi.mock('../components/Toolbar/InsertBlockMenu', () => ({
   InsertBlockMenu: () => <div data-testid="insert-block-menu">Insert Menu</div>,
 }));
 
-vi.mock('@lumia/components', () => ({
+vi.mock('@lumia-ui/components', () => ({
   Button: ({ onClick, children, variant, disabled, ...props }: any) => (
     <button
       onClick={onClick}

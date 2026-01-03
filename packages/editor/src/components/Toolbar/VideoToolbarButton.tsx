@@ -5,7 +5,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@lumia/components';
+} from '@lumia-ui/components';
 import { Video as VideoIcon } from 'lucide-react';
 import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { MediaInsertTabs } from '../MediaInsert';
