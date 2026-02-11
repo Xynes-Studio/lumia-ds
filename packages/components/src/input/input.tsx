@@ -4,6 +4,7 @@ import type {
   CSSProperties,
 } from 'react';
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import { Icon } from '@lumia-ui/icons';
 import {
   baseFieldClasses,
   buildAriaDescribedBy,
@@ -66,20 +67,44 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const generatedHintId = useId();
   const hintId = hint ? generatedHintId : undefined;
   const ariaDescribedBy = buildAriaDescribedBy(describedBy, hintId);
+  const isPasswordType = props.type === 'password';
+  const [showPassword, setShowPassword] = useState(false);
+  const resolvedType = isPasswordType
+    ? showPassword
+      ? 'text'
+      : 'password'
+    : props.type;
+  const toggleLabel = showPassword ? 'Hide password' : 'Show password';
 
   return (
     <div className={fieldWrapperClasses}>
-      <input
-        ref={ref}
-        aria-invalid={invalid || undefined}
-        aria-describedby={ariaDescribedBy}
-        className={cn(
-          baseFieldClasses,
-          invalid && invalidFieldClasses,
-          className,
-        )}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          ref={ref}
+          aria-invalid={invalid || undefined}
+          aria-describedby={ariaDescribedBy}
+          className={cn(
+            baseFieldClasses,
+            isPasswordType && 'pr-10',
+            invalid && invalidFieldClasses,
+            className,
+          )}
+          {...props}
+          type={resolvedType}
+        />
+        {isPasswordType ? (
+          <button
+            type="button"
+            aria-label={toggleLabel}
+            aria-pressed={showPassword}
+            disabled={props.disabled}
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-sm text-foreground/70 transition-colors hover:bg-muted/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Icon name={showPassword ? 'eye-off' : 'eye'} size={16} />
+          </button>
+        ) : null}
+      </div>
       {hint ? (
         <p
           id={hintId}

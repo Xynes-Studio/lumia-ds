@@ -65,6 +65,62 @@ describe('Input component', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it('renders a password visibility toggle for password inputs', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<Input type="password" placeholder="Password" />);
+    });
+
+    const input = host.querySelector('input');
+    const toggleButton = host.querySelector(
+      'button[aria-label="Show password"]',
+    ) as HTMLButtonElement | null;
+
+    expect(input?.getAttribute('type')).toBe('password');
+    expect(toggleButton).not.toBeNull();
+
+    await act(async () => {
+      toggleButton?.click();
+    });
+
+    expect(input?.getAttribute('type')).toBe('text');
+    expect(
+      host.querySelector('button[aria-label="Hide password"]'),
+    ).not.toBeNull();
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('keeps describedby and exposes accessible toggle label', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Input
+          type="password"
+          hint="Use at least 12 characters"
+          aria-describedby="existing"
+        />,
+      );
+    });
+
+    const input = host.querySelector('input');
+    const describedBy = input?.getAttribute('aria-describedby')?.split(' ');
+    const hint = host.querySelector('p');
+    const toggleButton = host.querySelector(
+      'button[aria-label="Show password"]',
+    );
+
+    expect(describedBy).toContain('existing');
+    expect(describedBy).toContain(hint?.id);
+    expect(toggleButton).not.toBeNull();
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });
 
 describe('Textarea component', () => {
