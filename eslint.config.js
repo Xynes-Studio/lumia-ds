@@ -13,6 +13,8 @@ module.exports = [
       '**/build/**',
       '**/coverage/**',
       '**/storybook-static/**',
+      'packages/icons/src/generated/**',
+      'packages/tokens/src/generated/**',
       '.pnpm-store/**',
     ],
   },

@@ -31,7 +31,7 @@ describe('@lumia-ui/tokens', () => {
       destructive: expect.any(String),
     });
     expect(defaultTheme.colors).toMatchObject({
-      primary: '#18181b',
+      primary: '#0f172a',
       secondary: '#f4f4f5',
       background: '#ffffff',
       foreground: '#09090b',

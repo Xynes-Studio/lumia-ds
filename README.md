@@ -44,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - Storybook usage: `docs/storybook.md`
 - Table wrapper usage: `docs/components-table.md`
 - Pagination usage: `docs/components-pagination.md`
+- Ticker usage: `docs/components-ticker.md`
 - Icon import workflow: `docs/icon-import.md`
 - Runtime schemas: `docs/runtime-schemas.md`
 - Admin app consumption guide: `docs/admin-app-consumption.md`

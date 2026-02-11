@@ -19,7 +19,7 @@ export type SelectProps = SelectHTMLAttributes<HTMLSelectElement> &
     isLoading?: boolean;
   };
 
-const selectAdditionalClasses = 'appearance-none pr-10 cursor-pointer';
+const selectAdditionalClasses = 'appearance-none bg-none pr-10 cursor-pointer';
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   function Select(
@@ -30,6 +30,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       invalid = false,
       isLoading = false,
       id,
+      style,
       'aria-describedby': describedBy,
       ...props
     },
@@ -61,6 +62,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             disabled={isDisabled}
             aria-invalid={invalid || undefined}
             aria-describedby={ariaDescribedBy}
+            style={{
+              appearance: 'none',
+              WebkitAppearance: 'none',
+              MozAppearance: 'none',
+              backgroundImage: 'none',
+              ...style,
+            }}
             className={cn(
               baseFieldClasses,
               selectAdditionalClasses,
@@ -69,7 +77,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             )}
             {...props}
           />
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
+          <span
+            className="text-muted-foreground"
+            style={{
+              position: 'absolute',
+              right: '0.75rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {isLoading ? (
               <Spinner size={16} aria-label="Loading" />
             ) : (

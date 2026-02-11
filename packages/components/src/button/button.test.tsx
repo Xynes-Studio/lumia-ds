@@ -27,6 +27,9 @@ describe('Button component', () => {
     expect(button?.textContent).toBe('Click');
     expect(button?.getAttribute('type')).toBe('button');
     expect(button?.className).toContain('bg-primary');
+    expect(button?.className).toContain(
+      'text-[color:var(--color-on-primary,#fff)]',
+    );
     expect(button?.className).toContain('rounded-md');
 
     await act(async () => root.unmount());

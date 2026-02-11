@@ -144,6 +144,8 @@ import {
   type PageHeaderProps,
   FlatList,
   type FlatListProps,
+  Ticker,
+  type TickerProps,
   Pagination,
   type PaginationProps,
   SideNavItem,
@@ -247,6 +249,7 @@ describe('components index barrel', () => {
     expect(Toolbar).toBeDefined();
     expect(PageHeader).toBeDefined();
     expect(FlatList).toBeDefined();
+    expect(Ticker).toBeDefined();
     expect(Pagination).toBeDefined();
     expect(SideNavItem).toBeDefined();
     expect(Table).toBeDefined();
@@ -444,6 +447,7 @@ describe('components index barrel', () => {
     expectTypeOf<FlatListProps<string>>().toMatchTypeOf<
       Parameters<typeof FlatList>[0]
     >();
+    expectTypeOf<TickerProps>().toMatchTypeOf<ComponentProps<typeof Ticker>>();
     expectTypeOf<PaginationProps>().toMatchTypeOf<
       ComponentProps<typeof Pagination>
     >();
@@ -603,6 +607,8 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.FlatListProps<string>>().toEqualTypeOf<
       FlatListProps<string>
     >();
+    expectTypeOf<ExternalApi.Ticker>().toEqualTypeOf<typeof Ticker>();
+    expectTypeOf<ExternalApi.TickerProps>().toEqualTypeOf<TickerProps>();
     expectTypeOf<ExternalApi.Pagination>().toEqualTypeOf<typeof Pagination>();
     expectTypeOf<ExternalApi.PaginationProps>().toEqualTypeOf<PaginationProps>();
     expectTypeOf<ExternalApi.SideNavItem>().toEqualTypeOf<typeof SideNavItem>();

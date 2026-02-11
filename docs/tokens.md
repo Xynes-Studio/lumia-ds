@@ -9,6 +9,7 @@ We use a two-tiered token architecture:
 1.  **Core Tokens** (`tokens/core/*.json`):
     -   Primitive values (blue-500, spacing-4, etc.)
     -   *Do not use these directly in the UI if a semantic token exists.*
+  -   Brand primitives live under `color.brand.*` (ex: `color.brand.primary`)
 
 2.  **Semantic Tokens** (`tokens/semantic/*.json`):
     -   Context-aware names (color-primary, color-bg, radius-md)

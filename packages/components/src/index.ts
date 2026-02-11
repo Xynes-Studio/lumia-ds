@@ -26,6 +26,7 @@ export * from './accordion/accordion';
 export * from './flex/flex';
 export * from './toolbar/toolbar';
 export * from './flat-list/flat-list';
+export * from './ticker/ticker';
 export * from './table/table';
 export * from './pagination/pagination';
 export * from './date-range-filter/date-range-filter';

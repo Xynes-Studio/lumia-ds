@@ -2,7 +2,7 @@
   "color": {
     "primary": {
       "base": {
-        "value": "{color.neutral.900}",
+        "value": "{color.brand.primary}",
         "type": "color"
       },
       "50": {

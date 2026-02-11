@@ -11,5 +11,9 @@ storybook-static
 .eslintcache
 *.tsbuildinfo
 
+# Agent tooling
+.claude/
+.entire/
+
 # Next.js build output
 apps/docs/.next/

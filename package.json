@@ -33,6 +33,7 @@
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
+    "@eslint/js": "^9.39.2",
     "@lumia-ui/theme": "workspace:*",
     "@lumia-ui/tokens": "workspace:*",
     "@playwright/test": "^1.57.0",

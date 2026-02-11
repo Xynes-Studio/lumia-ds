@@ -44,6 +44,7 @@ import {
   SheetFooter,
   Flex,
   FlatList,
+  Ticker,
 } from '@lumia-ui/components';
 
 export function Example() {
@@ -186,6 +187,17 @@ export function Example() {
         keyExtractor={(item) => item.id}
         scrollContainerProps={{ style: { height: 160 } }}
       />
+
+      <Ticker
+        alignment="center"
+        speed={36}
+        className="rounded-md border border-border bg-muted/20 px-3 py-2"
+        trackClassName="gap-3"
+      >
+        <span className="text-sm text-foreground">System healthy</span>
+        <span className="text-sm text-foreground">4 deployments today</span>
+        <span className="text-sm text-foreground">No incidents</span>
+      </Ticker>
     </Flex>
   );
 }
@@ -240,6 +252,13 @@ More details: see `docs/storybook.md`.
 - Virtualized rendering uses a relative container with absolutely positioned items sized by `estimatedItemSize` and optional `overscan`.
 - `onEndReached` fires when scroll progress exceeds `onEndReachedThreshold` (default `0.8`), and viewability callback is triggered when the visible window changes.
 - Pass `scrollContainerProps` for scroll height/attributes; only visible rows mount while total scroll height matches the estimated list size.
+
+### Ticker notes
+
+- Layout is built with internal `Flex` groups and supports `direction="row" | "column"` and `alignment` props.
+- `loop` defaults to `true` and duplicates content for seamless scrolling. Set `loop={false}` for one-pass motion.
+- `speed` controls pixels/second. `pauseOnHover` defaults to `true`.
+- Detailed component guide: `../../docs/components-ticker.md`.
 
 ## Local development
 

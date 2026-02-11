@@ -92,6 +92,12 @@
         "type": "color"
       }
     },
+    "brand": {
+      "primary": {
+        "value": "#0f172a",
+        "type": "color"
+      }
+    },
     "white": {
       "value": "#ffffff",
       "type": "color"
