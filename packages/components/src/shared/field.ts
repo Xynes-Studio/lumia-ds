@@ -6,7 +6,7 @@ export type FieldProps = {
 export const fieldWrapperClasses = 'flex flex-col gap-1.5';
 
 export const baseFieldClasses =
-  'flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+  'flex w-full rounded-none border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
 
 export const invalidFieldClasses =
   'border-destructive focus-visible:ring-destructive';

@@ -14,7 +14,7 @@ type ButtonVariant =
 type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 const baseButtonClasses =
-  'inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed';
+  'inline-flex items-center justify-center gap-2 rounded-none text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed';
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:

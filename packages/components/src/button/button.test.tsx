@@ -30,7 +30,7 @@ describe('Button component', () => {
     expect(button?.className).toContain(
       'text-[color:var(--color-on-primary,#fff)]',
     );
-    expect(button?.className).toContain('rounded-md');
+    expect(button?.className).toContain('rounded-none');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);
