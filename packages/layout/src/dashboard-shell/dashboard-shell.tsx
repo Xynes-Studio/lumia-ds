@@ -165,7 +165,6 @@ export const DashboardShell = ({
   enableWorkspaceCreation = true,
   workspaceCreationDisabledMessage = defaultWorkspaceCreationDisabledMessage,
   isSidebarCollapsed,
-  enableResponsiveCollapse = true,
   onResponsiveCollapseChange,
   sidebarExpandedWidth = defaultSidebarExpandedWidth,
   sidebarCollapsedWidth = defaultSidebarCollapsedWidth,
@@ -250,8 +249,7 @@ export const DashboardShell = ({
     ? workspaceOptions.filter((item) => item.id !== workspace.id)
     : workspaceOptions;
 
-  const isMobileMode =
-    mobileNavigationEnabled && isMobileViewport && enableResponsiveCollapse;
+  const isMobileMode = mobileNavigationEnabled && isMobileViewport;
 
   const handleNotificationDrawerOpenChange = (nextOpen: boolean) => {
     if (!isNotificationDrawerControlled) {
@@ -401,16 +399,17 @@ export const DashboardShell = ({
     }
 
     if (notification.deepLinkTarget === '_blank') {
-      const relTokens = (notification.deepLinkRel ?? '')
-        .split(/\s+/)
-        .filter(Boolean);
-      if (!relTokens.includes('noopener')) {
-        relTokens.push('noopener');
-      }
-      if (!relTokens.includes('noreferrer')) {
-        relTokens.push('noreferrer');
-      }
-      const featureValue = relTokens.join(',');
+      const relTokens = new Set(
+        (notification.deepLinkRel ?? '')
+          .split(/\s+/)
+          .map((token) => token.trim())
+          .filter(Boolean),
+      );
+      relTokens.add('noopener');
+      relTokens.add('noreferrer');
+      const featureValue = ['noopener', 'noreferrer']
+        .filter((token) => relTokens.has(token))
+        .join(',');
       window.open(href, '_blank', featureValue);
       return;
     }

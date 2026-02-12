@@ -34,6 +34,7 @@ export const Drawer = ({
   const frameOneRef = useRef<number | null>(null);
   const frameTwoRef = useRef<number | null>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
+  const wasOpenRef = useRef(open);
 
   useEffect(() => {
     return () => {
@@ -51,27 +52,51 @@ export const Drawer = ({
 
   useEffect(() => {
     if (open) {
+      wasOpenRef.current = true;
       previousActiveElementRef.current = document.activeElement as HTMLElement;
       if (closeTimeoutRef.current !== null) {
         window.clearTimeout(closeTimeoutRef.current);
         closeTimeoutRef.current = null;
       }
+      if (frameOneRef.current !== null) {
+        window.cancelAnimationFrame(frameOneRef.current);
+        frameOneRef.current = null;
+      }
+      if (frameTwoRef.current !== null) {
+        window.cancelAnimationFrame(frameTwoRef.current);
+        frameTwoRef.current = null;
+      }
       setIsMounted(true);
       setIsVisible(false);
       frameOneRef.current = window.requestAnimationFrame(() => {
+        frameOneRef.current = null;
         frameTwoRef.current = window.requestAnimationFrame(() => {
+          frameTwoRef.current = null;
           setIsVisible(true);
         });
       });
       return;
     }
 
+    if (frameOneRef.current !== null) {
+      window.cancelAnimationFrame(frameOneRef.current);
+      frameOneRef.current = null;
+    }
+    if (frameTwoRef.current !== null) {
+      window.cancelAnimationFrame(frameTwoRef.current);
+      frameTwoRef.current = null;
+    }
     setIsVisible(false);
-    (restoreFocusElement ?? previousActiveElementRef.current)?.focus();
-    closeTimeoutRef.current = window.setTimeout(() => {
+    if (wasOpenRef.current) {
+      (restoreFocusElement ?? previousActiveElementRef.current)?.focus();
+      closeTimeoutRef.current = window.setTimeout(() => {
+        setIsMounted(false);
+        closeTimeoutRef.current = null;
+      }, TRANSITION_MS);
+    } else {
       setIsMounted(false);
-      closeTimeoutRef.current = null;
-    }, TRANSITION_MS);
+    }
+    wasOpenRef.current = false;
   }, [open, restoreFocusElement]);
 
   useEffect(() => {
@@ -138,14 +163,14 @@ export const Drawer = ({
         role="dialog"
         aria-modal="true"
         className={cn(
-          'group absolute border border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          'group absolute border border-border bg-background p-6 shadow-lg transition-transform ease-[cubic-bezier(0.22,1,0.36,1)]',
           sideClass,
           contentClassName,
         )}
         style={{
           ...contentStyle,
           transform: transformStyle,
-          transition: 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)',
+          transition: `transform ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,
           willChange: 'transform',
         }}
         data-lumia-drawer-content

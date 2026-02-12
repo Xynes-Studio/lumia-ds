@@ -37,6 +37,11 @@ describe('isNavItemActive', () => {
       isNavItemActive('/dashboard/users/', '/dashboard/users', false),
     ).toBe(true);
   });
+
+  it('matches root nav item only on root path', () => {
+    expect(isNavItemActive('/', '/', false)).toBe(true);
+    expect(isNavItemActive('/dashboard/users', '/', false)).toBe(false);
+  });
 });
 
 describe('isSafeNotificationHref', () => {

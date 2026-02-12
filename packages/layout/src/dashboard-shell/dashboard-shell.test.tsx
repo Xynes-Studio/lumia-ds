@@ -1,6 +1,6 @@
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DashboardShell,
   type DashboardNavItem,
@@ -89,6 +89,14 @@ const notifications: DashboardNotification[] = [
 ];
 
 describe('DashboardShell', () => {
+  beforeEach(() => {
+    setViewportWidth(1024);
+  });
+
+  afterEach(() => {
+    setViewportWidth(1024);
+  });
+
   it('renders landmarks and sidebar/main slots', async () => {
     const { root, host } = createTestRoot();
 

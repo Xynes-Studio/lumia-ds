@@ -11,7 +11,7 @@ Create a reusable, auth-agnostic, router-agnostic dashboard layout shell in `@lu
 - Add `DashboardShell`, `DashboardSidebarSection`, and `DashboardMainSection` to `@lumia-ui/layout`.
 - Add exported types: `DashboardNavItem`, `DashboardWorkspace`, `DashboardUserMenu`, `DashboardNotification`, `DashboardShellProps`.
 - Add route-match helper logic as pure utilities with Tier 1 tests.
-- Add layout integration tests for nav active state, callbacks, profile menu, notifications popover, and focus return behavior.
+- Add layout integration tests for nav active state, callbacks, profile menu, notification drawer, and focus return behavior.
 - Add runtime story and docs page for consumption guidance.
 
 ## Non-Goals
@@ -43,7 +43,7 @@ Create a reusable, auth-agnostic, router-agnostic dashboard layout shell in `@lu
 3. Calls `onNavigate` with selected nav item metadata.
 4. Calls `onWorkspaceSelect` with selected workspace id.
 5. Opens profile menu and triggers profile/logout callbacks.
-6. Opens notifications popover in both empty and populated states.
+6. Opens notification drawer in both empty and populated states.
 7. Restores focus to overlay trigger after close.
 8. Preserves responsive slots (`mobile` + `desktop`) and sidebar/main landmarks.
 9. Barrel exports include all public shell symbols.

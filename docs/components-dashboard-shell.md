@@ -111,7 +111,7 @@ Mobile mutual exclusivity:
 - Landmarks: `aside`, `nav`, `main`.
 - Active items use `aria-current="page"`.
 - Bottom tabs expose explicit labels.
-- Mobile sheets use dialog semantics from DS `Sheet`.
+- Mobile sheets use dialog semantics from DS `Drawer` primitives (`Drawer`, `DrawerHeader`, `DrawerTitle`).
 - Delete actions are keyboard accessible and labeled.
 
 ## Legacy Compatibility Note

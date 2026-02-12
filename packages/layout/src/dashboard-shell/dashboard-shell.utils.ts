@@ -12,6 +12,10 @@ export const isNavItemActive = (
     return normalizedActivePath === normalizedItemHref;
   }
 
+  if (normalizedItemHref === '/') {
+    return normalizedActivePath === '/';
+  }
+
   return (
     normalizedActivePath === normalizedItemHref ||
     normalizedActivePath.startsWith(`${normalizedItemHref}/`)
