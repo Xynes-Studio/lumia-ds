@@ -44,8 +44,19 @@ import {
   type CardSubtitleProps,
   type CardTitleProps,
   StatTile,
+  EntityTile,
+  AppTile,
+  UserTile,
   type StatTileDelta,
   type StatTileProps,
+  type AppTileProps,
+  type EntityTileProps,
+  type TileActionContext,
+  type TileActionItem,
+  type TileActivateContext,
+  type TileSelectionContext,
+  type TileView,
+  type UserTileProps,
   Checkbox,
   type CheckboxProps,
   Dialog,
@@ -207,6 +218,9 @@ describe('components index barrel', () => {
     expect(CardContent).toBeDefined();
     expect(CardFooter).toBeDefined();
     expect(StatTile).toBeDefined();
+    expect(EntityTile).toBeDefined();
+    expect(AppTile).toBeDefined();
+    expect(UserTile).toBeDefined();
 
     expect(Accordion).toBeDefined();
     expect(AccordionItem).toBeDefined();
@@ -342,6 +356,28 @@ describe('components index barrel', () => {
       ComponentProps<typeof StatTile>
     >();
     expectTypeOf<StatTileDelta>().toMatchTypeOf<StatTileDelta>();
+    expectTypeOf<EntityTileProps>().toMatchTypeOf<
+      ComponentProps<typeof EntityTile>
+    >();
+    expectTypeOf<AppTileProps>().toMatchTypeOf<
+      ComponentProps<typeof AppTile>
+    >();
+    expectTypeOf<UserTileProps>().toMatchTypeOf<
+      ComponentProps<typeof UserTile>
+    >();
+    expectTypeOf<TileView>().toMatchTypeOf<'grid' | 'list'>();
+    expectTypeOf<TileActionItem<unknown>>().toMatchTypeOf<
+      TileActionItem<unknown>
+    >();
+    expectTypeOf<TileActionContext<unknown>>().toMatchTypeOf<
+      TileActionContext<unknown>
+    >();
+    expectTypeOf<TileSelectionContext<unknown>>().toMatchTypeOf<
+      TileSelectionContext<unknown>
+    >();
+    expectTypeOf<TileActivateContext<unknown>>().toMatchTypeOf<
+      TileActivateContext<unknown>
+    >();
 
     expectTypeOf<AccordionProps>().toMatchTypeOf<
       ComponentProps<typeof Accordion>
@@ -548,6 +584,25 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.StatTile>().toEqualTypeOf<typeof StatTile>();
     expectTypeOf<ExternalApi.StatTileProps>().toEqualTypeOf<StatTileProps>();
     expectTypeOf<ExternalApi.StatTileDelta>().toEqualTypeOf<StatTileDelta>();
+    expectTypeOf<ExternalApi.EntityTile>().toEqualTypeOf<typeof EntityTile>();
+    expectTypeOf<ExternalApi.AppTile>().toEqualTypeOf<typeof AppTile>();
+    expectTypeOf<ExternalApi.UserTile>().toEqualTypeOf<typeof UserTile>();
+    expectTypeOf<ExternalApi.EntityTileProps>().toEqualTypeOf<EntityTileProps>();
+    expectTypeOf<ExternalApi.AppTileProps>().toEqualTypeOf<AppTileProps>();
+    expectTypeOf<ExternalApi.UserTileProps>().toEqualTypeOf<UserTileProps>();
+    expectTypeOf<ExternalApi.TileView>().toEqualTypeOf<TileView>();
+    expectTypeOf<ExternalApi.TileActionItem<unknown>>().toEqualTypeOf<
+      TileActionItem<unknown>
+    >();
+    expectTypeOf<ExternalApi.TileActionContext<unknown>>().toEqualTypeOf<
+      TileActionContext<unknown>
+    >();
+    expectTypeOf<ExternalApi.TileSelectionContext<unknown>>().toEqualTypeOf<
+      TileSelectionContext<unknown>
+    >();
+    expectTypeOf<ExternalApi.TileActivateContext<unknown>>().toEqualTypeOf<
+      TileActivateContext<unknown>
+    >();
     expectTypeOf<ExternalApi.TabsProps>().toEqualTypeOf<TabsProps>();
     expectTypeOf<ExternalApi.TabsListProps>().toEqualTypeOf<TabsListProps>();
     expectTypeOf<ExternalApi.TabsTriggerProps>().toEqualTypeOf<TabsTriggerProps>();

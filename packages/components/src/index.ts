@@ -12,6 +12,7 @@ export * from './checkbox/checkbox';
 export * from './radio/radio';
 export * from './card/card';
 export * from './stat-tile/stat-tile';
+export * from './entity-tile';
 export * from './switch/switch';
 export * from './tabs/tabs';
 export * from './dialog/dialog';
