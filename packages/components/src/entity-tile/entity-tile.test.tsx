@@ -313,4 +313,42 @@ describe('EntityTile component', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it('does not prevent Enter on anchor tiles and still forwards onKeyDown', async () => {
+    const { root, host } = createTestRoot();
+    const onKeyDown = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <EntityTile
+          tileId="app-7"
+          view="list"
+          title="Xynes-CMS"
+          href="/apps/xynes-cms"
+          onKeyDown={onKeyDown}
+        />,
+      );
+    });
+
+    const tile = host.querySelector(
+      '[data-lumia-entity-tile]',
+    ) as HTMLAnchorElement | null;
+    expect(tile?.tagName).toBe('A');
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    await act(async () => {
+      tile?.dispatchEvent(event);
+    });
+
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(event.defaultPrevented).toBe(false);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });

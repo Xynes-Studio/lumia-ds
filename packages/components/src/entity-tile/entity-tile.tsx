@@ -229,6 +229,12 @@ export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
       ) {
         return;
       }
+
+      const isAnchorTarget = event.currentTarget.tagName === 'A';
+      if (isAnchorTarget) {
+        return;
+      }
+
       event.preventDefault();
       triggerActivate();
     };
@@ -406,6 +412,7 @@ export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
           data-lumia-entity-tile
           data-view={view}
           onClick={handleTileClick}
+          onKeyDown={handleTileKeyDown}
           style={tileStyle}
           className={rootClassName}
           {...props}
