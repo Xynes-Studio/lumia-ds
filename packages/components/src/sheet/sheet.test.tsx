@@ -94,9 +94,11 @@ describe('Sheet', () => {
     });
     await act(async () => {});
 
-    expect(document.body.querySelector('[data-lumia-sheet-content]')).toBe(
-      null,
+    const closedContent = document.body.querySelector(
+      '[data-lumia-sheet-content]',
     );
+    expect(closedContent).toBeTruthy();
+    expect(closedContent?.getAttribute('data-state')).toBe('closed');
     expect(document.activeElement).toBe(trigger);
 
     await act(async () => root.unmount());
@@ -125,9 +127,11 @@ describe('Sheet', () => {
     });
     await act(async () => {});
 
-    expect(document.body.querySelector('[data-lumia-sheet-overlay]')).toBe(
-      null,
+    const closedOverlay = document.body.querySelector(
+      '[data-lumia-sheet-overlay]',
     );
+    expect(closedOverlay).toBeTruthy();
+    expect(closedOverlay?.getAttribute('data-state')).toBe('closed');
     expect(document.activeElement).toBe(trigger);
 
     await act(async () => root.unmount());
@@ -164,9 +168,11 @@ describe('Sheet', () => {
     });
     await act(async () => {});
 
-    expect(document.body.querySelector('[data-lumia-sheet-content]')).toBe(
-      null,
+    const escapedContent = document.body.querySelector(
+      '[data-lumia-sheet-content]',
     );
+    expect(escapedContent).toBeTruthy();
+    expect(escapedContent?.getAttribute('data-state')).toBe('closed');
     expect(document.activeElement).toBe(trigger2);
 
     await act(async () => root2.unmount());
@@ -190,7 +196,12 @@ describe('Sheet', () => {
 
     expect(content?.getAttribute('data-lumia-sheet-side')).toBe('left');
     expect(content?.className.includes('left-0')).toBe(true);
-    expect(content?.className.includes('-translate-x-full')).toBe(true);
+    expect(content?.className.includes('data-[state=open]:translate-x-0')).toBe(
+      true,
+    );
+    expect(
+      content?.className.includes('data-[state=closed]:-translate-x-full'),
+    ).toBe(true);
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

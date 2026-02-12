@@ -87,10 +87,11 @@ const SheetOverlay = forwardRef<
 
   const overlay = (
     <DialogPrimitive.Overlay
+      forceMount
       ref={ref}
       data-lumia-sheet-overlay
       className={cn(
-        'fixed inset-0 z-40 bg-foreground/60 backdrop-blur-sm transition-opacity data-[state=open]:opacity-100 data-[state=closed]:opacity-0',
+        'fixed inset-0 z-40 bg-foreground/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0',
         className,
       )}
       {...props}
@@ -112,11 +113,11 @@ export type SheetContentProps = DialogPrimitive.DialogContentProps & {
 
 const sideClasses: Record<SheetSide, string> = {
   right:
-    'right-0 top-0 h-full w-[min(90vw,26rem)] translate-x-full data-[state=open]:translate-x-0 rounded-l-lg',
-  left: 'left-0 top-0 h-full w-[min(90vw,26rem)] -translate-x-full data-[state=open]:translate-x-0 rounded-r-lg',
-  top: 'left-1/2 top-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-full data-[state=open]:translate-y-0 rounded-b-lg',
+    'right-0 top-0 h-full w-[min(90vw,26rem)] rounded-l-lg data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full',
+  left: 'left-0 top-0 h-full w-[min(90vw,26rem)] rounded-r-lg data-[state=open]:translate-x-0 data-[state=closed]:-translate-x-full',
+  top: 'left-1/2 top-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-b-lg data-[state=open]:translate-y-0 data-[state=closed]:-translate-y-full',
   bottom:
-    'left-1/2 bottom-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 translate-y-full data-[state=open]:translate-y-0 rounded-t-lg',
+    'left-1/2 bottom-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-t-lg data-[state=open]:translate-y-0 data-[state=closed]:translate-y-full',
 };
 
 export const SheetContent = forwardRef<
@@ -129,14 +130,14 @@ export const SheetContent = forwardRef<
   useSheetInternalContext('SheetContent');
 
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal forceMount>
       <SheetOverlay />
       <DialogPrimitive.Content
         ref={ref}
         data-lumia-sheet-content
         data-lumia-sheet-side={side}
         className={cn(
-          'fixed z-50 grid gap-5 border border-border bg-background p-6 shadow-lg transition-transform duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          'group fixed z-50 grid gap-5 border border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] data-[state=closed]:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           sideClasses[side],
           className,
         )}
@@ -148,7 +149,10 @@ export const SheetContent = forwardRef<
           className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label="Close sheet"
         >
-          <span aria-hidden>X</span>
+          <span aria-hidden className="relative h-4 w-4">
+            <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-45 group-data-[state=closed]:rotate-0" />
+            <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:-rotate-45 group-data-[state=closed]:rotate-0" />
+          </span>
           <span className="sr-only">Close sheet</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

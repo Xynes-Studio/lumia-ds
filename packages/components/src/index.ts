@@ -18,6 +18,7 @@ export * from './tabs/tabs';
 export * from './dialog/dialog';
 export * from './confirm-dialog/confirm-dialog';
 export * from './sheet/sheet';
+export * from './drawer/drawer';
 export * from './menu/menu';
 export * from './context-menu/context-menu';
 export * from './segmented-control/segmented-control';
