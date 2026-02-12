@@ -54,6 +54,8 @@ describe('isSafeNotificationHref', () => {
   it('rejects unsafe and malformed URLs', () => {
     expect(isSafeNotificationHref('javascript:alert(1)')).toBe(false);
     expect(isSafeNotificationHref('data:text/html;base64,AAAA')).toBe(false);
+    expect(isSafeNotificationHref('//evil.com')).toBe(false);
+    expect(isSafeNotificationHref('///evil.com')).toBe(false);
     expect(isSafeNotificationHref('not-a-url')).toBe(false);
     expect(isSafeNotificationHref('')).toBe(false);
     expect(isSafeNotificationHref(undefined)).toBe(false);

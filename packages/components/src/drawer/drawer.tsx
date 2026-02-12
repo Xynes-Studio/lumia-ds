@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom';
 import { cn } from '../lib/utils';
 
 const TRANSITION_MS = 300;
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 type DrawerSide = 'left' | 'right' | 'bottom' | 'top';
 
@@ -35,6 +37,7 @@ export const Drawer = ({
   const frameTwoRef = useRef<number | null>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(open);
+  const contentRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -114,6 +117,79 @@ export const Drawer = ({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isMounted, onOpenChange]);
 
+  useEffect(() => {
+    if (!isMounted || !open) {
+      return;
+    }
+
+    const getFocusableElements = () =>
+      Array.from(
+        contentRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ??
+          [],
+      ).filter(
+        (element) =>
+          !element.hasAttribute('disabled') &&
+          element.getAttribute('aria-hidden') !== 'true',
+      );
+
+    const focusFirstElement = () => {
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length > 0) {
+        focusableElements[0]?.focus();
+        return;
+      }
+      contentRef.current?.focus();
+    };
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      focusFirstElement();
+    });
+
+    const onTabKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const container = contentRef.current;
+      if (!container) {
+        return;
+      }
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        container.focus();
+        return;
+      }
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement as HTMLElement | null;
+      const isInside = activeElement
+        ? container.contains(activeElement)
+        : false;
+
+      if (event.shiftKey) {
+        if (!isInside || activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        }
+        return;
+      }
+
+      if (!isInside || activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', onTabKeyDown, true);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener('keydown', onTabKeyDown, true);
+    };
+  }, [isMounted, open]);
+
   if (!isMounted || typeof document === 'undefined') {
     return null;
   }
@@ -160,8 +236,10 @@ export const Drawer = ({
       />
 
       <aside
+        ref={contentRef}
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         className={cn(
           'group absolute border border-border bg-background p-6 shadow-lg transition-transform ease-[cubic-bezier(0.22,1,0.36,1)]',
           sideClass,

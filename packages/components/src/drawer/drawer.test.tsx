@@ -15,6 +15,15 @@ const createTestRoot = () => {
 };
 
 describe('Drawer', () => {
+  const flushAnimationFrames = async () => {
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  };
+
   it('renders open state and handles close actions', async () => {
     const { root, host } = createTestRoot();
     const onOpenChange = vi.fn();
@@ -74,6 +83,52 @@ describe('Drawer', () => {
     });
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('traps focus within drawer and focuses first element on open', async () => {
+    const { root, host } = createTestRoot();
+    const onOpenChange = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <Drawer open onOpenChange={onOpenChange}>
+          <button type="button" data-testid="drawer-action-one">
+            Action one
+          </button>
+          <button type="button" data-testid="drawer-action-two">
+            Action two
+          </button>
+        </Drawer>,
+      );
+    });
+
+    await flushAnimationFrames();
+
+    const closeButton = document.body.querySelector(
+      '[aria-label="Close drawer"]',
+    ) as HTMLButtonElement;
+    const actionTwo = document.body.querySelector(
+      '[data-testid="drawer-action-two"]',
+    ) as HTMLButtonElement;
+
+    expect(document.activeElement).toBe(closeButton);
+
+    actionTwo.focus();
+    await act(async () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab' }));
+    });
+    expect(document.activeElement).toBe(closeButton);
+
+    closeButton.focus();
+    await act(async () => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }),
+      );
+    });
+    expect(document.activeElement).toBe(actionTwo);
 
     await act(async () => root.unmount());
     host.remove();

@@ -50,6 +50,7 @@ export const isSafeNotificationHref = (href?: string) => {
 
   const trimmedHref = href.trim();
   if (!trimmedHref) return false;
+  if (trimmedHref.startsWith('//')) return false;
   if (trimmedHref.startsWith('/')) return true;
 
   try {
