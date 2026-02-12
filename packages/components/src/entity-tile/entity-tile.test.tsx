@@ -235,4 +235,26 @@ describe('EntityTile component', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it('renders initials fallback when avatarSrc is missing', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <EntityTile
+          tileId="app-4"
+          view="grid"
+          title="Xynes CMS"
+          avatarFallbackInitials="XC"
+        />,
+      );
+    });
+
+    const image = host.querySelector('img');
+    expect(image).toBeNull();
+    expect(host.textContent).toContain('XC');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
 });

@@ -1,11 +1,11 @@
 import type {
-  ButtonHTMLAttributes,
   CSSProperties,
+  HTMLAttributes,
   KeyboardEvent,
   MouseEvent,
   ReactNode,
 } from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { Icon, type IconId } from '@lumia-ui/icons';
 import { Checkbox } from '../checkbox/checkbox';
 import { Flex } from '../flex/flex';
@@ -45,7 +45,7 @@ export type TileActionItem<TItem> = {
 };
 
 export type EntityTileProps<TItem = unknown> =
-  ButtonHTMLAttributes<HTMLButtonElement> & {
+  HTMLAttributes<HTMLDivElement> & {
     tileId: string;
     item?: TItem;
     view: TileView;
@@ -81,7 +81,77 @@ export type UserTileProps<TItem = unknown> = Omit<
   meta?: ReactNode;
 };
 
-export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
+type ActionButtonProps<TItem> = {
+  action: TileActionItem<TItem>;
+  item: TItem | undefined;
+  tileId: string;
+  view: TileView;
+  selected: boolean;
+  shadowClass?: string;
+};
+
+const ActionButton = <TItem,>({
+  action,
+  item,
+  tileId,
+  view,
+  selected,
+  shadowClass,
+}: ActionButtonProps<TItem>) => {
+  return (
+    <button
+      type="button"
+      aria-label={action.label}
+      disabled={action.disabled || action.isLoading}
+      data-lumia-tile-action-id={action.id}
+      className={cn(
+        'inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/90 p-0 transition-[box-shadow,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
+        shadowClass,
+        action.destructive
+          ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+          : 'bg-background text-foreground hover:bg-muted',
+      )}
+      onClick={(event) => {
+        event.stopPropagation();
+        action.onSelect({
+          actionId: action.id,
+          item,
+          tileId,
+          view,
+          selected,
+        });
+      }}
+    >
+      {action.isLoading ? (
+        <Spinner size={14} aria-label="Loading" />
+      ) : typeof action.icon === 'string' ? (
+        <Icon
+          name={action.icon}
+          size={16}
+          aria-hidden="true"
+          className="shrink-0"
+        />
+      ) : (
+        action.icon
+      )}
+      <span className="sr-only">{action.label}</span>
+    </button>
+  );
+};
+
+const getInitials = (value?: string) => {
+  const cleaned = value?.trim();
+  if (!cleaned) return undefined;
+
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]?.[0] ?? ''}${parts[1]?.[0] ?? ''}`.toUpperCase();
+  }
+
+  return cleaned.slice(0, 2).toUpperCase();
+};
+
+export const EntityTile = forwardRef<HTMLDivElement, EntityTileProps>(
   function EntityTile(
     {
       tileId,
@@ -91,6 +161,7 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
       subtitle,
       avatarSrc,
       avatarAlt,
+      avatarFallbackInitials,
       meta,
       selectable = false,
       selected = false,
@@ -111,12 +182,21 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
   ) {
     const maxActions = 3;
     const hasTooManyActions = (actions?.length ?? 0) > maxActions;
+    const previousHasTooManyActionsRef = useRef(false);
 
-    if (hasTooManyActions) {
-      console.warn(
-        '[EntityTile] Maximum 3 quick actions are supported; extra actions were ignored.',
-      );
-    }
+    useEffect(() => {
+      if (
+        import.meta.env.DEV &&
+        hasTooManyActions &&
+        !previousHasTooManyActionsRef.current
+      ) {
+        console.warn(
+          '[EntityTile] Maximum 3 quick actions are supported; extra actions were ignored.',
+        );
+      }
+
+      previousHasTooManyActionsRef.current = hasTooManyActions;
+    }, [hasTooManyActions]);
 
     const actionItems = (actions ?? []).slice(0, maxActions);
     const hasActions = actionItems.length > 0;
@@ -142,13 +222,13 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
       }
     };
 
-    const handleTileClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleTileClick = (event: MouseEvent<HTMLDivElement>) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
       triggerActivate();
     };
 
-    const handleTileKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const handleTileKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(event);
       if (event.defaultPrevented) return;
       if (
@@ -171,13 +251,15 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
       '--entity-tile-accent': hoverAccentColor ?? 'rgb(246 196 128 / 0.24)',
     } as CSSProperties;
 
+    const avatarSizeClasses = view === 'list' ? 'h-10 w-10' : 'h-16 w-16';
+    const fallbackText = getInitials(avatarFallbackInitials ?? title) ?? '?';
+
     return (
-      <button
-        type="button"
+      <div
         ref={ref}
         data-lumia-entity-tile
         data-view={view}
-        role={isInteractive && href ? 'link' : undefined}
+        role={isInteractive ? (href ? 'link' : 'button') : undefined}
         tabIndex={isInteractive ? 0 : -1}
         onClick={handleTileClick}
         onKeyDown={handleTileKeyDown}
@@ -233,14 +315,23 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
             justify="center"
             className={cn('min-w-0', view === 'list' ? 'gap-3' : 'gap-2')}
           >
-            <img
-              src={avatarSrc}
-              alt={avatarAlt ?? title}
-              className={cn(
-                'rounded-full object-cover',
-                view === 'list' ? 'h-10 w-10' : 'h-16 w-16',
-              )}
-            />
+            {avatarSrc ? (
+              <img
+                src={avatarSrc}
+                alt={avatarAlt ?? title}
+                className={cn('rounded-full object-cover', avatarSizeClasses)}
+              />
+            ) : (
+              <span
+                aria-label={avatarAlt ?? title}
+                className={cn(
+                  'inline-flex items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground',
+                  avatarSizeClasses,
+                )}
+              >
+                {fallbackText}
+              </span>
+            )}
 
             <Flex
               direction="col"
@@ -273,48 +364,20 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
                   isAlwaysVisible && 'opacity-100',
                   !isAlwaysVisible &&
                     isHoverReveal &&
-                    'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+                    'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100',
                 )}
               >
                 {hasActions
                   ? actionItems.map((action) => (
-                      <button
-                        type="button"
+                      <ActionButton
                         key={action.id}
-                        aria-label={action.label}
-                        disabled={action.disabled || action.isLoading}
-                        data-lumia-tile-action-id={action.id}
-                        className={cn(
-                          'inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/90 p-0 shadow-sm transition-[box-shadow,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
-                          action.destructive
-                            ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                            : 'bg-background text-foreground hover:bg-muted',
-                        )}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          action.onSelect({
-                            actionId: action.id,
-                            item,
-                            tileId,
-                            view,
-                            selected,
-                          });
-                        }}
-                      >
-                        {action.isLoading ? (
-                          <Spinner size={14} aria-label="Loading" />
-                        ) : typeof action.icon === 'string' ? (
-                          <Icon
-                            name={action.icon}
-                            size={16}
-                            aria-hidden="true"
-                            className="shrink-0"
-                          />
-                        ) : (
-                          action.icon
-                        )}
-                        <span className="sr-only">{action.label}</span>
-                      </button>
+                        action={action}
+                        item={item}
+                        tileId={tileId}
+                        view={view}
+                        selected={selected}
+                        shadowClass="shadow-sm"
+                      />
                     ))
                   : null}
               </Flex>
@@ -337,61 +400,33 @@ export const EntityTile = forwardRef<HTMLButtonElement, EntityTileProps>(
               >
                 {hasActions
                   ? actionItems.map((action) => (
-                      <button
-                        type="button"
+                      <ActionButton
                         key={action.id}
-                        aria-label={action.label}
-                        disabled={action.disabled || action.isLoading}
-                        data-lumia-tile-action-id={action.id}
-                        className={cn(
-                          'inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/90 p-0 shadow-md transition-[box-shadow,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
-                          action.destructive
-                            ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                            : 'bg-background text-foreground hover:bg-muted',
-                        )}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          action.onSelect({
-                            actionId: action.id,
-                            item,
-                            tileId,
-                            view,
-                            selected,
-                          });
-                        }}
-                      >
-                        {action.isLoading ? (
-                          <Spinner size={14} aria-label="Loading" />
-                        ) : typeof action.icon === 'string' ? (
-                          <Icon
-                            name={action.icon}
-                            size={16}
-                            aria-hidden="true"
-                            className="shrink-0"
-                          />
-                        ) : (
-                          action.icon
-                        )}
-                        <span className="sr-only">{action.label}</span>
-                      </button>
+                        action={action}
+                        item={item}
+                        tileId={tileId}
+                        view={view}
+                        selected={selected}
+                        shadowClass="shadow-md"
+                      />
                     ))
                   : null}
               </Flex>
             </>
           )}
         </Flex>
-      </button>
+      </div>
     );
   },
 );
 
-export const AppTile = forwardRef<HTMLButtonElement, AppTileProps>(
+export const AppTile = forwardRef<HTMLDivElement, AppTileProps>(
   function AppTile(props, ref) {
     return <EntityTile ref={ref} {...props} />;
   },
 );
 
-export const UserTile = forwardRef<HTMLButtonElement, UserTileProps>(
+export const UserTile = forwardRef<HTMLDivElement, UserTileProps>(
   function UserTile({ name, designation, teamName, meta, ...props }, ref) {
     const resolvedMeta =
       meta ??
