@@ -224,7 +224,7 @@ describe('EntityTile component', () => {
 
     const tile = host.querySelector(
       '[data-lumia-entity-tile]',
-    ) as HTMLButtonElement | null;
+    ) as HTMLElement | null;
     expect(tile).toBeTruthy();
     expect(tile?.className).toContain('flex');
     expect(tile?.className).toContain('items-center');
@@ -253,6 +253,62 @@ describe('EntityTile component', () => {
     const image = host.querySelector('img');
     expect(image).toBeNull();
     expect(host.textContent).toContain('XC');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders a default action glyph when icon is not provided', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <EntityTile
+          tileId="app-5"
+          view="list"
+          title="Xynes-CMS"
+          actions={[{ id: 'more', label: 'More', onSelect: vi.fn() }]}
+        />,
+      );
+    });
+
+    const action = host.querySelector(
+      '[data-lumia-tile-action-id="more"]',
+    ) as HTMLButtonElement | null;
+    expect(action).toBeTruthy();
+    expect(action?.querySelector('svg')).toBeTruthy();
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders a native anchor when href is provided', async () => {
+    const { root, host } = createTestRoot();
+    const onActivate = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <EntityTile
+          tileId="app-6"
+          view="list"
+          title="Xynes-CMS"
+          href="/apps/xynes-cms"
+          onActivate={onActivate}
+        />,
+      );
+    });
+
+    const tile = host.querySelector(
+      '[data-lumia-entity-tile]',
+    ) as HTMLAnchorElement | null;
+    expect(tile).toBeTruthy();
+    expect(tile?.tagName).toBe('A');
+    expect(tile?.getAttribute('href')).toBe('/apps/xynes-cms');
+
+    await act(async () => {
+      tile?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(onActivate).toHaveBeenCalledTimes(1);
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

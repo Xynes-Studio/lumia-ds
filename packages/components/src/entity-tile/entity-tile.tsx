@@ -3,6 +3,7 @@ import type {
   HTMLAttributes,
   KeyboardEvent,
   MouseEvent,
+  Ref,
   ReactNode,
 } from 'react';
 import { forwardRef, useEffect, useRef } from 'react';
@@ -44,30 +45,26 @@ export type TileActionItem<TItem> = {
   onSelect: (ctx: TileActionContext<TItem>) => void;
 };
 
-export type EntityTileProps<TItem = unknown> =
-  HTMLAttributes<HTMLDivElement> & {
-    tileId: string;
-    item?: TItem;
-    view: TileView;
-    title: string;
-    subtitle?: string;
-    avatarSrc?: string;
-    avatarAlt?: string;
-    avatarFallbackInitials?: string;
-    meta?: ReactNode;
-    selectable?: boolean;
-    selected?: boolean;
-    onSelectedChange?: (
-      next: boolean,
-      ctx: TileSelectionContext<TItem>,
-    ) => void;
-    selectionAriaLabel?: string;
-    actions?: TileActionItem<TItem>[];
-    onActivate?: (ctx: TileActivateContext<TItem>) => void;
-    href?: string;
-    actionVisibility?: 'auto' | 'hover' | 'always';
-    hoverAccentColor?: string;
-  };
+export type EntityTileProps<TItem = unknown> = HTMLAttributes<HTMLElement> & {
+  tileId: string;
+  item?: TItem;
+  view: TileView;
+  title: string;
+  subtitle?: string;
+  avatarSrc?: string;
+  avatarAlt?: string;
+  avatarFallbackInitials?: string;
+  meta?: ReactNode;
+  selectable?: boolean;
+  selected?: boolean;
+  onSelectedChange?: (next: boolean, ctx: TileSelectionContext<TItem>) => void;
+  selectionAriaLabel?: string;
+  actions?: TileActionItem<TItem>[];
+  onActivate?: (ctx: TileActivateContext<TItem>) => void;
+  href?: string;
+  actionVisibility?: 'auto' | 'hover' | 'always';
+  hoverAccentColor?: string;
+};
 
 export type AppTileProps<TItem = unknown> = EntityTileProps<TItem>;
 
@@ -131,8 +128,10 @@ const ActionButton = <TItem,>({
           aria-hidden="true"
           className="shrink-0"
         />
-      ) : (
+      ) : action.icon ? (
         action.icon
+      ) : (
+        <Icon name="info" size={16} aria-hidden="true" className="shrink-0" />
       )}
       <span className="sr-only">{action.label}</span>
     </button>
@@ -151,7 +150,7 @@ const getInitials = (value?: string) => {
   return cleaned.slice(0, 2).toUpperCase();
 };
 
-export const EntityTile = forwardRef<HTMLDivElement, EntityTileProps>(
+export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
   function EntityTile(
     {
       tileId,
@@ -211,24 +210,16 @@ export const EntityTile = forwardRef<HTMLDivElement, EntityTileProps>(
 
     const triggerActivate = () => {
       if (!isInteractive) return;
-
-      if (onActivate) {
-        onActivate({ item, tileId, view });
-        return;
-      }
-
-      if (href && typeof window !== 'undefined') {
-        window.location.assign(href);
-      }
+      onActivate?.({ item, tileId, view });
     };
 
-    const handleTileClick = (event: MouseEvent<HTMLDivElement>) => {
+    const handleTileClick = (event: MouseEvent<HTMLElement>) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
       triggerActivate();
     };
 
-    const handleTileKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const handleTileKeyDown = (event: KeyboardEvent<HTMLElement>) => {
       onKeyDown?.(event);
       if (event.defaultPrevented) return;
       if (
@@ -253,27 +244,16 @@ export const EntityTile = forwardRef<HTMLDivElement, EntityTileProps>(
 
     const avatarSizeClasses = view === 'list' ? 'h-10 w-10' : 'h-16 w-16';
     const fallbackText = getInitials(avatarFallbackInitials ?? title) ?? '?';
-
-    return (
-      <div
-        ref={ref}
-        data-lumia-entity-tile
-        data-view={view}
-        role={isInteractive ? (href ? 'link' : 'button') : undefined}
-        tabIndex={isInteractive ? 0 : -1}
-        onClick={handleTileClick}
-        onKeyDown={handleTileKeyDown}
-        style={tileStyle}
-        className={cn(
-          'group relative overflow-visible rounded-[10px] border border-border bg-background text-foreground shadow-sm transition-[box-shadow,border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
-          isInteractive &&
-            'cursor-pointer hover:border-border hover:shadow-lg focus-within:border-border focus-within:shadow-lg',
-          view === 'list' ? 'flex items-center' : 'block',
-          view === 'list' ? 'h-[76px] w-full px-4 py-3' : 'w-[170px] py-7',
-          className,
-        )}
-        {...props}
-      >
+    const rootClassName = cn(
+      'group relative overflow-visible rounded-[10px] border border-border bg-background text-foreground shadow-sm transition-[box-shadow,border-color,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
+      isInteractive &&
+        'cursor-pointer hover:border-border hover:shadow-lg focus-within:border-border focus-within:shadow-lg',
+      view === 'list' ? 'flex items-center' : 'block',
+      view === 'list' ? 'h-[76px] w-full px-4 py-3' : 'w-[170px] py-7',
+      className,
+    );
+    const tileBody = (
+      <>
         <span
           aria-hidden="true"
           className={cn(
@@ -415,18 +395,52 @@ export const EntityTile = forwardRef<HTMLDivElement, EntityTileProps>(
             </>
           )}
         </Flex>
+      </>
+    );
+
+    if (href) {
+      return (
+        <a
+          ref={ref as Ref<HTMLAnchorElement>}
+          href={href}
+          data-lumia-entity-tile
+          data-view={view}
+          onClick={handleTileClick}
+          style={tileStyle}
+          className={rootClassName}
+          {...props}
+        >
+          {tileBody}
+        </a>
+      );
+    }
+
+    return (
+      <div
+        ref={ref}
+        data-lumia-entity-tile
+        data-view={view}
+        role={isInteractive ? 'button' : undefined}
+        tabIndex={isInteractive ? 0 : -1}
+        onClick={handleTileClick}
+        onKeyDown={handleTileKeyDown}
+        style={tileStyle}
+        className={rootClassName}
+        {...props}
+      >
+        {tileBody}
       </div>
     );
   },
 );
 
-export const AppTile = forwardRef<HTMLDivElement, AppTileProps>(
+export const AppTile = forwardRef<HTMLElement, AppTileProps>(
   function AppTile(props, ref) {
     return <EntityTile ref={ref} {...props} />;
   },
 );
 
-export const UserTile = forwardRef<HTMLDivElement, UserTileProps>(
+export const UserTile = forwardRef<HTMLElement, UserTileProps>(
   function UserTile({ name, designation, teamName, meta, ...props }, ref) {
     const resolvedMeta =
       meta ??
