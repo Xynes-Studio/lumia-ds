@@ -102,19 +102,37 @@ type NotificationLike = {
 
 const toTimestamp = (value: string) => {
   const timestamp = new Date(value).getTime();
-  return Number.isFinite(timestamp) ? timestamp : 0;
+  return Number.isFinite(timestamp) ? timestamp : null;
 };
 
 export const groupNotificationsByDate = <T extends NotificationLike>(
   notifications: T[],
   now: Date = new Date(),
 ): NotificationGroup<T>[] => {
-  const sorted = [...notifications].sort(
-    (left, right) => toTimestamp(right.createdAt) - toTimestamp(left.createdAt),
-  );
+  const validNotifications = notifications
+    .map((notification) => {
+      const timestamp = toTimestamp(notification.createdAt);
+      if (timestamp === null) {
+        console.warn(
+          '[DashboardShell] Skipping notification with invalid createdAt:',
+          notification.createdAt,
+        );
+        return null;
+      }
+
+      return {
+        notification,
+        timestamp,
+      };
+    })
+    .filter(
+      (item): item is { notification: T; timestamp: number } => item !== null,
+    )
+    .sort((left, right) => right.timestamp - left.timestamp)
+    .map((item) => item.notification);
 
   const groups = new Map<string, T[]>();
-  for (const notification of sorted) {
+  for (const notification of validNotifications) {
     const createdAtDate = new Date(notification.createdAt);
     const label = getNotificationGroupLabel(createdAtDate, now);
     const existingGroup = groups.get(label);

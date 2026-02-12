@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   getNotificationGroupLabel,
   getUnreadNotificationIds,
@@ -90,6 +90,29 @@ describe('notification grouping helpers', () => {
     expect(groups[0]?.label).toBe('Today');
     expect(groups[0]?.items.map((item) => item.id)).toEqual(['n1', 'n2']);
     expect(groups[1]?.items.map((item) => item.id)).toEqual(['n3']);
+  });
+
+  it('skips invalid createdAt values and warns once per invalid item', () => {
+    const now = new Date('2026-02-12T12:00:00.000Z');
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const notifications = [
+      { id: 'n1', createdAt: '2026-02-12T09:00:00.000Z' },
+      { id: 'n2', createdAt: 'not-a-date' },
+      { id: 'n3', createdAt: '2026-02-11T07:00:00.000Z' },
+    ];
+
+    const groups = groupNotificationsByDate(notifications, now);
+    expect(
+      groups.flatMap((group) => group.items.map((item) => item.id)),
+    ).toEqual(['n1', 'n3']);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy.mock.calls[0]?.[0]).toContain(
+      'Skipping notification with invalid createdAt',
+    );
+
+    warnSpy.mockRestore();
   });
 
   it('returns unread notification ids', () => {

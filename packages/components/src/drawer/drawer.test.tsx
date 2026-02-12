@@ -47,6 +47,8 @@ describe('Drawer', () => {
       closeButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
     expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    onOpenChange.mockClear();
 
     await act(async () => {
       root.render(
@@ -61,6 +63,7 @@ describe('Drawer', () => {
       overlay?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
     expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
 
     await act(async () => root.unmount());
     host.remove();
