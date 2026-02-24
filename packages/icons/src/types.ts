@@ -1,6 +1,16 @@
-import type { ComponentType, SVGProps } from 'react';
+import type {
+  ComponentType,
+  ForwardRefExoticComponent,
+  RefAttributes,
+  SVGProps,
+} from 'react';
 
-export type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+type SvgIconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+type ForwardRefSvgIconComponent = ForwardRefExoticComponent<
+  Omit<SVGProps<SVGSVGElement>, 'ref'> & RefAttributes<SVGSVGElement>
+>;
+
+export type IconComponent = SvgIconComponent | ForwardRefSvgIconComponent;
 
 export type IconId = string & {};
 

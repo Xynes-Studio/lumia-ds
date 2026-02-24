@@ -185,7 +185,6 @@ export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
 
     useEffect(() => {
       if (
-        import.meta.env.DEV &&
         hasTooManyActions &&
         !previousHasTooManyActionsRef.current
       ) {

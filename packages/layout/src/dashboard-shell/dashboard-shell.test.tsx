@@ -857,6 +857,63 @@ describe('DashboardShell', () => {
     host.remove();
   });
 
+  it('renders dedicated mobile quick-nav icons for apps and directory', async () => {
+    setViewportWidth(700);
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/apps"
+          navItems={[
+            {
+              id: 'apps',
+              label: 'Apps',
+              href: '/dashboard/apps',
+              icon: 'package',
+            },
+            {
+              id: 'directory',
+              label: 'Directory',
+              href: '/dashboard/directory',
+              icon: 'users-round',
+            },
+          ]}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+          notifications={notifications}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+
+    const appsIconSvg = host
+      .querySelector('[data-testid="dashboard-mobile-nav-tab-apps"]')
+      ?.querySelector('svg');
+    const directoryIconSvg = host
+      .querySelector('[data-testid="dashboard-mobile-nav-tab-directory"]')
+      ?.querySelector('svg');
+
+    expect(appsIconSvg).toBeTruthy();
+    expect(directoryIconSvg).toBeTruthy();
+    expect(appsIconSvg?.querySelector('rect')).toBeNull();
+    expect(directoryIconSvg?.querySelector('rect')).toBeNull();
+    expect(
+      Array.from(appsIconSvg?.querySelectorAll('path') ?? []).some((path) =>
+        path
+          .getAttribute('d')
+          ?.includes('M21 8a2 2 0 0 0-1-1.73l-7-4'),
+      ),
+    ).toBe(true);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
   it('does not navigate mobile quick nav for unsafe href values', async () => {
     setViewportWidth(700);
     const { root, host } = createTestRoot();

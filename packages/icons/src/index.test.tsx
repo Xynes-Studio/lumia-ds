@@ -73,6 +73,7 @@ describe('default icon registry', () => {
       'home',
       'user',
       'users',
+      'users-round',
       'settings',
       'reports',
       'add',
@@ -83,6 +84,11 @@ describe('default icon registry', () => {
       'check',
       'alert',
       'info',
+      'package',
+      'folder-key',
+      'lock',
+      'file-text',
+      'dollar-sign',
     ];
 
     baseIds.forEach((id) => {
