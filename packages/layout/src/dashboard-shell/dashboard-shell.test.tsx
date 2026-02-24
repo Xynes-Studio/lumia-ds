@@ -60,6 +60,34 @@ const navItems: DashboardNavItem[] = [
   },
 ];
 
+const directoryNavItems: DashboardNavItem[] = [
+  {
+    id: 'contents',
+    label: 'Contents',
+    href: '/dashboard/contents',
+    icon: 'file-text',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    href: '/dashboard/settings',
+    icon: 'settings',
+  },
+];
+
+const directoryNodes = [
+  {
+    id: 'blogs',
+    label: 'Blogs',
+    children: [
+      {
+        id: 'guides',
+        label: 'Guides',
+      },
+    ],
+  },
+];
+
 const workspaceOptions: DashboardWorkspace[] = [
   { id: 'ws-1', name: 'Xynes', slug: 'xynes' },
   { id: 'ws-2', name: 'Lumia', slug: 'lumia' },
@@ -164,6 +192,7 @@ describe('DashboardShell', () => {
     const workspaceTrigger = host.querySelector(
       '[data-testid="dashboard-workspace-trigger"]',
     );
+    expect(workspaceTrigger?.className).toContain('cursor-pointer');
     await act(async () => {
       workspaceTrigger?.dispatchEvent(
         new PointerEvent('pointerdown', {
@@ -184,6 +213,134 @@ describe('DashboardShell', () => {
     });
 
     expect(onWorkspaceSelect).toHaveBeenCalledWith('ws-2');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('renders configured directory section on desktop and wires create/expand callbacks', async () => {
+    const { root, host } = createTestRoot();
+    const onCreateDirectory = vi.fn();
+    const onExpandedIdsChange = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/contents"
+          navItems={directoryNavItems}
+          onNavigate={vi.fn()}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+          directorySection={{
+            navItemId: 'contents',
+            rootHref: '/dashboard/contents',
+            nodes: directoryNodes,
+            expandedIds: ['blogs'],
+            onExpandedIdsChange,
+            onCreateDirectory,
+          }}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+
+    expect(
+      host.querySelector('[data-testid="directory-tree-root-link"]'),
+    ).toBeTruthy();
+    expect(host.textContent).toContain('Blogs');
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="directory-tree-create-root"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const input = host.querySelector(
+      'input[data-testid="directory-tree-composer-input"]',
+    ) as HTMLInputElement | null;
+
+    await act(async () => {
+      if (!input) return;
+      input.value = 'News';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    await act(async () => {
+      if (!input) return;
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }),
+      );
+    });
+
+    expect(onCreateDirectory).toHaveBeenCalledWith({
+      parentId: null,
+      name: 'News',
+    });
+
+    const blogsLabel = host.querySelector(
+      '[data-testid="directory-tree-node-label-blogs"]',
+    ) as HTMLButtonElement | null;
+    expect(blogsLabel).toBeTruthy();
+
+    await act(async () => {
+      blogsLabel?.click();
+    });
+
+    expect(onExpandedIdsChange).toHaveBeenCalledWith([]);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('renders configured directory section inside the mobile menu sheet', async () => {
+    setViewportWidth(700);
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/contents"
+          navItems={directoryNavItems}
+          onNavigate={vi.fn()}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+          directorySection={{
+            navItemId: 'contents',
+            rootHref: '/dashboard/contents',
+            nodes: directoryNodes,
+            expandedIds: ['blogs'],
+            onExpandedIdsChange: vi.fn(),
+            onCreateDirectory: vi.fn(),
+          }}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="dashboard-mobile-menu-tab"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const mobileMenuSheet = document.body.querySelector(
+      '[data-testid="dashboard-mobile-menu-sheet"]',
+    );
+    expect(mobileMenuSheet).toBeTruthy();
+    expect(mobileMenuSheet?.textContent).toContain('Contents');
+    expect(
+      mobileMenuSheet?.querySelector(
+        '[data-testid="directory-tree-root-link"]',
+      ),
+    ).toBeTruthy();
 
     await act(async () => root.unmount());
     host.remove();
@@ -904,9 +1061,7 @@ describe('DashboardShell', () => {
     expect(directoryIconSvg?.querySelector('rect')).toBeNull();
     expect(
       Array.from(appsIconSvg?.querySelectorAll('path') ?? []).some((path) =>
-        path
-          .getAttribute('d')
-          ?.includes('M21 8a2 2 0 0 0-1-1.73l-7-4'),
+        path.getAttribute('d')?.includes('M21 8a2 2 0 0 0-1-1.73l-7-4'),
       ),
     ).toBe(true);
 

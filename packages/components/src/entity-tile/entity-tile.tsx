@@ -184,10 +184,7 @@ export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
     const previousHasTooManyActionsRef = useRef(false);
 
     useEffect(() => {
-      if (
-        hasTooManyActions &&
-        !previousHasTooManyActionsRef.current
-      ) {
+      if (hasTooManyActions && !previousHasTooManyActionsRef.current) {
         console.warn(
           '[EntityTile] Maximum 3 quick actions are supported; extra actions were ignored.',
         );

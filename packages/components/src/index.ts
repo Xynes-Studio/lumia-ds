@@ -37,6 +37,7 @@ export * from './breadcrumbs/breadcrumbs';
 export * from './page-header/page-header';
 export * from './empty-state/empty-state';
 export * from './side-nav-item/side-nav-item';
+export * from './directory-tree-nav/directory-tree-nav';
 export * from './toast/toast';
 export * from './progress-bar/progress-bar';
 export * from './spinner/spinner';

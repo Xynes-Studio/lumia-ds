@@ -42,6 +42,7 @@ import {
 - `onCreateWorkspace`, `enableWorkspaceCreation`, `workspaceCreationDisabledMessage`.
 - `isSidebarCollapsed` (desktop manual collapse).
 - `userMenu`, `onProfileOpen`, `onLogout`.
+- `directorySection` (optional nested directory tree for one nav item).
 
 Notification props:
 - `notifications`.
@@ -74,6 +75,31 @@ type DashboardNotification = {
   deepLinkRel?: string;
 };
 ```
+
+## Directory Section Type
+
+```ts
+type DashboardDirectorySection = {
+  navItemId: string;
+  rootHref: string;
+  activeHref?: string;
+  rootLabel?: string;
+  rootIcon?: string;
+  nodes: DirectoryTreeNode[];
+  expandedIds: string[];
+  onExpandedIdsChange: (expandedIds: string[]) => void;
+  onCreateDirectory: (input: { parentId: string | null; name: string }) => void;
+  maxNameLength?: number;
+};
+```
+
+Behavior notes:
+- Additive API: when `directorySection` is undefined, shell nav stays unchanged.
+- If `directorySection.navItemId` matches a nav item id, that row renders the reusable `DirectoryTreeNav`.
+- Root row keeps route navigation; directory rows support nested expansion and inline creation.
+- Directory visuals are rendered as a subtree under the configured root row (for example `Contents`) with increasing indentation per depth.
+- Directory rows do not rely on chevrons; click behavior is row-driven (toggle + navigate) for simpler CMS parity.
+- Validation enforces trimmed names, max length, and sibling-level case-insensitive uniqueness.
 
 ## Callback Lifecycle
 

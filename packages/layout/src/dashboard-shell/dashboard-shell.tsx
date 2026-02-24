@@ -24,7 +24,9 @@ import {
   Drawer,
   DrawerHeader,
   DrawerTitle,
+  DirectoryTreeNav,
   SideNavItem,
+  type DirectoryTreeNode,
 } from '@lumia-ui/components';
 import {
   getFallbackInitials,
@@ -53,6 +55,19 @@ export type DashboardWorkspace = {
   slug?: string;
   roleLabel?: string;
   avatarSrc?: string;
+};
+
+export type DashboardDirectorySection = {
+  navItemId: string;
+  rootHref: string;
+  rootLabel?: string;
+  rootIcon?: string;
+  activeHref?: string;
+  nodes: DirectoryTreeNode[];
+  expandedIds: string[];
+  onExpandedIdsChange: (expandedIds: string[]) => void;
+  onCreateDirectory: (input: { parentId: string | null; name: string }) => void;
+  maxNameLength?: number;
 };
 
 export type DashboardUserMenu = {
@@ -117,6 +132,7 @@ export type DashboardShellProps = {
   mobileBottomBarInset?: string;
   mobileBottomSheetMaxHeight?: string;
   sidebarFooterNote?: string;
+  directorySection?: DashboardDirectorySection;
   children: ReactNode;
 };
 
@@ -193,6 +209,7 @@ export const DashboardShell = ({
   mobileBottomBarInset = defaultMobileBottomBarInset,
   mobileBottomSheetMaxHeight = defaultMobileBottomSheetMaxHeight,
   sidebarFooterNote = defaultFooterNote,
+  directorySection,
   children,
 }: DashboardShellProps) => {
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
@@ -461,7 +478,7 @@ export const DashboardShell = ({
           type="button"
           variant="ghost"
           className={cx(
-            'w-full rounded-md bg-background hover:bg-muted',
+            'w-full cursor-pointer rounded-md bg-background hover:bg-muted',
             compact
               ? 'h-auto flex-col items-center justify-center gap-1 px-2 py-2'
               : 'h-12 justify-between px-3',
@@ -742,6 +759,60 @@ export const DashboardShell = ({
                     )}
                   >
                     {navItems.map((item) => {
+                      const isDirectorySectionItem =
+                        directorySection?.navItemId === item.id;
+
+                      if (
+                        isDirectorySectionItem &&
+                        directorySection &&
+                        !isSidebarCollapsedEffective
+                      ) {
+                        const safeRootHref = isSafeNotificationHref(
+                          directorySection.rootHref,
+                        )
+                          ? directorySection.rootHref
+                          : '#';
+
+                        return (
+                          <DirectoryTreeNav
+                            key={item.id}
+                            rootLabel={directorySection.rootLabel ?? item.label}
+                            rootHref={safeRootHref}
+                            rootIcon={
+                              (directorySection.rootIcon ?? item.icon) as
+                                | undefined
+                                | string
+                            }
+                            rootActive={isNavItemActive(
+                              activePath,
+                              item.href,
+                              item.exact ?? false,
+                            )}
+                            activeHref={directorySection.activeHref}
+                            nodes={directorySection.nodes}
+                            expandedIds={directorySection.expandedIds}
+                            onExpandedIdsChange={
+                              directorySection.onExpandedIdsChange
+                            }
+                            onCreateDirectory={
+                              directorySection.onCreateDirectory
+                            }
+                            maxNameLength={directorySection.maxNameLength}
+                            onNavigate={(href: string) => {
+                              if (onNavigate) {
+                                onNavigate(href, {
+                                  ...item,
+                                  href,
+                                });
+                                return;
+                              }
+
+                              navigateToNavItemHref(href);
+                            }}
+                          />
+                        );
+                      }
+
                       const safeItemHref = isSafeNotificationHref(item.href)
                         ? item.href
                         : '#';
@@ -1018,6 +1089,51 @@ export const DashboardShell = ({
 
           <nav aria-label="Mobile dashboard navigation" className="space-y-2">
             {navItems.map((item) => {
+              const isDirectorySectionItem =
+                directorySection?.navItemId === item.id;
+
+              if (isDirectorySectionItem && directorySection) {
+                const safeRootHref = isSafeNotificationHref(
+                  directorySection.rootHref,
+                )
+                  ? directorySection.rootHref
+                  : '#';
+
+                return (
+                  <DirectoryTreeNav
+                    key={item.id}
+                    rootLabel={directorySection.rootLabel ?? item.label}
+                    rootHref={safeRootHref}
+                    rootIcon={
+                      (directorySection.rootIcon ?? item.icon) as
+                        | undefined
+                        | string
+                    }
+                    rootActive={isNavItemActive(
+                      activePath,
+                      item.href,
+                      item.exact ?? false,
+                    )}
+                    activeHref={directorySection.activeHref}
+                    nodes={directorySection.nodes}
+                    expandedIds={directorySection.expandedIds}
+                    onExpandedIdsChange={directorySection.onExpandedIdsChange}
+                    onCreateDirectory={directorySection.onCreateDirectory}
+                    maxNameLength={directorySection.maxNameLength}
+                    onNavigate={(href: string) => {
+                      if (onNavigate) {
+                        onNavigate(href, {
+                          ...item,
+                          href,
+                        });
+                        return;
+                      }
+                      navigateToNavItemHref(href);
+                    }}
+                  />
+                );
+              }
+
               // Prevent unsafe scheme navigation from host-provided nav config.
               // Callbacks still receive original href for host-side handling/validation.
               const safeItemHref = isSafeNotificationHref(item.href)
