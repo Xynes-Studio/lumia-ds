@@ -1,5 +1,5 @@
 import type { FormEvent, ReactNode } from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { isValidElement, useCallback, useMemo, useRef, useState } from 'react';
 import { Button } from '../button/button';
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
 
 export type ConfirmDialogProps = Omit<DialogProps, 'children'> & {
   title: string;
-  description?: string;
+  description?: ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;
   onConfirm: () => void | Promise<void>;
@@ -129,14 +129,23 @@ export const ConfirmDialog = ({
         <form onSubmit={handleConfirm} className="space-y-5">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            {description ? (
+            {!description ? (
+              <DialogDescription className="sr-only">
+                Please review this action before continuing.
+              </DialogDescription>
+            ) : typeof description === 'string' ? (
               <DialogDescription>{description}</DialogDescription>
-            ) : null}
+            ) : isValidElement(description) ? (
+              <DialogDescription asChild>{description}</DialogDescription>
+            ) : (
+              <DialogDescription>{String(description)}</DialogDescription>
+            )}
           </DialogHeader>
           <DialogFooter>
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
+              className="border-border text-foreground bg-background hover:bg-muted"
               onClick={handleCancel}
               disabled={isLoading}
             >

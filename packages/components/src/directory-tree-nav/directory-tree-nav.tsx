@@ -1,6 +1,9 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from '@lumia-ui/icons';
+import { Button } from '../button/button';
+import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
+import { ContextMenu, type MenuItemConfig } from '../context-menu/context-menu';
 import { Input } from '../input/input';
 import { cn } from '../lib/utils';
 import {
@@ -13,6 +16,15 @@ type DirectoryTreeCreateInput = {
   name: string;
 };
 
+type DirectoryTreeRenameInput = {
+  nodeId: string;
+  name: string;
+};
+
+type DirectoryTreeDeleteInput = {
+  nodeId: string;
+};
+
 export type DirectoryTreeNavProps = {
   rootLabel: string;
   rootHref: string;
@@ -23,13 +35,23 @@ export type DirectoryTreeNavProps = {
   expandedIds: string[];
   onExpandedIdsChange: (nextIds: string[]) => void;
   onCreateDirectory: (input: DirectoryTreeCreateInput) => void;
+  onRenameDirectory?: (input: DirectoryTreeRenameInput) => void;
+  onDeleteDirectory?: (input: DirectoryTreeDeleteInput) => void;
+  canManageDirectories?: boolean;
+  directoryActionDisabledReason?: string;
   maxNameLength?: number;
   onNavigate?: (href: string) => void;
   className?: string;
 };
 
+type ComposerMode = 'create' | 'rename';
+
 type ComposerState = {
-  parentId: string | null;
+  mode: ComposerMode;
+  anchorId: string | null;
+  validationParentId: string | null;
+  targetNodeId: string | null;
+  initialValue: string;
   value: string;
   error: string | null;
 };
@@ -41,11 +63,65 @@ const inactiveItemClasses =
 const activeItemClasses =
   'bg-primary/10 text-primary-800 hover:bg-primary/20 focus-visible:ring-primary-600';
 const defaultMaxNameLength = 80;
+const defaultDirectoryAccessDisabledReason =
+  'Only workspace owners can manage directories right now.';
 
 const toggleExpandedId = (expandedIds: string[], nodeId: string) =>
   expandedIds.includes(nodeId)
     ? expandedIds.filter((item) => item !== nodeId)
     : [...expandedIds, nodeId];
+
+type NodeContext = {
+  node: DirectoryTreeNode;
+  parentId: string | null;
+};
+
+const findNodePathById = (
+  nodes: DirectoryTreeNode[],
+  nodeId: string,
+  ancestry: DirectoryTreeNode[] = [],
+): DirectoryTreeNode[] | null => {
+  for (const node of nodes) {
+    const nextAncestry = [...ancestry, node];
+    if (node.id === nodeId) {
+      return nextAncestry;
+    }
+
+    if (!node.children?.length) {
+      continue;
+    }
+
+    const nested = findNodePathById(node.children, nodeId, nextAncestry);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return null;
+};
+
+const findNodeContextById = (
+  nodes: DirectoryTreeNode[],
+  nodeId: string,
+  parentId: string | null = null,
+): NodeContext | null => {
+  for (const node of nodes) {
+    if (node.id === nodeId) {
+      return { node, parentId };
+    }
+
+    if (!node.children?.length) {
+      continue;
+    }
+
+    const nested = findNodeContextById(node.children, nodeId, node.id);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return null;
+};
 
 export const DirectoryTreeNav = ({
   rootLabel,
@@ -57,13 +133,25 @@ export const DirectoryTreeNav = ({
   expandedIds,
   onExpandedIdsChange,
   onCreateDirectory,
+  onRenameDirectory,
+  onDeleteDirectory,
+  canManageDirectories = true,
+  directoryActionDisabledReason = defaultDirectoryAccessDisabledReason,
   maxNameLength = defaultMaxNameLength,
   onNavigate,
   className,
 }: DirectoryTreeNavProps) => {
   const [composer, setComposer] = useState<ComposerState | null>(null);
+  const [pendingDeleteNodeId, setPendingDeleteNodeId] = useState<string | null>(
+    null,
+  );
+  const [accessToastMessage, setAccessToastMessage] = useState<string | null>(
+    null,
+  );
   const composerInputRef = useRef<HTMLInputElement | null>(null);
-  const composerFocusKey = composer ? `${composer.parentId ?? 'root'}` : null;
+  const composerFocusKey = composer
+    ? `${composer.mode}:${composer.anchorId ?? 'root'}:${composer.targetNodeId ?? 'new'}`
+    : null;
 
   const expandedSet = useMemo(() => new Set(expandedIds), [expandedIds]);
 
@@ -76,14 +164,49 @@ export const DirectoryTreeNav = ({
     composerInputRef.current?.select();
   }, [composerFocusKey]);
 
-  const openComposer = (parentId: string | null) => {
+  const showAccessDeniedToast = () => {
+    setAccessToastMessage(directoryActionDisabledReason);
+  };
+
+  const openCreateComposer = (parentId: string | null) => {
+    if (!canManageDirectories) {
+      showAccessDeniedToast();
+      return;
+    }
+
     if (parentId !== null && !expandedSet.has(parentId)) {
       onExpandedIdsChange([...expandedIds, parentId]);
     }
 
     setComposer({
-      parentId,
+      mode: 'create',
+      anchorId: parentId,
+      validationParentId: parentId,
+      targetNodeId: null,
+      initialValue: '',
       value: '',
+      error: null,
+    });
+  };
+
+  const openEditComposer = (nodeId: string) => {
+    if (!canManageDirectories) {
+      showAccessDeniedToast();
+      return;
+    }
+
+    const context = findNodeContextById(nodes, nodeId);
+    if (!context) {
+      return;
+    }
+
+    setComposer({
+      mode: 'rename',
+      anchorId: nodeId,
+      validationParentId: context.parentId,
+      targetNodeId: nodeId,
+      initialValue: context.node.label,
+      value: context.node.label,
       error: null,
     });
   };
@@ -96,9 +219,23 @@ export const DirectoryTreeNav = ({
     const rawNameFromInput =
       rawNameOverride ?? composerInputRef.current?.value ?? composer.value;
 
+    if (composer.mode !== 'create' && !composer.targetNodeId) {
+      setComposer(null);
+      return;
+    }
+
+    const normalizedRawName = rawNameFromInput.trim();
+    if (
+      composer.mode !== 'create' &&
+      normalizedRawName === composer.initialValue.trim()
+    ) {
+      setComposer(null);
+      return;
+    }
+
     const validation = validateDirectoryName({
       nodes,
-      parentId: composer.parentId,
+      parentId: composer.validationParentId,
       rawName: rawNameFromInput,
       maxNameLength,
     });
@@ -116,8 +253,17 @@ export const DirectoryTreeNav = ({
       return;
     }
 
-    onCreateDirectory({
-      parentId: composer.parentId,
+    if (composer.mode === 'create') {
+      onCreateDirectory({
+        parentId: composer.validationParentId,
+        name: validation.normalizedName,
+      });
+      setComposer(null);
+      return;
+    }
+
+    onRenameDirectory?.({
+      nodeId: composer.targetNodeId as string,
       name: validation.normalizedName,
     });
 
@@ -137,8 +283,12 @@ export const DirectoryTreeNav = ({
     }
   };
 
-  const renderComposer = (parentId: string | null, depth: number) => {
-    if (!composer || composer.parentId !== parentId) {
+  const renderCreateComposer = (parentId: string | null, depth: number) => {
+    if (
+      !composer ||
+      composer.mode !== 'create' ||
+      composer.anchorId !== parentId
+    ) {
       return null;
     }
 
@@ -186,6 +336,82 @@ export const DirectoryTreeNav = ({
     );
   };
 
+  const ownerOnlySuffix = canManageDirectories ? '' : ' (Owner only)';
+
+  const pendingDeletePath = useMemo(
+    () =>
+      pendingDeleteNodeId ? findNodePathById(nodes, pendingDeleteNodeId) : null,
+    [nodes, pendingDeleteNodeId],
+  );
+  const pendingDeleteLabel = pendingDeletePath?.at(-1)?.label ?? null;
+  const pendingDeleteBreadcrumb = pendingDeletePath
+    ? [rootLabel, ...pendingDeletePath.map((node) => node.label)].join(' / ')
+    : null;
+
+  const guardManagedAction = (callback: () => void) => () => {
+    if (!canManageDirectories) {
+      showAccessDeniedToast();
+      return;
+    }
+
+    callback();
+  };
+
+  const openDeleteConfirmation = (nodeId: string) => {
+    if (!canManageDirectories) {
+      showAccessDeniedToast();
+      return;
+    }
+
+    if (!findNodeContextById(nodes, nodeId)) {
+      return;
+    }
+
+    setPendingDeleteNodeId(nodeId);
+  };
+
+  const confirmDeleteDirectory = () => {
+    if (!pendingDeleteNodeId) {
+      return;
+    }
+
+    onDeleteDirectory?.({ nodeId: pendingDeleteNodeId });
+    setPendingDeleteNodeId(null);
+  };
+
+  const getNodeContextMenuItems = (
+    node: DirectoryTreeNode,
+  ): MenuItemConfig[] => [
+    {
+      id: `create-${node.id}`,
+      label: `Create subdirectory${ownerOnlySuffix}`,
+      icon: 'add',
+      onSelect: guardManagedAction(() => openCreateComposer(node.id)),
+    },
+    {
+      id: `rename-${node.id}`,
+      label: `Rename directory${ownerOnlySuffix}`,
+      icon: 'edit',
+      onSelect: guardManagedAction(() => openEditComposer(node.id)),
+    },
+    {
+      id: `delete-${node.id}`,
+      label: `Delete directory${ownerOnlySuffix}`,
+      icon: 'delete',
+      variant: 'destructive',
+      onSelect: guardManagedAction(() => openDeleteConfirmation(node.id)),
+    },
+  ];
+
+  const rootContextMenuItems: MenuItemConfig[] = [
+    {
+      id: 'create-root',
+      label: `Create directory${ownerOnlySuffix}`,
+      icon: 'add',
+      onSelect: guardManagedAction(() => openCreateComposer(null)),
+    },
+  ];
+
   const renderNodes = (items: DirectoryTreeNode[], depth: number) => {
     if (items.length === 0) {
       return null;
@@ -202,6 +428,25 @@ export const DirectoryTreeNav = ({
             activeHref === node.href;
           const rowPadding =
             depth > 0 ? 'ml-3 border-l border-border/60 pl-3' : '';
+          const isInlineRenaming =
+            composer?.mode === 'rename' && composer.anchorId === node.id;
+
+          const handleNodeActivate = (
+            event: ReactMouseEvent<HTMLButtonElement>,
+          ) => {
+            // On macOS, Ctrl+Click emits click; treat it as context intent.
+            if (event.ctrlKey) {
+              return;
+            }
+
+            if (hasChildren) {
+              onExpandedIdsChange(toggleExpandedId(expandedIds, node.id));
+            }
+
+            if (node.href && onNavigate) {
+              onNavigate(node.href);
+            }
+          };
 
           return (
             <li
@@ -210,47 +455,85 @@ export const DirectoryTreeNav = ({
               data-testid={`directory-tree-node-${node.id}`}
             >
               <div className="group flex items-center gap-1">
-                <button
-                  type="button"
-                  className={cn(
-                    baseItemClasses,
-                    isActive ? activeItemClasses : inactiveItemClasses,
-                    'flex-1',
-                  )}
-                  onClick={() => {
-                    if (hasChildren) {
-                      onExpandedIdsChange(
-                        toggleExpandedId(expandedIds, node.id),
-                      );
-                    }
+                {isInlineRenaming ? (
+                  <div
+                    className="flex-1 rounded-md bg-muted/40 p-1"
+                    data-testid={`directory-tree-inline-composer-${node.id}`}
+                  >
+                    <Input
+                      ref={composerInputRef}
+                      value={composer.value}
+                      maxLength={maxNameLength}
+                      placeholder="Rename directory"
+                      aria-label="Rename directory"
+                      aria-invalid={Boolean(composer.error)}
+                      onChange={(event) => {
+                        const nextValue = event.currentTarget.value;
+                        setComposer((previous) =>
+                          previous
+                            ? {
+                                ...previous,
+                                value: nextValue,
+                                error: null,
+                              }
+                            : previous,
+                        );
+                      }}
+                      onKeyDown={handleComposerKeyDown}
+                      data-testid="directory-tree-inline-composer-input"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <ContextMenu items={getNodeContextMenuItems(node)}>
+                      <button
+                        type="button"
+                        className={cn(
+                          baseItemClasses,
+                          isActive ? activeItemClasses : inactiveItemClasses,
+                          'flex-1',
+                        )}
+                        onClick={handleNodeActivate}
+                        aria-expanded={hasChildren ? isExpanded : undefined}
+                        aria-current={isActive ? 'page' : undefined}
+                        data-testid={`directory-tree-node-label-${node.id}`}
+                      >
+                        <Icon name="folder" size={16} aria-hidden="true" />
+                        <span className="truncate">{node.label}</span>
+                      </button>
+                    </ContextMenu>
 
-                    if (node.href && onNavigate) {
-                      onNavigate(node.href);
-                    }
-                  }}
-                  aria-expanded={hasChildren ? isExpanded : undefined}
-                  aria-current={isActive ? 'page' : undefined}
-                  data-testid={`directory-tree-node-label-${node.id}`}
-                >
-                  <Icon name="folder" size={16} aria-hidden="true" />
-                  <span className="truncate">{node.label}</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 group-hover:opacity-100 group-focus-within:opacity-100 ring-offset-background"
-                  aria-label={`Create subdirectory in ${node.label}`}
-                  onClick={() => openComposer(node.id)}
-                  data-testid={`directory-tree-create-${node.id}`}
-                >
-                  <Icon name="add" size={14} />
-                </button>
+                    <button
+                      type="button"
+                      className={cn(
+                        'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 group-hover:opacity-100 group-focus-within:opacity-100 ring-offset-background',
+                        !canManageDirectories &&
+                          'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+                      )}
+                      aria-label={`Create subdirectory in ${node.label}`}
+                      aria-disabled={!canManageDirectories}
+                      onClick={() => openCreateComposer(node.id)}
+                      data-testid={`directory-tree-create-${node.id}`}
+                    >
+                      <Icon name="add" size={14} />
+                    </button>
+                  </>
+                )}
               </div>
 
+              {isInlineRenaming && composer.error ? (
+                <p
+                  className="ml-1 text-xs text-destructive"
+                  data-testid="directory-tree-composer-error"
+                  aria-live="polite"
+                >
+                  {composer.error}
+                </p>
+              ) : null}
               {isExpanded && node.children?.length
                 ? renderNodes(node.children, depth + 1)
                 : null}
-              {renderComposer(node.id, depth + 1)}
+              {renderCreateComposer(node.id, depth + 1)}
             </li>
           );
         })}
@@ -261,33 +544,44 @@ export const DirectoryTreeNav = ({
   return (
     <div className={cn('space-y-1', className)}>
       <div className="group flex items-center gap-0.5">
-        <a
-          href={rootHref}
-          className={cn(
-            baseItemClasses,
-            rootActive ? activeItemClasses : inactiveItemClasses,
-            'flex-1',
-          )}
-          aria-current={rootActive ? 'page' : undefined}
-          onClick={(event) => {
-            if (!onNavigate) {
-              return;
-            }
+        <ContextMenu items={rootContextMenuItems}>
+          <a
+            href={rootHref}
+            className={cn(
+              baseItemClasses,
+              rootActive ? activeItemClasses : inactiveItemClasses,
+              'flex-1',
+            )}
+            aria-current={rootActive ? 'page' : undefined}
+            onClick={(event) => {
+              if (event.ctrlKey) {
+                return;
+              }
 
-            event.preventDefault();
-            onNavigate(rootHref);
-          }}
-          data-testid="directory-tree-root-link"
-        >
-          <Icon name={rootIcon} size={16} aria-hidden="true" />
-          <span className="truncate">{rootLabel}</span>
-        </a>
+              if (!onNavigate) {
+                return;
+              }
+
+              event.preventDefault();
+              onNavigate(rootHref);
+            }}
+            data-testid="directory-tree-root-link"
+          >
+            <Icon name={rootIcon} size={16} aria-hidden="true" />
+            <span className="truncate">{rootLabel}</span>
+          </a>
+        </ContextMenu>
 
         <button
           type="button"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background"
+          className={cn(
+            'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
+            !canManageDirectories &&
+              'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+          )}
           aria-label={`Create directory in ${rootLabel}`}
-          onClick={() => openComposer(null)}
+          aria-disabled={!canManageDirectories}
+          onClick={() => openCreateComposer(null)}
           data-testid="directory-tree-create-root"
         >
           <Icon name="add" size={14} />
@@ -296,10 +590,92 @@ export const DirectoryTreeNav = ({
 
       <div className="space-y-1">
         <div className="pl-6">
-          {renderComposer(null, 0)}
+          {renderCreateComposer(null, 0)}
           {renderNodes(nodes, 0)}
         </div>
       </div>
+
+      {accessToastMessage ? (
+        <div
+          data-testid="directory-tree-access-toast"
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-4 left-4 z-50 w-[22rem] rounded-md border border-border bg-background/95 p-3 shadow-lg backdrop-blur-sm"
+        >
+          <p className="text-sm font-medium text-foreground">
+            Action unavailable
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {accessToastMessage}
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled
+              data-testid="directory-tree-access-request-button"
+            >
+              Request access
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled
+              data-testid="directory-tree-access-contact-button"
+            >
+              Contact owner
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="ml-auto"
+              onClick={() => setAccessToastMessage(null)}
+              aria-label="Dismiss access notice"
+            >
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
+      <ConfirmDialog
+        open={Boolean(pendingDeleteNodeId)}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            setPendingDeleteNodeId(null);
+          }
+        }}
+        title={
+          pendingDeleteLabel
+            ? `Delete “${pendingDeleteLabel}”?`
+            : 'Delete directory?'
+        }
+        description={
+          <div className="space-y-3">
+            {pendingDeleteBreadcrumb ? (
+              <div className="rounded-md border border-border bg-muted/40 px-3 py-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Directory path
+                </p>
+                <p className="mt-1 break-words text-sm font-medium text-foreground">
+                  {pendingDeleteBreadcrumb}
+                </p>
+              </div>
+            ) : null}
+            <p className="text-sm leading-5 text-foreground">
+              This will permanently delete this directory, all nested
+              subdirectories, and every content item inside them.
+            </p>
+            <p className="text-xs font-medium text-muted-foreground">
+              This action cannot be undone.
+            </p>
+          </div>
+        }
+        confirmLabel="Delete directory"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={confirmDeleteDirectory}
+      />
     </div>
   );
 };

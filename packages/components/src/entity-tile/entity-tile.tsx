@@ -420,7 +420,7 @@ export const EntityTile = forwardRef<HTMLElement, EntityTileProps>(
 
     return (
       <div
-        ref={ref}
+        ref={ref as Ref<HTMLDivElement>}
         data-lumia-entity-tile
         data-view={view}
         role={isInteractive ? 'button' : undefined}
