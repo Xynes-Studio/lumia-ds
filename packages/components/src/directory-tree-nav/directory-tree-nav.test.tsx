@@ -697,6 +697,169 @@ describe('DirectoryTreeNav', () => {
     host.remove();
   });
 
+  it('disables rename and delete actions when handlers are not provided', async () => {
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DirectoryTreeNav
+          rootLabel="Contents"
+          rootHref="/dashboard/acme"
+          nodes={fixture}
+          expandedIds={['blogs']}
+          onExpandedIdsChange={vi.fn()}
+          onCreateDirectory={vi.fn()}
+          canManageDirectories
+        />,
+      );
+    });
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="directory-tree-node-label-blogs"]')
+        ?.dispatchEvent(
+          new PointerEvent('pointerdown', { bubbles: true, button: 2 }),
+        );
+      host
+        .querySelector('[data-testid="directory-tree-node-label-blogs"]')
+        ?.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 10,
+            clientY: 10,
+          }),
+        );
+    });
+    await act(async () => {});
+
+    const renameItem = Array.from(
+      document.body.querySelectorAll('[data-lumia-menu-item]'),
+    ).find((item) => item.textContent?.includes('Rename directory'));
+    const deleteItem = Array.from(
+      document.body.querySelectorAll('[data-lumia-menu-item]'),
+    ).find((item) => item.textContent?.includes('Delete directory'));
+
+    expect(renameItem?.getAttribute('aria-disabled')).toBe('true');
+    expect(deleteItem?.getAttribute('aria-disabled')).toBe('true');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('treats case-only rename changes as no-op', async () => {
+    const { host, root } = createTestRoot();
+    const onRenameDirectory = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <DirectoryTreeNav
+          rootLabel="Contents"
+          rootHref="/dashboard/acme"
+          nodes={fixture}
+          expandedIds={['blogs']}
+          onExpandedIdsChange={vi.fn()}
+          onCreateDirectory={vi.fn()}
+          onRenameDirectory={onRenameDirectory}
+          canManageDirectories
+        />,
+      );
+    });
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="directory-tree-node-label-blogs"]')
+        ?.dispatchEvent(
+          new PointerEvent('pointerdown', { bubbles: true, button: 2 }),
+        );
+      host
+        .querySelector('[data-testid="directory-tree-node-label-blogs"]')
+        ?.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 10,
+            clientY: 10,
+          }),
+        );
+    });
+    await act(async () => {});
+
+    const renameItem = Array.from(
+      document.body.querySelectorAll('[data-lumia-menu-item]'),
+    ).find((item) => item.textContent?.includes('Rename directory'));
+    expect(renameItem).toBeTruthy();
+
+    await act(async () => {
+      renameItem?.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true }),
+      );
+      renameItem?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const renameInput = host.querySelector(
+      'input[data-testid="directory-tree-inline-composer-input"]',
+    ) as HTMLInputElement | null;
+    expect(renameInput).toBeTruthy();
+
+    await act(async () => {
+      if (!renameInput) return;
+      renameInput.value = 'blogs';
+      renameInput.dispatchEvent(new Event('change', { bubbles: true }));
+      renameInput.dispatchEvent(
+        new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }),
+      );
+    });
+
+    expect(onRenameDirectory).not.toHaveBeenCalled();
+    expect(
+      host.querySelector(
+        'input[data-testid="directory-tree-inline-composer-input"]',
+      ),
+    ).toBeNull();
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('auto-dismisses access toast after delay', async () => {
+    vi.useFakeTimers();
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DirectoryTreeNav
+          rootLabel="Contents"
+          rootHref="/dashboard/acme"
+          nodes={fixture}
+          expandedIds={['blogs']}
+          onExpandedIdsChange={vi.fn()}
+          onCreateDirectory={vi.fn()}
+          canManageDirectories={false}
+        />,
+      );
+    });
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="directory-tree-create-root"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(
+      host.querySelector('[data-testid="directory-tree-access-toast"]'),
+    ).toBeTruthy();
+
+    await act(async () => {
+      vi.advanceTimersByTime(4000);
+    });
+
+    expect(
+      host.querySelector('[data-testid="directory-tree-access-toast"]'),
+    ).toBeNull();
+
+    await act(async () => root.unmount());
+    host.remove();
+    vi.useRealTimers();
+  });
+
   it('keeps context menu open path stable on ctrl-click triggers', async () => {
     const { host, root } = createTestRoot();
     const onNavigate = vi.fn();

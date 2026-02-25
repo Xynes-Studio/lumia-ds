@@ -65,6 +65,11 @@ const activeItemClasses =
 const defaultMaxNameLength = 80;
 const defaultDirectoryAccessDisabledReason =
   'Only workspace owners can manage directories right now.';
+const defaultRenameUnavailableReason =
+  'Rename is unavailable until this workspace enables it.';
+const defaultDeleteUnavailableReason =
+  'Delete is unavailable until this workspace enables it.';
+const normalizeForCompare = (value: string) => value.trim().toLocaleLowerCase();
 
 const toggleExpandedId = (expandedIds: string[], nodeId: string) =>
   expandedIds.includes(nodeId)
@@ -164,6 +169,20 @@ export const DirectoryTreeNav = ({
     composerInputRef.current?.select();
   }, [composerFocusKey]);
 
+  useEffect(() => {
+    if (!accessToastMessage) {
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      setAccessToastMessage(null);
+    }, 4000);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [accessToastMessage]);
+
   const showAccessDeniedToast = () => {
     setAccessToastMessage(directoryActionDisabledReason);
   };
@@ -192,6 +211,11 @@ export const DirectoryTreeNav = ({
   const openEditComposer = (nodeId: string) => {
     if (!canManageDirectories) {
       showAccessDeniedToast();
+      return;
+    }
+
+    if (!onRenameDirectory) {
+      setAccessToastMessage(defaultRenameUnavailableReason);
       return;
     }
 
@@ -227,7 +251,8 @@ export const DirectoryTreeNav = ({
     const normalizedRawName = rawNameFromInput.trim();
     if (
       composer.mode !== 'create' &&
-      normalizedRawName === composer.initialValue.trim()
+      normalizeForCompare(normalizedRawName) ===
+        normalizeForCompare(composer.initialValue)
     ) {
       setComposer(null);
       return;
@@ -262,7 +287,13 @@ export const DirectoryTreeNav = ({
       return;
     }
 
-    onRenameDirectory?.({
+    if (!onRenameDirectory) {
+      setAccessToastMessage(defaultRenameUnavailableReason);
+      setComposer(null);
+      return;
+    }
+
+    onRenameDirectory({
       nodeId: composer.targetNodeId as string,
       name: validation.normalizedName,
     });
@@ -363,6 +394,11 @@ export const DirectoryTreeNav = ({
       return;
     }
 
+    if (!onDeleteDirectory) {
+      setAccessToastMessage(defaultDeleteUnavailableReason);
+      return;
+    }
+
     if (!findNodeContextById(nodes, nodeId)) {
       return;
     }
@@ -375,7 +411,12 @@ export const DirectoryTreeNav = ({
       return;
     }
 
-    onDeleteDirectory?.({ nodeId: pendingDeleteNodeId });
+    if (!onDeleteDirectory) {
+      setAccessToastMessage(defaultDeleteUnavailableReason);
+      return;
+    }
+
+    onDeleteDirectory({ nodeId: pendingDeleteNodeId });
     setPendingDeleteNodeId(null);
   };
 
@@ -392,6 +433,7 @@ export const DirectoryTreeNav = ({
       id: `rename-${node.id}`,
       label: `Rename directory${ownerOnlySuffix}`,
       icon: 'edit',
+      disabled: !onRenameDirectory,
       onSelect: guardManagedAction(() => openEditComposer(node.id)),
     },
     {
@@ -399,6 +441,7 @@ export const DirectoryTreeNav = ({
       label: `Delete directory${ownerOnlySuffix}`,
       icon: 'delete',
       variant: 'destructive',
+      disabled: !onDeleteDirectory,
       onSelect: guardManagedAction(() => openDeleteConfirmation(node.id)),
     },
   ];
@@ -681,3 +724,4 @@ export const DirectoryTreeNav = ({
 };
 
 export type { DirectoryTreeNode } from './directory-tree-nav.utils';
+export type { DirectoryTreeDeleteInput, DirectoryTreeRenameInput };
