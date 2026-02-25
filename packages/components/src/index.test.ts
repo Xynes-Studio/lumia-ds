@@ -161,6 +161,8 @@ import {
   type PaginationProps,
   SideNavItem,
   type SideNavItemProps,
+  DirectoryTreeNav,
+  type DirectoryTreeNode,
   Table,
   TableBody,
   TableCell,
@@ -266,6 +268,7 @@ describe('components index barrel', () => {
     expect(Ticker).toBeDefined();
     expect(Pagination).toBeDefined();
     expect(SideNavItem).toBeDefined();
+    expect(DirectoryTreeNav).toBeDefined();
     expect(Table).toBeDefined();
     expect(TableHeader).toBeDefined();
     expect(TableBody).toBeDefined();
@@ -490,6 +493,7 @@ describe('components index barrel', () => {
     expectTypeOf<SideNavItemProps>().toMatchTypeOf<
       ComponentProps<typeof SideNavItem>
     >();
+    expectTypeOf<DirectoryTreeNode>().toMatchTypeOf<DirectoryTreeNode>();
     expectTypeOf<TableProps>().toMatchTypeOf<ComponentProps<typeof Table>>();
     expectTypeOf<TableColumn>().toMatchTypeOf<TableColumn>();
     expectTypeOf<TableSortDirection>().toMatchTypeOf<TableSortDirection>();
@@ -668,6 +672,10 @@ describe('components index barrel', () => {
     expectTypeOf<ExternalApi.PaginationProps>().toEqualTypeOf<PaginationProps>();
     expectTypeOf<ExternalApi.SideNavItem>().toEqualTypeOf<typeof SideNavItem>();
     expectTypeOf<ExternalApi.SideNavItemProps>().toEqualTypeOf<SideNavItemProps>();
+    expectTypeOf<ExternalApi.DirectoryTreeNav>().toEqualTypeOf<
+      typeof DirectoryTreeNav
+    >();
+    expectTypeOf<ExternalApi.DirectoryTreeNode>().toEqualTypeOf<DirectoryTreeNode>();
     expectTypeOf<ExternalApi.Table>().toEqualTypeOf<typeof Table>();
     expectTypeOf<ExternalApi.TableProps>().toEqualTypeOf<TableProps>();
     expectTypeOf<ExternalApi.TableColumn>().toEqualTypeOf<TableColumn>();

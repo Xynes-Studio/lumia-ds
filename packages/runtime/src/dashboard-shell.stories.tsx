@@ -1,7 +1,9 @@
 /* istanbul ignore file */
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DashboardShell, type DashboardNavItem } from '@lumia-ui/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@lumia-ui/components';
+import type { DirectoryTreeNode } from '@lumia-ui/components';
 
 const navItems: DashboardNavItem[] = [
   { id: 'users', label: 'Users', href: '/dashboard/users', icon: 'users' },
@@ -17,6 +19,29 @@ const navItems: DashboardNavItem[] = [
     href: '/dashboard/audit',
     icon: 'reports',
     badgeCount: 3,
+  },
+];
+
+const directoryNavItems: DashboardNavItem[] = [
+  {
+    id: 'contents',
+    label: 'Contents',
+    href: '/dashboard/contents',
+    icon: 'file-text',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    href: '/dashboard/settings',
+    icon: 'settings',
+  },
+];
+
+const directorySeed: DirectoryTreeNode[] = [
+  {
+    id: 'blogs',
+    label: 'Blogs',
+    children: [{ id: 'guides', label: 'Guides' }],
   },
 ];
 
@@ -143,6 +168,85 @@ export const WorkspaceCreationDisabled: Story = {
       </Card>
     </DashboardShell>
   ),
+};
+
+export const DirectorySectionContents: Story = {
+  render: () => {
+    const [nodes, setNodes] = useState<DirectoryTreeNode[]>(directorySeed);
+    const [expandedIds, setExpandedIds] = useState<string[]>(['blogs']);
+
+    return (
+      <DashboardShell
+        activePath="/dashboard/contents"
+        navItems={directoryNavItems}
+        workspace={{ id: 'ws-1', name: 'Xynes', slug: 'xynes' }}
+        workspaceOptions={[
+          { id: 'ws-1', name: 'Xynes', slug: 'xynes' },
+          { id: 'ws-2', name: 'Lumia', slug: 'lumia' },
+        ]}
+        onWorkspaceSelect={() => undefined}
+        onNavigate={() => undefined}
+        userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+        onLogout={() => undefined}
+        notifications={[]}
+        directorySection={{
+          navItemId: 'contents',
+          rootHref: '/dashboard/contents',
+          nodes,
+          expandedIds,
+          onExpandedIdsChange: setExpandedIds,
+          onCreateDirectory: ({ parentId, name }) => {
+            const nextNode: DirectoryTreeNode = {
+              id: `${Date.now()}`,
+              label: name,
+              children: [],
+            };
+            if (parentId === null) {
+              setNodes((previous) => [...previous, nextNode]);
+              return;
+            }
+
+            const insertNested = (
+              tree: DirectoryTreeNode[],
+            ): DirectoryTreeNode[] =>
+              tree.map((item) => {
+                if (item.id === parentId) {
+                  return {
+                    ...item,
+                    children: [...(item.children ?? []), nextNode],
+                  };
+                }
+
+                if (!item.children?.length) {
+                  return item;
+                }
+
+                return {
+                  ...item,
+                  children: insertNested(item.children),
+                };
+              });
+
+            setNodes((previous) => insertNested(previous));
+          },
+        }}
+      >
+        <Card className="bg-background/80 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">
+              Content directories
+            </CardTitle>
+            <p className="text-2xl font-semibold text-foreground">
+              Nested sidebar tree
+            </p>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Use the plus actions in the sidebar to add nested directories.
+          </CardContent>
+        </Card>
+      </DashboardShell>
+    );
+  },
 };
 
 export const MobileBottomTabsBasic: Story = {

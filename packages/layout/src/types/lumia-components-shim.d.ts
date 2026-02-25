@@ -47,4 +47,11 @@ declare module '@lumia-ui/components' {
   export const TooltipProvider: ComponentLike;
   export const TooltipTrigger: ComponentLike;
   export const SideNavItem: ComponentLike;
+  export type DirectoryTreeNode = {
+    id: string;
+    label: string;
+    href?: string;
+    children?: DirectoryTreeNode[];
+  };
+  export const DirectoryTreeNav: ComponentLike;
 }
