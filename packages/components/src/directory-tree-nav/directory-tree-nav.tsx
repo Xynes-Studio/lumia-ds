@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Icon, type IconId } from '@lumia-ui/icons';
+import { Icon } from '@lumia-ui/icons';
 import { Input } from '../input/input';
 import { cn } from '../lib/utils';
 import {
@@ -16,7 +16,7 @@ type DirectoryTreeCreateInput = {
 export type DirectoryTreeNavProps = {
   rootLabel: string;
   rootHref: string;
-  rootIcon?: IconId;
+  rootIcon?: string;
   rootActive?: boolean;
   activeHref?: string;
   nodes: DirectoryTreeNode[];
@@ -196,7 +196,10 @@ export const DirectoryTreeNav = ({
         {items.map((node) => {
           const hasChildren = Boolean(node.children?.length);
           const isExpanded = expandedSet.has(node.id);
-          const isActive = activeHref === node.href;
+          const isActive =
+            Boolean(node.href) &&
+            Boolean(activeHref) &&
+            activeHref === node.href;
           const rowPadding =
             depth > 0 ? 'ml-3 border-l border-border/60 pl-3' : '';
 

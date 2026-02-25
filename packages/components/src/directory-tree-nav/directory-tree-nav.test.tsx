@@ -46,6 +46,11 @@ describe('DirectoryTreeNav', () => {
       '[data-testid="directory-tree-root-link"]',
     );
     expect(rootLink?.getAttribute('aria-current')).toBe('page');
+    expect(
+      host
+        .querySelector('[data-testid="directory-tree-node-label-blogs"]')
+        ?.getAttribute('aria-current'),
+    ).toBeNull();
     expect(host.textContent).toContain('Blogs');
     expect(host.textContent).toContain('Guides');
     expect(

@@ -778,11 +778,7 @@ export const DashboardShell = ({
                             key={item.id}
                             rootLabel={directorySection.rootLabel ?? item.label}
                             rootHref={safeRootHref}
-                            rootIcon={
-                              (directorySection.rootIcon ?? item.icon) as
-                                | undefined
-                                | string
-                            }
+                            rootIcon={directorySection.rootIcon ?? item.icon}
                             rootActive={isNavItemActive(
                               activePath,
                               item.href,
@@ -1104,11 +1100,7 @@ export const DashboardShell = ({
                     key={item.id}
                     rootLabel={directorySection.rootLabel ?? item.label}
                     rootHref={safeRootHref}
-                    rootIcon={
-                      (directorySection.rootIcon ?? item.icon) as
-                        | undefined
-                        | string
-                    }
+                    rootIcon={directorySection.rootIcon ?? item.icon}
                     rootActive={isNavItemActive(
                       activePath,
                       item.href,
