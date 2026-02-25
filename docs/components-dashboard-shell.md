@@ -89,6 +89,10 @@ type DashboardDirectorySection = {
   expandedIds: string[];
   onExpandedIdsChange: (expandedIds: string[]) => void;
   onCreateDirectory: (input: { parentId: string | null; name: string }) => void;
+  onRenameDirectory?: (input: { nodeId: string; name: string }) => void;
+  onDeleteDirectory?: (input: { nodeId: string }) => void;
+  canManageDirectories?: boolean;
+  directoryActionDisabledReason?: string;
   maxNameLength?: number;
 };
 ```
@@ -100,6 +104,9 @@ Behavior notes:
 - Directory visuals are rendered as a subtree under the configured root row (for example `Contents`) with increasing indentation per depth.
 - Directory rows do not rely on chevrons; click behavior is row-driven (toggle + navigate) for simpler CMS parity.
 - Validation enforces trimmed names, max length, and sibling-level case-insensitive uniqueness.
+- Rename is inline at the same row level (no extra tree line), and `Escape` cancels inline editing.
+- Delete uses a confirmation dialog with breadcrumb context and irreversible-action messaging.
+- When `canManageDirectories` is false, mutating actions stay visible but are disabled and emit an access explanation pop-up.
 
 ## Callback Lifecycle
 

@@ -67,6 +67,10 @@ export type DashboardDirectorySection = {
   expandedIds: string[];
   onExpandedIdsChange: (expandedIds: string[]) => void;
   onCreateDirectory: (input: { parentId: string | null; name: string }) => void;
+  onRenameDirectory?: (input: { nodeId: string; name: string }) => void;
+  onDeleteDirectory?: (input: { nodeId: string }) => void;
+  canManageDirectories?: boolean;
+  directoryActionDisabledReason?: string;
   maxNameLength?: number;
 };
 
@@ -793,6 +797,18 @@ export const DashboardShell = ({
                             onCreateDirectory={
                               directorySection.onCreateDirectory
                             }
+                            onRenameDirectory={
+                              directorySection.onRenameDirectory
+                            }
+                            onDeleteDirectory={
+                              directorySection.onDeleteDirectory
+                            }
+                            canManageDirectories={
+                              directorySection.canManageDirectories
+                            }
+                            directoryActionDisabledReason={
+                              directorySection.directoryActionDisabledReason
+                            }
                             maxNameLength={directorySection.maxNameLength}
                             onNavigate={(href: string) => {
                               if (onNavigate) {
@@ -1111,6 +1127,12 @@ export const DashboardShell = ({
                     expandedIds={directorySection.expandedIds}
                     onExpandedIdsChange={directorySection.onExpandedIdsChange}
                     onCreateDirectory={directorySection.onCreateDirectory}
+                    onRenameDirectory={directorySection.onRenameDirectory}
+                    onDeleteDirectory={directorySection.onDeleteDirectory}
+                    canManageDirectories={directorySection.canManageDirectories}
+                    directoryActionDisabledReason={
+                      directorySection.directoryActionDisabledReason
+                    }
                     maxNameLength={directorySection.maxNameLength}
                     onNavigate={(href: string) => {
                       if (onNavigate) {
