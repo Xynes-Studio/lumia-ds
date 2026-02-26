@@ -20,6 +20,7 @@ import {
   CardSubtitle,
   CardTitle,
   Checkbox,
+  Chip,
   Input,
   Radio,
   Select,
@@ -86,6 +87,19 @@ export function Example() {
       </Card>
 
       <Checkbox label="Subscribe to updates" hint="Get release news via email" />
+
+      <Flex align="center" gap="sm">
+        <Chip>Following</Chip>
+        <Chip
+          toggle
+          active
+          variant="accent"
+          leadingIcon={<span aria-hidden="true">★</span>}
+        >
+          Favorites
+        </Chip>
+        <Chip disabled>Filter</Chip>
+      </Flex>
 
       <Flex direction="col" gap="xs">
         <p className="text-sm font-medium text-foreground">Response time</p>

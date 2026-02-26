@@ -43,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 - Storybook usage: `docs/storybook.md`
 - Table wrapper usage: `docs/components-table.md`
+- Chip usage: `docs/components-chip.md`
 - Pagination usage: `docs/components-pagination.md`
 - Input usage: `docs/components-input.md`
 - Ticker usage: `docs/components-ticker.md`

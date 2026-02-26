@@ -13,6 +13,11 @@ import {
   tagStyles,
   type TagProps,
   type TagVariant,
+  Chip,
+  chipStyles,
+  type ChipProps,
+  type ChipVariant,
+  type ChipSize,
   StatusPill,
   statusPillStyles,
   type StatusPillProps,
@@ -195,6 +200,8 @@ describe('components index barrel', () => {
     expect(badgeStyles.base).toBeDefined();
     expect(Tag).toBeDefined();
     expect(tagStyles.base).toBeDefined();
+    expect(Chip).toBeDefined();
+    expect(chipStyles.base).toBeDefined();
     expect(StatusPill).toBeDefined();
     expect(statusPillStyles.base).toBeDefined();
     expect(Input).toBeDefined();
@@ -292,6 +299,11 @@ describe('components index barrel', () => {
     expectTypeOf<TagVariant>().toEqualTypeOf<
       'default' | 'success' | 'warning' | 'error'
     >();
+    expectTypeOf<ChipProps>().toMatchTypeOf<ComponentProps<typeof Chip>>();
+    expectTypeOf<ChipVariant>().toEqualTypeOf<
+      'neutral' | 'accent' | 'warning'
+    >();
+    expectTypeOf<ChipSize>().toEqualTypeOf<'sm' | 'md'>();
     expectTypeOf<StatusPillProps>().toMatchTypeOf<
       ComponentProps<typeof StatusPill>
     >();
@@ -539,6 +551,10 @@ describe('components index barrel', () => {
     expectTypeOf<typeof ExternalApi.Tag>().toEqualTypeOf<typeof Tag>();
     expectTypeOf<ExternalApi.TagProps>().toEqualTypeOf<TagProps>();
     expectTypeOf<ExternalApi.TagVariant>().toEqualTypeOf<TagVariant>();
+    expectTypeOf<typeof ExternalApi.Chip>().toEqualTypeOf<typeof Chip>();
+    expectTypeOf<ExternalApi.ChipProps>().toEqualTypeOf<ChipProps>();
+    expectTypeOf<ExternalApi.ChipVariant>().toEqualTypeOf<ChipVariant>();
+    expectTypeOf<ExternalApi.ChipSize>().toEqualTypeOf<ChipSize>();
     expectTypeOf<typeof ExternalApi.StatusPill>().toEqualTypeOf<
       typeof StatusPill
     >();
