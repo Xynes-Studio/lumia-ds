@@ -2,6 +2,7 @@ export * from './button/button';
 export * from './badge/badge';
 export * from './avatar/avatar';
 export * from './tag/tag';
+export * from './chip/chip';
 export * from './status-pill/status-pill';
 export * from './input/input';
 export * from './input-group/input-group';
