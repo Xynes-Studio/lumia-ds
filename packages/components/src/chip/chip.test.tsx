@@ -17,6 +17,21 @@ const createTestRoot = () => {
 };
 
 describe('Chip component', () => {
+  it('renders icon by iconName', async () => {
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(<Chip iconName="add">Create</Chip>);
+    });
+
+    const chip = host.querySelector('[data-lumia-chip]');
+    const icon = chip?.querySelector('svg');
+    expect(icon).toBeTruthy();
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
   it('renders with label, icon, and trailing content', async () => {
     const { host, root } = createTestRoot();
 
@@ -107,6 +122,56 @@ describe('Chip component', () => {
     });
 
     expect(onClick).toHaveBeenCalledTimes(0);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('prefers custom icon over iconName', async () => {
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Chip iconName="add" icon={<span data-testid="custom-icon">*</span>}>
+          Favorites
+        </Chip>,
+      );
+    });
+
+    expect(host.querySelector('[data-testid="custom-icon"]')?.textContent).toBe('*');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('normalizes custom icon size classes for sm chips', async () => {
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <Chip size="sm" icon={<svg data-testid="custom-svg" />}>
+          Small
+        </Chip>,
+      );
+    });
+
+    const iconContainer = host.querySelector('[data-testid="custom-svg"]')?.parentElement;
+    expect(iconContainer?.className).toContain('[&>svg]:h-4');
+    expect(iconContainer?.className).toContain('[&>svg]:w-4');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('applies pointer cursor style', async () => {
+    const { host, root } = createTestRoot();
+
+    await act(async () => {
+      root.render(<Chip>Hoverable</Chip>);
+    });
+
+    const chip = host.querySelector('[data-lumia-chip]');
+    expect(chip?.className).toContain('cursor-pointer');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

@@ -36,7 +36,14 @@ export const ActiveAccent: Story = {
 export const WithIcon: Story = {
   args: {
     children: 'Following',
-    leadingIcon: <Users className="h-4 w-4" />,
+    iconName: 'users',
+  },
+};
+
+export const WithCustomIcon: Story = {
+  args: {
+    children: 'Favorites',
+    icon: <Star className="h-4 w-4" />,
   },
 };
 
