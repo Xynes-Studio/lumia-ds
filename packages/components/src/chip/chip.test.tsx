@@ -138,7 +138,9 @@ describe('Chip component', () => {
       );
     });
 
-    expect(host.querySelector('[data-testid="custom-icon"]')?.textContent).toBe('*');
+    expect(host.querySelector('[data-testid="custom-icon"]')?.textContent).toBe(
+      '*',
+    );
 
     await act(async () => root.unmount());
     document.body.removeChild(host);
@@ -155,7 +157,9 @@ describe('Chip component', () => {
       );
     });
 
-    const iconContainer = host.querySelector('[data-testid="custom-svg"]')?.parentElement;
+    const iconContainer = host.querySelector(
+      '[data-testid="custom-svg"]',
+    )?.parentElement;
     expect(iconContainer?.className).toContain('[&>svg]:h-4');
     expect(iconContainer?.className).toContain('[&>svg]:w-4');
 

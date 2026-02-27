@@ -62,7 +62,9 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   const resolvedLeadingIcon =
     icon ??
     leadingIcon ??
-    (iconName ? <Icon name={iconName} size={iconSize} aria-hidden="true" /> : null);
+    (iconName ? (
+      <Icon name={iconName} size={iconSize} aria-hidden="true" />
+    ) : null);
 
   return (
     <button
