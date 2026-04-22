@@ -16,6 +16,11 @@ const FontsConfigConsumer = ({
 };
 
 describe('useFontsConfig', () => {
+  const getResolvedConfig = (config: FontConfig | null): FontConfig => {
+    expect(config).not.toBeNull();
+    return config as unknown as FontConfig;
+  };
+
   it('returns default config when no fonts prop provided', () => {
     let capturedConfig: FontConfig | null = null;
 
@@ -29,9 +34,9 @@ describe('useFontsConfig', () => {
       </EditorProvider>,
     );
 
-    expect(capturedConfig).not.toBeNull();
-    expect(capturedConfig?.allFonts).toBeDefined();
-    expect(capturedConfig?.defaultFontId).toBe('inter');
+    const resolvedConfig = getResolvedConfig(capturedConfig);
+    expect(resolvedConfig.allFonts).toBeDefined();
+    expect(resolvedConfig.defaultFontId).toBe('inter');
   });
 
   it('returns custom config when fonts prop provided', () => {
@@ -63,9 +68,10 @@ describe('useFontsConfig', () => {
       </EditorProvider>,
     );
 
-    expect(capturedConfig).toEqual(customConfig);
-    expect(capturedConfig?.allFonts.length).toBe(2);
-    expect(capturedConfig?.defaultFontId).toBe('custom-font');
+    const resolvedConfig = getResolvedConfig(capturedConfig);
+    expect(resolvedConfig).toEqual(customConfig);
+    expect(resolvedConfig.allFonts.length).toBe(2);
+    expect(resolvedConfig.defaultFontId).toBe('custom-font');
   });
 
   it('custom fonts config is accessible throughout editor tree', () => {
@@ -97,8 +103,9 @@ describe('useFontsConfig', () => {
       </EditorProvider>,
     );
 
-    expect(capturedConfig).toEqual(customConfig);
-    expect(capturedConfig?.allowedFonts).toEqual(['test-font']);
+    const resolvedConfig = getResolvedConfig(capturedConfig);
+    expect(resolvedConfig).toEqual(customConfig);
+    expect(resolvedConfig.allowedFonts).toEqual(['test-font']);
   });
 
   it('throws error when used outside EditorProvider', () => {

@@ -28,6 +28,7 @@ import {
   SlashCommand,
 } from '../components/SlashMenu';
 import { SlashMenuModal } from '../components/SlashMenu/SlashMenuModal';
+import type { SlashMenuModalType } from '../components/SlashMenu/SlashMenuModal';
 import { useMediaContext } from '../EditorProvider';
 import { useSlashMenuState } from '../hooks/useSlashMenuState';
 import { useSlashMediaUpload } from '../hooks/useSlashMediaUpload';
@@ -120,7 +121,7 @@ export function SlashMenuPlugin(): React.ReactElement | null {
 
       // Check if command needs modal UI
       if (command.modalType && command.modalType !== 'none') {
-        openModal(command.modalType, position);
+        openModal(command.modalType as SlashMenuModalType, position);
       } else {
         command.execute(editor);
       }

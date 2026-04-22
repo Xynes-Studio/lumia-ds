@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -53,15 +53,16 @@ describe('InsertPanelPlugin Integration', () => {
     renderEditor();
     await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-    capturedEditor!.update(() => {
-      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant: 'info',
-        title: 'Information',
+    await act(async () => {
+      capturedEditor!.update(() => {
+        capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+          variant: 'info',
+          title: 'Information',
+        });
       });
-    });
 
-    // Wait for update to complete
-    await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
 
     capturedEditor!.read(() => {
       const root = $getRoot();
@@ -74,14 +75,16 @@ describe('InsertPanelPlugin Integration', () => {
     renderEditor();
     await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-    capturedEditor!.update(() => {
-      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant: 'warning',
-        title: 'Warning',
+    await act(async () => {
+      capturedEditor!.update(() => {
+        capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+          variant: 'warning',
+          title: 'Warning',
+        });
       });
-    });
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
 
     capturedEditor!.read(() => {
       const root = $getRoot();
@@ -93,14 +96,16 @@ describe('InsertPanelPlugin Integration', () => {
     renderEditor();
     await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-    capturedEditor!.update(() => {
-      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant: 'success',
-        title: 'Success',
+    await act(async () => {
+      capturedEditor!.update(() => {
+        capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+          variant: 'success',
+          title: 'Success',
+        });
       });
-    });
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
 
     capturedEditor!.read(() => {
       const root = $getRoot();
@@ -112,15 +117,17 @@ describe('InsertPanelPlugin Integration', () => {
     renderEditor();
     await vi.waitFor(() => expect(capturedEditor).not.toBeNull());
 
-    capturedEditor!.update(() => {
-      capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant: 'note',
-        title: 'Note',
-        icon: 'bookmark',
+    await act(async () => {
+      capturedEditor!.update(() => {
+        capturedEditor!.dispatchCommand(INSERT_PANEL_COMMAND, {
+          variant: 'note',
+          title: 'Note',
+          icon: 'bookmark',
+        });
       });
-    });
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
 
     capturedEditor!.read(() => {
       const root = $getRoot();

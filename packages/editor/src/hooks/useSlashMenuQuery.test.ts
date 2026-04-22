@@ -1,13 +1,40 @@
 /**
  * Tests for useSlashMenuQuery hook logic.
  */
-import { describe, it, expect } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { useSlashMenuQuery } from './useSlashMenuQuery';
 import {
   extractQueryWithCursor,
   isSlashStillPresent,
   isSelectionInValidNode,
   getCorrectedSlashIndex,
+  processQueryUpdate,
 } from '../utils/slashMenuUtils';
+import {
+  $getNodeByKey,
+  $getSelection,
+  $isElementNode,
+  $isRangeSelection,
+  $isTextNode,
+} from 'lexical';
+
+vi.mock('lexical', () => ({
+  $getNodeByKey: vi.fn(),
+  $getSelection: vi.fn(),
+  $isElementNode: vi.fn(),
+  $isRangeSelection: vi.fn(),
+  $isTextNode: vi.fn(),
+}));
+
+vi.mock('../utils/slashMenuUtils', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../utils/slashMenuUtils')>();
+  return {
+    ...actual,
+    processQueryUpdate: vi.fn(),
+  };
+});
 
 describe('useSlashMenuQuery - Pure Functions', () => {
   describe('extractQueryWithCursor', () => {
@@ -84,5 +111,114 @@ describe('useSlashMenuQuery - Pure Functions', () => {
     it('should return original offset for text node', () => {
       expect(getCorrectedSlashIndex(false, 5)).toBe(5);
     });
+  });
+});
+
+describe('useSlashMenuQuery hook', () => {
+  const registerUpdateListener = vi.fn();
+  const editor = { registerUpdateListener };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('does not register an update listener when the menu is closed', () => {
+    renderHook(() =>
+      useSlashMenuQuery({
+        editor: editor as never,
+        isOpen: false,
+        triggerNodeKey: 'node-key',
+        triggerOffset: 0,
+        onUpdateQuery: vi.fn(),
+        onClose: vi.fn(),
+      }),
+    );
+
+    expect(registerUpdateListener).not.toHaveBeenCalled();
+  });
+
+  it('closes the menu when processQueryUpdate requests closing', () => {
+    const onClose = vi.fn();
+    const onUpdateQuery = vi.fn();
+    const node = { getKey: () => 'node-key', getTextContent: () => '/t' };
+    ($getNodeByKey as Mock).mockReturnValue(node);
+    ($isElementNode as Mock).mockReturnValue(false);
+    ($isTextNode as Mock).mockReturnValue(true);
+    ($getSelection as Mock).mockReturnValue({
+      anchor: {
+        getNode: () => ({ getKey: () => 'node-key' }),
+        offset: 1,
+      },
+    });
+    ($isRangeSelection as Mock).mockReturnValue(true);
+    (processQueryUpdate as Mock).mockReturnValue({
+      shouldClose: true,
+      shouldUpdate: false,
+      query: '',
+    });
+
+    registerUpdateListener.mockImplementation((handler) => {
+      handler({ editorState: { read: (callback: () => void) => callback() } });
+      return vi.fn();
+    });
+
+    renderHook(() =>
+      useSlashMenuQuery({
+        editor: editor as never,
+        isOpen: true,
+        triggerNodeKey: 'node-key',
+        triggerOffset: 0,
+        onUpdateQuery,
+        onClose,
+      }),
+    );
+
+    expect(onClose).toHaveBeenCalled();
+    expect(onUpdateQuery).not.toHaveBeenCalled();
+  });
+
+  it('updates the query from a text child under an element trigger node', () => {
+    const onClose = vi.fn();
+    const onUpdateQuery = vi.fn();
+    const child = { getTextContent: () => '/image', getKey: () => 'child-key' };
+    const node = { getFirstChild: () => child };
+    ($getNodeByKey as Mock).mockReturnValue(node);
+    ($isElementNode as Mock).mockImplementation(
+      (value: unknown) => value === node,
+    );
+    ($isTextNode as Mock).mockImplementation(
+      (value: unknown) => value === child,
+    );
+    ($getSelection as Mock).mockReturnValue({
+      anchor: {
+        getNode: () => child,
+        offset: 6,
+      },
+    });
+    ($isRangeSelection as Mock).mockReturnValue(true);
+    (processQueryUpdate as Mock).mockReturnValue({
+      shouldClose: false,
+      shouldUpdate: true,
+      query: 'image',
+    });
+
+    registerUpdateListener.mockImplementation((handler) => {
+      handler({ editorState: { read: (callback: () => void) => callback() } });
+      return vi.fn();
+    });
+
+    renderHook(() =>
+      useSlashMenuQuery({
+        editor: editor as never,
+        isOpen: true,
+        triggerNodeKey: 'node-key',
+        triggerOffset: 0,
+        onUpdateQuery,
+        onClose,
+      }),
+    );
+
+    expect(onUpdateQuery).toHaveBeenCalledWith('image');
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

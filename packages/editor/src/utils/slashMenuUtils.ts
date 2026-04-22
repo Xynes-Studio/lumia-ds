@@ -3,6 +3,8 @@
  * These are extracted from SlashMenuPlugin for testability.
  */
 
+import type { SlashMenuModalType } from '../components/SlashMenu/SlashMenuModal';
+
 export interface SlashMenuState {
   isOpen: boolean;
   query: string;
@@ -13,7 +15,7 @@ export interface SlashMenuState {
 
 export interface ModalState {
   isOpen: boolean;
-  type: string | null;
+  type: SlashMenuModalType | null;
   position: { top: number; left: number };
 }
 

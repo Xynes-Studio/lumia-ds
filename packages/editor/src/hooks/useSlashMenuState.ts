@@ -5,6 +5,7 @@ import {
   initialSlashMenuState,
   initialModalState,
 } from '../utils/slashMenuUtils';
+import type { SlashMenuModalType } from '../components/SlashMenu/SlashMenuModal';
 
 export interface UseSlashMenuStateReturn {
   menuState: SlashMenuState;
@@ -16,7 +17,10 @@ export interface UseSlashMenuStateReturn {
   ) => void;
   closeMenu: () => void;
   updateQuery: (query: string) => void;
-  openModal: (type: string, position: { top: number; left: number }) => void;
+  openModal: (
+    type: SlashMenuModalType,
+    position: { top: number; left: number },
+  ) => void;
   closeModal: () => void;
 }
 
@@ -56,7 +60,7 @@ export function useSlashMenuState(): UseSlashMenuStateReturn {
   }, []);
 
   const openModal = useCallback(
-    (type: string, position: { top: number; left: number }) => {
+    (type: SlashMenuModalType, position: { top: number; left: number }) => {
       setModalState({
         isOpen: true,
         type,

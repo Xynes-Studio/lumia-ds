@@ -58,7 +58,7 @@ describe('useSlashMediaUpload', () => {
 
   describe('Media config validation', () => {
     it('should check for upload adapter before processing file', () => {
-      const mediaConfig: EditorMediaConfig | null = null;
+      const mediaConfig = null as EditorMediaConfig | null;
 
       // Without upload adapter, file upload should not proceed
       expect(mediaConfig?.uploadAdapter).toBeUndefined();
@@ -67,9 +67,11 @@ describe('useSlashMediaUpload', () => {
     it('should have upload adapter to process files', () => {
       const mediaConfig: EditorMediaConfig = {
         uploadAdapter: {
-          uploadFile: vi
-            .fn()
-            .mockResolvedValue({ url: 'https://cdn.example.com/file.pdf' }),
+          uploadFile: vi.fn().mockResolvedValue({
+            url: 'https://cdn.example.com/file.pdf',
+            mime: 'application/pdf',
+            size: 1024,
+          }),
         },
       };
 
@@ -80,9 +82,11 @@ describe('useSlashMediaUpload', () => {
       const onUploadStart = vi.fn();
       const mediaConfig: EditorMediaConfig = {
         uploadAdapter: {
-          uploadFile: vi
-            .fn()
-            .mockResolvedValue({ url: 'https://cdn.example.com/file.pdf' }),
+          uploadFile: vi.fn().mockResolvedValue({
+            url: 'https://cdn.example.com/file.pdf',
+            mime: 'application/pdf',
+            size: 1024,
+          }),
         },
         callbacks: { onUploadStart },
       };
@@ -100,9 +104,11 @@ describe('useSlashMediaUpload', () => {
       const onUploadComplete = vi.fn();
       const mediaConfig: EditorMediaConfig = {
         uploadAdapter: {
-          uploadFile: vi
-            .fn()
-            .mockResolvedValue({ url: 'https://cdn.example.com/file.pdf' }),
+          uploadFile: vi.fn().mockResolvedValue({
+            url: 'https://cdn.example.com/file.pdf',
+            mime: 'application/pdf',
+            size: 1024,
+          }),
         },
         callbacks: { onUploadComplete },
       };
@@ -111,7 +117,11 @@ describe('useSlashMediaUpload', () => {
       const file = new File(['content'], 'test.pdf', {
         type: 'application/pdf',
       });
-      const result = { url: 'https://cdn.example.com/file.pdf' };
+      const result = {
+        url: 'https://cdn.example.com/file.pdf',
+        mime: 'application/pdf',
+        size: 1024,
+      };
       mediaConfig.callbacks?.onUploadComplete?.(file, result);
 
       expect(onUploadComplete).toHaveBeenCalledWith(file, result);
@@ -140,9 +150,11 @@ describe('useSlashMediaUpload', () => {
       const onUploadProgress = vi.fn();
       const mediaConfig: EditorMediaConfig = {
         uploadAdapter: {
-          uploadFile: vi
-            .fn()
-            .mockResolvedValue({ url: 'https://cdn.example.com/file.pdf' }),
+          uploadFile: vi.fn().mockResolvedValue({
+            url: 'https://cdn.example.com/file.pdf',
+            mime: 'application/pdf',
+            size: 1024,
+          }),
         },
         callbacks: { onUploadProgress },
       };

@@ -6,6 +6,7 @@ import {
   ImageBlockNode,
   $createImageBlockNode,
 } from '../nodes/ImageBlockNode/ImageBlockNode';
+import { VideoBlockNode, $createVideoBlockNode } from '../nodes/VideoBlockNode';
 import { $getRoot } from 'lexical';
 
 // Mock URL methods
@@ -23,7 +24,7 @@ describe('useMediaUpload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockEditor = createHeadlessEditor({
-      nodes: [ImageBlockNode],
+      nodes: [ImageBlockNode, VideoBlockNode],
       onError: (error) => console.error(error),
     });
 
@@ -168,5 +169,93 @@ describe('useMediaUpload', () => {
       status: 'idle',
       progress: 0,
     });
+  });
+
+  it('tracks progress, exposes retry state, and retries the pending file', async () => {
+    const mockUpload = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockImplementationOnce(async (_file, options) => {
+        options?.onProgress?.(45);
+        return {
+          url: 'https://example.com/retried.jpg',
+          mime: 'image/jpeg',
+          size: 100,
+        };
+      });
+
+    const { result } = renderHook(() =>
+      useMediaUpload({
+        editor: mockEditor,
+        mediaConfig: {
+          uploadAdapter: { uploadFile: mockUpload },
+        },
+        nodeKey,
+        mediaType: 'image',
+      }),
+    );
+
+    const file = new File(['test'], 'retry.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      await result.current.upload(file);
+    });
+
+    expect(result.current.state.status).toBe('error');
+    expect(result.current.canRetry).toBe(true);
+
+    await act(async () => {
+      await result.current.retry();
+    });
+
+    expect(result.current.state.status).toBe('success');
+    expect(result.current.state.progress).toBe(100);
+    expect(mockUpload).toHaveBeenCalledTimes(2);
+  });
+
+  it('handles video uploads and no-op retry when there is no pending file', async () => {
+    let videoNodeKey = '';
+    mockEditor.update(() => {
+      const root = $getRoot();
+      const videoNode = $createVideoBlockNode({
+        src: 'video.mp4',
+        provider: 'html5',
+      });
+      root.append(videoNode);
+      videoNodeKey = videoNode.getKey();
+    });
+
+    const warnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const mockUpload = vi.fn().mockResolvedValue({
+      url: 'https://example.com/video.mp4',
+      mime: 'video/mp4',
+      size: 2048,
+    });
+
+    const { result } = renderHook(() =>
+      useMediaUpload({
+        editor: mockEditor,
+        mediaConfig: {
+          uploadAdapter: { uploadFile: mockUpload },
+        },
+        nodeKey: videoNodeKey,
+        mediaType: 'video',
+      }),
+    );
+
+    await act(async () => {
+      await result.current.retry();
+    });
+
+    expect(warnSpy).toHaveBeenCalledWith('No pending file to retry');
+
+    const file = new File(['video'], 'video.mp4', { type: 'video/mp4' });
+    await act(async () => {
+      await result.current.upload(file);
+    });
+
+    expect(result.current.state.status).toBe('success');
   });
 });

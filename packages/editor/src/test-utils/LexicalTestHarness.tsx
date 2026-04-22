@@ -18,6 +18,7 @@ import {
   $getRoot,
   $createParagraphNode,
   $createTextNode,
+  $isParagraphNode,
 } from 'lexical';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
@@ -156,8 +157,12 @@ export function simulateTyping(
   return new Promise((resolve) => {
     editor.update(() => {
       const root = $getRoot();
-      const paragraph = root.getFirstChild() ?? $createParagraphNode();
-      if (!root.getFirstChild()) {
+      const firstChild = root.getFirstChild();
+      const paragraph =
+        firstChild && $isParagraphNode(firstChild)
+          ? firstChild
+          : $createParagraphNode();
+      if (!firstChild || !$isParagraphNode(firstChild)) {
         root.append(paragraph);
       }
       const textNode = $createTextNode(text);

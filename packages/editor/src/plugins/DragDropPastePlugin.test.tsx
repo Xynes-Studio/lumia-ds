@@ -83,6 +83,23 @@ describe('DragDropPastePlugin', () => {
     (useMediaContext as Mock).mockReturnValue(mockMediaConfig);
   });
 
+  const getRegisteredHandler = (
+    command: typeof DROP_COMMAND | typeof PASTE_COMMAND,
+  ) => {
+    const calls = (mockEditor.registerCommand as Mock).mock.calls as Array<
+      [
+        typeof DROP_COMMAND | typeof PASTE_COMMAND,
+        (event: unknown) => boolean | Promise<boolean>,
+        number,
+      ]
+    >;
+    const call = calls.find((registeredCall) => registeredCall[0] === command);
+    expect(call).toBeDefined();
+    return call?.[1] as unknown as (
+      event: unknown,
+    ) => boolean | Promise<boolean>;
+  };
+
   it('renders nothing', () => {
     const { container } = render(<DragDropPastePlugin />);
     expect(container.firstChild).toBeNull();
@@ -105,10 +122,7 @@ describe('DragDropPastePlugin', () => {
   it('handles drop event with files', async () => {
     render(<DragDropPastePlugin />);
 
-    // Get the registered drop handler
-    const dropHandler = mockEditor.registerCommand.mock.calls.find(
-      (call) => call[0] === DROP_COMMAND,
-    )[1];
+    const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
     const file = new File(['content'], 'test.png', { type: 'image/png' });
     const event = {
@@ -129,9 +143,7 @@ describe('DragDropPastePlugin', () => {
 
   it('ignores drop without files', () => {
     render(<DragDropPastePlugin />);
-    const dropHandler = mockEditor.registerCommand.mock.calls.find(
-      (call) => call[0] === DROP_COMMAND,
-    )[1];
+    const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
     const event = {
       dataTransfer: { files: [] },
@@ -146,9 +158,7 @@ describe('DragDropPastePlugin', () => {
   it('handles paste event with files', async () => {
     render(<DragDropPastePlugin />);
 
-    const pasteHandler = mockEditor.registerCommand.mock.calls.find(
-      (call) => call[0] === PASTE_COMMAND,
-    )[1];
+    const pasteHandler = getRegisteredHandler(PASTE_COMMAND);
 
     const file = new File(['content'], 'test.mp4', { type: 'video/mp4' });
     const event = {
@@ -167,9 +177,7 @@ describe('DragDropPastePlugin', () => {
 
   it('ignores paste without files', () => {
     render(<DragDropPastePlugin />);
-    const pasteHandler = mockEditor.registerCommand.mock.calls.find(
-      (call) => call[0] === PASTE_COMMAND,
-    )[1];
+    const pasteHandler = getRegisteredHandler(PASTE_COMMAND);
 
     const event = {
       clipboardData: { files: [] },
@@ -197,9 +205,7 @@ describe('DragDropPastePlugin', () => {
     it('detects image file type and calls onUploadStart with image type', async () => {
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       const file = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
       const event = {
@@ -218,9 +224,7 @@ describe('DragDropPastePlugin', () => {
     it('detects video file type and calls onUploadStart with video type', async () => {
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       const file = new File(['video content'], 'movie.mp4', {
         type: 'video/mp4',
@@ -241,9 +245,7 @@ describe('DragDropPastePlugin', () => {
     it('detects generic file type and calls onUploadStart with file type', async () => {
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       const file = new File(['pdf content'], 'document.pdf', {
         type: 'application/pdf',
@@ -280,9 +282,7 @@ describe('DragDropPastePlugin', () => {
 
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
       const event = {
@@ -309,9 +309,7 @@ describe('DragDropPastePlugin', () => {
 
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
       const event = {
@@ -343,9 +341,7 @@ describe('DragDropPastePlugin', () => {
 
       render(<DragDropPastePlugin />);
 
-      const dropHandler = mockEditor.registerCommand.mock.calls.find(
-        (call) => call[0] === DROP_COMMAND,
-      )[1];
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
 
       // Create a file that's larger than 1MB
       const largeContent = new Array(2 * 1024 * 1024).fill('a').join('');

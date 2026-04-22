@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { LumiaEditorPrimitive } from './LumiaEditorPrimitive';
-import { vi, describe, it, expect } from 'vitest';
+import { beforeEach, vi, describe, it, expect } from 'vitest';
+
+const mockEditorFocus = vi.fn();
 
 // Mock all child plugins and components to verify they are rendered
+vi.mock('@lexical/react/LexicalComposerContext', () => ({
+  useLexicalComposerContext: () => [{ focus: mockEditorFocus }],
+}));
+
 vi.mock('@lexical/react/LexicalRichTextPlugin', () => ({
   RichTextPlugin: ({ placeholder, contentEditable }: any) => (
     <div data-testid="rich-text-plugin">
@@ -15,11 +21,13 @@ vi.mock('@lexical/react/LexicalRichTextPlugin', () => ({
 }));
 
 vi.mock('@lexical/react/LexicalContentEditable', () => ({
-  ContentEditable: ({ className, 'aria-label': ariaLabel }: any) => (
+  ContentEditable: ({ className, 'aria-label': ariaLabel, ...props }: any) => (
     <div
       data-testid="content-editable"
       className={className}
       aria-label={ariaLabel}
+      contentEditable
+      {...props}
     />
   ),
 }));
@@ -111,6 +119,10 @@ vi.mock('../plugins/DragDropPastePlugin', () => ({
 }));
 
 describe('LumiaEditorPrimitive', () => {
+  beforeEach(() => {
+    mockEditorFocus.mockClear();
+  });
+
   it('renders full editor variant by default', () => {
     render(<LumiaEditorPrimitive />);
 
@@ -142,6 +154,7 @@ describe('LumiaEditorPrimitive', () => {
     );
 
     expect(container.firstChild).toHaveClass('custom-class');
+    expect(container.firstChild).toHaveClass('editor-container--document');
   });
 
   it('renders all core plugins', () => {
@@ -173,5 +186,33 @@ describe('LumiaEditorPrimitive', () => {
       screen.getByTestId('selected-block-tracker-plugin'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('drag-drop-paste-plugin')).toBeInTheDocument();
+  });
+
+  it('focuses the editor when the empty surface is clicked', () => {
+    const { container } = render(<LumiaEditorPrimitive />);
+    const wrapper = container.querySelector('.editor-input-wrapper');
+
+    expect(wrapper).not.toBeNull();
+
+    fireEvent.mouseDown(wrapper as Element);
+
+    expect(mockEditorFocus).toHaveBeenCalledTimes(1);
+  });
+
+  it('adds a focused wrapper state while the editor surface is focused', () => {
+    const { container } = render(<LumiaEditorPrimitive />);
+    const wrapper = container.querySelector('.editor-input-wrapper');
+    const input = screen.getByTestId('content-editable');
+
+    expect(wrapper).not.toBeNull();
+    expect(wrapper).not.toHaveClass('editor-input-wrapper--focused');
+
+    fireEvent.focus(input);
+
+    expect(wrapper).toHaveClass('editor-input-wrapper--focused');
+
+    fireEvent.blur(input);
+
+    expect(wrapper).not.toHaveClass('editor-input-wrapper--focused');
   });
 });

@@ -8,6 +8,7 @@ import { Type, Heading1, List } from 'lucide-react';
 describe('SlashMenu', () => {
   const mockOnSelect = vi.fn();
   const mockOnClose = vi.fn();
+  let scrollIntoViewMock: ReturnType<typeof vi.fn>;
 
   const mockCommands: SlashCommand[] = [
     {
@@ -40,6 +41,11 @@ describe('SlashMenu', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    scrollIntoViewMock = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoViewMock,
+    });
   });
 
   afterEach(() => {
@@ -56,6 +62,29 @@ describe('SlashMenu', () => {
       />,
     );
     expect(container.firstChild).toBeNull();
+  });
+
+  it('does not trap document key events when there are no commands', () => {
+    render(
+      <SlashMenu
+        commands={[]}
+        onSelect={mockOnSelect}
+        onClose={mockOnClose}
+        position={defaultPosition}
+      />,
+    );
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(mockOnSelect).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('renders all commands', () => {
@@ -117,6 +146,7 @@ describe('SlashMenu', () => {
     const options = screen.getAllByRole('option');
     expect(options[0]).toHaveAttribute('aria-selected', 'false');
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(scrollIntoViewMock).toHaveBeenCalledWith({ block: 'nearest' });
   });
 
   it('navigates up with ArrowUp key', () => {
@@ -148,6 +178,28 @@ describe('SlashMenu', () => {
 
     fireEvent.keyDown(document, { key: 'Enter' });
 
+    expect(mockOnSelect).toHaveBeenCalledWith(mockCommands[0]);
+  });
+
+  it('prevents the default Enter behavior while selecting a command', () => {
+    render(
+      <SlashMenu
+        commands={mockCommands}
+        onSelect={mockOnSelect}
+        onClose={mockOnClose}
+        position={defaultPosition}
+      />,
+    );
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
     expect(mockOnSelect).toHaveBeenCalledWith(mockCommands[0]);
   });
 

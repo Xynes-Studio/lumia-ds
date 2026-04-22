@@ -4,6 +4,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
@@ -34,26 +35,63 @@ interface LumiaEditorPrimitiveProps {
   variant?: 'full' | 'compact';
 }
 
+function EditorSurface({ placeholder }: { placeholder: string }) {
+  const [editor] = useLexicalComposerContext();
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  const focusEditor = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rawTarget = event.target;
+    const target =
+      rawTarget instanceof HTMLElement
+        ? rawTarget
+        : rawTarget instanceof Node
+          ? rawTarget.parentElement
+          : null;
+
+    if (
+      target?.closest(
+        '[contenteditable="true"], button, input, textarea, select, a, [role="button"]',
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    editor.focus();
+  };
+
+  return (
+    <div
+      className={`editor-input-wrapper${isFocused ? ' editor-input-wrapper--focused' : ''}`}
+      onMouseDown={focusEditor}
+    >
+      <RichTextPlugin
+        contentEditable={
+          <ContentEditable
+            className="editor-input"
+            aria-label="Rich Text Editor"
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+        }
+        placeholder={<div className="editor-placeholder">{placeholder}</div>}
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+    </div>
+  );
+}
+
 export function LumiaEditorPrimitive({
   placeholder = 'Enter some text...',
   className,
   variant = 'full',
 }: LumiaEditorPrimitiveProps) {
   return (
-    <div className={`editor-container ${className || ''}`}>
+    <div
+      className={`editor-container editor-container--document ${className || ''}`}
+    >
       {variant === 'compact' ? <EditorToolbarCompact /> : <Toolbar />}
-      <div className="editor-input-wrapper">
-        <RichTextPlugin
-          contentEditable={
-            <ContentEditable
-              className="editor-input"
-              aria-label="Rich Text Editor"
-            />
-          }
-          placeholder={<div className="editor-placeholder">{placeholder}</div>}
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-      </div>
+      <EditorSurface placeholder={placeholder} />
       <HistoryPlugin />
       <ListPlugin />
       <TablePlugin />

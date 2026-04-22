@@ -45,7 +45,10 @@ See [RELEASE.md](./RELEASE.md) for the complete release checklist including:
 Before submitting a PR, ensure:
 - [ ] `pnpm lint` passes
 - [ ] `pnpm type-check` passes
-- [ ] `pnpm test` passes with 75% minimum coverage
+- [ ] Use TDD for feature and regression work: red, green, refactor
+- [ ] Package code follows ADR-001 segregation: `src/utils`, `src/hooks`, `src/components`, `src/test-utils`
+- [ ] `pnpm test` passes with 80% minimum coverage target per `docs/ADR-001-testing-standards.md`
+- [ ] `pnpm coverage:all` includes the touched package in the monorepo sweep
 - [ ] Visual tests pass: `pnpm test:visual`
 
 ## Related Documentation
@@ -53,5 +56,6 @@ Before submitting a PR, ensure:
 | Document | Purpose |
 |----------|---------|
 | [RELEASE.md](./RELEASE.md) | Release process for maintainers |
+| [docs/TESTING.md](./docs/TESTING.md) | Global TDD, coverage, and folder-structure guidance |
 | [docs/qa-test-plan.md](./docs/qa-test-plan.md) | QA strategy and testing |
 | [docs/qa-component-checklist.md](./docs/qa-component-checklist.md) | Component QA checklist |

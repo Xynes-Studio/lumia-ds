@@ -212,16 +212,12 @@ describe('FontCombobox', () => {
     document.body.removeChild(host);
   });
 
-  it.skip('renders all fonts when allowedFonts is not set', async () => {
+  it('renders all fonts when allowedFonts is not set', async () => {
     const handleChange = vi.fn();
 
     await act(async () => {
       root.render(
-        <FontCombobox
-          config={mockConfig}
-          value="inter"
-          onChange={handleChange}
-        />,
+        <FontCombobox config={mockConfig} value="" onChange={handleChange} />,
       );
     });
 
@@ -250,7 +246,7 @@ describe('FontCombobox', () => {
     ]);
   });
 
-  it.skip('filters to show only allowedFonts when provided', async () => {
+  it('filters to show only allowedFonts when provided', async () => {
     const configWithRestrictions: FontConfig = {
       ...mockConfig,
       allowedFonts: ['inter', 'roboto'],
@@ -261,7 +257,7 @@ describe('FontCombobox', () => {
       root.render(
         <FontCombobox
           config={configWithRestrictions}
-          value="inter"
+          value=""
           onChange={handleChange}
         />,
       );
@@ -313,7 +309,7 @@ describe('FontCombobox', () => {
       input.value = 'inter';
       Simulate.change(input, {
         target: { value: 'inter' },
-      } as React.ChangeEvent<HTMLInputElement>);
+      } as never);
     });
 
     // Wait for filtered options to appear
@@ -354,7 +350,7 @@ describe('FontCombobox', () => {
       input.value = 'mono';
       Simulate.change(input, {
         target: { value: 'mono' },
-      } as React.ChangeEvent<HTMLInputElement>);
+      } as never);
     });
 
     // Wait for filtered options to appear
@@ -369,11 +365,11 @@ describe('FontCombobox', () => {
     expect(options[0].textContent).toBe('Roboto Mono');
   });
 
-  it.skip('clicking on a font option selects it and fires onChange with correct fontId', async () => {
+  it('clicking on a font option selects it and fires onChange with correct fontId', async () => {
     const handleChange = vi.fn();
 
     const Harness = () => {
-      const [selected, setSelected] = useState('inter');
+      const [selected, setSelected] = useState('');
 
       return (
         <FontCombobox
@@ -435,5 +431,70 @@ describe('FontCombobox', () => {
     ) as HTMLInputElement;
 
     expect(input.value).toBe('Lora');
+  });
+
+  it('renders no results for unmatched queries and uses the custom placeholder', async () => {
+    const handleChange = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <FontCombobox
+          config={mockConfig}
+          value="inter"
+          onChange={handleChange}
+          placeholder="Pick a font"
+        />,
+      );
+    });
+
+    const input = host.querySelector(
+      '[data-testid="font-combobox-input"]',
+    ) as HTMLInputElement;
+
+    expect(input.placeholder).toBe('Pick a font');
+
+    await act(async () => {
+      Simulate.focus(input);
+      input.value = 'zzz';
+      Simulate.change(input, {
+        target: { value: 'zzz' },
+      } as never);
+    });
+
+    await waitFor(async () => {
+      expect(document.body.textContent).toContain('No results');
+    });
+  });
+
+  it('ignores a disallowed selection when allowedFonts is enforced', async () => {
+    const handleChange = vi.fn();
+    const restrictedConfig: FontConfig = {
+      ...mockConfig,
+      allowedFonts: ['inter'],
+    };
+
+    await act(async () => {
+      root.render(
+        <FontCombobox
+          config={restrictedConfig}
+          value="inter"
+          onChange={handleChange}
+        />,
+      );
+    });
+
+    const input = host.querySelector(
+      '[data-testid="font-combobox-input"]',
+    ) as HTMLInputElement;
+
+    await act(async () => {
+      Simulate.focus(input);
+      input.value = 'roboto';
+      Simulate.change(input, {
+        target: { value: 'roboto' },
+      } as never);
+    });
+
+    expect(handleChange).not.toHaveBeenCalled();
   });
 });

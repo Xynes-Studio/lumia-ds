@@ -1,7 +1,6 @@
 {
   "name": "@lumia-ui/cli",
   "version": "0.1.0",
-
   "description": "CLI utilities for Lumia DS",
   "publishConfig": {
     "access": "public"
@@ -33,7 +32,7 @@
     "fs-extra": "^11.3.2",
     "inquirer": "^13.0.2",
     "node-plop": "^0.32.3",
-    "plop": "^4.0.4"
+    "plop": "^4.0.5"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

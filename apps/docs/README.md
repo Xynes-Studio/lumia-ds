@@ -4,8 +4,8 @@ This workspace contains the documentation site for the Lumia Design System, buil
 
 ## Stack
 
-- **Framework**: Next.js 14
-- **Documentation**: Nextra 2.x
+- **Framework**: Next.js 15
+- **Documentation**: Nextra 4.x
 - **Styling**: Tailwind CSS (if configured), Nextra default theme
 - **Deployment**: Static export (`next build && next export` via Nextra)
 
@@ -29,8 +29,8 @@ pnpm build
 lumia docs build
 ```
 
-## structure
+## Structure
 
-- `pages/` - Content files (`.md`, `.mdx`, `.tsx`). File system routing applies.
-- `theme.config.jsx` - Nextra theme configuration.
-- `next.config.js` - Next.js configuration.
+- `app/layout.tsx`: Root Nextra 4 layout wiring for the App Router.
+- `app/page.mdx`: Documentation homepage content.
+- `next.config.mjs`: Next.js + Nextra plugin configuration.

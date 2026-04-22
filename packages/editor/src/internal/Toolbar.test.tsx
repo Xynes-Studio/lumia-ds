@@ -62,18 +62,22 @@ vi.mock('@lumia-ui/components', () => ({
 }));
 
 // Mock Lucide icons
-vi.mock('lucide-react', () => ({
-  Bold: () => <span>BoldIcon</span>,
-  Italic: () => <span>ItalicIcon</span>,
-  Underline: () => <span>UnderlineIcon</span>,
-  Code: () => <span>CodeIcon</span>,
-  Link: () => <span>LinkIcon</span>,
-  Trash2: () => <span>TrashIcon</span>,
-  ExternalLink: () => <span>ExternalLinkIcon</span>,
-  FileCode: () => <span>FileCodeIcon</span>,
-  List: () => <span>ListIcon</span>,
-  ListOrdered: () => <span>ListOrderedIcon</span>,
-}));
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('lucide-react')>();
+  return {
+    ...actual,
+    Bold: () => <span>BoldIcon</span>,
+    Italic: () => <span>ItalicIcon</span>,
+    Underline: () => <span>UnderlineIcon</span>,
+    Code: () => <span>CodeIcon</span>,
+    Link: () => <span>LinkIcon</span>,
+    Trash2: () => <span>TrashIcon</span>,
+    ExternalLink: () => <span>ExternalLinkIcon</span>,
+    FileCode: () => <span>FileCodeIcon</span>,
+    List: () => <span>ListIcon</span>,
+    ListOrdered: () => <span>ListOrderedIcon</span>,
+  };
+});
 
 describe('Toolbar', () => {
   const mockEditor = {

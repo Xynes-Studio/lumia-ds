@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, beforeEach, it, expect, Mock } from 'vitest';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $getNodeByKey } from 'lexical';
+import { $isVideoBlockNode } from './VideoBlockNode';
 
 // Import the component after mocking
 import { VideoBlockInspector } from './VideoBlockInspector';
@@ -140,5 +142,57 @@ describe('VideoBlockInspector', () => {
     fireEvent.change(select, { target: { value: 'vimeo' } });
 
     expect(mockUpdate).toHaveBeenCalled();
+  });
+
+  it('loads video node data from editor state and update listener', () => {
+    const node = {
+      __src: 'https://video.example/start',
+      __provider: 'youtube',
+      __title: 'Initial title',
+    };
+    ($getNodeByKey as Mock).mockReturnValue(node);
+    ($isVideoBlockNode as Mock).mockReturnValue(true);
+    mockRegisterUpdateListener.mockImplementation((listener) => {
+      node.__src = 'https://video.example/updated';
+      node.__provider = 'html5';
+      node.__title = 'Updated title';
+      listener({ editorState: { read: (callback: () => void) => callback() } });
+      return vi.fn();
+    });
+
+    render(<VideoBlockInspector nodeKey="video-123" />);
+
+    expect(screen.getByTestId('video-url-input')).toHaveValue(
+      'https://video.example/updated',
+    );
+    expect(screen.getByTestId('video-provider-select')).toHaveValue('html5');
+    expect(screen.getByTestId('video-title-input')).toHaveValue(
+      'Updated title',
+    );
+  });
+
+  it('updates node methods only when the resolved node is a video block', () => {
+    const setSrc = vi.fn();
+    const setProvider = vi.fn();
+    const setTitle = vi.fn();
+    const node = { setSrc, setProvider, setTitle };
+    ($getNodeByKey as Mock).mockReturnValue(node);
+    ($isVideoBlockNode as Mock).mockReturnValue(true);
+
+    render(<VideoBlockInspector nodeKey="video-123" />);
+
+    fireEvent.change(screen.getByTestId('video-url-input'), {
+      target: { value: 'https://video.example/next' },
+    });
+    fireEvent.change(screen.getByTestId('video-provider-select'), {
+      target: { value: 'loom' },
+    });
+    fireEvent.change(screen.getByTestId('video-title-input'), {
+      target: { value: 'Changed title' },
+    });
+
+    expect(setSrc).toHaveBeenCalledWith('https://video.example/next');
+    expect(setProvider).toHaveBeenCalledWith('loom');
+    expect(setTitle).toHaveBeenCalledWith('Changed title');
   });
 });

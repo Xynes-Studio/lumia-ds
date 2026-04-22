@@ -1,8 +1,14 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { InlineToolbar } from './InlineToolbar';
 import { vi, describe, beforeEach, it, expect, Mock } from 'vitest';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import {
+  $getSelection,
+  $isRangeSelection,
+  FORMAT_TEXT_COMMAND,
+  SELECTION_CHANGE_COMMAND,
+} from 'lexical';
 
 // Mock dependencies
 vi.mock('@lexical/react/LexicalComposerContext', () => ({
@@ -56,6 +62,8 @@ describe('InlineToolbar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useLexicalComposerContext as Mock).mockReturnValue([mockEditor]);
+    ($getSelection as Mock).mockReturnValue(null);
+    ($isRangeSelection as Mock).mockReturnValue(false);
   });
 
   it('returns null when no selection', () => {
@@ -86,6 +94,62 @@ describe('InlineToolbar', () => {
 
     render(<InlineToolbar />);
     expect(mockRegisterCommand).toHaveBeenCalled();
+
+    window.getSelection = originalGetSelection;
+  });
+
+  it('shows the floating toolbar for a non-collapsed DOM selection and dispatches format commands', () => {
+    const originalGetSelection = window.getSelection;
+    window.getSelection = vi.fn(() => ({
+      isCollapsed: false,
+      getRangeAt: () => ({
+        getBoundingClientRect: () => ({ top: 100, left: 50 }),
+      }),
+    })) as () => Selection | null;
+    ($getSelection as Mock).mockReturnValue({
+      hasFormat: (format: string) => format === 'bold',
+    });
+    ($isRangeSelection as Mock).mockReturnValue(true);
+
+    render(<InlineToolbar />);
+
+    const updateListener = mockRegisterUpdateListener.mock
+      .calls[0][0] as (payload: {
+      editorState: { read: (callback: () => void) => void };
+    }) => void;
+    act(() => {
+      updateListener({
+        editorState: {
+          read: (callback) => callback(),
+        },
+      });
+    });
+
+    const selectionCommand = mockRegisterCommand.mock.calls.find(
+      (call) => call[0] === SELECTION_CHANGE_COMMAND,
+    );
+    expect(selectionCommand).toBeDefined();
+
+    act(() => {
+      document.dispatchEvent(new Event('selectionchange'));
+    });
+
+    const buttons = screen.getAllByRole('button');
+    expect(buttons).toHaveLength(2);
+
+    fireEvent.click(buttons[0]);
+    fireEvent.click(buttons[1]);
+
+    expect(mockDispatchCommand).toHaveBeenNthCalledWith(
+      1,
+      FORMAT_TEXT_COMMAND,
+      'bold',
+    );
+    expect(mockDispatchCommand).toHaveBeenNthCalledWith(
+      2,
+      FORMAT_TEXT_COMMAND,
+      'italic',
+    );
 
     window.getSelection = originalGetSelection;
   });

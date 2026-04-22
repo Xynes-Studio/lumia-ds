@@ -48,6 +48,41 @@ interface TableActionMenuProps {
   anchorElem?: HTMLElement;
 }
 
+export interface TableActionMenuLayout {
+  top: number;
+  left: number;
+  placeAbove: boolean;
+}
+
+export function getTableActionMenuLayout(
+  tableRect: Pick<DOMRect, 'top' | 'bottom' | 'left'>,
+  viewportHeight: number,
+  viewportWidth: number,
+): TableActionMenuLayout {
+  const viewportPadding = 8;
+  const verticalOffset = 8;
+  const estimatedMenuHeight = 56;
+  const placeAbove =
+    tableRect.top >= estimatedMenuHeight + verticalOffset + viewportPadding;
+
+  return {
+    top: Math.max(
+      viewportPadding,
+      placeAbove
+        ? tableRect.top - verticalOffset
+        : Math.min(
+            tableRect.bottom + verticalOffset,
+            viewportHeight - viewportPadding,
+          ),
+    ),
+    left: Math.min(
+      Math.max(viewportPadding, tableRect.left),
+      viewportWidth - viewportPadding,
+    ),
+    placeAbove,
+  };
+}
+
 export function TableActionMenuPlugin({
   anchorElem,
 }: TableActionMenuProps): React.ReactNode {
@@ -158,21 +193,22 @@ export function TableActionMenuPlugin({
     return null;
   }
 
-  // Calculate position for the menu
   const tableRect = tableElement.getBoundingClientRect();
-  const containerRect = (anchorElem || document.body).getBoundingClientRect();
-
-  const top = tableRect.top - containerRect.top - 40; // 40px above the table
-  const left = tableRect.left - containerRect.left;
+  const layout = getTableActionMenuLayout(
+    tableRect,
+    window.innerHeight,
+    window.innerWidth,
+  );
 
   const menu = (
     <div
       ref={menuRef}
       className="table-action-menu"
       style={{
-        position: 'absolute',
-        top: `${Math.max(0, top)}px`,
-        left: `${left}px`,
+        position: 'fixed',
+        top: `${layout.top}px`,
+        left: `${layout.left}px`,
+        transform: layout.placeAbove ? 'translateY(-100%)' : undefined,
       }}
     >
       {/* Header Row Toggle */}
@@ -292,10 +328,5 @@ export function TableActionMenuPlugin({
     </div>
   );
 
-  // Render to portal if anchorElem provided, otherwise render in place
-  if (anchorElem) {
-    return createPortal(menu, anchorElem);
-  }
-
-  return menu;
+  return createPortal(menu, anchorElem ?? document.body);
 }

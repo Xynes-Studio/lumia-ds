@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Users, Filter, Star } from 'lucide-react';
+import { Filter, Star } from 'lucide-react';
 import { Chip } from './chip';
 
 const meta = {

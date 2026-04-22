@@ -16,29 +16,45 @@ export function SlashMenu({
 }: SlashMenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
     // Reset selection when commands change
     setSelectedIndex(0);
   }, [commands]);
 
+  useEffect(() => {
+    if (commands.length === 0) {
+      return;
+    }
+
+    const selectedItem = itemRefs.current[selectedIndex];
+    selectedItem?.scrollIntoView({
+      block: 'nearest',
+    });
+  }, [commands.length, selectedIndex]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
+        e.stopPropagation();
         setSelectedIndex((prev) => (prev + 1) % commands.length);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
+        e.stopPropagation();
         setSelectedIndex(
           (prev) => (prev - 1 + commands.length) % commands.length,
         );
       } else if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
+        e.stopPropagation();
         if (commands[selectedIndex]) {
           onSelect(commands[selectedIndex]);
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
+        e.stopPropagation();
         onClose();
       }
     },
@@ -46,14 +62,22 @@ export function SlashMenu({
   );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+    if (commands.length === 0) {
+      return;
+    }
+
+    document.addEventListener('keydown', handleKeyDown, true);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, [handleKeyDown]);
+  }, [commands.length, handleKeyDown]);
 
   // Close menu when clicking outside
   useEffect(() => {
+    if (commands.length === 0) {
+      return;
+    }
+
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         onClose();
@@ -64,7 +88,7 @@ export function SlashMenu({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose]);
+  }, [commands.length, onClose]);
 
   if (commands.length === 0) {
     return null;
@@ -89,9 +113,13 @@ export function SlashMenu({
           return (
             <button
               key={command.name}
+              ref={(node) => {
+                itemRefs.current[index] = node;
+              }}
               className={`slash-menu-item ${index === selectedIndex ? 'slash-menu-item-selected' : ''}`}
               onClick={() => onSelect(command)}
               onMouseEnter={() => setSelectedIndex(index)}
+              type="button"
               role="option"
               aria-selected={index === selectedIndex}
             >

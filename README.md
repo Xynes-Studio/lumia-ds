@@ -42,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Docs and guides
 
 - Storybook usage: `docs/storybook.md`
+- Testing standards: `docs/TESTING.md`
 - Table wrapper usage: `docs/components-table.md`
 - Chip usage: `docs/components-chip.md`
 - Pagination usage: `docs/components-pagination.md`
@@ -58,6 +59,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - Install deps: `pnpm install`
 - Run Storybook: `STORYBOOK_DISABLE_TELEMETRY=1 pnpm storybook`
 - Build packages: `pnpm -r build`
+
+## Engineering standards
+
+- Follow TDD: write a failing test first, make the smallest change to pass it, then refactor.
+- Keep package structure aligned with ADR-001: pure logic in `src/utils`, React hooks in `src/hooks`, UI in `src/components`, shared helpers in `src/test-utils`.
+- Use `pnpm lint`, `pnpm type-check`, and the relevant package `pnpm --filter <pkg> test` command before opening a PR.
+- Use `pnpm coverage:all` for the monorepo coverage sweep; the target is 80% minimum coverage per ADR-001.
 
 ## Resource scaffolding CLI
 

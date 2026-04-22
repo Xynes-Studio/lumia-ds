@@ -1,105 +1,33 @@
-# Testing Guide for Contributors (DS-951)
+# Testing Standards
 
-Global testing standards and contributor guidelines for the Lumia Design System monorepo.
+This document is the developer-facing summary of the testing expectations defined in [ADR-001](./ADR-001-testing-standards.md).
 
-## Overview
+## Required workflow
 
-This monorepo uses a **three-tier testing strategy** to achieve maintainable test coverage. Current global coverage: **75%**.
+All feature work and bug fixes should follow TDD:
 
-See [ADR-001](./ADR-001-testing-standards.md) for decision rationale.
+1. Write or update a failing test that proves the behavior gap.
+2. Make the smallest implementation change that turns the test green.
+3. Refactor only after the test suite is green.
 
-## Quick Reference
+## Coverage target
 
-| What to test | Test type | Target coverage |
-|--------------|-----------|-----------------|
-| Utility functions | Unit (`*.test.ts`) | 100% |
-| Hooks & Plugins | Integration (`*.integration.test.tsx`) | 70% |
-| UI Components | Storybook + play functions | Smoke |
-| User interactions | Interaction (`*.interaction.test.tsx`) | Key flows |
+- Monorepo target: 80% minimum coverage.
+- Pure functions in `src/utils` should aim for 100% coverage.
+- React integrations in `src/hooks`, `src/components`, and plugin code should meet or exceed the package-level 80% target.
 
-## Writing Tests
+## Package structure
 
-### Tier 1: Unit Tests (Pure Functions)
+Keep code segregated by responsibility so tests stay focused and cheap to maintain:
 
-```typescript
-// src/utils/__tests__/formatters.test.ts
-import { formatCurrency } from '../formatters';
-
-describe('formatCurrency', () => {
-  it('should format USD correctly', () => {
-    expect(formatCurrency(1234.56, 'USD')).toBe('$1,234.56');
-  });
-
-  it('should handle zero', () => {
-    expect(formatCurrency(0, 'USD')).toBe('$0.00');
-  });
-});
-```
-
-**Rule**: If logic doesn't need React/DOM context, extract it to `src/utils/`.
-
-### Tier 2: Integration Tests (Components & Hooks)
-
-```typescript
-// src/components/Form.integration.test.tsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Form } from './Form';
-
-describe('Form', () => {
-  it('should submit valid data', async () => {
-    const onSubmit = vi.fn();
-    render(<Form onSubmit={onSubmit} />);
-    
-    await userEvent.type(screen.getByLabelText('Email'), 'test@example.com');
-    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
-    
-    expect(onSubmit).toHaveBeenCalledWith({ email: 'test@example.com' });
-  });
-});
-```
-
-### Tier 3: Storybook Tests
-
-Add `play` functions for interaction testing:
-
-```typescript
-// Button.stories.tsx
-export const Interactive: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button'));
-    await expect(canvas.getByText('Clicked!')).toBeVisible();
-  },
-};
-```
-
-## Best Practices
-
-### Do's ✅
-
-1. **Extract pure logic** from hooks into utility functions
-2. **Use shared test utilities** from `src/test-utils/`
-3. **Name tests clearly**: `should [action] when [condition]`
-4. **One assertion per test** when practical
-5. **Test behavior, not implementation**
-
-### Don'ts ❌
-
-1. **Don't mock heavily** - prefer integration tests with real dependencies
-2. **Don't test private methods** - test through public interface
-3. **Don't snapshot everything** - only stable, visual output
-
-## Running Tests
-
-```bash
-# From monorepo root
-pnpm test                    # Run all tests
-pnpm test --filter=@lumia/*  # Tests for all Lumia packages
-
-# From package directory
-pnpm test                    # Run package tests
-pnpm test:coverage           # With coverage report
+```text
+packages/<package>/
+├── src/
+│   ├── utils/       # Pure functions and transforms
+│   ├── hooks/       # React hooks and state orchestration
+│   ├── components/  # UI and interaction surfaces
+│   ├── plugins/     # Editor/runtime behavior integrations when applicable
+│   └── test-utils/  # Shared harnesses and fixtures
 pnpm storybook:test          # Run Storybook interaction tests
 ```
 

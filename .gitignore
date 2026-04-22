@@ -5,11 +5,14 @@ coverage
 .env
 .env.local
 .turbo
+.pnpm-store
 build
 storybook-static
 **/storybook-static
 .eslintcache
 *.tsbuildinfo
+.ai-logs/
+audit-prod-high.json
 
 # Agent tooling
 .claude/
