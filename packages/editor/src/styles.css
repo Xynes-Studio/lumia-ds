@@ -1,11 +1,80 @@
+:root {
+  --editor-surface-light: #ffffff;
+  --editor-surface-dark: #111827;
+  --editor-surface-subtle-light: #f8fafc;
+  --editor-surface-subtle-dark: #0f172a;
+  --editor-border-light: #e5e7eb;
+  --editor-border-dark: #374151;
+  --editor-text-light: #111827;
+  --editor-text-dark: #e5e7eb;
+  --editor-muted-light: #6b7280;
+  --editor-muted-dark: #9ca3af;
+  --editor-placeholder-light: #9ca3af;
+  --editor-placeholder-dark: #6b7280;
+  --editor-focus-surface-light: rgba(37, 99, 235, 0.04);
+  --editor-focus-surface-dark: rgba(59, 130, 246, 0.18);
+  --editor-code-surface-light: #f3f4f6;
+  --editor-code-surface-dark: #111827;
+  --editor-code-gutter-light: #e5e7eb;
+  --editor-code-gutter-dark: #1f2937;
+  --editor-code-gutter-text-light: #6b7280;
+  --editor-code-gutter-text-dark: #9ca3af;
+  --editor-popover-surface-light: #ffffff;
+  --editor-popover-surface-dark: #0f172a;
+  --editor-popover-border-light: #e5e7eb;
+  --editor-popover-border-dark: #374151;
+  --editor-popover-hover-light: #f3f4f6;
+  --editor-popover-hover-dark: #1f2937;
+  --editor-table-header-light: #f9fafb;
+  --editor-table-header-dark: #1f2937;
+  --editor-table-selected-light: #dbeafe;
+  --editor-table-selected-dark: rgba(59, 130, 246, 0.2);
+  --editor-surface: var(--editor-surface-light);
+  --editor-surface-subtle: var(--editor-surface-subtle-light);
+  --editor-border: var(--editor-border-light);
+  --editor-text: var(--editor-text-light);
+  --editor-muted: var(--editor-muted-light);
+  --editor-placeholder: var(--editor-placeholder-light);
+  --editor-focus-surface: var(--editor-focus-surface-light);
+  --editor-code-surface: var(--editor-code-surface-light);
+  --editor-code-gutter: var(--editor-code-gutter-light);
+  --editor-code-gutter-text: var(--editor-code-gutter-text-light);
+  --editor-popover-surface: var(--editor-popover-surface-light);
+  --editor-popover-border: var(--editor-popover-border-light);
+  --editor-popover-hover: var(--editor-popover-hover-light);
+  --editor-table-header: var(--editor-table-header-light);
+  --editor-table-selected: var(--editor-table-selected-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --editor-surface: var(--editor-surface-dark);
+    --editor-surface-subtle: var(--editor-surface-subtle-dark);
+    --editor-border: var(--editor-border-dark);
+    --editor-text: var(--editor-text-dark);
+    --editor-muted: var(--editor-muted-dark);
+    --editor-placeholder: var(--editor-placeholder-dark);
+    --editor-focus-surface: var(--editor-focus-surface-dark);
+    --editor-code-surface: var(--editor-code-surface-dark);
+    --editor-code-gutter: var(--editor-code-gutter-dark);
+    --editor-code-gutter-text: var(--editor-code-gutter-text-dark);
+    --editor-popover-surface: var(--editor-popover-surface-dark);
+    --editor-popover-border: var(--editor-popover-border-dark);
+    --editor-popover-hover: var(--editor-popover-hover-dark);
+    --editor-table-header: var(--editor-table-header-dark);
+    --editor-table-selected: var(--editor-table-selected-dark);
+  }
+}
+
 .editor-container {
   position: relative;
   line-height: 20px;
-  color: #444;
+  color: var(--editor-text);
   font-weight: 400;
   text-align: left;
   border-radius: 4px;
-  background: #fff;
+  background: var(--editor-surface);
+  border: 1px solid var(--editor-border);
 }
 
 .editor-container--document {
@@ -25,7 +94,7 @@
 
 .editor-input-wrapper--focused {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
-  background: rgba(37, 99, 235, 0.04);
+  background: var(--editor-focus-surface);
 }
 
 .editor-container--document .editor-input-wrapper {
@@ -39,7 +108,8 @@
   min-height: 150px;
   resize: none;
   font-size: 15px;
-  caret-color: #444;
+  caret-color: var(--editor-text);
+  color: var(--editor-text);
   position: relative;
   tab-size: 1;
   border: 0;
@@ -61,7 +131,7 @@
 }
 
 .editor-placeholder {
-  color: #999;
+  color: var(--editor-placeholder);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
@@ -80,7 +150,7 @@
 
 .editor-heading-h1 {
   font-size: 24px;
-  color: #333;
+  color: var(--editor-text);
   font-weight: bold;
   margin: 0 0 12px;
   padding: 0;
@@ -88,7 +158,7 @@
 
 .editor-heading-h2 {
   font-size: 15px;
-  color: #333;
+  color: var(--editor-text);
   font-weight: bold;
   margin: 10px 0;
   padding: 0;
@@ -97,7 +167,7 @@
 
 .editor-heading-h3 {
   font-size: 18px;
-  color: #333;
+  color: var(--editor-text);
   font-weight: 600;
   margin: 8px 0;
   padding: 0;
@@ -106,8 +176,8 @@
 .editor-quote {
   margin: 0 0 0 20px;
   font-size: 15px;
-  color: rgb(101, 103, 107);
-  border-left-color: rgb(206, 208, 212);
+  color: var(--editor-muted);
+  border-left-color: var(--editor-border);
   border-left-width: 4px;
   border-left-style: solid;
   padding-left: 16px;
@@ -151,7 +221,7 @@
 }
 
 .editor-code {
-  background-color: rgb(240, 242, 245);
+  background-color: var(--editor-code-surface);
   font-family: Menlo, Consolas, Monaco, monospace;
   display: block;
   padding: 8px 8px 8px 52px;
@@ -163,17 +233,18 @@
   tab-size: 2;
   overflow-x: auto;
   position: relative;
+  color: var(--editor-text);
 }
 
 .editor-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: #eee;
+  background-color: var(--editor-code-gutter);
   left: 0;
   top: 0;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--editor-border);
   padding: 8px;
-  color: #777;
+  color: var(--editor-code-gutter-text);
   white-space: pre-wrap;
   text-align: right;
   min-width: 25px;
@@ -240,8 +311,8 @@
 
 /* Slash Menu Styles */
 .slash-menu {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--editor-popover-surface);
+  border: 1px solid var(--editor-popover-border);
   border-radius: 8px;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -271,7 +342,7 @@
 
 .slash-menu-item:hover,
 .slash-menu-item-selected {
-  background-color: #f3f4f6;
+  background-color: var(--editor-popover-hover);
 }
 
 .slash-menu-item-icon {
@@ -281,12 +352,12 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  background-color: #f3f4f6;
-  color: #6b7280;
+  background-color: var(--editor-popover-hover);
+  color: var(--editor-muted);
 }
 
 .slash-menu-item-selected .slash-menu-item-icon {
-  background-color: #e5e7eb;
+  background-color: var(--editor-border);
 }
 
 .slash-menu-item-content {
@@ -297,12 +368,12 @@
 .slash-menu-item-label {
   font-size: 14px;
   font-weight: 500;
-  color: #111827;
+  color: var(--editor-text);
 }
 
 .slash-menu-item-description {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--editor-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -318,7 +389,7 @@
 
 .editor-table td,
 .editor-table th {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--editor-border);
   padding: 8px 12px;
   text-align: left;
   vertical-align: top;
@@ -327,13 +398,13 @@
 
 /* Style header cells - Lexical applies editor-table-cell-header class to header cells */
 .editor-table-cell-header {
-  background-color: #f9fafb;
+  background-color: var(--editor-table-header);
   font-weight: 600;
 }
 
 /* Also support th elements for static rendering */
 .editor-table th {
-  background-color: #f9fafb;
+  background-color: var(--editor-table-header);
   font-weight: 600;
 }
 
@@ -344,7 +415,7 @@
 }
 
 .editor-table-cell-selected {
-  background-color: #dbeafe;
+  background-color: var(--editor-table-selected);
 }
 
 .editor-table-cell-resizer {
@@ -369,8 +440,8 @@
   padding: 6px 8px;
   width: max-content;
   max-width: calc(100vw - 16px);
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--editor-popover-surface);
+  border: 1px solid var(--editor-popover-border);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100;
@@ -386,7 +457,7 @@
 .table-action-divider {
   width: 1px;
   height: 24px;
-  background-color: #e5e7eb;
+  background-color: var(--editor-popover-border);
   margin: 0 4px;
 }
 
@@ -402,7 +473,7 @@
 }
 
 .table-action-button:hover {
-  background-color: #f3f4f6;
+  background-color: var(--editor-popover-hover);
 }
 
 .table-action-delete:not(:disabled):hover {

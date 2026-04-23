@@ -149,9 +149,33 @@ describe('DashboardShell', () => {
     expect(host.textContent).toContain('Page content');
     expect(host.textContent).toContain('Users');
     expect(
+      host.querySelector('[data-testid="dashboard-sidebar-scroll-region"]')
+        ?.className,
+    ).toContain('overflow-y-auto');
+    expect(
+      host
+        .querySelector('[data-testid="dashboard-sidebar-scroll-region"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('Sidebar navigation scroll area');
+    expect(
+      host
+        .querySelector('[data-testid="dashboard-sidebar-scroll-region"]')
+        ?.getAttribute('tabindex'),
+    ).toBe('0');
+    expect(
+      host.querySelector('[data-testid="dashboard-main-scroll-frame"]')
+        ?.className,
+    ).toContain('min-h-0');
+    expect(
       host.querySelector('nav[aria-label="Dashboard navigation"]')?.className,
     ).toContain('mt-3');
     expect(host.querySelector('nav svg')).toBeTruthy();
+    expect(
+      host.querySelector('[data-testid="dashboard-sidebar-frame"]')?.className,
+    ).toContain('overflow-hidden');
+    expect(
+      host.querySelector('[data-testid="dashboard-main-frame"]')?.className,
+    ).toContain('overflow-hidden');
 
     const usersLink = host.querySelector('a[href="/dashboard/users"]');
     expect(usersLink?.getAttribute('aria-current')).toBe('page');
@@ -252,6 +276,15 @@ describe('DashboardShell', () => {
       host.querySelector('[data-testid="directory-tree-root-link"]'),
     ).toBeTruthy();
     expect(host.textContent).toContain('Blogs');
+    expect(
+      host.querySelector('[data-testid="dashboard-sidebar-scroll-region"]')
+        ?.className,
+    ).toContain('overflow-y-auto');
+    expect(
+      host
+        .querySelector('[data-testid="dashboard-sidebar-scroll-region"]')
+        ?.getAttribute('tabindex'),
+    ).toBe('0');
 
     await act(async () => {
       host
@@ -331,6 +364,10 @@ describe('DashboardShell', () => {
         ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
+    expect(
+      host.querySelector('[data-testid="dashboard-main-scroll-frame"]')
+        ?.className,
+    ).toContain('min-h-0');
     const mobileMenuSheet = document.body.querySelector(
       '[data-testid="dashboard-mobile-menu-sheet"]',
     );

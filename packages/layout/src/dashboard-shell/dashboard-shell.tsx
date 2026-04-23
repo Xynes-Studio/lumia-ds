@@ -159,7 +159,7 @@ export const DashboardMainSection = ({
   className,
   ...props
 }: DashboardMainSectionProps) => (
-  <section className={cx('h-full w-full', className)} {...props}>
+  <section className={cx('h-full min-h-0 w-full', className)} {...props}>
     {children}
   </section>
 );
@@ -736,9 +736,9 @@ export const DashboardShell = ({
   );
 
   const renderDesktopShell = () => (
-    <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[1400px] flex-col gap-6 lg:flex-row">
+    <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[1400px] flex-col gap-6 lg:h-[calc(100vh-3rem)] lg:flex-row">
       <aside
-        className="w-full transition-all duration-300 ease-in-out lg:w-[var(--dashboard-sidebar-width)]"
+        className="w-full transition-all duration-300 ease-in-out lg:h-full lg:w-[var(--dashboard-sidebar-width)]"
         style={
           {
             '--dashboard-sidebar-width': activeSidebarWidth,
@@ -746,132 +746,144 @@ export const DashboardShell = ({
         }
         aria-label="Dashboard sidebar"
       >
-        <Card className="h-full border-border/60 bg-card/90 shadow-sm">
+        <Card
+          data-testid="dashboard-sidebar-frame"
+          className="h-full overflow-hidden border-border/60 bg-card/90 shadow-sm"
+        >
           <div className="flex h-full flex-col">
             <CardHeader className="pb-5">
               {renderWorkspaceSwitcher(isSidebarCollapsedEffective)}
             </CardHeader>
 
-            <CardContent className="flex flex-1 flex-col gap-6 pt-0">
-              <DashboardSidebarSection>
+            <CardContent className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden pt-0">
+              <DashboardSidebarSection className="min-h-0 flex-1 overflow-hidden">
                 <TooltipProvider>
-                  <nav
-                    aria-label="Dashboard navigation"
-                    className={cx(
-                      'mt-3 space-y-2 transition-all duration-300 ease-in-out',
-                      isSidebarCollapsedEffective && 'space-y-1',
-                    )}
+                  <div
+                    data-testid="dashboard-sidebar-scroll-region"
+                    aria-label="Sidebar navigation scroll area"
+                    tabIndex={0}
+                    className="min-h-0 flex-1 overflow-y-auto pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset"
                   >
-                    {navItems.map((item) => {
-                      const isDirectorySectionItem =
-                        directorySection?.navItemId === item.id;
+                    <nav
+                      aria-label="Dashboard navigation"
+                      className={cx(
+                        'mt-3 space-y-2 transition-all duration-300 ease-in-out',
+                        isSidebarCollapsedEffective && 'space-y-1',
+                      )}
+                    >
+                      {navItems.map((item) => {
+                        const isDirectorySectionItem =
+                          directorySection?.navItemId === item.id;
 
-                      if (
-                        isDirectorySectionItem &&
-                        directorySection &&
-                        !isSidebarCollapsedEffective
-                      ) {
-                        const safeRootHref = isSafeNotificationHref(
-                          directorySection.rootHref,
-                        )
-                          ? directorySection.rootHref
+                        if (
+                          isDirectorySectionItem &&
+                          directorySection &&
+                          !isSidebarCollapsedEffective
+                        ) {
+                          const safeRootHref = isSafeNotificationHref(
+                            directorySection.rootHref,
+                          )
+                            ? directorySection.rootHref
+                            : '#';
+
+                          return (
+                            <DirectoryTreeNav
+                              key={item.id}
+                              rootLabel={
+                                directorySection.rootLabel ?? item.label
+                              }
+                              rootHref={safeRootHref}
+                              rootIcon={directorySection.rootIcon ?? item.icon}
+                              rootActive={isNavItemActive(
+                                activePath,
+                                item.href,
+                                item.exact ?? false,
+                              )}
+                              activeHref={directorySection.activeHref}
+                              nodes={directorySection.nodes}
+                              expandedIds={directorySection.expandedIds}
+                              onExpandedIdsChange={
+                                directorySection.onExpandedIdsChange
+                              }
+                              onCreateDirectory={
+                                directorySection.onCreateDirectory
+                              }
+                              onRenameDirectory={
+                                directorySection.onRenameDirectory
+                              }
+                              onDeleteDirectory={
+                                directorySection.onDeleteDirectory
+                              }
+                              canManageDirectories={
+                                directorySection.canManageDirectories
+                              }
+                              directoryActionDisabledReason={
+                                directorySection.directoryActionDisabledReason
+                              }
+                              maxNameLength={directorySection.maxNameLength}
+                              onNavigate={(href: string) => {
+                                if (onNavigate) {
+                                  onNavigate(href, {
+                                    ...item,
+                                    href,
+                                  });
+                                  return;
+                                }
+
+                                navigateToNavItemHref(href);
+                              }}
+                            />
+                          );
+                        }
+
+                        const safeItemHref = isSafeNotificationHref(item.href)
+                          ? item.href
                           : '#';
-
-                        return (
-                          <DirectoryTreeNav
+                        const navItem = (
+                          <SideNavItem
                             key={item.id}
-                            rootLabel={directorySection.rootLabel ?? item.label}
-                            rootHref={safeRootHref}
-                            rootIcon={directorySection.rootIcon ?? item.icon}
-                            rootActive={isNavItemActive(
+                            label={item.label}
+                            href={safeItemHref}
+                            icon={item.icon}
+                            badgeCount={
+                              isSidebarCollapsedEffective
+                                ? undefined
+                                : item.badgeCount
+                            }
+                            active={isNavItemActive(
                               activePath,
                               item.href,
                               item.exact ?? false,
                             )}
-                            activeHref={directorySection.activeHref}
-                            nodes={directorySection.nodes}
-                            expandedIds={directorySection.expandedIds}
-                            onExpandedIdsChange={
-                              directorySection.onExpandedIdsChange
-                            }
-                            onCreateDirectory={
-                              directorySection.onCreateDirectory
-                            }
-                            onRenameDirectory={
-                              directorySection.onRenameDirectory
-                            }
-                            onDeleteDirectory={
-                              directorySection.onDeleteDirectory
-                            }
-                            canManageDirectories={
-                              directorySection.canManageDirectories
-                            }
-                            directoryActionDisabledReason={
-                              directorySection.directoryActionDisabledReason
-                            }
-                            maxNameLength={directorySection.maxNameLength}
-                            onNavigate={(href: string) => {
-                              if (onNavigate) {
-                                onNavigate(href, {
-                                  ...item,
-                                  href,
-                                });
-                                return;
-                              }
-
-                              navigateToNavItemHref(href);
+                            aria-label={item.label}
+                            className={cx(
+                              'transition-all duration-300 ease-in-out',
+                              isSidebarCollapsedEffective &&
+                                'h-10 w-full justify-center px-2 [&>span.flex-1]:sr-only [&>span.ml-auto]:hidden',
+                            )}
+                            onClick={(event: Event) => {
+                              if (!onNavigate) return;
+                              event.preventDefault();
+                              onNavigate(item.href, item);
                             }}
                           />
                         );
-                      }
 
-                      const safeItemHref = isSafeNotificationHref(item.href)
-                        ? item.href
-                        : '#';
-                      const navItem = (
-                        <SideNavItem
-                          key={item.id}
-                          label={item.label}
-                          href={safeItemHref}
-                          icon={item.icon}
-                          badgeCount={
-                            isSidebarCollapsedEffective
-                              ? undefined
-                              : item.badgeCount
-                          }
-                          active={isNavItemActive(
-                            activePath,
-                            item.href,
-                            item.exact ?? false,
-                          )}
-                          aria-label={item.label}
-                          className={cx(
-                            'transition-all duration-300 ease-in-out',
-                            isSidebarCollapsedEffective &&
-                              'h-10 w-full justify-center px-2 [&>span.flex-1]:sr-only [&>span.ml-auto]:hidden',
-                          )}
-                          onClick={(event: Event) => {
-                            if (!onNavigate) return;
-                            event.preventDefault();
-                            onNavigate(item.href, item);
-                          }}
-                        />
-                      );
+                        if (!isSidebarCollapsedEffective) {
+                          return navItem;
+                        }
 
-                      if (!isSidebarCollapsedEffective) {
-                        return navItem;
-                      }
-
-                      return (
-                        <Tooltip key={item.id}>
-                          <TooltipTrigger asChild>{navItem}</TooltipTrigger>
-                          <TooltipContent side="right">
-                            {item.label}
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    })}
-                  </nav>
+                        return (
+                          <Tooltip key={item.id}>
+                            <TooltipTrigger asChild>{navItem}</TooltipTrigger>
+                            <TooltipContent side="right">
+                              {item.label}
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </nav>
+                  </div>
                 </TooltipProvider>
               </DashboardSidebarSection>
 
@@ -956,11 +968,17 @@ export const DashboardShell = ({
 
       <main
         id="main-content"
-        className="w-full flex-1"
+        className="flex min-h-0 w-full flex-1"
         aria-label="Dashboard main content"
       >
-        <Card className="h-full w-full border-border/70 bg-card/90 shadow-sm">
-          <CardContent className="h-full p-6 lg:p-8">
+        <Card
+          data-testid="dashboard-main-frame"
+          className="flex h-full min-h-0 w-full flex-col overflow-hidden border-border/70 bg-card/90 shadow-sm"
+        >
+          <CardContent
+            data-testid="dashboard-main-scroll-frame"
+            className="flex min-h-0 flex-1 flex-col p-6 lg:p-8"
+          >
             <DashboardMainSection>{children}</DashboardMainSection>
           </CardContent>
         </Card>
@@ -969,14 +987,20 @@ export const DashboardShell = ({
   );
 
   const renderMobileShell = () => (
-    <div className="relative mx-auto min-h-[calc(100vh-3rem)] w-full max-w-[1400px] pb-24">
+    <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[1400px] flex-col pb-24">
       <main
         id="main-content"
-        className="w-full"
+        className="flex min-h-0 w-full flex-1"
         aria-label="Dashboard main content"
       >
-        <Card className="h-full w-full border-border/70 bg-card/90 shadow-sm">
-          <CardContent className="h-full p-4 sm:p-6">
+        <Card
+          data-testid="dashboard-main-frame"
+          className="flex h-full min-h-0 w-full flex-col overflow-hidden border-border/70 bg-card/90 shadow-sm"
+        >
+          <CardContent
+            data-testid="dashboard-main-scroll-frame"
+            className="flex min-h-0 flex-1 flex-col p-4 sm:p-6"
+          >
             <DashboardMainSection>{children}</DashboardMainSection>
           </CardContent>
         </Card>
