@@ -3,12 +3,27 @@ import type {
   ElementRef,
   MutableRefObject,
 } from 'react';
-import { createContext, forwardRef, useContext, useRef } from 'react';
+import {
+  createContext,
+  forwardRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '../lib/utils';
+import {
+  getDialogOverlayBackdrop,
+  resolveDialogTheme,
+  type DialogTheme,
+} from './dialog-theme';
 
 export type DialogProps = DialogPrimitive.DialogProps;
 export type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
+
+const DIALOG_OVERLAY_Z_CLASS = 'z-[200]';
+const DIALOG_CONTENT_Z_CLASS = 'z-[210]';
 
 const DialogInternalContext =
   createContext<MutableRefObject<HTMLElement | null> | null>(null);
@@ -65,22 +80,57 @@ export const DialogTrigger = forwardRef<
 
 type DialogOverlayProps = DialogPrimitive.DialogOverlayProps;
 
+const useDialogOverlayBackdrop = () => {
+  const [theme, setTheme] = useState<DialogTheme>(() =>
+    resolveDialogTheme(
+      typeof document === 'undefined' ? null : document.documentElement,
+    ),
+  );
+
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const target = document.documentElement;
+    const updateTheme = () => {
+      setTheme(resolveDialogTheme(target));
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(target, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class'],
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return getDialogOverlayBackdrop(theme);
+};
+
 const DialogOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   DialogOverlayProps
 >(function DialogOverlay({ className, ...props }, ref) {
+  const overlayBackdrop = useDialogOverlayBackdrop();
+
   return (
-    <DialogPrimitive.Close asChild>
-      <DialogPrimitive.Overlay
-        ref={ref}
-        data-lumia-dialog-overlay
-        className={cn(
-          'fixed inset-0 z-40 bg-foreground/60 backdrop-blur-sm',
-          className,
-        )}
-        {...props}
-      />
-    </DialogPrimitive.Close>
+    <DialogPrimitive.Overlay
+      ref={ref}
+      data-lumia-dialog-overlay
+      style={{ backgroundColor: overlayBackdrop }}
+      className={cn(
+        'fixed inset-0 backdrop-blur-sm',
+        DIALOG_OVERLAY_Z_CLASS,
+        className,
+      )}
+      {...props}
+    />
   );
 });
 
@@ -99,7 +149,8 @@ export const DialogContent = forwardRef<
         ref={ref}
         data-lumia-dialog-content
         className={cn(
-          'fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-5 rounded-lg border border-border bg-background p-6 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          'fixed left-1/2 top-1/2 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-5 rounded-lg border border-border bg-background p-6 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          DIALOG_CONTENT_Z_CLASS,
           className,
         )}
         aria-modal="true"

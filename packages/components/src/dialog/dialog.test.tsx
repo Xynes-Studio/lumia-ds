@@ -1,6 +1,7 @@
-import { act } from 'react';
+import { act, createRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { Button } from '../button/button';
 import {
   Dialog,
@@ -51,6 +52,58 @@ const DialogFixture = () => (
 );
 
 describe('Dialog', () => {
+  it('forwards object refs through DialogTrigger', async () => {
+    const { root, host } = createTestRoot();
+    const triggerRef = createRef<HTMLButtonElement>();
+
+    await act(async () => {
+      root.render(
+        <Dialog>
+          <DialogTrigger ref={triggerRef} asChild>
+            <Button type="button">Open dialog</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Dialog title</DialogTitle>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>,
+      );
+    });
+
+    const trigger = host.querySelector('button');
+    expect(triggerRef.current).toBe(trigger);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('forwards function refs through DialogTrigger', async () => {
+    const { root, host } = createTestRoot();
+    const triggerRef = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <Dialog>
+          <DialogTrigger ref={triggerRef} asChild>
+            <Button type="button">Open dialog</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Dialog title</DialogTitle>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>,
+      );
+    });
+
+    const trigger = host.querySelector('button');
+    expect(triggerRef).toHaveBeenCalledWith(trigger);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
   it('opens from trigger and closes with close button', async () => {
     const { root, host } = createTestRoot();
 
@@ -97,7 +150,7 @@ describe('Dialog', () => {
     document.body.removeChild(host);
   });
 
-  it('closes on overlay click and Escape press', async () => {
+  it('closes on overlay pointer down and Escape press', async () => {
     const { root, host } = createTestRoot();
 
     await act(async () => {
@@ -115,13 +168,19 @@ describe('Dialog', () => {
     expect(overlay).toBeTruthy();
 
     await act(async () => {
-      overlay?.click();
+      overlay?.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true, button: 0 }),
+      );
+      overlay?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, button: 0 }),
+      );
     });
-    await act(async () => {});
 
-    expect(document.body.querySelector('[data-lumia-dialog-overlay]')).toBe(
-      null,
-    );
+    await waitFor(() => {
+      expect(document.body.querySelector('[data-lumia-dialog-overlay]')).toBe(
+        null,
+      );
+    });
     expect(document.activeElement).toBe(trigger);
 
     await act(async () => {
@@ -143,6 +202,90 @@ describe('Dialog', () => {
       null,
     );
     expect(document.activeElement).toBe(trigger);
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('uses a darker theme-aware overlay backdrop', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<DialogFixture />);
+    });
+
+    const trigger = host.querySelector('button');
+
+    await act(async () => {
+      trigger?.click();
+    });
+
+    const overlay = document.body.querySelector(
+      '[data-lumia-dialog-overlay]',
+    ) as HTMLElement | null;
+    expect(overlay?.style.backgroundColor).toBe('rgba(9, 9, 11, 0.78)');
+
+    await act(async () => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    });
+
+    await waitFor(() => {
+      expect(overlay?.style.backgroundColor).toBe('rgba(0, 0, 0, 0.82)');
+    });
+
+    document.documentElement.removeAttribute('data-theme');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('renders the overlay and content above transient editor chrome layers', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<DialogFixture />);
+    });
+
+    const trigger = host.querySelector('button');
+
+    await act(async () => {
+      trigger?.click();
+    });
+
+    const overlay = document.body.querySelector(
+      '[data-lumia-dialog-overlay]',
+    ) as HTMLElement | null;
+    const content = document.body.querySelector(
+      '[data-lumia-dialog-content]',
+    ) as HTMLElement | null;
+
+    expect(overlay?.className).toContain('z-[200]');
+    expect(content?.className).toContain('z-[210]');
+
+    await act(async () => root.unmount());
+    document.body.removeChild(host);
+  });
+
+  it('falls back to the dark html class when data-theme is absent', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(<DialogFixture />);
+    });
+
+    document.documentElement.classList.add('dark');
+    const trigger = host.querySelector('button');
+
+    await act(async () => {
+      trigger?.click();
+    });
+
+    const overlay = document.body.querySelector(
+      '[data-lumia-dialog-overlay]',
+    ) as HTMLElement | null;
+    expect(overlay?.style.backgroundColor).toBe('rgba(0, 0, 0, 0.82)');
+
+    document.documentElement.classList.remove('dark');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

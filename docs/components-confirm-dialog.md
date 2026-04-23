@@ -44,3 +44,4 @@ export function DeleteProjectButton() {
 - Use the `useConfirmDialog` hook for programmatic control (`openDialog`, `closeDialog`, and `dialogProps` for the component).
 - The cancel action uses the outline button style for better contrast parity in light and dark themes.
 - When no description is provided, a screen-reader-only fallback description is rendered to preserve alert-dialog accessibility semantics.
+- Dialog overlay/content stacking is owned by the shared `Dialog` primitive and must stay above full-screen app shells and transient editor chrome such as floating table toolbars; consumer apps should not patch this with local z-index overrides.
