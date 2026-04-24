@@ -1,3 +1,5 @@
+'use client';
+
 export * from './button/button';
 export * from './badge/badge';
 export * from './avatar/avatar';

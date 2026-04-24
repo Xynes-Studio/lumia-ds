@@ -310,7 +310,10 @@ export const TimePicker = ({
                     data-value={option.value}
                     aria-selected={isSelected}
                     className={cn(
-                      'flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm transition',
+                      'flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm transition',
+                      format === '12h'
+                        ? 'justify-between gap-3'
+                        : 'justify-start',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-muted/40',
                       isSelected
                         ? 'bg-primary text-secondary'
@@ -324,9 +327,11 @@ export const TimePicker = ({
                     }
                   >
                     <span>{option.label}</span>
-                    <span className="text-xs text-muted-foreground ">
-                      {formatTimeValue(option)}
-                    </span>
+                    {format === '12h' ? (
+                      <span className="text-xs text-muted-foreground ">
+                        {formatTimeValue(option)}
+                      </span>
+                    ) : null}
                   </button>
                 );
               })}

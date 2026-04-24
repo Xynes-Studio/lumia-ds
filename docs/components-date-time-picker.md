@@ -50,6 +50,8 @@ const [date, setDate] = useState<Date>();
 - Opens a Popover listbox of time options; arrow keys move, Enter/Space selects, Escape closes.
 - Clicking an option or pressing Enter selects and closes. “Clear” link resets the value.
 - List scrolls the active/selected option into view on open.
+- In `24h` mode, each option renders a single canonical value such as `14:30`.
+- In `12h` mode, each option renders the friendly label plus a trailing `24h` reference, for example `2:30 PM` with `14:30`.
 
 ### Examples
 ```tsx
@@ -80,4 +82,3 @@ const [meeting, setMeeting] = useState<Date | undefined>(
 - Triggers manage `aria-haspopup="dialog"` and `aria-expanded`; focus returns to trigger on close.
 - DatePicker uses the day-grid roles from react-day-picker; keyboard users can move with arrows and select with Enter/Space.
 - TimePicker exposes `role="listbox"`/`role="option"` and supports arrow key movement plus Enter/Space selection; Escape closes.
-*** End Patchниценторы to=functions.apply_patch fiersjson## Test Output Reasoning  
