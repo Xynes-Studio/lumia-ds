@@ -78,6 +78,33 @@ describe('notification grouping helpers', () => {
     expect(getNotificationGroupLabel(yesterday, now)).toBe('Yesterday');
   });
 
+  it('accepts consumer-provided notification date group labels', () => {
+    const now = new Date('2026-02-12T12:00:00.000Z');
+    const yesterday = new Date('2026-02-11T08:00:00.000Z');
+    const older = new Date('2026-02-10T08:00:00.000Z');
+
+    expect(
+      getNotificationGroupLabel(yesterday, now, {
+        today: '[Today]',
+        yesterday: '[Yesterday]',
+        date: (date) => `[${date.toISOString().slice(0, 10)}]`,
+      }),
+    ).toBe('[Yesterday]');
+
+    const groups = groupNotificationsByDate(
+      [{ id: 'older', createdAt: older.toISOString() }],
+      now,
+      (date, currentNow) =>
+        getNotificationGroupLabel(date, currentNow, {
+          today: '[Today]',
+          yesterday: '[Yesterday]',
+          date: (value) => `[${value.toISOString().slice(0, 10)}]`,
+        }),
+    );
+
+    expect(groups[0]?.label).toBe('[2026-02-10]');
+  });
+
   it('groups and sorts notifications by createdAt desc', () => {
     const now = new Date('2026-02-12T12:00:00.000Z');
     const notifications = [

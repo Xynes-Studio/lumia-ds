@@ -636,6 +636,192 @@ describe('DashboardShell', () => {
     host.remove();
   });
 
+  it('accepts consumer-supplied shell labels for copy and accessible names', async () => {
+    setViewportWidth(700);
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/users"
+          navItems={navItems}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          onCreateWorkspace={vi.fn()}
+          userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+          notifications={[
+            {
+              id: 'n-custom',
+              title: 'Deploy done',
+              createdAt: createRelativeIso(0, 0),
+              unread: true,
+            },
+            {
+              id: 'n-yesterday',
+              title: 'Invite sent',
+              createdAt: createRelativeIso(1, 0),
+              unread: false,
+            },
+          ]}
+          labels={{
+            navigation: {
+              mainContent: '[Main work area]',
+              sidebarScrollArea: '[Primary navigation scroller]',
+              dashboardNavigation: '[Workspace admin navigation]',
+              mobileDashboardNavigation: '[Mobile workspace navigation]',
+              mobileMenu: '[More]',
+              openMobileMenu: '[Open more navigation]',
+            },
+            workspace: {
+              trigger: '[Switch workspace]',
+              currentSection: '[Current context]',
+              currentBadge: '[Active]',
+              switchToSection: '[Move to]',
+              createAction: '[Create workspace]',
+              createUnavailableAction: '[Workspace creation blocked]',
+            },
+            profile: {
+              trigger: '[Open account menu]',
+              profileAction: '[Profile settings]',
+              logoutAction: '[Sign out]',
+            },
+            notifications: {
+              open: '[Open activity]',
+              tab: '[Activity]',
+              title: (count) => `[Activity ${count}]`,
+              empty: '[No activity]',
+              list: '[Activity list]',
+              todayGroup: '[Today group]',
+              yesterdayGroup: '[Yesterday group]',
+              dateGroup: (date) => `[Date group ${date.getFullYear()}]`,
+              unreadCount: (count) => `[${count} unread activity items]`,
+              delete: (notification) => `[Dismiss ${notification.title}]`,
+            },
+          }}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+
+    expect(host.querySelector('main')?.getAttribute('aria-label')).toBe(
+      '[Main work area]',
+    );
+    expect(
+      host.querySelector('[data-testid="dashboard-mobile-notifications-tab"]')
+        ?.textContent,
+    ).toContain('[Activity]');
+    expect(
+      host
+        .querySelector('[data-testid="dashboard-mobile-notifications-tab"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('[Open activity]');
+    expect(
+      host
+        .querySelector('[data-testid="dashboard-mobile-menu-tab"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('[Open more navigation]');
+    expect(
+      host.querySelector('[data-testid="dashboard-mobile-menu-tab"]')
+        ?.textContent,
+    ).toContain('[More]');
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="dashboard-mobile-menu-tab"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await flushTimers();
+
+    const mobileMenuSheet = document.body.querySelector(
+      '[data-testid="dashboard-mobile-menu-sheet"]',
+    );
+    expect(
+      mobileMenuSheet?.querySelector('nav')?.getAttribute('aria-label'),
+    ).toBe('[Mobile workspace navigation]');
+
+    const workspaceTrigger = document.body.querySelector(
+      '[data-testid="dashboard-workspace-trigger"]',
+    );
+    expect(workspaceTrigger?.getAttribute('aria-label')).toBe(
+      '[Switch workspace]',
+    );
+
+    await act(async () => {
+      workspaceTrigger?.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          pointerType: 'mouse',
+        }),
+      );
+      workspaceTrigger?.dispatchEvent(
+        new MouseEvent('click', { bubbles: true }),
+      );
+    });
+
+    expect(document.body.textContent).toContain('[Current context]');
+    expect(document.body.textContent).toContain('[Active]');
+    expect(document.body.textContent).toContain('[Move to]');
+    expect(document.body.textContent).toContain('[Create workspace]');
+
+    const profileTrigger = document.body.querySelector(
+      '[data-testid="dashboard-profile-trigger"]',
+    );
+    expect(profileTrigger?.getAttribute('aria-label')).toBe(
+      '[Open account menu]',
+    );
+
+    await act(async () => {
+      profileTrigger?.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          pointerType: 'mouse',
+        }),
+      );
+      profileTrigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(document.body.textContent).toContain('[Profile settings]');
+    expect(document.body.textContent).toContain('[Sign out]');
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="dashboard-mobile-notifications-tab"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await flushTimers();
+
+    expect(
+      document.body.querySelector(
+        '[data-testid="dashboard-mobile-notification-title"]',
+      )?.textContent,
+    ).toBe('[Activity 1]');
+    expect(document.body.textContent).toContain('[Today group]');
+    expect(document.body.textContent).toContain('[Yesterday group]');
+    expect(
+      document.body
+        .querySelector(
+          '[data-testid="dashboard-notification-group-[Today group]"]',
+        )
+        ?.getAttribute('aria-label'),
+    ).toBe('[Today group]');
+    expect(
+      document.body
+        .querySelector('[data-testid="dashboard-notification-delete-n-custom"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('[Dismiss Deploy done]');
+    expect(
+      document.body
+        .querySelector('[data-testid="dashboard-mobile-notification-badge"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('[1 unread activity items]');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
   it('does not auto navigate for unsafe deep links', async () => {
     const { root, host } = createTestRoot();
     const onNotificationNavigate = vi.fn();

@@ -43,6 +43,9 @@ import {
 - `isSidebarCollapsed` (desktop manual collapse).
 - `userMenu`, `onProfileOpen`, `onLogout`.
 - `directorySection` (optional nested directory tree for one nav item).
+- `labels` for product-copy-neutral shell text and accessible labels. Consumers
+  own translated copy for workspace switching, profile actions, notifications,
+  notification date groups, mobile navigation, and shell landmarks.
 
 Notification props:
 - `notifications`.
@@ -146,6 +149,8 @@ Mobile mutual exclusivity:
 - Bottom tabs expose explicit labels.
 - Mobile sheets use dialog semantics from DS `Drawer` primitives (`Drawer`, `DrawerHeader`, `DrawerTitle`).
 - Delete actions are keyboard accessible and labeled.
+- Notification date-group headings are consumer-labelable so visible text and
+  section `aria-label`s can come from app catalogs.
 
 ## Legacy Compatibility Note
 
@@ -161,6 +166,8 @@ Mobile mutual exclusivity:
 1. Resolve active path in app (`usePathname` or router state).
 2. Pass navigation handlers through `onNavigate`.
 3. Wire workspace/profile/logout/notification callbacks in app services.
+4. Pass app-local translated strings and locale-aware date formatters through
+   `labels`; Lumia DS keeps only backwards-compatible English defaults.
 
 ### Segregation and Folder Structure
 

@@ -71,6 +71,56 @@ export function AdminLayout() {
 
 All components accept standard `div` props (`className`, `style`, etc.) for easy styling overrides.
 
+### Dashboard shell labels and product copy
+
+`DashboardShell` is shared by Xynes apps, but Lumia DS does not own product
+copy or translations. Consumers should pass app-local, translated copy through
+the `labels` prop for workspace switching, profile actions, notification
+surfaces, mobile navigation, and landmark/accessibility labels.
+
+```tsx
+import { DashboardShell } from '@lumia-ui/layout';
+
+<DashboardShell
+    activePath="/dashboard/apps"
+    navItems={navItems}
+    workspace={workspace}
+    workspaceOptions={workspaceOptions}
+    onWorkspaceSelect={selectWorkspace}
+    userMenu={userMenu}
+    onLogout={logout}
+    labels={{
+        workspace: {
+            trigger: t('shell.workspace.trigger'),
+            currentSection: t('shell.workspace.currentSection'),
+            createAction: t('shell.workspace.createAction'),
+        },
+        profile: {
+            trigger: t('shell.profile.trigger'),
+            profileAction: t('shell.profile.profileAction'),
+            logoutAction: t('shell.profile.logoutAction'),
+        },
+        notifications: {
+            open: t('shell.notifications.open'),
+            tab: t('shell.notifications.tab'),
+            title: (count) => t('shell.notifications.title', { count }),
+            todayGroup: t('shell.notifications.groups.today'),
+            yesterdayGroup: t('shell.notifications.groups.yesterday'),
+            dateGroup: (date) => dateFormatter.format(date),
+            delete: (notification) =>
+                t('shell.notifications.delete', { title: notification.title }),
+        },
+    }}
+>
+    {children}
+</DashboardShell>;
+```
+
+Backwards-compatible English defaults are provided so existing consumers do not
+break, but new or migrated apps should supply labels from their own catalogs.
+Do not pass raw HTML strings. Rich product copy should be composed by the app
+before it reaches Lumia components.
+
 ### Stacked detail pages
 
 ```tsx

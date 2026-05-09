@@ -30,6 +30,7 @@ import {
 } from '@lumia-ui/components';
 import {
   getFallbackInitials,
+  getNotificationGroupLabel,
   getNotificationTimeLabel,
   getUnreadNotificationIds,
   groupNotificationsByDate,
@@ -95,6 +96,51 @@ export type DashboardNotification = {
   deepLinkRel?: string;
 };
 
+export type DashboardShellLabels = {
+  navigation?: {
+    mainContent?: string;
+    sidebar?: string;
+    sidebarScrollArea?: string;
+    dashboardNavigation?: string;
+    mobileDashboardNavigation?: string;
+    mobileMenu?: string;
+    openMobileMenu?: string;
+  };
+  workspace?: {
+    trigger?: string;
+    fallbackName?: string;
+    currentSection?: string;
+    currentBadge?: string;
+    switchToSection?: string;
+    createAction?: string;
+    createUnavailableAction?: string;
+  };
+  profile?: {
+    trigger?: string;
+    profileAction?: string;
+    logoutAction?: string;
+  };
+  notifications?: {
+    open?: string;
+    tab?: string;
+    title?: (unreadCount: number) => string;
+    empty?: string;
+    list?: string;
+    todayGroup?: string;
+    yesterdayGroup?: string;
+    dateGroup?: (date: Date) => string;
+    unreadCount?: (unreadCount: number) => string;
+    delete?: (notification: DashboardNotification) => string;
+  };
+};
+
+type DashboardShellResolvedLabels = {
+  navigation: Required<NonNullable<DashboardShellLabels['navigation']>>;
+  workspace: Required<NonNullable<DashboardShellLabels['workspace']>>;
+  profile: Required<NonNullable<DashboardShellLabels['profile']>>;
+  notifications: Required<NonNullable<DashboardShellLabels['notifications']>>;
+};
+
 export type DashboardShellProps = {
   activePath: string;
   navItems: DashboardNavItem[];
@@ -137,6 +183,7 @@ export type DashboardShellProps = {
   mobileBottomSheetMaxHeight?: string;
   sidebarFooterNote?: string;
   directorySection?: DashboardDirectorySection;
+  labels?: DashboardShellLabels;
   children: ReactNode;
 };
 
@@ -173,6 +220,48 @@ const defaultNotificationMobileInset = '0.75rem';
 const defaultMobileNavigationBreakpoint = 1024;
 const defaultMobileBottomBarInset = '0.75rem';
 const defaultMobileBottomSheetMaxHeight = '100dvh';
+const defaultDashboardShellLabels: DashboardShellResolvedLabels = {
+  navigation: {
+    mainContent: 'Dashboard main content',
+    sidebar: 'Dashboard sidebar',
+    sidebarScrollArea: 'Sidebar navigation scroll area',
+    dashboardNavigation: 'Dashboard navigation',
+    mobileDashboardNavigation: 'Mobile dashboard navigation',
+    mobileMenu: 'Menu',
+    openMobileMenu: 'Open menu',
+  },
+  workspace: {
+    trigger: 'Switch workspace',
+    fallbackName: 'Workspace',
+    currentSection: 'Current Workspace',
+    currentBadge: 'Current',
+    switchToSection: 'Switch to',
+    createAction: 'Create new workspace',
+    createUnavailableAction: 'Workspace creation unavailable',
+  },
+  profile: {
+    trigger: 'Open profile menu',
+    profileAction: 'Profile',
+    logoutAction: 'Logout',
+  },
+  notifications: {
+    open: 'Open notifications',
+    tab: 'Notifications',
+    title: (unreadCount) => `Notifications (${unreadCount})`,
+    empty: 'No notifications',
+    list: 'Notification list',
+    todayGroup: 'Today',
+    yesterdayGroup: 'Yesterday',
+    dateGroup: (date) =>
+      new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(date),
+    unreadCount: (unreadCount) => `${unreadCount} unread notifications`,
+    delete: (notification) => `Delete notification ${notification.title}`,
+  },
+};
 
 export const DashboardShell = ({
   activePath,
@@ -214,6 +303,7 @@ export const DashboardShell = ({
   mobileBottomSheetMaxHeight = defaultMobileBottomSheetMaxHeight,
   sidebarFooterNote = defaultFooterNote,
   directorySection,
+  labels,
   children,
 }: DashboardShellProps) => {
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
@@ -257,9 +347,39 @@ export const DashboardShell = ({
   const activeNotificationDrawerDesktopWidth =
     notificationDrawerDesktopWidth ?? activeSidebarWidth;
 
+  const shellLabels: DashboardShellResolvedLabels = {
+    navigation: {
+      ...defaultDashboardShellLabels.navigation,
+      ...labels?.navigation,
+    },
+    workspace: {
+      ...defaultDashboardShellLabels.workspace,
+      ...labels?.workspace,
+    },
+    profile: {
+      ...defaultDashboardShellLabels.profile,
+      ...labels?.profile,
+    },
+    notifications: {
+      ...defaultDashboardShellLabels.notifications,
+      ...labels?.notifications,
+    },
+  };
   const groupedNotifications = useMemo(
-    () => groupNotificationsByDate(notifications),
-    [notifications],
+    () =>
+      groupNotificationsByDate(notifications, new Date(), (date, now) =>
+        getNotificationGroupLabel(date, now, {
+          today: shellLabels.notifications.todayGroup,
+          yesterday: shellLabels.notifications.yesterdayGroup,
+          date: shellLabels.notifications.dateGroup,
+        }),
+      ),
+    [
+      notifications,
+      shellLabels.notifications.dateGroup,
+      shellLabels.notifications.todayGroup,
+      shellLabels.notifications.yesterdayGroup,
+    ],
   );
   const mobileQuickNavItems = useMemo(
     () => navItems.slice(0, Math.min(2, navItems.length)),
@@ -469,7 +589,7 @@ export const DashboardShell = ({
       </div>
       {options?.showCurrentBadge ? (
         <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary">
-          Current
+          {shellLabels.workspace.currentBadge}
         </span>
       ) : null}
     </div>
@@ -487,18 +607,19 @@ export const DashboardShell = ({
               ? 'h-auto flex-col items-center justify-center gap-1 px-2 py-2'
               : 'h-12 justify-between px-3',
           )}
+          aria-label={shellLabels.workspace.trigger}
           data-testid="dashboard-workspace-trigger"
         >
           <span className="flex min-w-0 items-center gap-3">
             <Avatar
               size="sm"
               src={workspace?.avatarSrc}
-              alt={workspace?.name ?? 'Workspace'}
+              alt={workspace?.name ?? shellLabels.workspace.fallbackName}
               fallbackInitials={getFallbackInitials(workspace?.name)}
             />
             {!compact ? (
               <span className="truncate text-base font-medium text-foreground">
-                {workspace?.name ?? 'Workspace'}
+                {workspace?.name ?? shellLabels.workspace.fallbackName}
               </span>
             ) : null}
           </span>
@@ -516,7 +637,7 @@ export const DashboardShell = ({
       >
         {workspace ? (
           <>
-            <MenuLabel>Current Workspace</MenuLabel>
+            <MenuLabel>{shellLabels.workspace.currentSection}</MenuLabel>
             <MenuItem
               disabled
               aria-current="true"
@@ -533,7 +654,7 @@ export const DashboardShell = ({
 
         {otherWorkspaces.length > 0 ? (
           <>
-            <MenuLabel>Switch to</MenuLabel>
+            <MenuLabel>{shellLabels.workspace.switchToSection}</MenuLabel>
             {otherWorkspaces.map((item) => (
               <MenuItem
                 key={item.id}
@@ -550,13 +671,13 @@ export const DashboardShell = ({
         <MenuSeparator />
         {enableWorkspaceCreation ? (
           <MenuItem
-            label="Create new workspace"
+            label={shellLabels.workspace.createAction}
             data-testid="dashboard-workspace-create"
             onSelect={onCreateWorkspace}
           >
             <div className="flex items-center gap-2">
               <PlusIcon className="h-4 w-4 text-muted-foreground" />
-              <span>Create new workspace</span>
+              <span>{shellLabels.workspace.createAction}</span>
             </div>
           </MenuItem>
         ) : (
@@ -565,7 +686,7 @@ export const DashboardShell = ({
               disabled
               data-testid="dashboard-workspace-create-disabled"
             >
-              Workspace creation unavailable
+              {shellLabels.workspace.createUnavailableAction}
             </MenuItem>
             <p className="px-3 py-2 text-xs text-muted-foreground">
               {workspaceCreationDisabledMessage}
@@ -588,6 +709,7 @@ export const DashboardShell = ({
               ? 'flex-col items-center justify-center gap-1'
               : 'justify-start gap-3',
           )}
+          aria-label={shellLabels.profile.trigger}
           data-testid="dashboard-profile-trigger"
         >
           <Avatar
@@ -619,13 +741,13 @@ export const DashboardShell = ({
       </MenuTrigger>
       <MenuContent align="end">
         <MenuItem
-          label="Profile"
+          label={shellLabels.profile.profileAction}
           data-testid="dashboard-profile-item"
           onSelect={onProfileOpen}
         />
         <MenuSeparator />
         <MenuItem
-          label="Logout"
+          label={shellLabels.profile.logoutAction}
           variant="destructive"
           data-testid="dashboard-logout-item"
           onSelect={onLogout}
@@ -637,9 +759,11 @@ export const DashboardShell = ({
   const renderNotificationList = () => (
     <div className="mt-2 flex min-h-0 flex-1 flex-col overflow-y-auto pr-1">
       {groupedNotifications.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No notifications</p>
+        <p className="text-sm text-muted-foreground">
+          {shellLabels.notifications.empty}
+        </p>
       ) : (
-        <div className="space-y-5" aria-label="Notification list">
+        <div className="space-y-5" aria-label={shellLabels.notifications.list}>
           {groupedNotifications.map((group) => (
             <section
               key={group.label}
@@ -712,7 +836,7 @@ export const DashboardShell = ({
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 shrink-0 rounded-md"
-                          aria-label={`Delete notification ${item.title}`}
+                          aria-label={shellLabels.notifications.delete(item)}
                           data-testid={`dashboard-notification-delete-${item.id}`}
                           onClick={(
                             event: ReactMouseEvent<HTMLButtonElement>,
@@ -744,7 +868,7 @@ export const DashboardShell = ({
             '--dashboard-sidebar-width': activeSidebarWidth,
           } as CSSProperties
         }
-        aria-label="Dashboard sidebar"
+        aria-label={shellLabels.navigation.sidebar}
       >
         <Card
           data-testid="dashboard-sidebar-frame"
@@ -760,12 +884,12 @@ export const DashboardShell = ({
                 <TooltipProvider>
                   <div
                     data-testid="dashboard-sidebar-scroll-region"
-                    aria-label="Sidebar navigation scroll area"
+                    aria-label={shellLabels.navigation.sidebarScrollArea}
                     tabIndex={0}
                     className="min-h-0 flex-1 overflow-y-auto pr-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-inset"
                   >
                     <nav
-                      aria-label="Dashboard navigation"
+                      aria-label={shellLabels.navigation.dashboardNavigation}
                       className={cx(
                         'mt-3 space-y-2 transition-all duration-300 ease-in-out',
                         isSidebarCollapsedEffective && 'space-y-1',
@@ -907,7 +1031,7 @@ export const DashboardShell = ({
                       'relative rounded-md bg-transparent transition-all duration-300 ease-in-out hover:rounded-md hover:bg-muted',
                       isSidebarCollapsedEffective ? 'h-9 w-9' : 'h-10 w-10',
                     )}
-                    aria-label="Open notifications"
+                    aria-label={shellLabels.notifications.open}
                     data-testid="dashboard-notification-trigger"
                     onClick={(event: ReactMouseEvent<HTMLButtonElement>) => {
                       event.currentTarget.focus();
@@ -918,7 +1042,9 @@ export const DashboardShell = ({
                     {unreadCount > 0 ? (
                       <span
                         className="absolute -right-1 -top-1 inline-flex h-[1.25rem] w-[1.25rem] items-center justify-center rounded-full bg-destructive text-[10px] font-semibold leading-none text-destructive-foreground"
-                        aria-label={`${unreadCount} unread notifications`}
+                        aria-label={shellLabels.notifications.unreadCount(
+                          unreadCount,
+                        )}
                         data-testid="dashboard-notification-badge"
                       >
                         {unreadCount > 9 ? '9+' : unreadCount}
@@ -948,7 +1074,7 @@ export const DashboardShell = ({
                     >
                       <DrawerHeader>
                         <DrawerTitle data-testid="dashboard-notification-title">
-                          Notifications ({unreadCount})
+                          {shellLabels.notifications.title(unreadCount)}
                         </DrawerTitle>
                       </DrawerHeader>
 
@@ -969,7 +1095,7 @@ export const DashboardShell = ({
       <main
         id="main-content"
         className="flex min-h-0 w-full flex-1"
-        aria-label="Dashboard main content"
+        aria-label={shellLabels.navigation.mainContent}
       >
         <Card
           data-testid="dashboard-main-frame"
@@ -991,7 +1117,7 @@ export const DashboardShell = ({
       <main
         id="main-content"
         className="flex min-h-0 w-full flex-1"
-        aria-label="Dashboard main content"
+        aria-label={shellLabels.navigation.mainContent}
       >
         <Card
           data-testid="dashboard-main-frame"
@@ -1024,15 +1150,18 @@ export const DashboardShell = ({
               'relative h-auto min-h-[4.25rem] flex-col justify-center gap-1 rounded-xl px-2 py-2 text-muted-foreground hover:bg-muted/70 hover:text-foreground',
               isMobileNotificationsVisible && 'bg-primary/12 text-primary-900',
             )}
-            aria-label="Open notifications"
+            aria-label={shellLabels.notifications.open}
             data-testid="dashboard-mobile-notifications-tab"
             onClick={() => handleMobileNotificationsOpenChange(true)}
           >
             <BellIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">Notifications</span>
+            <span className="text-xs font-medium">
+              {shellLabels.notifications.tab}
+            </span>
             {unreadCount > 0 ? (
               <span
                 className="absolute right-2 top-1 inline-flex h-[1.25rem] min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground"
+                aria-label={shellLabels.notifications.unreadCount(unreadCount)}
                 data-testid="dashboard-mobile-notification-badge"
               >
                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -1072,12 +1201,14 @@ export const DashboardShell = ({
               'h-auto min-h-[4.25rem] flex-col justify-center gap-1 rounded-xl px-2 py-2 text-muted-foreground hover:bg-muted/70 hover:text-foreground',
               isMobileMenuVisible && 'bg-primary/12 text-primary-900',
             )}
-            aria-label="Open menu"
+            aria-label={shellLabels.navigation.openMobileMenu}
             data-testid="dashboard-mobile-menu-tab"
             onClick={() => handleMobileMenuOpenChange(true)}
           >
             <MenuIcon className="h-5 w-5" />
-            <span className="text-xs font-medium">Menu</span>
+            <span className="text-xs font-medium">
+              {shellLabels.navigation.mobileMenu}
+            </span>
           </Button>
         </div>
       </div>
@@ -1099,7 +1230,7 @@ export const DashboardShell = ({
         >
           <DrawerHeader>
             <DrawerTitle data-testid="dashboard-mobile-notification-title">
-              Notifications ({unreadCount})
+              {shellLabels.notifications.title(unreadCount)}
             </DrawerTitle>
           </DrawerHeader>
           {renderNotificationList()}
@@ -1123,7 +1254,10 @@ export const DashboardShell = ({
         >
           <div>{renderWorkspaceSwitcher(false)}</div>
 
-          <nav aria-label="Mobile dashboard navigation" className="space-y-2">
+          <nav
+            aria-label={shellLabels.navigation.mobileDashboardNavigation}
+            className="space-y-2"
+          >
             {navItems.map((item) => {
               const isDirectorySectionItem =
                 directorySection?.navItemId === item.id;
