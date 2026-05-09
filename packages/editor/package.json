@@ -14,9 +14,12 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js",
             "default": "./dist/index.js"
-        }
+        },
+        "./styles.css": "./dist/index.css"
     },
-    "sideEffects": false,
+    "sideEffects": [
+        "**/*.css"
+    ],
     "scripts": {
         "build": "tsup",
         "dev": "tsup --watch",

@@ -5,6 +5,8 @@ import { describe, expect, it } from 'vitest';
 
 type PackageJson = {
   dependencies?: Record<string, string>;
+  exports?: Record<string, unknown>;
+  sideEffects?: boolean | string[];
 };
 
 describe('package metadata', () => {
@@ -25,5 +27,18 @@ describe('package metadata', () => {
         'react-error-boundary': '^6.0.0',
       }),
     );
+  });
+
+  it('exports the bundled editor stylesheet as a public package subpath', () => {
+    const packageJson = JSON.parse(
+      readFileSync(resolve(cwd(), 'package.json'), 'utf8'),
+    ) as PackageJson;
+
+    expect(packageJson.exports).toEqual(
+      expect.objectContaining({
+        './styles.css': './dist/index.css',
+      }),
+    );
+    expect(packageJson.sideEffects).toContain('**/*.css');
   });
 });
