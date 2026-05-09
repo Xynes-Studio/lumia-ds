@@ -66,28 +66,38 @@ export type NotificationGroup<T> = {
   items: T[];
 };
 
+type NotificationGroupLabelOptions = {
+  today?: string;
+  yesterday?: string;
+  date?: (date: Date) => string;
+};
+
 export const getNotificationGroupLabel = (
   date: Date,
   now: Date = new Date(),
+  labels: NotificationGroupLabelOptions = {},
 ) => {
   const dayDate = toDayStart(date);
   const dayNow = toDayStart(now);
 
   if (isSameDay(dayDate, dayNow)) {
-    return 'Today';
+    return labels.today ?? 'Today';
   }
 
   const yesterday = new Date(dayNow);
   yesterday.setDate(yesterday.getDate() - 1);
   if (isSameDay(dayDate, yesterday)) {
-    return 'Yesterday';
+    return labels.yesterday ?? 'Yesterday';
   }
 
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date);
+  return (
+    labels.date?.(date) ??
+    new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date)
+  );
 };
 
 export const getNotificationTimeLabel = (date: Date) =>
@@ -108,6 +118,7 @@ const toTimestamp = (value: string) => {
 export const groupNotificationsByDate = <T extends NotificationLike>(
   notifications: T[],
   now: Date = new Date(),
+  getGroupLabel: (date: Date, now: Date) => string = getNotificationGroupLabel,
 ): NotificationGroup<T>[] => {
   const validNotifications = notifications
     .map((notification) => {
@@ -134,7 +145,7 @@ export const groupNotificationsByDate = <T extends NotificationLike>(
   const groups = new Map<string, T[]>();
   for (const notification of validNotifications) {
     const createdAtDate = new Date(notification.createdAt);
-    const label = getNotificationGroupLabel(createdAtDate, now);
+    const label = getGroupLabel(createdAtDate, now);
     const existingGroup = groups.get(label);
     if (existingGroup) {
       existingGroup.push(notification);
