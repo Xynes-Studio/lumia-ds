@@ -274,6 +274,14 @@ More details: see `docs/storybook.md`.
 - `speed` controls pixels/second. `pauseOnHover` defaults to `true`.
 - Detailed component guide: `../../docs/components-ticker.md`.
 
+### Barrel export contract
+
+- Public API is published via `src/index.ts` and shipped to consumers as the bundled `dist/index.d.ts` (built by `tsup`).
+- Most leaf modules are re-exported with `export *` for brevity. The `index.test.ts` contract test enumerates every exported value/type symbol — keep it in sync when you add or remove a public surface.
+- A handful of leaf modules use **per-symbol** `export { ... }` / `export type { ... }` form rather than `export *`. The current per-symbol set (PFU-5, 2026-05-09) is: `card`, `confirm-dialog`, `entity-tile`, `page-header`, `status-pill`, `view-toggle`, and the `Alert` / `InlineAlert` pair from `alert`.
+- Per-symbol form is preferred for surfaces consumed via `link:` workspace deps (for example by `xynes-front-end/xynes-auth-app` and `xynes-front-end/xynes-cms-console-web`), where TypeScript's module resolution under `tsc --noEmit` has historically been less reliable than esbuild's runtime resolution.
+- When adding a new component module, prefer per-symbol `export` form for any module whose symbols are consumed by an app dashboard surface or shipped feature; keep `export *` for purely internal or sampler modules.
+
 ## Local development
 
 - Build: `pnpm --filter @lumia-ui/components build`
