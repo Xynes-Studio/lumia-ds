@@ -822,6 +822,80 @@ describe('DashboardShell', () => {
     host.remove();
   });
 
+  it('preserves callable notification defaults when partial labels contain undefined values', async () => {
+    setViewportWidth(700);
+    const { root, host } = createTestRoot();
+    const createdAt = createRelativeIso(2, 0);
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/users"
+          navItems={navItems}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+          notifications={[
+            {
+              id: 'n-default-callables',
+              title: 'Deploy done',
+              createdAt,
+              unread: true,
+            },
+          ]}
+          labels={{
+            notifications: {
+              open: '[Open activity]',
+              title: undefined,
+              dateGroup: undefined,
+              unreadCount: undefined,
+              delete: undefined,
+            },
+          }}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+
+    await act(async () => {
+      host
+        .querySelector('[data-testid="dashboard-mobile-notifications-tab"]')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await flushTimers();
+
+    expect(
+      document.body.querySelector(
+        '[data-testid="dashboard-mobile-notification-title"]',
+      )?.textContent,
+    ).toBe('Notifications (1)');
+    expect(
+      document.body
+        .querySelector('[data-testid="dashboard-mobile-notification-badge"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('1 unread notifications');
+    expect(
+      document.body
+        .querySelector(
+          '[data-testid="dashboard-notification-delete-n-default-callables"]',
+        )
+        ?.getAttribute('aria-label'),
+    ).toBe('Delete notification Deploy done');
+    expect(document.body.textContent).toContain(
+      new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(new Date(createdAt)),
+    );
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
   it('does not auto navigate for unsafe deep links', async () => {
     const { root, host } = createTestRoot();
     const onNotificationNavigate = vi.fn();

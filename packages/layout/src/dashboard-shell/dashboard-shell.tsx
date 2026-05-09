@@ -363,6 +363,18 @@ export const DashboardShell = ({
     notifications: {
       ...defaultDashboardShellLabels.notifications,
       ...labels?.notifications,
+      title:
+        labels?.notifications?.title ??
+        defaultDashboardShellLabels.notifications.title,
+      dateGroup:
+        labels?.notifications?.dateGroup ??
+        defaultDashboardShellLabels.notifications.dateGroup,
+      unreadCount:
+        labels?.notifications?.unreadCount ??
+        defaultDashboardShellLabels.notifications.unreadCount,
+      delete:
+        labels?.notifications?.delete ??
+        defaultDashboardShellLabels.notifications.delete,
     },
   };
   const groupedNotifications = useMemo(
