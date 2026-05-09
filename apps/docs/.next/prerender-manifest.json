@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/_not-found": {
       "initialStatus": 404,
       "experimentalBypassFor": [
@@ -49,13 +25,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "bdf6c9ae905d0d8dd2fa0d50f9b31b39",
-    "previewModeSigningKey": "43b2cd6ae9e6ed501ecfbeb4cb0f34f9b65fc0cf4315ae110410db951acc1397",
-    "previewModeEncryptionKey": "56216b047578737414a9c37632528029625ccd10c5f9509e6fa6b9364c4a60d0"
+    "previewModeId": "ccee44b80b4200ae905c98da1be74e8b",
+    "previewModeSigningKey": "ec7ca43a90dbb00e14f4e23180fa7d724161bf00f816e02ac3636d8a86550947",
+    "previewModeEncryptionKey": "fcad042b6c5ff16f802c35f6d2270febc8a509ed5505fe3aa5f95546e6d9befc"
   }
 }

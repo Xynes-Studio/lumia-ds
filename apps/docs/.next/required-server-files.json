@@ -301,7 +301,7 @@
           "as": "*.tsx",
           "loaders": [
             {
-              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.15_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_73fcfc8ea37010a9ec2b4d4fa53afb37/node_modules/nextra/loader.cjs",
+              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.18_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_ec49797323824956cedb289b190bc244/node_modules/nextra/loader.cjs",
               "options": {
                 "search": {
                   "codeblocks": false
@@ -323,7 +323,7 @@
           "as": "*.tsx",
           "loaders": [
             {
-              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.15_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_73fcfc8ea37010a9ec2b4d4fa53afb37/node_modules/nextra/loader.cjs",
+              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.18_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_ec49797323824956cedb289b190bc244/node_modules/nextra/loader.cjs",
               "options": {
                 "search": {
                   "codeblocks": false
@@ -343,7 +343,7 @@
         "**/nextra/dist/server/page-map/placeholder.js": {
           "loaders": [
             {
-              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.15_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_73fcfc8ea37010a9ec2b4d4fa53afb37/node_modules/nextra/loader.cjs",
+              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.18_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_ec49797323824956cedb289b190bc244/node_modules/nextra/loader.cjs",
               "options": {
                 "contentDirBasePath": "",
                 "contentDir": "content",
@@ -355,7 +355,7 @@
         "**/nextra/dist/server/page-map/get.js": {
           "loaders": [
             {
-              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.15_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_73fcfc8ea37010a9ec2b4d4fa53afb37/node_modules/nextra/loader.cjs",
+              "loader": "/Users/archanray/xynes-erp/xynes-front-end/lumia-ds/node_modules/.pnpm/nextra@4.6.1_next@15.5.18_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@_ec49797323824956cedb289b190bc244/node_modules/nextra/loader.cjs",
               "options": {
                 "locales": [
                   ""
@@ -400,6 +400,6 @@
     ".next/required-server-files.json"
   ],
   "ignore": [
-    "../../node_modules/.pnpm/next@15.5.15_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@ampproject/toolbox-optimizer/**/*"
+    "../../node_modules/.pnpm/next@15.5.18_@playwright+test@1.57.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/@ampproject/toolbox-optimizer/**/*"
   ]
 }
