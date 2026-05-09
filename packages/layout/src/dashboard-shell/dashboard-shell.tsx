@@ -14,7 +14,6 @@ import {
   Menu,
   MenuContent,
   MenuItem,
-  MenuLabel,
   MenuSeparator,
   MenuTrigger,
   Tooltip,
@@ -37,6 +36,11 @@ import {
   isNavItemActive,
   isSafeNotificationHref,
 } from './dashboard-shell.utils';
+import {
+  DashboardWorkspaceSwitcher,
+  type DashboardWorkspaceSwitcherLabels,
+  type DashboardWorkspaceSwitcherWorkspace,
+} from './dashboard-workspace-switcher';
 
 const cx = (...classes: Array<string | undefined | false | null>) =>
   classes.filter(Boolean).join(' ');
@@ -50,13 +54,7 @@ export type DashboardNavItem = {
   exact?: boolean;
 };
 
-export type DashboardWorkspace = {
-  id: string;
-  name: string;
-  slug?: string;
-  roleLabel?: string;
-  avatarSrc?: string;
-};
+export type DashboardWorkspace = DashboardWorkspaceSwitcherWorkspace;
 
 export type DashboardDirectorySection = {
   navItemId: string;
@@ -106,15 +104,7 @@ export type DashboardShellLabels = {
     mobileMenu?: string;
     openMobileMenu?: string;
   };
-  workspace?: {
-    trigger?: string;
-    fallbackName?: string;
-    currentSection?: string;
-    currentBadge?: string;
-    switchToSection?: string;
-    createAction?: string;
-    createUnavailableAction?: string;
-  };
+  workspace?: Partial<DashboardWorkspaceSwitcherLabels>;
   profile?: {
     trigger?: string;
     profileAction?: string;
@@ -136,7 +126,7 @@ export type DashboardShellLabels = {
 
 type DashboardShellResolvedLabels = {
   navigation: Required<NonNullable<DashboardShellLabels['navigation']>>;
-  workspace: Required<NonNullable<DashboardShellLabels['workspace']>>;
+  workspace: DashboardWorkspaceSwitcherLabels;
   profile: Required<NonNullable<DashboardShellLabels['profile']>>;
   notifications: Required<NonNullable<DashboardShellLabels['notifications']>>;
 };
@@ -306,7 +296,6 @@ export const DashboardShell = ({
   labels,
   children,
 }: DashboardShellProps) => {
-  const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [
@@ -397,10 +386,6 @@ export const DashboardShell = ({
     () => navItems.slice(0, Math.min(2, navItems.length)),
     [navItems],
   );
-
-  const otherWorkspaces = workspace
-    ? workspaceOptions.filter((item) => item.id !== workspace.id)
-    : workspaceOptions;
 
   const isMobileMode = mobileNavigationEnabled && isMobileViewport;
 
@@ -580,133 +565,18 @@ export const DashboardShell = ({
     window.location.assign(href);
   };
 
-  const renderWorkspaceItem = (
-    item: DashboardWorkspace,
-    options?: { showCurrentBadge?: boolean },
-  ) => (
-    <div className="flex w-full items-center gap-3">
-      <Avatar
-        size="sm"
-        alt={item.name}
-        src={item.avatarSrc}
-        fallbackInitials={getFallbackInitials(item.name)}
-      />
-      <div className="min-w-0 flex-1 text-left">
-        <div className="truncate font-medium">{item.name}</div>
-        {item.slug ? (
-          <div className="truncate text-xs text-muted-foreground">
-            {item.slug}
-          </div>
-        ) : null}
-      </div>
-      {options?.showCurrentBadge ? (
-        <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary">
-          {shellLabels.workspace.currentBadge}
-        </span>
-      ) : null}
-    </div>
-  );
-
   const renderWorkspaceSwitcher = (compact = false) => (
-    <Menu open={isWorkspaceMenuOpen} onOpenChange={setIsWorkspaceMenuOpen}>
-      <MenuTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          className={cx(
-            'w-full cursor-pointer rounded-md bg-background hover:bg-muted',
-            compact
-              ? 'h-auto flex-col items-center justify-center gap-1 px-2 py-2'
-              : 'h-12 justify-between px-3',
-          )}
-          aria-label={shellLabels.workspace.trigger}
-          data-testid="dashboard-workspace-trigger"
-        >
-          <span className="flex min-w-0 items-center gap-3">
-            <Avatar
-              size="sm"
-              src={workspace?.avatarSrc}
-              alt={workspace?.name ?? shellLabels.workspace.fallbackName}
-              fallbackInitials={getFallbackInitials(workspace?.name)}
-            />
-            {!compact ? (
-              <span className="truncate text-base font-medium text-foreground">
-                {workspace?.name ?? shellLabels.workspace.fallbackName}
-              </span>
-            ) : null}
-          </span>
-          <ChevronDownIcon
-            className={cx(
-              'h-5 w-5 shrink-0 text-foreground transition-transform duration-200',
-              isWorkspaceMenuOpen && 'rotate-180',
-            )}
-          />
-        </Button>
-      </MenuTrigger>
-      <MenuContent
-        className="max-w-[calc(100vw-3rem)]"
-        style={{ width: activeSidebarWidth }}
-      >
-        {workspace ? (
-          <>
-            <MenuLabel>{shellLabels.workspace.currentSection}</MenuLabel>
-            <MenuItem
-              disabled
-              aria-current="true"
-              data-testid="dashboard-workspace-current"
-              className="cursor-default"
-            >
-              {renderWorkspaceItem(workspace, {
-                showCurrentBadge: true,
-              })}
-            </MenuItem>
-            <MenuSeparator />
-          </>
-        ) : null}
-
-        {otherWorkspaces.length > 0 ? (
-          <>
-            <MenuLabel>{shellLabels.workspace.switchToSection}</MenuLabel>
-            {otherWorkspaces.map((item) => (
-              <MenuItem
-                key={item.id}
-                label={item.name}
-                data-workspace-id={item.id}
-                onSelect={() => onWorkspaceSelect(item.id)}
-              >
-                {renderWorkspaceItem(item)}
-              </MenuItem>
-            ))}
-          </>
-        ) : null}
-
-        <MenuSeparator />
-        {enableWorkspaceCreation ? (
-          <MenuItem
-            label={shellLabels.workspace.createAction}
-            data-testid="dashboard-workspace-create"
-            onSelect={onCreateWorkspace}
-          >
-            <div className="flex items-center gap-2">
-              <PlusIcon className="h-4 w-4 text-muted-foreground" />
-              <span>{shellLabels.workspace.createAction}</span>
-            </div>
-          </MenuItem>
-        ) : (
-          <>
-            <MenuItem
-              disabled
-              data-testid="dashboard-workspace-create-disabled"
-            >
-              {shellLabels.workspace.createUnavailableAction}
-            </MenuItem>
-            <p className="px-3 py-2 text-xs text-muted-foreground">
-              {workspaceCreationDisabledMessage}
-            </p>
-          </>
-        )}
-      </MenuContent>
-    </Menu>
+    <DashboardWorkspaceSwitcher
+      compact={compact}
+      workspace={workspace}
+      workspaceOptions={workspaceOptions}
+      onWorkspaceSelect={onWorkspaceSelect}
+      onCreateWorkspace={onCreateWorkspace}
+      labels={shellLabels.workspace}
+      enableWorkspaceCreation={enableWorkspaceCreation}
+      workspaceCreationDisabledMessage={workspaceCreationDisabledMessage}
+      width={activeSidebarWidth}
+    />
   );
 
   const renderProfileMenu = (compact = false) => (
@@ -1361,23 +1231,6 @@ export const DashboardShell = ({
     </div>
   );
 };
-
-function PlusIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
 
 function ChevronDownIcon({ className }: { className?: string }) {
   return (

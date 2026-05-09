@@ -121,6 +121,46 @@ break, but new or migrated apps should supply labels from their own catalogs.
 Do not pass raw HTML strings. Rich product copy should be composed by the app
 before it reaches Lumia components.
 
+### Workspace switcher contract
+
+`DashboardWorkspaceSwitcher` is the reusable workspace switcher used by
+`DashboardShell`. Apps should use the shell-level workspace props when they are
+inside `DashboardShell`; app-local switchers should only exist for routes that
+cannot use the dashboard shell.
+
+```tsx
+import { DashboardWorkspaceSwitcher } from '@lumia-ui/layout';
+
+<DashboardWorkspaceSwitcher
+    workspace={{
+        id: 'workspace-1',
+        name: 'Acme Workspace',
+        slug: 'acme',
+    }}
+    workspaceOptions={[
+        { id: 'workspace-1', name: 'Acme Workspace', slug: 'acme' },
+        { id: 'workspace-2', name: 'Lumia Studio', slug: 'lumia' },
+    ]}
+    onWorkspaceSelect={(workspaceId) => selectWorkspace(workspaceId)}
+    onCreateWorkspace={() => openWorkspaceCreation()}
+    labels={{
+        trigger: t('shell.workspace.trigger'),
+        currentSection: t('shell.workspace.currentSection'),
+        currentBadge: t('shell.workspace.currentBadge'),
+        switchToSection: t('shell.workspace.switchToSection'),
+        createAction: t('shell.workspace.createAction'),
+    }}
+/>;
+```
+
+The switcher contract accepts the current workspace, all switchable workspace
+options, optional avatar metadata, the workspace-select callback, create-workspace
+state, disabled create-workspace explanatory copy, compact rendering, and
+consumer-supplied labels. The trigger uses a real button, the menu returns focus
+to the trigger on close through the shared `Menu` primitive, the current
+workspace is marked with `aria-current`, and compact mode keeps an accessible
+trigger label even when the visible workspace name is hidden.
+
 ### Stacked detail pages
 
 ```tsx

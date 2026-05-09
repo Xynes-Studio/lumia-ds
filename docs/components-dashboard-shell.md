@@ -7,10 +7,13 @@ Reusable dashboard scaffold with desktop sidebar + mobile bottom navigation, whi
 ```ts
 import {
   DashboardShell,
+  DashboardWorkspaceSwitcher,
   DashboardSidebarSection,
   DashboardMainSection,
   type DashboardNavItem,
   type DashboardWorkspace,
+  type DashboardWorkspaceSwitcherLabels,
+  type DashboardWorkspaceSwitcherProps,
   type DashboardUserMenu,
   type DashboardNotification,
   type DashboardShellProps,
@@ -46,6 +49,19 @@ import {
 - `labels` for product-copy-neutral shell text and accessible labels. Consumers
   own translated copy for workspace switching, profile actions, notifications,
   notification date groups, mobile navigation, and shell landmarks.
+
+Workspace switcher contract:
+- `DashboardShell` delegates workspace switching to the exported
+  `DashboardWorkspaceSwitcher`.
+- Prefer the shell-level workspace props when rendering inside
+  `DashboardShell`; use the standalone switcher only for dashboard-adjacent
+  surfaces that cannot use the full shell.
+- The shared contract accepts current workspace, switch targets,
+  `onWorkspaceSelect`, optional `onCreateWorkspace`, creation-disabled state,
+  compact rendering, consumer-supplied labels, and menu sizing/class hooks.
+- The trigger is a real button with an action label, the current workspace row
+  exposes `aria-current`, decorative icons are hidden from assistive tech, and
+  menu close returns focus to the trigger through the shared `Menu` primitive.
 
 Notification props:
 - `notifications`.
@@ -146,6 +162,8 @@ Mobile mutual exclusivity:
 
 - Landmarks: `aside`, `nav`, `main`.
 - Active items use `aria-current="page"`.
+- The workspace switcher trigger keeps an accessible label in compact mode, and
+  the active workspace is marked with `aria-current`.
 - Bottom tabs expose explicit labels.
 - Mobile sheets use dialog semantics from DS `Drawer` primitives (`Drawer`, `DrawerHeader`, `DrawerTitle`).
 - Delete actions are keyboard accessible and labeled.
