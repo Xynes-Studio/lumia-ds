@@ -28,6 +28,16 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
+      - name: Build Storybook prerequisites (tokens + theme)
+        # Storybook resolves @lumia-ui/theme/dist/tailwind/tailwind.js via
+        # PostCSS, and aliases @lumia-ui/tokens/dist via Vite, so both packages
+        # need a built dist/ before storybook:build runs. The repo already
+        # exposes pnpm storybook:reset for this purpose; CI just needs to call
+        # it. Without this step, Build Storybook fails with:
+        #   [vite:css] [postcss] Cannot find module
+        #     './node_modules/@lumia-ui/theme/dist/tailwind/tailwind.js'
+        run: pnpm storybook:reset
+
       - name: Build Storybook
         run: pnpm storybook:build
 
