@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  Archive,
   BarChart3,
   Bold,
   CheckCircle2,
@@ -24,8 +25,10 @@ import {
   Package,
   Pencil,
   Plus,
+  RefreshCw,
   Search,
   Settings,
+  Star,
   Trash2,
   Underline,
   User,
@@ -59,6 +62,11 @@ const defaultIconComponents = {
   'dollar-sign': DollarSign,
   'chevron-up': ChevronUp,
   'chevron-down': ChevronDown,
+  // Status / favorite
+  star: Star,
+  // CMS publish lifecycle
+  republish: RefreshCw,
+  'archive-entry': Archive,
   // Editor toolbar icons
   bold: Bold,
   italic: Italic,

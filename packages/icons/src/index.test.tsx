@@ -95,6 +95,62 @@ describe('default icon registry', () => {
       expect(getIcon(id)).toBeDefined();
     });
   });
+
+  it('resolves every canonical id from the icon purpose registry', () => {
+    // Mirrors the icon purpose registry table in
+    // packages/icons/README.md ("Icon Purpose Registry"). When new canonical
+    // ids land in the registry table, add them here too so the contract stays
+    // single-sourced.
+    const canonicalIds: IconId[] = [
+      // Navigation
+      'home',
+      'users-round',
+      'folder-key',
+      'lock',
+      'link',
+      'file-text',
+      'dollar-sign',
+      'settings',
+      'package',
+      // View modes
+      'layout-grid',
+      'list',
+      // Filtering / search
+      'filter',
+      'search',
+      // Commands
+      'add',
+      'edit',
+      'delete',
+      'republish',
+      'archive-entry',
+      // Disclosure
+      'chevron-down',
+      'chevron-up',
+      // Outbound
+      'external-link',
+      // Status
+      'check',
+      'alert',
+      'info',
+      // Favorite / pinned
+      'star',
+    ];
+
+    canonicalIds.forEach((id) => {
+      expect(
+        getIcon(id),
+        `expected canonical icon "${id}" to be registered`,
+      ).toBeDefined();
+    });
+  });
+
+  it('returns undefined (no throw) when looking up a missing canonical id', () => {
+    // The registry must fail safely so a typo in a consumer never crashes the
+    // app — the <Icon /> component renders null in this case (covered below).
+    expect(() => getIcon('definitely-not-a-real-icon')).not.toThrow();
+    expect(getIcon('definitely-not-a-real-icon')).toBeUndefined();
+  });
 });
 
 describe('generated icon registry', () => {
