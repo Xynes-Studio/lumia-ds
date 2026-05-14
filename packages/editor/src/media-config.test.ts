@@ -157,48 +157,58 @@ describe('MediaUploadAdapter', () => {
     const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
     await expect(mockAdapter.uploadFile(file)).rejects.toThrow('Network error');
   });
+
+  // ─── STORAGE-11: objectId + resolveDownloadUrl ─────────────────────────
+
+  it('STORAGE-11: uploadFile result accepts optional objectId', async () => {
+    const mockAdapter = {
+      uploadFile: async (file: File) => {
+        return {
+          url: 'https://signed.example/file.jpg',
+          mime: file.type,
+          size: file.size,
+          objectId: 'obj_storage_11_test',
+        };
+      },
+    };
+    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+    const result = await mockAdapter.uploadFile(file);
+    expect(result.objectId).toBe('obj_storage_11_test');
+  });
+
+  it('STORAGE-11: uploadFile result without objectId stays backward-compatible', async () => {
+    const mockAdapter = {
+      uploadFile: async (file: File) => ({
+        url: 'https://example.com/legacy.jpg',
+        mime: file.type,
+        size: file.size,
+      }),
+    };
+    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+    const result = await mockAdapter.uploadFile(file);
+    expect(result.url).toBe('https://example.com/legacy.jpg');
+    expect((result as { objectId?: string }).objectId).toBeUndefined();
+  });
 });
 
-describe('MediaUploadCallbacks', () => {
-  it('should invoke onUploadStart with file and media type', () => {
-    const onUploadStart = vi.fn();
-    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-
-    onUploadStart(file, 'image');
-
-    expect(onUploadStart).toHaveBeenCalledWith(file, 'image');
+describe('STORAGE-11 resolveDownloadUrl', () => {
+  it('getEffectiveMediaConfig passes through resolveDownloadUrl', () => {
+    const resolver = vi.fn(async () => 'https://signed.example/url');
+    const config = getEffectiveMediaConfig({ resolveDownloadUrl: resolver });
+    expect(config.resolveDownloadUrl).toBe(resolver);
   });
 
-  it('should invoke onUploadProgress with file and progress', () => {
-    const onUploadProgress = vi.fn();
-    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-
-    onUploadProgress(file, 50);
-
-    expect(onUploadProgress).toHaveBeenCalledWith(file, 50);
+  it('getEffectiveMediaConfig leaves resolveDownloadUrl undefined by default', () => {
+    const config = getEffectiveMediaConfig();
+    expect(config.resolveDownloadUrl).toBeUndefined();
   });
 
-  it('should invoke onUploadComplete with file and result', () => {
-    const onUploadComplete = vi.fn();
-    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-    const result = {
-      url: 'https://example.com/file.jpg',
-      mime: 'image/jpeg',
-      size: 1024,
-    };
-
-    onUploadComplete(file, result);
-
-    expect(onUploadComplete).toHaveBeenCalledWith(file, result);
-  });
-
-  it('should invoke onUploadError with file and error', () => {
-    const onUploadError = vi.fn();
-    const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-    const error = new Error('Upload failed');
-
-    onUploadError(file, error);
-
-    expect(onUploadError).toHaveBeenCalledWith(file, error);
+  it('resolver receives an objectId and returns a signed URL', async () => {
+    const resolver = vi.fn(
+      async (objectId: string) => `https://signed.example/${objectId}`,
+    );
+    const url = await resolver('obj_abc');
+    expect(url).toBe('https://signed.example/obj_abc');
+    expect(resolver).toHaveBeenCalledWith('obj_abc');
   });
 });

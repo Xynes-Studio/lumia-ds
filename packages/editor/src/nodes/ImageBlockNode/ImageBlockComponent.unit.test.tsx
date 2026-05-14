@@ -101,6 +101,7 @@ describe('ImageBlockComponent unit', () => {
     __src: '',
     __status: '',
     __caption: '',
+    __objectId: undefined as string | undefined,
   };
   const node = {
     getWritable: () => writable,
@@ -108,6 +109,9 @@ describe('ImageBlockComponent unit', () => {
     setLayout: vi.fn(),
     setAlignment: vi.fn(),
     setWidth: vi.fn(),
+    // STORAGE-11: getObjectId is used by the resolveDownloadUrl effect to
+    // guard against stale resolution after the node was edited or removed.
+    getObjectId: vi.fn((): string | undefined => writable.__objectId),
   };
   const editor = {
     registerCommand: vi.fn(
@@ -127,6 +131,7 @@ describe('ImageBlockComponent unit', () => {
     writable.__src = '';
     writable.__status = '';
     writable.__caption = '';
+    writable.__objectId = undefined;
     (useLexicalComposerContext as Mock).mockReturnValue([editor]);
     (useLexicalNodeSelection as Mock).mockReturnValue([
       false,
@@ -331,5 +336,238 @@ describe('ImageBlockComponent unit', () => {
     expect(writable.__caption).toBe('Updated caption');
     expect(node.remove).toHaveBeenCalled();
     expect(preventDefault).toHaveBeenCalled();
+  });
+
+  // ─── STORAGE-11: objectId + resolveDownloadUrl ───────────────────────────
+
+  describe('STORAGE-11 storage-backed images', () => {
+    it('persists result.objectId on the node after a successful upload', async () => {
+      uploadFile.mockResolvedValue({
+        url: 'https://signed.example/storage/object',
+        mime: 'image/png',
+        size: 1024,
+        objectId: 'obj_uploaded_123',
+      });
+
+      render(
+        <ImageBlockComponent nodeKey="image-node" src="" status="uploaded" />,
+      );
+
+      fireEvent.change(screen.getByTestId('file-upload-input'), {
+        target: {
+          files: [new File(['image'], 'photo.png', { type: 'image/png' })],
+        },
+      });
+
+      await waitFor(() => {
+        expect(onUploadComplete).toHaveBeenCalled();
+      });
+
+      expect(writable.__src).toBe('https://signed.example/storage/object');
+      expect(writable.__objectId).toBe('obj_uploaded_123');
+    });
+
+    it('ignores result.objectId when it is missing (back-compat)', async () => {
+      uploadFile.mockResolvedValue({
+        url: 'https://cdn.example/legacy.png',
+        mime: 'image/png',
+        size: 256,
+      });
+
+      render(
+        <ImageBlockComponent nodeKey="image-node" src="" status="uploaded" />,
+      );
+
+      fireEvent.change(screen.getByTestId('file-upload-input'), {
+        target: {
+          files: [new File(['image'], 'photo.png', { type: 'image/png' })],
+        },
+      });
+
+      await waitFor(() => {
+        expect(onUploadComplete).toHaveBeenCalled();
+      });
+
+      expect(writable.__src).toBe('https://cdn.example/legacy.png');
+      expect(writable.__objectId).toBeUndefined();
+    });
+
+    it('ignores result.objectId when it is an empty string (no-op)', async () => {
+      uploadFile.mockResolvedValue({
+        url: 'https://cdn.example/x.png',
+        mime: 'image/png',
+        size: 1,
+        objectId: '',
+      });
+
+      render(
+        <ImageBlockComponent nodeKey="image-node" src="" status="uploaded" />,
+      );
+
+      fireEvent.change(screen.getByTestId('file-upload-input'), {
+        target: {
+          files: [new File(['image'], 'photo.png', { type: 'image/png' })],
+        },
+      });
+
+      await waitFor(() => {
+        expect(onUploadComplete).toHaveBeenCalled();
+      });
+
+      expect(writable.__objectId).toBeUndefined();
+    });
+
+    it('calls resolveDownloadUrl when objectId is present and updates src', async () => {
+      const resolveDownloadUrl = vi.fn(
+        async (objectId: string) => `https://fresh.example/${objectId}`,
+      );
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+        resolveDownloadUrl,
+      });
+      writable.__objectId = 'obj_load_me';
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src=""
+          status="uploaded"
+          objectId="obj_load_me"
+        />,
+      );
+
+      await waitFor(() => {
+        expect(resolveDownloadUrl).toHaveBeenCalledWith('obj_load_me');
+      });
+
+      await waitFor(() => {
+        expect(writable.__src).toBe('https://fresh.example/obj_load_me');
+      });
+    });
+
+    it('does NOT call resolveDownloadUrl when objectId is missing', () => {
+      const resolveDownloadUrl = vi.fn();
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+        resolveDownloadUrl,
+      });
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src="https://cdn.example/legacy.png"
+          status="uploaded"
+        />,
+      );
+
+      expect(resolveDownloadUrl).not.toHaveBeenCalled();
+    });
+
+    it('does NOT throw when resolver returns empty string (leaves src alone)', async () => {
+      const resolveDownloadUrl = vi.fn(async () => '');
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+        resolveDownloadUrl,
+      });
+      writable.__src = 'https://stale.example/cached.png';
+      writable.__objectId = 'obj_empty_resolver';
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src="https://stale.example/cached.png"
+          status="uploaded"
+          objectId="obj_empty_resolver"
+        />,
+      );
+
+      await waitFor(() => {
+        expect(resolveDownloadUrl).toHaveBeenCalled();
+      });
+
+      // src must NOT be wiped to an empty string — degrade gracefully.
+      expect(writable.__src).toBe('https://stale.example/cached.png');
+    });
+
+    it('swallows resolver rejection — keeps existing src for graceful degradation', async () => {
+      const resolveDownloadUrl = vi.fn(async () => {
+        throw new Error('resolver outage');
+      });
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+        resolveDownloadUrl,
+      });
+      writable.__src = 'https://stale.example/cached.png';
+      writable.__objectId = 'obj_resolver_throws';
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src="https://stale.example/cached.png"
+          status="uploaded"
+          objectId="obj_resolver_throws"
+        />,
+      );
+
+      await waitFor(() => {
+        expect(resolveDownloadUrl).toHaveBeenCalled();
+      });
+
+      expect(writable.__src).toBe('https://stale.example/cached.png');
+    });
+
+    it('does NOT call resolveDownloadUrl if mediaConfig is missing it', () => {
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+      });
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src=""
+          status="uploaded"
+          objectId="obj_no_resolver"
+        />,
+      );
+
+      // No throw, no resolution attempt — silent no-op is expected.
+      expect(useMediaContext).toHaveBeenCalled();
+    });
+
+    it('updates src only when the node still has the same objectId (race guard)', async () => {
+      const resolveDownloadUrl = vi.fn(
+        async () => 'https://fresh.example/resolved.png',
+      );
+      (useMediaContext as Mock).mockReturnValue({
+        uploadAdapter: { uploadFile },
+        callbacks: {},
+        resolveDownloadUrl,
+      });
+      // Simulate a race: between scheduling the effect and the update callback
+      // running, the node's objectId changed (user replaced the image).
+      writable.__objectId = 'obj_DIFFERENT';
+
+      render(
+        <ImageBlockComponent
+          nodeKey="image-node"
+          src=""
+          status="uploaded"
+          objectId="obj_original"
+        />,
+      );
+
+      await waitFor(() => {
+        expect(resolveDownloadUrl).toHaveBeenCalledWith('obj_original');
+      });
+
+      // node.getObjectId() returns 'obj_DIFFERENT' so the guard rejects the
+      // update.
+      expect(writable.__src).toBe('');
+    });
   });
 });

@@ -198,7 +198,47 @@ function App() {
 **Retry Support:**
 If upload fails, clicking Retry will retry with the same file (no need to re-select).
 
-**No Adapter:**
+### Storage-backed images (STORAGE-11)
+
+When integrating with a workspace storage service (e.g. the Xynes universal object storage layer), the upload adapter SHOULD return a stable `objectId` alongside the display URL, and `EditorMediaConfig` SHOULD provide a `resolveDownloadUrl` resolver:
+
+```tsx
+const mediaConfig: EditorMediaConfig = {
+  uploadAdapter: {
+    uploadFile: async (file) => {
+      // 1) Create upload session via your workspace storage service
+      // 2) Upload directly to the provider URL
+      // 3) Complete the session
+      // 4) Mint a fresh signed download URL for immediate display
+      return {
+        url: 'https://signed.example/download/obj_abc123',
+        mime: 'image/png',
+        size: file.size,
+        objectId: 'obj_abc123', // <-- stable storage object id
+      };
+    },
+  },
+
+  // Mint a fresh signed URL on next mount so a persisted entry body
+  // can carry only the `objectId` (no signed URL leakage).
+  resolveDownloadUrl: async (objectId) => {
+    const res = await fetch(
+      `/api/workspaces/${ws}/storage/objects/${objectId}/download-url`,
+      { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } },
+    );
+    const json = await res.json();
+    return json.url;
+  },
+};
+```
+
+Persistence layers (your save handler) MUST normalise the editor body before storing it so signed delivery URLs never reach the database: walk `body.root.children` (recursively), find every `type: 'image-block'` node that carries `objectId`, and clear `src` (set to empty string). The runtime resolver re-mints fresh URLs on next mount. See `xynes-front-end/xynes-cms-console-web/src/features/cms-content/cms-editor-image-refs.ts` for a reference implementation.
+
+`ImageBlockNode` exposes `getObjectId()` and serialises `objectId` through `exportJSON()` / `importJSON()` so storage-backed images round-trip across saves and reloads. The optional `objectId` field on `MediaUploadResult` is additive — adapters that don't supply it continue to work exactly as before.
+
+`resolveDownloadUrl` is invoked on mount and on every `objectId` change. Failures (rejection, empty string) are swallowed: the existing `__src` stays in place so the editor degrades gracefully under a transient storage-service outage. A race-guard ensures stale resolutions never overwrite a node whose `objectId` changed mid-flight.
+
+### No Adapter:**
 If no `uploadAdapter` is provided, only URL-based insertion is available.
 
 
