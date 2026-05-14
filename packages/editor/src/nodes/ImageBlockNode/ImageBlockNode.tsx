@@ -21,6 +21,16 @@ export interface ImageBlockPayload {
   key?: NodeKey;
   status?: 'uploading' | 'uploaded' | 'error';
   alignment?: ImageBlockAlignment;
+  /**
+   * Stable storage object ID (STORAGE-11).
+   * When set, callers persist this in the editor body instead of `src`,
+   * and resolve a fresh signed delivery URL at render time via
+   * `EditorMediaConfig.resolveDownloadUrl(objectId)`. The `src` field
+   * may still carry a transient blob: preview or a freshly resolved
+   * signed URL during the editor session, but persistence layers must
+   * not store it when `objectId` is present.
+   */
+  objectId?: string;
 }
 
 export type SerializedImageBlockNode = Spread<
@@ -33,6 +43,8 @@ export type SerializedImageBlockNode = Spread<
     height?: number;
     status?: 'uploading' | 'uploaded' | 'error';
     alignment?: ImageBlockAlignment;
+    /** Stable storage object ID (STORAGE-11). See ImageBlockPayload. */
+    objectId?: string;
   },
   SerializedLexicalNode
 >;
@@ -46,6 +58,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
   __height?: number;
   __status?: 'uploading' | 'uploaded' | 'error';
   __alignment?: ImageBlockAlignment;
+  __objectId?: string;
 
   static getType(): string {
     return 'image-block';
@@ -62,12 +75,22 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       node.__status,
       node.__alignment,
       node.__key,
+      node.__objectId,
     );
   }
 
   static importJSON(serializedNode: SerializedImageBlockNode): ImageBlockNode {
-    const { src, alt, caption, layout, width, height, status, alignment } =
-      serializedNode;
+    const {
+      src,
+      alt,
+      caption,
+      layout,
+      width,
+      height,
+      status,
+      alignment,
+      objectId,
+    } = serializedNode;
     const node = $createImageBlockNode({
       src,
       alt,
@@ -77,6 +100,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       height,
       status,
       alignment,
+      objectId,
     });
     return node;
   }
@@ -91,6 +115,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
       height: this.__height,
       status: this.__status,
       alignment: this.__alignment,
+      objectId: this.__objectId,
       type: 'image-block',
       version: 1,
     };
@@ -106,6 +131,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
     status?: 'uploading' | 'uploaded' | 'error',
     alignment?: ImageBlockAlignment,
     key?: NodeKey,
+    objectId?: string,
   ) {
     super(key);
     this.__src = src;
@@ -116,6 +142,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
     this.__height = height;
     this.__status = status;
     this.__alignment = alignment;
+    this.__objectId = objectId;
   }
 
   createDOM(config: EditorConfig): HTMLElement {
@@ -143,6 +170,7 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
         caption={this.__caption}
         status={this.__status}
         alignment={this.__alignment}
+        objectId={this.__objectId}
         nodeKey={this.getKey()}
       />
     );
@@ -177,6 +205,16 @@ export class ImageBlockNode extends DecoratorNode<React.ReactElement> {
     const self = this.getWritable();
     self.__alignment = alignment;
   }
+
+  /**
+   * Get the stable storage object ID for this image, if any (STORAGE-11).
+   * Returns undefined for images that were not uploaded via the storage-service
+   * adapter (e.g. legacy entries, images inserted from URL).
+   */
+  getObjectId(): string | undefined {
+    // Read from the latest writable state to honour any in-flight updates.
+    return this.__objectId;
+  }
 }
 
 export function $createImageBlockNode({
@@ -189,6 +227,7 @@ export function $createImageBlockNode({
   status,
   alignment,
   key,
+  objectId,
 }: ImageBlockPayload): ImageBlockNode {
   return new ImageBlockNode(
     src,
@@ -200,6 +239,7 @@ export function $createImageBlockNode({
     status,
     alignment,
     key,
+    objectId,
   );
 }
 

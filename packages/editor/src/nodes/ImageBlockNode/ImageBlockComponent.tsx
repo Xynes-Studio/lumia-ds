@@ -32,6 +32,15 @@ export interface ImageBlockComponentProps {
   status?: 'uploading' | 'uploaded' | 'error';
   layout?: 'inline' | 'breakout' | 'fullWidth';
   alignment?: ImageBlockAlignment;
+  /**
+   * Stable storage object ID (STORAGE-11). When set and the editor's
+   * `EditorMediaConfig.resolveDownloadUrl` is provided, the component
+   * resolves a fresh signed delivery URL on mount and on objectId change.
+   * The resolved URL is stored as the node's `__src` for display only —
+   * persistence layers MUST strip `__src` before save when `__objectId`
+   * is set (the saved entry body must never carry a signed URL).
+   */
+  objectId?: string;
 }
 
 export function ImageBlockComponent({
@@ -44,6 +53,7 @@ export function ImageBlockComponent({
   status,
   layout,
   alignment,
+  objectId,
 }: ImageBlockComponentProps) {
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelected] =
@@ -57,6 +67,39 @@ export function ImageBlockComponent({
   const pendingFileRef = useRef<File | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  // STORAGE-11: when an objectId is present (storage-service-backed image)
+  // and the consumer provided a `resolveDownloadUrl` resolver, refresh the
+  // node's `__src` with a freshly signed URL. We deliberately do not depend
+  // on `src` here so a stale/expired URL persisted in entry body gets swapped
+  // out on every mount. Failures are swallowed — the existing `__src` stays
+  // so a partial outage degrades gracefully rather than blanking the image.
+  useEffect(() => {
+    if (!objectId) return;
+    const resolver = mediaConfig?.resolveDownloadUrl;
+    if (typeof resolver !== 'function') return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const url = await resolver(objectId);
+        if (cancelled) return;
+        if (typeof url !== 'string' || url.length === 0) return;
+        editor.update(() => {
+          const node = $getNodeByKey(nodeKey);
+          if ($isImageBlockNode(node) && node.getObjectId() === objectId) {
+            const writable = node.getWritable();
+            writable.__src = url;
+          }
+        });
+      } catch {
+        // Resolver failure is non-fatal — surface a stale or empty src
+        // rather than throwing into the editor render path.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [editor, nodeKey, objectId, mediaConfig]);
 
   const onDelete = useCallback(
     (payload: KeyboardEvent) => {
@@ -144,6 +187,14 @@ export function ImageBlockComponent({
             const writable = node.getWritable();
             writable.__src = result.url;
             writable.__status = 'uploaded';
+            // STORAGE-11: persist objectId from adapter result so the entry
+            // body can later carry the id only (no signed URL leakage).
+            if (
+              typeof result.objectId === 'string' &&
+              result.objectId.length > 0
+            ) {
+              writable.__objectId = result.objectId;
+            }
           }
         });
 
