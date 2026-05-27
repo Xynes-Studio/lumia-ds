@@ -36,7 +36,7 @@ export function ImageToolbarButton() {
       if (!mediaConfig?.uploadAdapter) return;
 
       // Call onUploadStart callback
-      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image', 'file-picker');
 
       // Create node with uploading status
       const previewUrl = URL.createObjectURL(file);

@@ -117,7 +117,7 @@ describe('useMediaUpload', () => {
 
     expect(result.current.state.status).toBe('success');
     expect(result.current.state.progress).toBe(100);
-    expect(mockOnStart).toHaveBeenCalledWith(file, 'image');
+    expect(mockOnStart).toHaveBeenCalledWith(file, 'image', 'file-picker');
     expect(mockOnComplete).toHaveBeenCalled();
     expect(mockRevokeObjectURL).toHaveBeenCalled();
   });

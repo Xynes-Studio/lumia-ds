@@ -99,6 +99,7 @@ describe('useSlashUpload Integration', () => {
     expect(mockCallbacks.onUploadStart).toHaveBeenCalledWith(
       expect.any(File),
       'image',
+      'file-picker',
     );
   });
 
@@ -123,6 +124,7 @@ describe('useSlashUpload Integration', () => {
     expect(mockCallbacks.onUploadStart).toHaveBeenCalledWith(
       expect.any(File),
       'video',
+      'file-picker',
     );
   });
 
@@ -156,6 +158,7 @@ describe('useSlashUpload Integration', () => {
     expect(mockCallbacks.onUploadStart).toHaveBeenCalledWith(
       expect.any(File),
       'file',
+      'file-picker',
     );
   });
 });

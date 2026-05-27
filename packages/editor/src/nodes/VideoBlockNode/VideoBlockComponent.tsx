@@ -143,7 +143,7 @@ export function VideoBlockComponent({
       });
 
       // Notify start
-      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video', 'file-picker');
 
       try {
         const result = await mediaConfig.uploadAdapter.uploadFile(file, {

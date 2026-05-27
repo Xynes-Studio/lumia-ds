@@ -235,7 +235,11 @@ describe('useSlashMediaUpload integration', () => {
       expect(writable?.__status).toBe('uploaded');
     });
 
-    expect(callbacks.onUploadStart).toHaveBeenCalledWith(file, 'image');
+    expect(callbacks.onUploadStart).toHaveBeenCalledWith(
+      file,
+      'image',
+      'file-picker',
+    );
     expect(callbacks.onUploadComplete).toHaveBeenCalledWith(file, {
       url: 'https://cdn.example.com/photo.png',
       mime: 'image/png',
@@ -272,7 +276,11 @@ describe('useSlashMediaUpload integration', () => {
       expect(writable?.__status).toBe('error');
     });
 
-    expect(callbacks.onUploadStart).toHaveBeenCalledWith(file, 'video');
+    expect(callbacks.onUploadStart).toHaveBeenCalledWith(
+      file,
+      'video',
+      'file-picker',
+    );
     expect(callbacks.onUploadError).toHaveBeenCalledWith(file, uploadFailure);
     expect(callbacks.onUploadComplete).not.toHaveBeenCalled();
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -323,7 +331,11 @@ describe('useSlashMediaUpload integration', () => {
       expect(writable?.__status).toBe('uploaded');
     });
 
-    expect(callbacks.onUploadStart).toHaveBeenCalledWith(file, 'file');
+    expect(callbacks.onUploadStart).toHaveBeenCalledWith(
+      file,
+      'file',
+      'file-picker',
+    );
     expect(callbacks.onUploadProgress).toHaveBeenCalledWith(file, 55);
     expect(callbacks.onUploadComplete).toHaveBeenCalledWith(file, {
       url: 'https://cdn.example.com/report.pdf',

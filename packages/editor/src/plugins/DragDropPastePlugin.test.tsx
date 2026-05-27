@@ -228,6 +228,7 @@ describe('DragDropPastePlugin', () => {
       expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
         file,
         'image',
+        'drag-drop',
       );
     });
 
@@ -249,6 +250,7 @@ describe('DragDropPastePlugin', () => {
       expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
         file,
         'video',
+        'drag-drop',
       );
     });
 
@@ -270,7 +272,51 @@ describe('DragDropPastePlugin', () => {
       expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
         file,
         'file',
+        'drag-drop',
       );
+    });
+
+    // STORAGE-LIVE-5: source detection — paste path emits source='paste'
+    it("emits onUploadStart with source='paste' when file arrives via PASTE_COMMAND", async () => {
+      render(<DragDropPastePlugin />);
+
+      const pasteHandler = getRegisteredHandler(PASTE_COMMAND);
+
+      const file = new File(['content'], 'pasted.png', { type: 'image/png' });
+      const event = {
+        clipboardData: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await pasteHandler(event as unknown as ClipboardEvent);
+
+      expect(mockMediaConfig.callbacks.onUploadStart).toHaveBeenCalledWith(
+        file,
+        'image',
+        'paste',
+      );
+    });
+
+    // STORAGE-LIVE-5: source detection — drop path emits source='drag-drop'
+    // (already covered above implicitly, but make the contract explicit)
+    it("emits onUploadStart with source='drag-drop' when file arrives via DROP_COMMAND", async () => {
+      render(<DragDropPastePlugin />);
+
+      const dropHandler = getRegisteredHandler(DROP_COMMAND);
+
+      const file = new File(['content'], 'dropped.png', { type: 'image/png' });
+      const event = {
+        dataTransfer: { files: [file] },
+        preventDefault: vi.fn(),
+      };
+
+      await dropHandler(event);
+
+      const calls = (mockMediaConfig.callbacks.onUploadStart as Mock).mock
+        .calls;
+      const lastCall = calls.at(-1);
+      // Closed-set source taxonomy: drag-drop on DROP_COMMAND, never anything else
+      expect(lastCall?.[2]).toBe('drag-drop');
     });
   });
 

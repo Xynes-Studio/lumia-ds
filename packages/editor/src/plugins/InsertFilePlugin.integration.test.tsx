@@ -110,7 +110,7 @@ describe('InsertFilePlugin Integration', () => {
     });
 
     // Verify upload was triggered
-    expect(onUploadStart).toHaveBeenCalledWith(file, 'file');
+    expect(onUploadStart).toHaveBeenCalledWith(file, 'file', 'file-picker');
     expect(uploadFile).toHaveBeenCalled();
   });
 

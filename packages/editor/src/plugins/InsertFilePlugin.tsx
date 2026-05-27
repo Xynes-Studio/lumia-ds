@@ -43,7 +43,7 @@ export function InsertFilePlugin(): null {
           // If we have a file, we want to handle the upload flow
           if (file && mediaConfig?.uploadAdapter) {
             // Call onUploadStart callback
-            mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+            mediaConfig.callbacks?.onUploadStart?.(file, 'file', 'file-picker');
 
             // Validate size
             if (
