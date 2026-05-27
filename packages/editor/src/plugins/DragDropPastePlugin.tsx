@@ -33,7 +33,7 @@ export function DragDropPastePlugin(): null {
       return;
     }
 
-    const handleMedia = async (file: File) => {
+    const handleMedia = async (file: File, source: 'drag-drop' | 'paste') => {
       // Validate size
       if (
         mediaConfig.maxFileSizeMB &&
@@ -50,6 +50,7 @@ export function DragDropPastePlugin(): null {
           : file.type.startsWith('video/')
             ? 'video'
             : 'file',
+        source,
       );
 
       // STORAGE-11 bugfix: Lexical's `editor.update()` is queued (not always
@@ -194,7 +195,7 @@ export function DragDropPastePlugin(): null {
           const files = event.dataTransfer?.files;
           if (files && files.length > 0) {
             event.preventDefault();
-            Array.from(files).forEach((file) => handleMedia(file));
+            Array.from(files).forEach((file) => handleMedia(file, 'drag-drop'));
             return true;
           }
           return false;
@@ -207,7 +208,7 @@ export function DragDropPastePlugin(): null {
           const files = event.clipboardData?.files;
           if (files && files.length > 0) {
             event.preventDefault();
-            Array.from(files).forEach((file) => handleMedia(file));
+            Array.from(files).forEach((file) => handleMedia(file, 'paste'));
             return true;
           }
           return false;

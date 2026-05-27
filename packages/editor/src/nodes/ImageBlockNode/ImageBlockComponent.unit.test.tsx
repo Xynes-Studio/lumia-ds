@@ -185,7 +185,11 @@ describe('ImageBlockComponent unit', () => {
       expect(onUploadComplete).toHaveBeenCalled();
     });
 
-    expect(onUploadStart).toHaveBeenCalledWith(expect.any(File), 'image');
+    expect(onUploadStart).toHaveBeenCalledWith(
+      expect.any(File),
+      'image',
+      'file-picker',
+    );
     expect(onUploadProgress).toHaveBeenCalledWith(expect.any(File), 80);
     expect(createObjectURL).toHaveBeenCalled();
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:image-preview');

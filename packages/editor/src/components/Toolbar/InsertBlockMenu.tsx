@@ -242,7 +242,7 @@ function ImageInsertItem({
     (file: File) => {
       if (!mediaConfig?.uploadAdapter) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image', 'file-picker');
       const previewUrl = URL.createObjectURL(file);
 
       editor.update(() => {
@@ -355,7 +355,7 @@ function VideoInsertItem({
     (file: File) => {
       if (!mediaConfig?.uploadAdapter) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video', 'file-picker');
       const previewUrl = URL.createObjectURL(file);
 
       editor.update(() => {

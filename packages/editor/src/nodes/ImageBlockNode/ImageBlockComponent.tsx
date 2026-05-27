@@ -177,7 +177,7 @@ export function ImageBlockComponent({
       });
 
       // Notify start
-      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image', 'file-picker');
 
       try {
         const result = await mediaConfig.uploadAdapter.uploadFile(file, {

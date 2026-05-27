@@ -113,7 +113,7 @@ export function useSlashMediaUpload({
     (file: File) => {
       if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig!.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'image', 'file-picker');
 
       const previewUrl = createPreviewUrl(file);
       const payload = buildImageNodePayload(previewUrl, file.name);
@@ -156,7 +156,7 @@ export function useSlashMediaUpload({
     (file: File) => {
       if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig!.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'video', 'file-picker');
 
       const previewUrl = createPreviewUrl(file);
       const payload = buildVideoNodePayload(previewUrl, file.name);
@@ -201,7 +201,7 @@ export function useSlashMediaUpload({
     (file: File) => {
       if (!hasUploadAdapter(mediaConfig)) return;
 
-      mediaConfig!.callbacks?.onUploadStart?.(file, 'file');
+      mediaConfig!.callbacks?.onUploadStart?.(file, 'file', 'file-picker');
 
       const previewUrl = createPreviewUrl(file);
       const payload = buildFileNodePayload(previewUrl, file);

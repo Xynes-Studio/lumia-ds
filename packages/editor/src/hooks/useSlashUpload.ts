@@ -77,7 +77,7 @@ export function useSlashUpload(
     (file: File, onComplete?: () => void) => {
       if (!editor || !mediaConfig?.uploadAdapter) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'image');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'image', 'file-picker');
       const previewUrl = URL.createObjectURL(file);
 
       editor.update(() => {
@@ -99,7 +99,7 @@ export function useSlashUpload(
     (file: File, onComplete?: () => void) => {
       if (!editor || !mediaConfig?.uploadAdapter) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video', 'file-picker');
       const previewUrl = URL.createObjectURL(file);
 
       editor.update(() => {
@@ -122,7 +122,7 @@ export function useSlashUpload(
     (file: File, onComplete?: () => void) => {
       if (!editor || !mediaConfig?.uploadAdapter) return;
 
-      mediaConfig.callbacks?.onUploadStart?.(file, 'file');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'file', 'file-picker');
       const previewUrl = URL.createObjectURL(file);
 
       editor.update(() => {

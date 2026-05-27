@@ -87,7 +87,7 @@ export function useMediaUpload({
       updateNodeStatus('uploading', previewUrl);
 
       setState({ status: 'uploading', progress: 0 });
-      mediaConfig.callbacks?.onUploadStart?.(file, mediaType);
+      mediaConfig.callbacks?.onUploadStart?.(file, mediaType, 'file-picker');
 
       try {
         const result = await mediaConfig.uploadAdapter.uploadFile(file, {

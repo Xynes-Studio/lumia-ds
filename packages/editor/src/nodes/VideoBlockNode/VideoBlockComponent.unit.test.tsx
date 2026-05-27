@@ -179,7 +179,11 @@ describe('VideoBlockComponent unit', () => {
       expect(onUploadComplete).toHaveBeenCalled();
     });
 
-    expect(onUploadStart).toHaveBeenCalledWith(expect.any(File), 'video');
+    expect(onUploadStart).toHaveBeenCalledWith(
+      expect.any(File),
+      'video',
+      'file-picker',
+    );
     expect(onUploadProgress).toHaveBeenCalledWith(expect.any(File), 55);
     expect(createObjectURL).toHaveBeenCalled();
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:video-preview');

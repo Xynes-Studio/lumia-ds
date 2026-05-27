@@ -52,8 +52,28 @@ export interface MediaUploadAdapter {
  * show notifications, log analytics, or handle errors with custom logic.
  */
 export interface MediaUploadCallbacks {
-  /** Called when an upload starts */
-  onUploadStart?: (file: File, mediaType: 'image' | 'video' | 'file') => void;
+  /**
+   * Called when an upload starts.
+   *
+   * @param file - The file being uploaded.
+   * @param mediaType - The classified media kind (`image` / `video` / `file`).
+   * @param source - **STORAGE-LIVE-5.** Optional entry-path hint indicating
+   *   which editor affordance triggered the upload:
+   *     - `'file-picker'` — slash menu, toolbar button, or empty-block click
+   *       (anything that opens a native file dialog).
+   *     - `'drag-drop'` — file dropped onto the editor surface.
+   *     - `'paste'` — file pasted from clipboard.
+   *   Optional for backward compatibility — pre-STORAGE-LIVE-5 callers
+   *   continue to compile and run byte-for-byte. Consumers that wire
+   *   telemetry should treat `undefined` as `'unknown'`. Implementations
+   *   MUST NOT use `source` to leak any provider material into analytics —
+   *   it's a closed-set string only.
+   */
+  onUploadStart?: (
+    file: File,
+    mediaType: 'image' | 'video' | 'file',
+    source?: 'file-picker' | 'drag-drop' | 'paste',
+  ) => void;
   /** Called with progress updates (0-100) */
   onUploadProgress?: (file: File, progress: number) => void;
   /** Called when an upload completes successfully */

@@ -34,7 +34,7 @@ export function VideoToolbarButton() {
       if (!mediaConfig?.uploadAdapter) return;
 
       // Call onUploadStart callback
-      mediaConfig.callbacks?.onUploadStart?.(file, 'video');
+      mediaConfig.callbacks?.onUploadStart?.(file, 'video', 'file-picker');
 
       // Create node with uploading status and preview
       const previewUrl = URL.createObjectURL(file);
