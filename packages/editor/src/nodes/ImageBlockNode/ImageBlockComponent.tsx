@@ -62,6 +62,13 @@ export function ImageBlockComponent({
   const componentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaConfig = useMediaContext();
+  // STORAGE-11 — depend on the resolver function directly, NOT the whole
+  // mediaConfig object. Consumers that pass an inline `media={{...}}` object
+  // literal would otherwise hand a fresh reference on every render, causing
+  // this effect to re-fire on every render → editor.update → onChange →
+  // consumer setState → render → infinite loop. Function references coming
+  // out of useCallback are stable across renders so this is safe.
+  const resolveDownloadUrl = mediaConfig?.resolveDownloadUrl;
 
   // Store file reference for retry
   const pendingFileRef = useRef<File | null>(null);
@@ -76,12 +83,11 @@ export function ImageBlockComponent({
   // so a partial outage degrades gracefully rather than blanking the image.
   useEffect(() => {
     if (!objectId) return;
-    const resolver = mediaConfig?.resolveDownloadUrl;
-    if (typeof resolver !== 'function') return;
+    if (typeof resolveDownloadUrl !== 'function') return;
     let cancelled = false;
     void (async () => {
       try {
-        const url = await resolver(objectId);
+        const url = await resolveDownloadUrl(objectId);
         if (cancelled) return;
         if (typeof url !== 'string' || url.length === 0) return;
         editor.update(() => {
@@ -99,7 +105,7 @@ export function ImageBlockComponent({
     return () => {
       cancelled = true;
     };
-  }, [editor, nodeKey, objectId, mediaConfig]);
+  }, [editor, nodeKey, objectId, resolveDownloadUrl]);
 
   const onDelete = useCallback(
     (payload: KeyboardEvent) => {
