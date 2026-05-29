@@ -183,6 +183,35 @@ to the trigger on close through the shared `Menu` primitive, the current
 workspace is marked with `aria-current`, and compact mode keeps an accessible
 trigger label even when the visible workspace name is hidden.
 
+#### Trigger layout contract (BUG-LDS-2)
+
+`DashboardWorkspaceSwitcher` is the **single canonical** workspace switcher for
+every `DashboardShell` consumer (AGENTS.md §7 rule 9). Apps must not ship their
+own in-shell switcher — both the Auth App and the CMS Console render this
+component via the shell-level `workspace*` props, so the two are pixel-identical.
+
+The trigger fills the full rail width (`w-full`); its width is governed by the
+shell's `--dashboard-sidebar-width` token, never by app CSS. In the **expanded**
+rail the trigger row is a single grid, `grid-cols-[auto_1fr_auto]`:
+
+- `auto` — workspace avatar (left-anchored)
+- `1fr` — truncating workspace label stack
+- `auto` — chevron (right-anchored)
+
+In the **compact** (collapsed) rail the label *and* the chevron are hidden,
+leaving only the avatar so the trigger stays target-sized in the narrow rail.
+The expanded grid (`data-testid="dashboard-workspace-trigger-grid"`) and the
+chevron (`data-testid="dashboard-workspace-chevron"`) are covered by
+`dashboard-workspace-switcher.test.tsx`.
+
+> **Dev note — rebuild after editing layout source.** Consuming apps import
+> `@lumia-ui/layout` from its built `dist/`, and the `xynes-front-end/infra`
+> dev stack has **no** hot-reload watcher for this package (unlike
+> `@lumia-ui/components` / `@lumia-ui/editor`). After changing layout source,
+> run `pnpm --filter @lumia-ui/layout build` and restart the consuming dev
+> servers (`xynes-front-end/infra/run.sh restart`) — otherwise the apps render
+> a stale switcher/shell and can drift out of parity.
+
 ### Stacked detail pages
 
 ```tsx

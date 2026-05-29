@@ -120,31 +120,48 @@ export function DashboardWorkspaceSwitcher({
             'w-full cursor-pointer rounded-md bg-background hover:bg-muted',
             compact
               ? 'h-auto flex-col items-center justify-center gap-1 px-2 py-2'
-              : 'h-12 justify-between px-3',
+              : 'h-12 px-3',
             className,
           )}
           aria-label={resolvedLabels.trigger}
           data-testid="dashboard-workspace-trigger"
         >
-          <span className="flex min-w-0 items-center gap-3">
+          {compact ? (
+            // Collapsed rail: avatar only — the label and chevron are hidden
+            // so the trigger stays target-sized within the narrow rail.
             <Avatar
               size="sm"
               src={workspace?.avatarSrc}
               alt={workspace?.name ?? resolvedLabels.fallbackName}
               fallbackInitials={getFallbackInitials(workspace?.name)}
             />
-            {!compact ? (
-              <span className="truncate text-base font-medium text-foreground">
+          ) : (
+            // Expanded rail: a single full-width grid keeps the avatar
+            // left-anchored, the label stack flexible (1fr), and the chevron
+            // right-anchored — no inline padding hacks, fills the rail width
+            // governed by Lumia's --dashboard-sidebar-width token.
+            <span
+              className="grid w-full min-w-0 grid-cols-[auto_1fr_auto] items-center gap-3 text-left"
+              data-testid="dashboard-workspace-trigger-grid"
+            >
+              <Avatar
+                size="sm"
+                src={workspace?.avatarSrc}
+                alt={workspace?.name ?? resolvedLabels.fallbackName}
+                fallbackInitials={getFallbackInitials(workspace?.name)}
+              />
+              <span className="min-w-0 truncate text-base font-medium text-foreground">
                 {workspace?.name ?? resolvedLabels.fallbackName}
               </span>
-            ) : null}
-          </span>
-          <ChevronDownIcon
-            className={cx(
-              'h-5 w-5 shrink-0 text-foreground transition-transform duration-200',
-              isOpen && 'rotate-180',
-            )}
-          />
+              <ChevronDownIcon
+                className={cx(
+                  'h-5 w-5 shrink-0 text-foreground transition-transform duration-200',
+                  isOpen && 'rotate-180',
+                )}
+                data-testid="dashboard-workspace-chevron"
+              />
+            </span>
+          )}
         </Button>
       </MenuTrigger>
       <MenuContent
@@ -235,10 +252,17 @@ function PlusIcon({ className }: { className?: string }) {
   );
 }
 
-function ChevronDownIcon({ className }: { className?: string }) {
+function ChevronDownIcon({
+  className,
+  'data-testid': dataTestid,
+}: {
+  className?: string;
+  'data-testid'?: string;
+}) {
   return (
     <svg
       className={className}
+      data-testid={dataTestid}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
