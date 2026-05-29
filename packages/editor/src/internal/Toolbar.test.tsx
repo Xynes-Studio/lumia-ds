@@ -12,14 +12,33 @@ vi.mock('./useToolbarState', () => ({
 
 vi.mock('../components/Fonts', () => ({
   FontCombobox: ({ onChange, value }: any) => (
-    <select
+    <button
       data-testid="font-combobox"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
+      data-value={value}
+      onClick={() => onChange('roboto')}
     >
-      <option value="inter">Inter</option>
-      <option value="roboto">Roboto</option>
-    </select>
+      Font
+    </button>
+  ),
+}));
+
+vi.mock('../components/Dropdown', () => ({
+  Dropdown: ({ onChange, value, options, 'aria-label': ariaLabel }: any) => (
+    <div
+      data-testid="block-type-dropdown"
+      data-value={value}
+      aria-label={ariaLabel}
+    >
+      {options.map((option: { value: string; label: string }) => (
+        <button
+          key={option.value}
+          data-testid={`block-type-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -53,11 +72,6 @@ vi.mock('@lumia-ui/components', () => ({
       onChange={onChange}
       onKeyDown={onKeyDown}
     />
-  ),
-  Select: ({ onChange, value, children }: any) => (
-    <select data-testid="block-type-select" value={value} onChange={onChange}>
-      {children}
-    </select>
   ),
 }));
 
@@ -143,17 +157,24 @@ describe('Toolbar', () => {
   it('calls handleBlockTypeChange when block type changes', () => {
     render(<Toolbar />);
 
-    const select = screen.getByTestId('block-type-select');
-    fireEvent.change(select, { target: { value: 'h1' } });
+    fireEvent.click(screen.getByTestId('block-type-option-h1'));
 
     expect(defaultState.handleBlockTypeChange).toHaveBeenCalledWith('h1');
+  });
+
+  it('renders block type as a Lumia dropdown (not a native select)', () => {
+    render(<Toolbar />);
+
+    const dropdown = screen.getByTestId('block-type-dropdown');
+    expect(dropdown).toHaveAttribute('aria-label', 'Block Type');
+    expect(dropdown).toHaveAttribute('data-value', 'paragraph');
   });
 
   it('calls handleFontChange when font changes', () => {
     render(<Toolbar />);
 
     const combobox = screen.getByTestId('font-combobox');
-    fireEvent.change(combobox, { target: { value: 'roboto' } });
+    fireEvent.click(combobox);
 
     expect(defaultState.handleFontChange).toHaveBeenCalledWith('roboto');
   });

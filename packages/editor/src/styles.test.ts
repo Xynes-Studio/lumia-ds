@@ -22,3 +22,17 @@ describe('editor dark theme styles', () => {
     expect(styles).toContain('var(--editor-popover-border-dark');
   });
 });
+
+describe('editor focus treatment (BUG-LDS-3)', () => {
+  it('does not render a blue active-state ring on the content-editable wrapper', () => {
+    // The jarring blue focus ring/tint was removed; focus is conveyed by the
+    // caret instead. Guard against the specific ring colour creeping back.
+    expect(styles).not.toContain('rgba(37, 99, 235, 0.35)');
+    expect(styles).not.toMatch(
+      /\.editor-input-wrapper--focused\s*\{[^}]*box-shadow/,
+    );
+    expect(styles).not.toMatch(
+      /\.editor-input-wrapper--focused\s*\{[^}]*var\(--editor-focus-surface\)/,
+    );
+  });
+});

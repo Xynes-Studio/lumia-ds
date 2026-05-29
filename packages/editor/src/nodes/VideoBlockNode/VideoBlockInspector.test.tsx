@@ -41,25 +41,36 @@ vi.mock('@lumia-ui/components', () => ({
       placeholder={placeholder}
     />
   ),
-  Select: ({
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  Dropdown: ({
     label,
     value,
     onChange,
-    children,
+    options,
   }: {
-    label: string;
+    label?: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
   }) => (
-    <select
+    <div
       data-testid="video-provider-select"
       aria-label={label}
-      value={value}
-      onChange={onChange}
+      data-value={value}
     >
-      {children}
-    </select>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`video-provider-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -103,11 +114,10 @@ describe('VideoBlockInspector', () => {
   it('renders all provider options', () => {
     render(<VideoBlockInspector nodeKey="video-123" />);
 
-    const select = screen.getByTestId('video-provider-select');
-    expect(select).toContainHTML('YouTube');
-    expect(select).toContainHTML('Vimeo');
-    expect(select).toContainHTML('Loom');
-    expect(select).toContainHTML('HTML5');
+    expect(screen.getByText('YouTube')).toBeInTheDocument();
+    expect(screen.getByText('Vimeo')).toBeInTheDocument();
+    expect(screen.getByText('Loom')).toBeInTheDocument();
+    expect(screen.getByText('HTML5')).toBeInTheDocument();
   });
 
   it('registers update listener on mount', () => {
@@ -138,8 +148,7 @@ describe('VideoBlockInspector', () => {
   it('calls editor.update when provider changes', () => {
     render(<VideoBlockInspector nodeKey="video-123" />);
 
-    const select = screen.getByTestId('video-provider-select');
-    fireEvent.change(select, { target: { value: 'vimeo' } });
+    fireEvent.click(screen.getByTestId('video-provider-option-vimeo'));
 
     expect(mockUpdate).toHaveBeenCalled();
   });
@@ -165,7 +174,10 @@ describe('VideoBlockInspector', () => {
     expect(screen.getByTestId('video-url-input')).toHaveValue(
       'https://video.example/updated',
     );
-    expect(screen.getByTestId('video-provider-select')).toHaveValue('html5');
+    expect(screen.getByTestId('video-provider-select')).toHaveAttribute(
+      'data-value',
+      'html5',
+    );
     expect(screen.getByTestId('video-title-input')).toHaveValue(
       'Updated title',
     );
@@ -184,9 +196,7 @@ describe('VideoBlockInspector', () => {
     fireEvent.change(screen.getByTestId('video-url-input'), {
       target: { value: 'https://video.example/next' },
     });
-    fireEvent.change(screen.getByTestId('video-provider-select'), {
-      target: { value: 'loom' },
-    });
+    fireEvent.click(screen.getByTestId('video-provider-option-loom'));
     fireEvent.change(screen.getByTestId('video-title-input'), {
       target: { value: 'Changed title' },
     });

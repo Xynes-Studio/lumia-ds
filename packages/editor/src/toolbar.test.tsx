@@ -3,6 +3,38 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { LumiaEditor } from './lumia-editor';
 
+// The block-type control is a Lumia Popover-based Dropdown. Radix's popover
+// portal needs polyfills jsdom lacks, so (matching this package's convention of
+// mocking Popover-based primitives) render the Dropdown as a flat option list.
+// The real toolbar state + editor transform under test are untouched.
+vi.mock('./components/Dropdown', () => ({
+  Dropdown: ({
+    value,
+    onChange,
+    options,
+    'aria-label': ariaLabel,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
+    'aria-label'?: string;
+  }) => (
+    <div role="group" aria-label={ariaLabel}>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          role="option"
+          aria-selected={value === option.value}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
 describe('Toolbar', () => {
   it('toggles bold formatting when clicking the bold button', async () => {
     const onChange = vi.fn();
@@ -120,10 +152,8 @@ describe('Toolbar', () => {
     await user.keyboard('Hello Heading');
 
     // Find and change the block type dropdown
-    const blockTypeSelect = screen.getByRole('combobox', {
-      name: /Block Type/i,
-    });
-    await user.selectOptions(blockTypeSelect, 'h1');
+    const headingOption = screen.getByRole('option', { name: 'Heading 1' });
+    await user.click(headingOption);
 
     await waitFor(() => {
       expect(onChange).toHaveBeenCalled();

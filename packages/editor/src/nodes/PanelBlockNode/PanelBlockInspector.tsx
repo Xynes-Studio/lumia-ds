@@ -1,9 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select } from '@lumia-ui/components';
+import { Input } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isPanelBlockNode, PanelVariant } from './PanelBlockNode';
+import { Dropdown } from '../../components/Dropdown';
+
+const VARIANT_OPTIONS = [
+  { value: 'info', label: 'Info' },
+  { value: 'warning', label: 'Warning' },
+  { value: 'success', label: 'Success' },
+  { value: 'note', label: 'Note' },
+];
 
 export const PanelBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   nodeKey,
@@ -44,8 +52,8 @@ export const PanelBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   }, [editor, nodeKey]);
 
   const updateVariant = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newVariant = e.target.value as PanelVariant;
+    (value: string) => {
+      const newVariant = value as PanelVariant;
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isPanelBlockNode(node)) {
@@ -73,12 +81,12 @@ export const PanelBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
     <div className="space-y-4 p-4">
       <h3 className="mb-2 text-lg font-medium">Panel Inspector</h3>
 
-      <Select label="Variant" value={data.variant} onChange={updateVariant}>
-        <option value="info">Info</option>
-        <option value="warning">Warning</option>
-        <option value="success">Success</option>
-        <option value="note">Note</option>
-      </Select>
+      <Dropdown
+        label="Variant"
+        value={data.variant}
+        onChange={updateVariant}
+        options={VARIANT_OPTIONS}
+      />
 
       <div className="space-y-1">
         <label className="text-sm font-medium text-foreground">Title</label>

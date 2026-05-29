@@ -37,25 +37,36 @@ vi.mock('@lumia-ui/components', () => ({
       placeholder={placeholder}
     />
   ),
-  Select: ({
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  Dropdown: ({
     label,
     value,
     onChange,
-    children,
+    options,
   }: {
-    label: string;
+    label?: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
   }) => (
-    <select
+    <div
       data-testid="panel-variant-select"
       aria-label={label}
-      value={value}
-      onChange={onChange}
+      data-value={value}
     >
-      {children}
-    </select>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`panel-variant-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -96,11 +107,10 @@ describe('PanelBlockInspector', () => {
   it('renders all variant options', () => {
     render(<PanelBlockInspector nodeKey="panel-123" />);
 
-    const select = screen.getByTestId('panel-variant-select');
-    expect(select).toContainHTML('Info');
-    expect(select).toContainHTML('Warning');
-    expect(select).toContainHTML('Success');
-    expect(select).toContainHTML('Note');
+    expect(screen.getByText('Info')).toBeInTheDocument();
+    expect(screen.getByText('Warning')).toBeInTheDocument();
+    expect(screen.getByText('Success')).toBeInTheDocument();
+    expect(screen.getByText('Note')).toBeInTheDocument();
   });
 
   it('registers update listener on mount', () => {
@@ -111,8 +121,7 @@ describe('PanelBlockInspector', () => {
   it('calls editor.update when variant changes', () => {
     render(<PanelBlockInspector nodeKey="panel-123" />);
 
-    const select = screen.getByTestId('panel-variant-select');
-    fireEvent.change(select, { target: { value: 'warning' } });
+    fireEvent.click(screen.getByTestId('panel-variant-option-warning'));
 
     expect(mockUpdate).toHaveBeenCalled();
   });
@@ -155,9 +164,8 @@ describe('PanelBlockInspector', () => {
 
     it('handles variant change when node is valid', () => {
       render(<PanelBlockInspector nodeKey="panel-123" />);
-      const select = screen.getByTestId('panel-variant-select');
 
-      fireEvent.change(select, { target: { value: 'success' } });
+      fireEvent.click(screen.getByTestId('panel-variant-option-success'));
 
       expect(mockUpdate).toHaveBeenCalled();
     });

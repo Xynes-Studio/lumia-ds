@@ -19,12 +19,6 @@ vi.mock('@lumia-ui/components', () => ({
     />
   ),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Select: ({ onChange, value, children }: any) => (
-    <select data-testid="mock-select" value={value} onChange={onChange}>
-      {children}
-    </select>
-  ),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Slider: ({ onChange, value }: any) => (
     <input
       type="range"
@@ -32,6 +26,25 @@ vi.mock('@lumia-ui/components', () => ({
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
     />
+  ),
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Dropdown: ({ onChange, value, options }: any) => (
+    <div data-testid="mock-select" data-value={value}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {options.map((option: any) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`mock-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -86,18 +99,21 @@ describe('ImageBlockInspector', () => {
     });
   });
 
-  it('updates node layout when select changes', async () => {
+  it('updates node layout when a dropdown option is chosen', async () => {
     render(<TestEditor />);
 
-    const select = await screen.findByTestId('mock-select');
+    const dropdown = await screen.findByTestId('mock-select');
     // Default is 'inline' from inspector component default, but node default is undefined (which might default to inline logic elsewhere).
     // The inspector sets 'inline' if undefined.
-    expect(select).toHaveValue('inline');
+    expect(dropdown).toHaveAttribute('data-value', 'inline');
 
-    fireEvent.change(select, { target: { value: 'fullWidth' } });
+    fireEvent.click(screen.getByTestId('mock-option-fullWidth'));
 
     await waitFor(() => {
-      expect(select).toHaveValue('fullWidth');
+      expect(screen.getByTestId('mock-select')).toHaveAttribute(
+        'data-value',
+        'fullWidth',
+      );
     });
   });
 });

@@ -87,14 +87,18 @@
   position: relative;
   cursor: text;
   border-radius: 4px;
-  transition:
-    box-shadow 120ms ease,
-    background-color 120ms ease;
+  transition: background-color 120ms ease;
 }
 
+/*
+ * BUG-LDS-3: the content-editable surface no longer renders the jarring blue
+ * active-state ring/tint while typing. Focus is conveyed by the caret; the
+ * surrounding toolbar buttons, inputs, and dropdown triggers keep their own
+ * focus-visible rings. The class is retained as a styling hook (and exercised
+ * by the editor-primitive tests) but applies no ring.
+ */
 .editor-input-wrapper--focused {
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
-  background: var(--editor-focus-surface);
+  background: transparent;
 }
 
 .editor-container--document .editor-input-wrapper {
