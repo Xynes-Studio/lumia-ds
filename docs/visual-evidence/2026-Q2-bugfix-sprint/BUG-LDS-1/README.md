@@ -7,63 +7,39 @@
 
 ## What this directory holds
 
-Manual browser smoke screenshots demonstrating the BUG-LDS-1 contract on both consuming apps at three viewport heights. Per sprint plan §7, manual screenshots are accepted for this sprint; Playwright automation is deferred to a follow-up.
+Automated Playwright screenshots demonstrating the BUG-LDS-1 scroll-containment contract on the `DashboardShell` at three viewport heights:
 
-## Capture checklist
+| File | Viewport | Source |
+|---|---|---|
+| `dashboard-shell-720.png` | 1440×720 | `Runtime/DashboardShell` story (`runtime-dashboardshell--basic-dashboard-shell`) |
+| `dashboard-shell-900.png` | 1440×900 | same |
+| `dashboard-shell-1200.png` | 1440×1200 | same |
 
-For each cell below, capture a PNG. Use Chrome DevTools device toolbar with custom viewport sizes (Cmd+Shift+M → Responsive → set viewport).
+Because Lumia DS is a design-system repo (it does not run the Auth App / CMS Console), the contract is proven against the rendered Storybook story, where Storybook resolves `@lumia-ui/layout` to source — so the screenshots exercise the branch code, not a stale build. Consuming apps inherit the fix unchanged.
 
-| App | URL | Viewport heights | Expected file |
-|---|---|---|---|
-| Auth App | `http://localhost:3100/dashboard/<workspaceSlug>` | 720, 900, 1200 px @ 1440 px wide | `auth-app-{720,900,1200}.png` |
-| CMS Console | `http://localhost:3000/dashboard/<workspaceSlug>/content` | 720, 900, 1200 px @ 1440 px wide | `cms-console-{720,900,1200}.png` |
-
-Six PNG files total.
-
-## Per-screenshot smoke checks (must all pass before saving the PNG)
-
-For every screenshot, open the DevTools console and confirm:
-
-```js
-document.documentElement.scrollHeight === document.documentElement.clientHeight
-// must return: true
-```
-
-This proves the page itself is not scrollable — the entire layout is locked to the viewport via the new `h-dvh overflow-hidden` root contract.
-
-Visual checks:
-
-1. The workspace switcher at the top of the left rail is **fully visible**.
-2. The profile menu + footer at the bottom of the left rail are **fully visible**.
-3. Scrolling the page (mouse wheel over content, or arrow keys focused on the content area) scrolls the **right content panel only** — the sidebar stays put.
-4. Scrolling inside the sidebar (mouse wheel over the nav region) scrolls the **middle nav slot only** — workspace switcher + profile menu stay anchored.
-5. No double scrollbars anywhere on the page.
-
-## Pseudo-locale smoke
-
-Repeat the auth-app capture at 900 px once more with `en-XA` pseudo-locale active (set via the locale cookie or query, per `xynes-front-end/xynes-auth-app/DEVELOPER.md`). Save as `auth-app-900-en-XA.png`. Confirm no label overlap or clipping in the rail.
-
-## Local stack bring-up
-
-From the workspace root:
+## How the screenshots are generated
 
 ```bash
-cd xynes-front-end/infra
-cp -n .env.example .env   # if .env doesn't exist yet
-./run.sh up:dev
-./run.sh health           # confirm both apps healthy
+pnpm storybook:build                 # rebuilds storybook-static from package source
+pnpm exec playwright test e2e/dashboard-shell-scroll.spec.ts --project=chromium
 ```
 
-Both apps live on:
-- Auth App → `http://localhost:3100`
-- CMS Console → `http://localhost:3000`
+The spec (`e2e/dashboard-shell-scroll.spec.ts`) writes the PNGs into this directory and asserts, at real runtime layout, for each height:
 
-Once both serve a dashboard route, run the captures and commit the PNGs to this directory in a follow-up commit.
+1. `document.documentElement.scrollHeight - clientHeight <= 1` — the page itself is **not** scrollable (`h-dvh overflow-hidden` root).
+2. The right content panel (`data-testid="dashboard-main-scroll-frame"`) **does** overflow and scroll when content exceeds the viewport (`overflow-y-auto`).
+3. The bottom-anchored profile (`data-testid="dashboard-profile-trigger"`) does **not** move when the right pane is scrolled, and stays within the viewport — i.e. the rail's switcher/profile stay pinned.
 
-## Why this directory exists pre-screenshots
+This replaces the earlier manual-capture checklist. Per sprint plan §7, Playwright authoring was optional for this sprint; it is wired here because the harness was already set up and it gives the runtime proof the jsdom unit tests cannot.
 
-Per the sprint plan §6 "Definition of done", `xynes-front-end/lumia-ds/docs/visual-evidence/2026-Q2-bugfix-sprint/` must be populated. The PR that lands the BUG-LDS-1 code change creates this directory; the operator/reviewer captures the PNGs once both apps are running with the new lumia-ds build pulled in via `link:` (auth-app) or rebuilt `dist/` (cms-console). The smoke runs in **under 5 minutes**.
+## Visual checks (confirmed in the captured PNGs)
 
-## Verification automation (deferred)
+1. Workspace switcher at the top of the left rail is fully visible and anchored.
+2. Profile menu + footer at the bottom of the left rail are fully visible and anchored.
+3. The right content panel holds the page content; tall content scrolls inside it only.
+4. No double scrollbars.
 
-A future story should wire Playwright `screenshot()` calls so the smoke is run on every PR. Sprint plan §7 explicitly defers this. The Vitest layout-contract tests in `dashboard-shell.test.tsx` already lock the classNames at the unit level; the visual smoke covers the live composition.
+## Follow-up
+
+- Live-app visual smoke (Auth App `:3100`, CMS Console `:3000`) and pseudo-locale (`en-XA`) rail capture remain useful end-to-end checks but belong to the consuming-app stories (BUG-AUTH-1 / BUG-CMS-9), since this repo does not run those apps.
+- The Playwright spec can be promoted into CI alongside the existing `e2e/visual.spec.ts` suite.

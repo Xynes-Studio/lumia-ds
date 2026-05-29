@@ -81,13 +81,17 @@ All components accept standard `div` props (`className`, `style`, etc.) for easy
    - **Middle** — the only scrollable slot in the rail: `min-h-0 flex-1 overflow-y-auto` (exposed via `data-testid="dashboard-sidebar-scroll-region"`).
    - **Bottom** — profile menu + footer (anchored, no scroll).
    The sidebar `Card` itself carries `h-full overflow-hidden` (exposed via `data-testid="dashboard-sidebar-frame"`).
-3. **Main content panel** (right) is also height-locked: the `Card` carries `flex h-full min-h-0 overflow-hidden` (`data-testid="dashboard-main-frame"`); the inner `CardContent` (`data-testid="dashboard-main-scroll-frame"`) carries `min-h-0 flex-1` so children own the scroll seam.
+3. **Main content panel** (right) is height-locked and **owns its own scroll**: the `Card` carries `flex h-full min-h-0 overflow-hidden` (`data-testid="dashboard-main-frame"`) to clip at the panel edge, and the inner `CardContent` (`data-testid="dashboard-main-scroll-frame"`) carries `min-h-0 flex-1 overflow-y-auto` so tall page content scrolls **inside the right panel** while the rail stays anchored. Consumers drop their content straight in — no consumer-side scroll container is required.
 
-**Consumers must not** add `h-screen`, `min-h-screen`, `overflow-hidden`, or sticky positioning around the children passed into `DashboardShell`. The shell already locks the viewport; consumer-side scroll containers cause double scrollbars and fight the rail's anchored layout (see `AGENTS.md` §7 rule 9).
+**Consumers must not** add `h-screen`, `min-h-screen`, `overflow-hidden`, sticky positioning, or their own `overflow-y-auto` scroll container around the children passed into `DashboardShell`. The shell already locks the viewport and provides the right-pane scroll; an extra consumer-side scroll container produces double scrollbars and fights the rail's anchored layout (see `AGENTS.md` §7 rule 9).
 
-If a consumer page needs an inner scrollable region (a long form, a list with pinned filters), apply `min-h-0 flex-1 overflow-y-auto` to the *innermost* scroll container — `DashboardMainSection` already exposes `h-full min-h-0 w-full` so a single descendant `overflow-y-auto` is sufficient.
+If a consumer page needs a *nested* scroll region with pinned chrome (e.g. a sticky filter bar above an independently scrolling list), compose it inside the children using `min-h-0` flex layout — but the default and expected case is to let the shell's right pane scroll.
 
-The contract is enforced by Vitest assertions in `dashboard-shell.test.tsx` under the `DashboardShell shell layout contract (BUG-LDS-1)` describe block; any drive-by edit that drops `h-dvh`, `overflow-hidden`, or the anchored 3-slot rail will fail those tests.
+The contract is enforced by:
+- Vitest assertions in `dashboard-shell.test.tsx` under the `DashboardShell shell layout contract (BUG-LDS-1)` describe block (classname invariants — including the right pane's `overflow-y-auto`).
+- A Playwright runtime spec `e2e/dashboard-shell-scroll.spec.ts` against the `Runtime/DashboardShell` Storybook story, which proves at real layout that the document does not scroll, the right pane *does* scroll when content overflows, and the anchored profile/footer stay pinned across 720/900/1200 px heights. Evidence PNGs land in `docs/visual-evidence/2026-Q2-bugfix-sprint/BUG-LDS-1/`.
+
+Any drive-by edit that drops `h-dvh`, the rail's `overflow-hidden`, the anchored 3-slot rail, or the right pane's `overflow-y-auto` will fail these checks.
 
 ### Dashboard shell labels and product copy
 
@@ -223,3 +227,4 @@ export function DrawerExample() {
         </>
     );
 }
+```

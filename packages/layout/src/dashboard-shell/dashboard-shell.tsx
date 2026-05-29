@@ -986,7 +986,7 @@ export const DashboardShell = ({
         >
           <CardContent
             data-testid="dashboard-main-scroll-frame"
-            className="flex min-h-0 flex-1 flex-col p-6 lg:p-8"
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto p-6 lg:p-8"
           >
             <DashboardMainSection>{children}</DashboardMainSection>
           </CardContent>
@@ -1008,7 +1008,7 @@ export const DashboardShell = ({
         >
           <CardContent
             data-testid="dashboard-main-scroll-frame"
-            className="flex min-h-0 flex-1 flex-col p-4 sm:p-6"
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6"
           >
             <DashboardMainSection>{children}</DashboardMainSection>
           </CardContent>

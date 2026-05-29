@@ -1870,7 +1870,7 @@ describe('DashboardShell shell layout contract (BUG-LDS-1)', () => {
     host.remove();
   });
 
-  it('main scroll frame surfaces flex-1 + min-h-0 for child-owned scroll', async () => {
+  it('main scroll frame owns the right-pane scroll (overflow-y-auto + flex-1 + min-h-0)', async () => {
     const { root, host } = await renderShell();
 
     const scrollFrame = host.querySelector(
@@ -1881,6 +1881,7 @@ describe('DashboardShell shell layout contract (BUG-LDS-1)', () => {
 
     expect(scrollFrameClasses).toContain('min-h-0');
     expect(scrollFrameClasses).toContain('flex-1');
+    expect(scrollFrameClasses).toContain('overflow-y-auto');
 
     await act(async () => root.unmount());
     host.remove();
