@@ -71,6 +71,24 @@ export function AdminLayout() {
 
 All components accept standard `div` props (`className`, `style`, etc.) for easy styling overrides.
 
+### Dashboard shell layout contract (BUG-LDS-1)
+
+`DashboardShell` owns its own viewport-locked layout so consumers do not have to fight document-level scroll. The contract — encoded inside the shell — is:
+
+1. **Outer wrapper** carries `h-dvh w-full overflow-hidden` (with a `supports-[height:100svh]:h-svh` fallback for older browsers). This disables document-level scroll on dashboard routes. The element is exposed via `data-testid="dashboard-root"` for layout-invariant tests.
+2. **Sidebar (left rail)** is a fixed-height column with three slots:
+   - **Top** — workspace switcher (anchored, no scroll).
+   - **Middle** — the only scrollable slot in the rail: `min-h-0 flex-1 overflow-y-auto` (exposed via `data-testid="dashboard-sidebar-scroll-region"`).
+   - **Bottom** — profile menu + footer (anchored, no scroll).
+   The sidebar `Card` itself carries `h-full overflow-hidden` (exposed via `data-testid="dashboard-sidebar-frame"`).
+3. **Main content panel** (right) is also height-locked: the `Card` carries `flex h-full min-h-0 overflow-hidden` (`data-testid="dashboard-main-frame"`); the inner `CardContent` (`data-testid="dashboard-main-scroll-frame"`) carries `min-h-0 flex-1` so children own the scroll seam.
+
+**Consumers must not** add `h-screen`, `min-h-screen`, `overflow-hidden`, or sticky positioning around the children passed into `DashboardShell`. The shell already locks the viewport; consumer-side scroll containers cause double scrollbars and fight the rail's anchored layout (see `AGENTS.md` §7 rule 9).
+
+If a consumer page needs an inner scrollable region (a long form, a list with pinned filters), apply `min-h-0 flex-1 overflow-y-auto` to the *innermost* scroll container — `DashboardMainSection` already exposes `h-full min-h-0 w-full` so a single descendant `overflow-y-auto` is sufficient.
+
+The contract is enforced by Vitest assertions in `dashboard-shell.test.tsx` under the `DashboardShell shell layout contract (BUG-LDS-1)` describe block; any drive-by edit that drops `h-dvh`, `overflow-hidden`, or the anchored 3-slot rail will fail those tests.
+
 ### Dashboard shell labels and product copy
 
 `DashboardShell` is shared by Xynes apps, but Lumia DS does not own product
@@ -205,4 +223,3 @@ export function DrawerExample() {
         </>
     );
 }
-```

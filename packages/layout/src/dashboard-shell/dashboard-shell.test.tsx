@@ -1759,3 +1759,166 @@ describe('DashboardShell', () => {
     host.remove();
   });
 });
+
+describe('DashboardShell shell layout contract (BUG-LDS-1)', () => {
+  beforeEach(() => {
+    setViewportWidth(1024);
+  });
+
+  afterEach(() => {
+    setViewportWidth(1024);
+  });
+
+  const renderShell = async () => {
+    const { root, host } = createTestRoot();
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/users"
+          navItems={navItems}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+    return { root, host };
+  };
+
+  it('root wrapper is viewport-locked and disables document-level scroll', async () => {
+    const { root, host } = await renderShell();
+
+    const dashboardRoot = host.querySelector('[data-testid="dashboard-root"]');
+    expect(dashboardRoot).toBeTruthy();
+    const rootClasses = dashboardRoot?.className ?? '';
+
+    expect(rootClasses).toContain('h-dvh');
+    expect(rootClasses).toContain('overflow-hidden');
+    expect(rootClasses).not.toContain('min-h-screen');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('desktop shell container inherits h-full and drops calc(100vh) brittleness', async () => {
+    const { root, host } = await renderShell();
+
+    const dashboardRoot = host.querySelector('[data-testid="dashboard-root"]');
+    const desktopContainer = dashboardRoot?.firstElementChild;
+    expect(desktopContainer).toBeTruthy();
+    const desktopClasses = desktopContainer?.className ?? '';
+
+    expect(desktopClasses).toContain('h-full');
+    expect(desktopClasses).not.toMatch(/calc\(100vh/);
+    expect(desktopClasses).not.toContain('min-h-[calc(100vh');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('sidebar frame is fixed-height with scroll-containing overflow-hidden', async () => {
+    const { root, host } = await renderShell();
+
+    const sidebarFrame = host.querySelector(
+      '[data-testid="dashboard-sidebar-frame"]',
+    );
+    expect(sidebarFrame).toBeTruthy();
+    const sidebarClasses = sidebarFrame?.className ?? '';
+
+    expect(sidebarClasses).toContain('h-full');
+    expect(sidebarClasses).toContain('overflow-hidden');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('sidebar scroll region is the only scrollable slot in the rail', async () => {
+    const { root, host } = await renderShell();
+
+    const scrollRegion = host.querySelector(
+      '[data-testid="dashboard-sidebar-scroll-region"]',
+    );
+    expect(scrollRegion).toBeTruthy();
+    const scrollClasses = scrollRegion?.className ?? '';
+
+    expect(scrollClasses).toContain('overflow-y-auto');
+    expect(scrollClasses).toContain('min-h-0');
+    expect(scrollClasses).toContain('flex-1');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('main frame is height-locked and clips its own overflow', async () => {
+    const { root, host } = await renderShell();
+
+    const mainFrame = host.querySelector(
+      '[data-testid="dashboard-main-frame"]',
+    );
+    expect(mainFrame).toBeTruthy();
+    const mainClasses = mainFrame?.className ?? '';
+
+    expect(mainClasses).toContain('h-full');
+    expect(mainClasses).toContain('min-h-0');
+    expect(mainClasses).toContain('overflow-hidden');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('main scroll frame surfaces flex-1 + min-h-0 for child-owned scroll', async () => {
+    const { root, host } = await renderShell();
+
+    const scrollFrame = host.querySelector(
+      '[data-testid="dashboard-main-scroll-frame"]',
+    );
+    expect(scrollFrame).toBeTruthy();
+    const scrollFrameClasses = scrollFrame?.className ?? '';
+
+    expect(scrollFrameClasses).toContain('min-h-0');
+    expect(scrollFrameClasses).toContain('flex-1');
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('mobile shell inherits the same root contract at narrow viewports', async () => {
+    const { root, host } = createTestRoot();
+    setViewportWidth(720);
+
+    await act(async () => {
+      root.render(
+        <DashboardShell
+          activePath="/dashboard/users"
+          navItems={navItems}
+          workspace={{ id: 'ws-1', name: 'Xynes' }}
+          workspaceOptions={workspaceOptions}
+          onWorkspaceSelect={vi.fn()}
+          userMenu={{ name: 'Ada Lovelace', email: 'ada@xynes.com' }}
+          onLogout={vi.fn()}
+        >
+          <section>Page content</section>
+        </DashboardShell>,
+      );
+    });
+    await flushTimers();
+
+    const dashboardRoot = host.querySelector('[data-testid="dashboard-root"]');
+    expect(dashboardRoot).toBeTruthy();
+    const rootClasses = dashboardRoot?.className ?? '';
+    expect(rootClasses).toContain('h-dvh');
+    expect(rootClasses).toContain('overflow-hidden');
+
+    const mobileContainer = dashboardRoot?.firstElementChild;
+    const mobileClasses = mobileContainer?.className ?? '';
+    expect(mobileClasses).toContain('h-full');
+    expect(mobileClasses).not.toMatch(/calc\(100vh/);
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+});

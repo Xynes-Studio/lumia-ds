@@ -743,7 +743,7 @@ export const DashboardShell = ({
   );
 
   const renderDesktopShell = () => (
-    <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[1400px] flex-col gap-6 lg:h-[calc(100vh-3rem)] lg:flex-row">
+    <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col gap-6 lg:flex-row">
       <aside
         className="w-full transition-all duration-300 ease-in-out lg:h-full lg:w-[var(--dashboard-sidebar-width)]"
         style={
@@ -996,7 +996,7 @@ export const DashboardShell = ({
   );
 
   const renderMobileShell = () => (
-    <div className="relative mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[1400px] flex-col pb-24">
+    <div className="relative mx-auto flex h-full w-full max-w-[1400px] flex-col pb-24">
       <main
         id="main-content"
         className="flex min-h-0 w-full flex-1"
@@ -1227,7 +1227,10 @@ export const DashboardShell = ({
   );
 
   return (
-    <div className="relative min-h-screen w-full bg-background px-4 py-4 sm:px-6 sm:py-6">
+    <div
+      data-testid="dashboard-root"
+      className="relative h-dvh w-full overflow-hidden bg-background px-4 py-4 supports-[height:100svh]:h-svh sm:px-6 sm:py-6"
+    >
       {isMobileMode ? renderMobileShell() : renderDesktopShell()}
     </div>
   );
