@@ -2,6 +2,7 @@ import type { ChangeEvent, HTMLAttributes } from 'react';
 import { useMemo } from 'react';
 import { Button } from '../button/button';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type PaginationProps = HTMLAttributes<HTMLElement> & {
   page: number;
@@ -12,8 +13,7 @@ export type PaginationProps = HTMLAttributes<HTMLElement> & {
   pageSizeOptions?: number[];
 };
 
-const pageSizeSelectClasses =
-  'h-9 w-24 rounded-md border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+const pageSizeSelectClasses = `h-9 w-24 rounded-md border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor} disabled:opacity-50`;
 
 export function Pagination({
   page,

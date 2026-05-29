@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 const TRANSITION_MS = 300;
 const FOCUSABLE_SELECTOR =
@@ -256,7 +257,7 @@ export const Drawer = ({
       >
         <button
           type="button"
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className={`absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
           aria-label="Close drawer"
           onClick={() => onOpenChange(false)}
         >

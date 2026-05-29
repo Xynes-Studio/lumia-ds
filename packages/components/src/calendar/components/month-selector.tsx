@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 import { MONTH_NAMES_SHORT } from '../utils/constants';
+import { interactiveCursor } from '../../lib/interactive-styles';
 
 // We use 0-11 for months
 export interface MonthSelectorProps {
@@ -25,7 +26,7 @@ export const MonthSelector = ({
           }}
           type="button"
           className={cn(
-            'px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors flex items-center justify-center h-full',
+            `px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors flex items-center justify-center h-full ${interactiveCursor}`,
             value === index && 'bg-primary text-white hover:bg-primary',
           )}
         >

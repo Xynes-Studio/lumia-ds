@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { cn } from '../../lib/utils';
+import { interactiveCursor } from '../../lib/interactive-styles';
 
 export interface YearSelectorProps {
   value: number;
@@ -48,7 +49,7 @@ export const YearSelector = ({
             }
           }}
           className={cn(
-            'px-4 py-2 text-sm rounded-md hover:bg-muted transition-colors flex items-center justify-center border border-transparent min-w-[72px]',
+            `px-4 py-2 text-sm rounded-md hover:bg-muted transition-colors flex items-center justify-center border border-transparent min-w-[72px] ${interactiveCursor}`,
             value === year &&
               'bg-primary text-white hover:bg-primary shadow-sm',
           )}

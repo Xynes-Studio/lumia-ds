@@ -25,6 +25,7 @@ import {
   DrawerTitle,
   DirectoryTreeNav,
   SideNavItem,
+  interactiveCursor,
   type DirectoryTreeNode,
 } from '@lumia-ui/components';
 import {
@@ -673,7 +674,7 @@ export const DashboardShell = ({
                       <div className="flex items-start gap-2">
                         <button
                           type="button"
-                          className="flex min-w-0 flex-1 items-start gap-3 text-left"
+                          className={`flex min-w-0 flex-1 items-start gap-3 text-left ${interactiveCursor}`}
                           data-testid={`dashboard-notification-item-${item.id}`}
                           onClick={() => {
                             onNotificationClick?.(item);

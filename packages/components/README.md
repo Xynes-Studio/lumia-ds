@@ -230,6 +230,48 @@ All interactive components (`Button`, `MenuItem`, `ConfirmDialog`, `Select`) sup
 - **Select**: Replaces chevron with spinner; disables selection.
 - **ConfirmDialog**: Automatically handles async `onConfirm` loading state.
 
+## Interactive cursor contract (BUG-UNIVERSAL)
+
+Every Lumia DS primitive that exposes an `onClick`, `onSelect`, or `href` prop and triggers a user action MUST render with:
+
+- `cursor: pointer` when enabled.
+- `cursor: not-allowed` when disabled OR `aria-disabled="true"`.
+
+The contract is encoded by a shared token exported from `@lumia-ui/components`:
+
+```ts
+import { interactiveCursor, interactiveCursorStateful } from '@lumia-ui/components';
+
+// Static — the element is a real <button> / <input> / <a> so Tailwind's
+// `disabled:` and `aria-disabled:` variants fire automatically from the
+// underlying HTML attribute.
+const baseClasses = `inline-flex items-center ${interactiveCursor} ...`;
+
+// Stateful — the disabled posture is driven by a component prop (e.g.
+// `isDisabled` on Radio / Checkbox / Switch label wrappers) rather than an
+// HTML attribute. Returns `cursor-pointer` when enabled and
+// `cursor-not-allowed` when disabled.
+className={cn(baseClasses, interactiveCursorStateful(isDisabled), ...)}
+```
+
+### What MUST opt in
+
+Action-triggering primitives: `Button`, `Chip`, `SideNavItem`, `Tabs` trigger, `SegmentedControl` option, `ViewToggle` button, `Pagination` page-size select, `Select`, `NumberInput` steppers, `Input` password-reveal button, `Tag` close-x, `Alert` close button, `Toast` action + dismiss buttons, `Breadcrumbs` interactive crumbs, `Drawer` close button, `Calendar` header + day + month + year cells, `DatePicker` / `TimePicker` / `DateRangeFilter` triggers and inline option buttons, `DirectoryTreeNav` row + create buttons, `Table` sort header + secondary-action menu items, `EntityTile` action button, `Radio` / `Checkbox` / `Switch` label wrappers, `Table` selection checkbox label wrapper.
+
+### What MUST NOT opt in
+
+- **Text-entry fields** (`Input`, `Textarea`, `Combobox` text input) keep their browser-default `cursor: text`. They aren't action-triggering on click — typing is the interaction.
+- **MenuItem and ContextMenu items** (Radix-anchored) intentionally render `cursor: default`. Pointer cursor inside a controlled menu reads off in native macOS / iOS idioms; we mirror shadcn/ui's posture. This is asserted in `src/lib/interactive-cursor-inventory.test.tsx` against `menuItemBaseClasses`.
+- **Decorative non-interactive elements** (icons in display contexts, layout containers).
+
+### Lint enforcement
+
+The flat-config block in `eslint.config.js` bans bare `onClick` on lowercase HTML elements (`div`, `span`, `li`, `tr`, `td`, `section`, `header`, `footer`) inside `packages/components/src/`, `packages/layout/src/`, and `packages/editor/src/`. Test files and stories are excluded. Pre-existing aria-button-ish patterns (Combobox input wrapper, Drawer overlay, EntityTile, FileUpload dropzone, StatusNodePopover, VideoBlockComponent) are file-scope allowlisted with documented justifications.
+
+### Inventory test
+
+`src/lib/interactive-cursor-inventory.test.tsx` is the single source of truth for which primitives honour the contract. When you add a new action-triggering primitive, register it in `INTERACTIVE_PRIMITIVES`; the registry-exhaustiveness test (the explicit count assertion) trips when a primitive is added or removed, forcing a deliberate review.
+
 ## Storybook
 
 `HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia-ui/components storybook -- -p 6006`

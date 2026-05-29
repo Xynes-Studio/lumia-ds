@@ -1,4 +1,4 @@
-import { Flex } from '@lumia-ui/components';
+import { Flex, interactiveCursor } from '@lumia-ui/components';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { forwardRef, useEffect } from 'react';
 
@@ -48,7 +48,7 @@ export const DrawerLayout = forwardRef<HTMLDivElement, DrawerLayoutProps>(
           type="button"
           aria-label="Close drawer"
           data-slot="drawer-overlay"
-          className="absolute inset-0 h-full w-full bg-foreground/60 backdrop-blur-sm transition-opacity"
+          className={`absolute inset-0 h-full w-full bg-foreground/60 backdrop-blur-sm transition-opacity ${interactiveCursor}`}
           onClick={onClose}
         />
 

@@ -17,6 +17,7 @@ import {
 } from '../shared/field';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 type TimeParts = { hours: number; minutes: number };
 
@@ -233,6 +234,7 @@ export const TimePicker = ({
             className={cn(
               baseFieldClasses,
               'flex items-center justify-between text-left',
+              interactiveCursor,
               invalid && invalidFieldClasses,
             )}
           >
@@ -277,7 +279,7 @@ export const TimePicker = ({
                 <button
                   type="button"
                   onClick={() => commitChange(undefined)}
-                  className="text-xs font-medium text-muted-foreground  underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={`text-xs font-medium text-muted-foreground  underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
                 >
                   Clear
                 </button>
@@ -310,7 +312,7 @@ export const TimePicker = ({
                     data-value={option.value}
                     aria-selected={isSelected}
                     className={cn(
-                      'flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm transition',
+                      `flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm transition ${interactiveCursor}`,
                       format === '12h'
                         ? 'justify-between gap-3'
                         : 'justify-start',

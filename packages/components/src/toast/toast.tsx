@@ -8,6 +8,7 @@ import {
 } from 'react';
 import * as ToastPrimitive from '@radix-ui/react-toast';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type ToastVariant = 'default' | 'success' | 'warning' | 'error';
 
@@ -128,7 +129,7 @@ export const ToastProvider = ({
       >
         <button
           type="button"
-          className="inline-flex h-8 items-center rounded-md bg-transparent px-3 text-sm font-medium text-primary transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className={`inline-flex h-8 items-center rounded-md bg-transparent px-3 text-sm font-medium text-primary transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
           onClick={() => toast.action?.onClick?.()}
         >
           {toast.action.label}
@@ -176,7 +177,7 @@ export const ToastProvider = ({
                 ) : null}
               </div>
               <ToastPrimitive.Close
-                className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/60 transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={`ml-auto inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/60 transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
                 aria-label="Dismiss notification"
               >
                 <span aria-hidden>X</span>

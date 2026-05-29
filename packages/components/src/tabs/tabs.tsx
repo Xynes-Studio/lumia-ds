@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 type TabsValue = string;
 
@@ -310,7 +311,7 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         data-state={isActive ? 'active' : 'inactive'}
         disabled={disabled}
         className={cn(
-          'relative inline-flex min-w-24 items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-muted-foreground  transition-[color,background,border,box-shadow] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
+          `relative inline-flex min-w-24 items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-muted-foreground  transition-[color,background,border,box-shadow] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${interactiveCursor} disabled:opacity-60`,
           isActive
             ? 'border border-border bg-background text-foreground shadow-sm'
             : 'border border-transparent hover:bg-muted/70 hover:text-foreground',

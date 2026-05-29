@@ -15,6 +15,7 @@ import {
   invalidHintClasses,
 } from '../shared/field';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type DateRangeValue = {
   from?: Date;
@@ -315,6 +316,7 @@ export const DateRangeFilter = ({
           className={cn(
             baseFieldClasses,
             'flex items-center justify-between text-left',
+            interactiveCursor,
             invalid && invalidFieldClasses,
           )}
         >

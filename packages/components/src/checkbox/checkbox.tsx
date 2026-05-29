@@ -7,6 +7,7 @@ import {
   invalidHintClasses,
 } from '../shared/field';
 import { cn } from '../lib/utils';
+import { interactiveCursorStateful } from '../lib/interactive-styles';
 
 export type CheckboxProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -71,7 +72,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         htmlFor={controlId}
         className={cn(
           'flex items-start gap-3 text-foreground',
-          isDisabled && 'cursor-not-allowed opacity-70',
+          interactiveCursorStateful(isDisabled),
+          isDisabled && 'opacity-70',
         )}
       >
         <input

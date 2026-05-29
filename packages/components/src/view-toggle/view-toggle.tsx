@@ -6,6 +6,7 @@ import type {
 import { forwardRef, useCallback } from 'react';
 import { Icon } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type ViewMode = 'grid' | 'list';
 
@@ -21,8 +22,7 @@ export type ViewToggleProps = Omit<
 const groupClasses =
   'inline-flex items-center gap-1 rounded-lg border border-border bg-muted/60 p-1 shadow-sm';
 
-const buttonClasses =
-  'inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background hover:text-foreground hover:bg-background data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm disabled:cursor-not-allowed disabled:opacity-50';
+const buttonClasses = `inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background hover:text-foreground hover:bg-background data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm ${interactiveCursor} disabled:opacity-50`;
 
 const viewOptions: { mode: ViewMode; label: string; icon: string }[] = [
   { mode: 'grid', label: 'Grid view', icon: 'layout-grid' },

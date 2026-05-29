@@ -89,4 +89,59 @@ module.exports = [
       'prettier/prettier': 'error',
     },
   },
+  /**
+   * BUG-UNIVERSAL — ban bare `<div onClick>` / `<span onClick>` etc. inside
+   * the Lumia DS source tree. Interactive surfaces must be real `<button>` /
+   * `<a>` elements (or a Lumia primitive that wraps one) so they inherit the
+   * `interactiveCursor` contract plus the usual button a11y semantics
+   * (focusability, Enter/Space activation, role).
+   *
+   * Scope: source files only. Tests and stories are excluded because they
+   * frequently mount native HTML elements as fixtures.
+   *
+   * Allowlist (covered by file-scoped overrides if needed): the Combobox
+   * outer `<div onClick>` that re-focuses the inner input is the canonical
+   * exception in the package today; if a future primitive needs the same
+   * pattern, refactor through a real `<button>` or add a targeted disable
+   * comment with a justification.
+   */
+  {
+    files: [
+      'packages/components/src/**/*.{ts,tsx}',
+      'packages/layout/src/**/*.{ts,tsx}',
+      'packages/editor/src/**/*.{ts,tsx}',
+    ],
+    ignores: [
+      '**/*.test.{ts,tsx}',
+      '**/*.stories.{ts,tsx}',
+      // Pre-existing patterns that are intentionally not real buttons:
+      //   - Combobox multi-select trigger wraps an <input> and uses onClick
+      //     only to refocus the input.
+      //   - Drawer / FileUpload / EntityTile use the `role="button"` +
+      //     `tabIndex={0}` + onKeyDown pattern to make a non-button container
+      //     keyboard-accessible without forcing a real <button> wrapper. They
+      //     pre-date the BUG-UNIVERSAL guard; refactoring them is out of
+      //     scope for this story.
+      //   - StatusNodePopover trigger + VideoBlockComponent click-capture
+      //     overlay + video container use the same aria-button-ish pattern
+      //     inside the editor package.
+      'packages/components/src/combobox/combobox.tsx',
+      'packages/components/src/drawer/drawer.tsx',
+      'packages/components/src/entity-tile/entity-tile.tsx',
+      'packages/components/src/file-upload/file-upload.tsx',
+      'packages/editor/src/nodes/StatusNode/StatusNodePopover.tsx',
+      'packages/editor/src/nodes/VideoBlockNode/VideoBlockComponent.tsx',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "JSXOpeningElement[name.type='JSXIdentifier'][name.name=/^(div|span|li|tr|td|section|header|footer)$/] > JSXAttribute[name.name='onClick']",
+          message:
+            'Bare onClick on a non-interactive HTML element is forbidden in Lumia DS. Use Button, a styled <a>, or another Lumia primitive — they carry the cursor + a11y contract documented in packages/components/README.md "Interactive cursor contract".',
+        },
+      ],
+    },
+  },
 ];

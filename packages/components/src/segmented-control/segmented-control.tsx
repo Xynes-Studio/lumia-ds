@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type SegmentedControlOption = {
   value: string;
@@ -34,8 +35,7 @@ export type SegmentedControlProps = Omit<
 const containerClasses =
   'inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 p-1 text-sm';
 
-const optionClasses =
-  'inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-medium text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm disabled:cursor-not-allowed disabled:opacity-60';
+const optionClasses = `inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-medium text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm ${interactiveCursor} disabled:cursor-not-allowed disabled:opacity-60`;
 
 export const SegmentedControl = forwardRef<
   HTMLDivElement,

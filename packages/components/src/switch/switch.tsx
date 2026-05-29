@@ -2,6 +2,7 @@ import type { ElementRef } from 'react';
 import { forwardRef, useId } from 'react';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import { cn } from '../lib/utils';
+import { interactiveCursorStateful } from '../lib/interactive-styles';
 
 export type SwitchProps = Omit<
   SwitchPrimitive.SwitchProps,
@@ -48,7 +49,8 @@ export const Switch = forwardRef<
       htmlFor={controlId}
       className={cn(
         'inline-flex items-center gap-3 text-foreground',
-        isDisabled && 'cursor-not-allowed opacity-70',
+        interactiveCursorStateful(isDisabled),
+        isDisabled && 'opacity-70',
       )}
     >
       {control}

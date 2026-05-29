@@ -11,6 +11,7 @@ import {
 } from '../shared/field';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type DatePickerProps = FieldProps & {
   value?: Date;
@@ -120,6 +121,7 @@ export const DatePicker = ({
             className={cn(
               baseFieldClasses,
               'flex items-center justify-between text-left',
+              interactiveCursor,
               invalid && invalidFieldClasses,
             )}
           >
