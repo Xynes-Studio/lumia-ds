@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 import { forwardRef, useMemo, useState } from 'react';
 import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 type AlertVariant = 'info' | 'success' | 'warning' | 'error';
 
@@ -172,7 +173,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           type="button"
           onClick={handleClose}
           aria-label={closeButtonLabel}
-          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-current/80 transition-colors hover:bg-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          className={`absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-current/80 transition-colors hover:bg-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${interactiveCursor}`}
         >
           <span aria-hidden="true" className="text-lg leading-none">
             ×

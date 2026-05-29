@@ -7,6 +7,7 @@ import type {
 import { forwardRef } from 'react';
 import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 type SideNavItemBase = {
   label: string;
@@ -27,8 +28,7 @@ type SideNavItemButtonProps = SideNavItemBase &
 
 export type SideNavItemProps = SideNavItemLinkProps | SideNavItemButtonProps;
 
-const baseClasses =
-  'group inline-flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background';
+const baseClasses = `group inline-flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor}`;
 const inactiveClasses =
   'text-muted-foreground hover:bg-muted hover:text-foreground';
 const activeClasses =

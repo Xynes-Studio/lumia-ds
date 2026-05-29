@@ -6,6 +6,7 @@ import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 import { ContextMenu, type MenuItemConfig } from '../context-menu/context-menu';
 import { Input } from '../input/input';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 import {
   type DirectoryTreeNode,
   validateDirectoryName,
@@ -56,8 +57,7 @@ type ComposerState = {
   error: string | null;
 };
 
-const baseItemClasses =
-  'inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background';
+const baseItemClasses = `inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor}`;
 const inactiveItemClasses =
   'text-muted-foreground hover:bg-muted hover:text-foreground';
 const activeItemClasses =
@@ -549,7 +549,7 @@ export const DirectoryTreeNav = ({
                     <button
                       type="button"
                       className={cn(
-                        'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 group-hover:opacity-100 group-focus-within:opacity-100 ring-offset-background',
+                        `inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 group-hover:opacity-100 group-focus-within:opacity-100 ring-offset-background ${interactiveCursor}`,
                         !canManageDirectories &&
                           'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                       )}
@@ -618,7 +618,7 @@ export const DirectoryTreeNav = ({
         <button
           type="button"
           className={cn(
-            'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
+            `inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor}`,
             !canManageDirectories &&
               'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
           )}

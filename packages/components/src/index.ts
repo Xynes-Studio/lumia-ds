@@ -130,3 +130,12 @@ export * from './date-picker/date-picker';
 export * from './time-picker/time-picker';
 export * from './file-upload/file-upload';
 export * from './calendar';
+
+// BUG-UNIVERSAL: shared cursor token for interactive primitives. Consumers
+// composing link-styled <a> elements (or new in-app interactive surfaces) can
+// import `interactiveCursor` / `interactiveCursorStateful` to inherit the same
+// pointer / not-allowed contract Lumia DS components honour internally.
+export {
+  interactiveCursor,
+  interactiveCursorStateful,
+} from './lib/interactive-styles';

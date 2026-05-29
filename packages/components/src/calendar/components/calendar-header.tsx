@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '../../lib/utils';
+import { interactiveCursor } from '../../lib/interactive-styles';
 
 export interface CalendarHeaderProps {
   month: Date;
@@ -41,7 +42,7 @@ export const CalendarHeader = ({
         disabled={isMonthSelectorOpen || isYearSelectorOpen}
         type="button"
         className={cn(
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center hover:bg-muted rounded-md transition-colors',
+          `h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center hover:bg-muted rounded-md transition-colors ${interactiveCursor}`,
           (isMonthSelectorOpen || isYearSelectorOpen) &&
             'opacity-20 cursor-not-allowed hover:bg-transparent hover:opacity-20',
         )}
@@ -56,7 +57,7 @@ export const CalendarHeader = ({
           type="button"
           onClick={onMonthClick}
           className={cn(
-            'text-sm font-medium hover:bg-muted px-2 py-1 rounded-md transition-colors',
+            `text-sm font-medium hover:bg-muted px-2 py-1 rounded-md transition-colors ${interactiveCursor}`,
             (isMonthSelectorOpen || isYearSelectorOpen) && 'bg-muted',
           )}
         >
@@ -68,7 +69,7 @@ export const CalendarHeader = ({
           type="button"
           onClick={onYearClick}
           className={cn(
-            'text-sm font-medium hover:bg-muted px-2 py-1 rounded-md transition-colors',
+            `text-sm font-medium hover:bg-muted px-2 py-1 rounded-md transition-colors ${interactiveCursor}`,
             (isMonthSelectorOpen || isYearSelectorOpen) && 'bg-muted',
           )}
         >
@@ -83,7 +84,7 @@ export const CalendarHeader = ({
         disabled={isMonthSelectorOpen || isYearSelectorOpen}
         type="button"
         className={cn(
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center hover:bg-muted rounded-md transition-colors',
+          `h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center hover:bg-muted rounded-md transition-colors ${interactiveCursor}`,
           (isMonthSelectorOpen || isYearSelectorOpen) &&
             'opacity-20 cursor-not-allowed hover:bg-transparent hover:opacity-20',
         )}

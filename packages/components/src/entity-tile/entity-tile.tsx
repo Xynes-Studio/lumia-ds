@@ -12,6 +12,7 @@ import { Checkbox } from '../checkbox/checkbox';
 import { Flex } from '../flex/flex';
 import { cn } from '../lib/utils';
 import { Spinner } from '../spinner/spinner';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type TileView = 'grid' | 'list';
 
@@ -102,7 +103,7 @@ const ActionButton = <TItem,>({
       disabled={action.disabled || action.isLoading}
       data-lumia-tile-action-id={action.id}
       className={cn(
-        'inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/90 p-0 transition-[box-shadow,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
+        `inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/90 p-0 transition-[box-shadow,background-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor} disabled:opacity-50`,
         shadowClass,
         action.destructive
           ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'

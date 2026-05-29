@@ -54,4 +54,10 @@ declare module '@lumia-ui/components' {
     children?: DirectoryTreeNode[];
   };
   export const DirectoryTreeNav: ComponentLike;
+
+  // BUG-UNIVERSAL: shared cursor token re-exported from @lumia-ui/components.
+  export const interactiveCursor: string;
+  export const interactiveCursorStateful: (
+    isDisabled: boolean | undefined,
+  ) => 'cursor-not-allowed' | 'cursor-pointer';
 }

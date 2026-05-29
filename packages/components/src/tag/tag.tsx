@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react';
 import { forwardRef } from 'react';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type TagVariant = 'default' | 'success' | 'warning' | 'error';
 
@@ -23,8 +24,7 @@ const variantClasses: Record<TagVariant, string> = {
     'bg-red-50 text-red-900 border-red-200 dark:bg-red-500/10 dark:text-red-50 dark:border-red-500/40',
 };
 
-const removeButtonClasses =
-  'ml-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full text-current opacity-80 transition hover:bg-black/5 dark:hover:bg-white/15 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+const removeButtonClasses = `ml-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full text-current opacity-80 transition hover:bg-black/5 dark:hover:bg-white/15 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`;
 
 const labelClasses = 'max-w-[160px] truncate';
 

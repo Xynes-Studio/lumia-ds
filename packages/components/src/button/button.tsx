@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
 import { forwardRef } from 'react';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 import { Spinner } from '../spinner/spinner';
 
@@ -13,8 +14,7 @@ type ButtonVariant =
   | 'link';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
-const baseButtonClasses =
-  'inline-flex items-center justify-center gap-2 rounded-none text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed';
+const baseButtonClasses = `inline-flex items-center justify-center gap-2 rounded-none text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor} disabled:opacity-50`;
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:

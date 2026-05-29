@@ -18,6 +18,10 @@ import {
 } from 'react';
 import { Button } from '../button/button';
 import { cn } from '../lib/utils';
+import {
+  interactiveCursor,
+  interactiveCursorStateful,
+} from '../lib/interactive-styles';
 
 type TableDensity = 'comfortable' | 'compact';
 type TableAlignment = 'left' | 'center' | 'right';
@@ -343,7 +347,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
                     aria-pressed={direction !== 'none'}
                     onClick={() => handleSortToggle(column.id)}
                     className={cn(
-                      'group inline-flex w-full items-center gap-2 font-semibold tracking-wide text-muted-foreground',
+                      `group inline-flex w-full items-center gap-2 font-semibold tracking-wide text-muted-foreground ${interactiveCursor}`,
                       justifyContent,
                     )}
                   >
@@ -557,7 +561,7 @@ export function TableRowActions<RowData>({
                   key={`${action.label}-${index.toString()}`}
                   type="button"
                   role="menuitem"
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
                   onClick={() => handleSecondaryAction(action)}
                 >
                   {action.icon ? (
@@ -601,7 +605,8 @@ const SelectionCheckbox = ({
     <label
       className={cn(
         'inline-flex h-5 w-5 items-center justify-center',
-        disabled && 'cursor-not-allowed opacity-70',
+        interactiveCursorStateful(disabled),
+        disabled && 'opacity-70',
       )}
     >
       <input

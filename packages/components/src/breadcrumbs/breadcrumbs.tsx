@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react';
 import { Icon, type IconId } from '@lumia-ui/icons';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type BreadcrumbItem = {
   label: string;
@@ -25,8 +26,7 @@ const isEllipsis = (item: VisibleItem): item is { type: 'ellipsis' } =>
 
 const baseCrumbClasses =
   'inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors';
-const interactiveCrumbClasses =
-  'hover:text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background';
+const interactiveCrumbClasses = `hover:text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor}`;
 
 const buildVisibleItems = (
   items: BreadcrumbItem[],

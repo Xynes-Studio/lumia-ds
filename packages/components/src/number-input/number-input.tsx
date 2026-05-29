@@ -17,6 +17,7 @@ import {
   invalidHintClasses,
 } from '../shared/field';
 import { cn } from '../lib/utils';
+import { interactiveCursor } from '../lib/interactive-styles';
 
 export type NumberInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -38,8 +39,7 @@ const inputClasses =
 
 const controlsClasses = 'flex w-11 flex-col border-l border-border';
 
-const controlButtonClasses =
-  'flex flex-1 items-center justify-center text-muted-foreground  transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50';
+const controlButtonClasses = `flex flex-1 items-center justify-center text-muted-foreground  transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor} disabled:opacity-50`;
 
 const clampValue = (value: number | undefined, min?: number, max?: number) => {
   if (typeof value !== 'number' || Number.isNaN(value)) return undefined;
