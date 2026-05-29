@@ -182,4 +182,65 @@ describe('DashboardWorkspaceSwitcher', () => {
     await act(async () => root.unmount());
     host.remove();
   });
+
+  it('fills the rail width and lays the expanded trigger out as a three-cell grid (avatar / label / chevron)', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DashboardWorkspaceSwitcher
+          workspace={workspaces[0]}
+          workspaceOptions={workspaces}
+          onWorkspaceSelect={vi.fn()}
+        />,
+      );
+    });
+
+    const trigger = host.querySelector(
+      '[data-testid="dashboard-workspace-trigger"]',
+    );
+    // Full-rail width is governed by the trigger itself, not app CSS.
+    expect(trigger?.className).toContain('w-full');
+
+    const grid = host.querySelector(
+      '[data-testid="dashboard-workspace-trigger-grid"]',
+    );
+    expect(grid).toBeTruthy();
+    // Three cells: avatar (auto) / label (1fr) / chevron (auto).
+    expect(grid?.className).toContain('grid');
+    expect(grid?.className).toContain('grid-cols-[auto_1fr_auto]');
+    // Expanded rail shows both the label and the chevron affordance.
+    expect(grid?.textContent).toContain('Workspace Alpha');
+    expect(
+      host.querySelector('[data-testid="dashboard-workspace-chevron"]'),
+    ).toBeTruthy();
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
+
+  it('hides the label and chevron in compact rail mode, leaving only the avatar', async () => {
+    const { root, host } = createTestRoot();
+
+    await act(async () => {
+      root.render(
+        <DashboardWorkspaceSwitcher
+          compact
+          workspace={workspaces[0]}
+          workspaceOptions={workspaces}
+          onWorkspaceSelect={vi.fn()}
+        />,
+      );
+    });
+
+    expect(
+      host.querySelector('[data-testid="dashboard-workspace-trigger-grid"]'),
+    ).toBeNull();
+    expect(
+      host.querySelector('[data-testid="dashboard-workspace-chevron"]'),
+    ).toBeNull();
+
+    await act(async () => root.unmount());
+    host.remove();
+  });
 });
