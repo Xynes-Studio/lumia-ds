@@ -67,11 +67,6 @@ vi.mock('@lumia-ui/components', () => ({
   Input: (props: React.ComponentProps<'input'>) => (
     <input {...props} data-testid="input" />
   ),
-  Select: ({ children, ...props }: React.ComponentProps<'select'>) => (
-    <select {...props} data-testid="select">
-      {children}
-    </select>
-  ),
   Slider: () => <div data-testid="slider" />,
 }));
 

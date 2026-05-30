@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select, Slider } from '@lumia-ui/components';
+import { Input, Slider } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isImageBlockNode } from './ImageBlockNode';
+import { Dropdown } from '../../components/Dropdown';
+
+const LAYOUT_OPTIONS = [
+  { value: 'inline', label: 'Inline' },
+  { value: 'breakout', label: 'Breakout' },
+  { value: 'fullWidth', label: 'Full Width' },
+];
 
 export const ImageBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   nodeKey,
@@ -57,9 +64,9 @@ export const ImageBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   );
 
   const updateLayout = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (value: string) => {
       // Cast string to union type
-      const newLayout = e.target.value as 'inline' | 'breakout' | 'fullWidth';
+      const newLayout = value as 'inline' | 'breakout' | 'fullWidth';
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isImageBlockNode(node)) {
@@ -95,11 +102,12 @@ export const ImageBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
         />
       </div>
 
-      <Select label="Layout" value={data.layout} onChange={updateLayout}>
-        <option value="inline">Inline</option>
-        <option value="breakout">Breakout</option>
-        <option value="fullWidth">Full Width</option>
-      </Select>
+      <Dropdown
+        label="Layout"
+        value={data.layout}
+        onChange={updateLayout}
+        options={LAYOUT_OPTIONS}
+      />
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground">Width</label>

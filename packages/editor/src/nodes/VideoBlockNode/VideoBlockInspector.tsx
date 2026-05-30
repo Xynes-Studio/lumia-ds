@@ -1,9 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select } from '@lumia-ui/components';
+import { Input } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isVideoBlockNode, VideoProvider } from './VideoBlockNode';
+import { Dropdown } from '../../components/Dropdown';
+
+const PROVIDER_OPTIONS = [
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'vimeo', label: 'Vimeo' },
+  { value: 'loom', label: 'Loom' },
+  { value: 'html5', label: 'HTML5' },
+];
 
 export const VideoBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   nodeKey,
@@ -63,8 +71,8 @@ export const VideoBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
   );
 
   const updateProvider = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newProvider = e.target.value as VideoProvider;
+    (value: string) => {
+      const newProvider = value as VideoProvider;
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isVideoBlockNode(node)) {
@@ -101,12 +109,12 @@ export const VideoBlockInspector: React.FC<{ nodeKey: NodeKey }> = ({
         />
       </div>
 
-      <Select label="Provider" value={data.provider} onChange={updateProvider}>
-        <option value="youtube">YouTube</option>
-        <option value="vimeo">Vimeo</option>
-        <option value="loom">Loom</option>
-        <option value="html5">HTML5</option>
-      </Select>
+      <Dropdown
+        label="Provider"
+        value={data.provider}
+        onChange={updateProvider}
+        options={PROVIDER_OPTIONS}
+      />
 
       <div className="space-y-1">
         <label className="text-sm font-medium text-foreground">Title</label>

@@ -54,6 +54,14 @@ The editor supports two toolbar variants:
 - **Full** (`variant="full"`): The default toolbar with all features including block type dropdown, font picker, text formatting, lists, and links.
 - **Compact** (`variant="compact"`): A simplified toolbar for tight layouts, showing only essential formatting options (Bold, Italic, Underline, Bullet List, Link).
 
+### Choice controls + focus styling (BUG-LDS-3)
+
+Every choice control inside the editor (toolbar block-type picker, block inspector dropdowns for image layout, panel variant, video provider, status colour) is rendered with the Lumia DS Popover-based `Dropdown` (`packages/editor/src/components/Dropdown`). Native `<select>` is forbidden in the editor source tree — the production code carries zero `<select>` elements and a regression suite asserts it.
+
+`Dropdown` is a translation-ready primitive: it accepts `value` / `onChange` / `options` (each `{ value, label }`) and an `aria-label` for screen readers, but ships no product copy of its own. Consumers (CMS Console, Auth App, future apps) supply the localized `label` strings from their own message catalogs; the design system stays product-copy-neutral.
+
+The content-editable surface itself does **not** render an active-state ring on focus. Focus is conveyed by the caret. The surrounding toolbar buttons, form inputs, and dropdown triggers keep their own `focus-visible` rings so keyboard users still get clear focus targets where they need them.
+
 ### Font Configuration
 
 Control which fonts are available in your editor using the `fonts` prop:

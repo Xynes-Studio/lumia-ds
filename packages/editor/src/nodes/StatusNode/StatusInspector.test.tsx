@@ -35,25 +35,36 @@ vi.mock('@lumia-ui/components', () => ({
       placeholder={placeholder}
     />
   ),
-  Select: ({
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  Dropdown: ({
     label,
     value,
     onChange,
-    children,
+    options,
   }: {
-    label: string;
+    label?: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
   }) => (
-    <select
+    <div
       data-testid="status-color-select"
       aria-label={label}
-      value={value}
-      onChange={onChange}
+      data-value={value}
     >
-      {children}
-    </select>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`status-color-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -92,11 +103,10 @@ describe('StatusInspector', () => {
   it('renders all color options', () => {
     render(<StatusInspector nodeKey="status-123" />);
 
-    const select = screen.getByTestId('status-color-select');
-    expect(select).toContainHTML('Info');
-    expect(select).toContainHTML('Success');
-    expect(select).toContainHTML('Warning');
-    expect(select).toContainHTML('Error');
+    expect(screen.getByText('Info')).toBeInTheDocument();
+    expect(screen.getByText('Success')).toBeInTheDocument();
+    expect(screen.getByText('Warning')).toBeInTheDocument();
+    expect(screen.getByText('Error')).toBeInTheDocument();
   });
 
   it('registers update listener on mount', () => {
@@ -116,8 +126,7 @@ describe('StatusInspector', () => {
   it('calls editor.update when color changes', () => {
     render(<StatusInspector nodeKey="status-123" />);
 
-    const select = screen.getByTestId('status-color-select');
-    fireEvent.change(select, { target: { value: 'success' } });
+    fireEvent.click(screen.getByTestId('status-color-option-success'));
 
     expect(mockUpdate).toHaveBeenCalled();
   });

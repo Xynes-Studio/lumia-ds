@@ -1,9 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Input, Select } from '@lumia-ui/components';
+import { Input } from '@lumia-ui/components';
 import { $getNodeByKey } from 'lexical';
 import { $isStatusNode, StatusColor } from './StatusNode';
+import { Dropdown } from '../../components/Dropdown';
+
+const COLOR_OPTIONS = [
+  { value: 'info', label: 'Info' },
+  { value: 'success', label: 'Success' },
+  { value: 'warning', label: 'Warning' },
+  { value: 'error', label: 'Error' },
+];
 
 export const StatusInspector: React.FC<{ nodeKey: NodeKey }> = ({
   nodeKey,
@@ -57,8 +65,8 @@ export const StatusInspector: React.FC<{ nodeKey: NodeKey }> = ({
   );
 
   const updateColor = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newColor = e.target.value as StatusColor;
+    (value: string) => {
+      const newColor = value as StatusColor;
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
         if ($isStatusNode(node)) {
@@ -82,12 +90,12 @@ export const StatusInspector: React.FC<{ nodeKey: NodeKey }> = ({
         />
       </div>
 
-      <Select label="Color" value={data.color} onChange={updateColor}>
-        <option value="info">Info</option>
-        <option value="success">Success</option>
-        <option value="warning">Warning</option>
-        <option value="error">Error</option>
-      </Select>
+      <Dropdown
+        label="Color"
+        value={data.color}
+        onChange={updateColor}
+        options={COLOR_OPTIONS}
+      />
     </div>
   );
 };

@@ -7,14 +7,22 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
-  Select,
 } from '@lumia-ui/components';
 import { Icon } from '@lumia-ui/icons';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 
 import { FontCombobox } from '../components/Fonts';
+import { Dropdown } from '../components/Dropdown';
 import { useToolbarState } from './useToolbarState';
 import { InsertBlockMenu } from '../components/Toolbar/InsertBlockMenu';
+
+const BLOCK_TYPE_OPTIONS = [
+  { value: 'paragraph', label: 'Paragraph' },
+  { value: 'h1', label: 'Heading 1' },
+  { value: 'h2', label: 'Heading 2' },
+  { value: 'h3', label: 'Heading 3' },
+  { value: 'code', label: 'Code Block' },
+];
 
 export function Toolbar() {
   const {
@@ -48,17 +56,12 @@ export function Toolbar() {
       <div className="flex flex-wrap items-center gap-1">
         {/* Block Type Dropdown */}
         <div className="min-w-[120px]">
-          <Select
+          <Dropdown
             value={blockType}
-            onChange={(e) => handleBlockTypeChange(e.target.value)}
+            onChange={handleBlockTypeChange}
+            options={BLOCK_TYPE_OPTIONS}
             aria-label="Block Type"
-          >
-            <option value="paragraph">Paragraph</option>
-            <option value="h1">Heading 1</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
-            <option value="code">Code Block</option>
-          </Select>
+          />
         </div>
         <div className="mx-2 h-6 w-px bg-border" />
 

@@ -28,19 +28,6 @@ vi.mock('@lumia-ui/components', () => ({
   }) => (
     <input data-testid="alt-text-input" value={value} onChange={onChange} />
   ),
-  Select: ({
-    value,
-    onChange,
-    children,
-  }: {
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
-  }) => (
-    <select data-testid="layout-select" value={value} onChange={onChange}>
-      {children}
-    </select>
-  ),
   Slider: ({
     value,
     onChange,
@@ -54,6 +41,31 @@ vi.mock('@lumia-ui/components', () => ({
       value={value}
       onChange={(event) => onChange(Number(event.target.value))}
     />
+  ),
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  Dropdown: ({
+    value,
+    onChange,
+    options,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
+  }) => (
+    <div data-testid="layout-select" data-value={value}>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`layout-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -93,7 +105,10 @@ describe('ImageBlockInspector unit', () => {
     render(<ImageBlockInspector nodeKey="image-123" />);
 
     expect(screen.getByTestId('alt-text-input')).toHaveValue('Updated alt');
-    expect(screen.getByTestId('layout-select')).toHaveValue('fullWidth');
+    expect(screen.getByTestId('layout-select')).toHaveAttribute(
+      'data-value',
+      'fullWidth',
+    );
     expect(screen.getByTestId('width-slider')).toHaveValue('88');
   });
 
@@ -110,9 +125,7 @@ describe('ImageBlockInspector unit', () => {
     fireEvent.change(screen.getByTestId('alt-text-input'), {
       target: { value: 'Accessible alt' },
     });
-    fireEvent.change(screen.getByTestId('layout-select'), {
-      target: { value: 'breakout' },
-    });
+    fireEvent.click(screen.getByTestId('layout-option-breakout'));
     fireEvent.change(screen.getByTestId('width-slider'), {
       target: { value: '75' },
     });
@@ -134,9 +147,7 @@ describe('ImageBlockInspector unit', () => {
     fireEvent.change(screen.getByTestId('alt-text-input'), {
       target: { value: 'Ignored alt' },
     });
-    fireEvent.change(screen.getByTestId('layout-select'), {
-      target: { value: 'breakout' },
-    });
+    fireEvent.click(screen.getByTestId('layout-option-breakout'));
     fireEvent.change(screen.getByTestId('width-slider'), {
       target: { value: '75' },
     });

@@ -35,26 +35,6 @@ vi.mock('@lumia-ui/components', () => ({
       placeholder={placeholder}
     />
   ),
-  Select: ({
-    label,
-    value,
-    onChange,
-    children,
-  }: {
-    label: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
-  }) => (
-    <select
-      data-testid="layout-select"
-      aria-label={label}
-      value={value}
-      onChange={onChange}
-    >
-      {children}
-    </select>
-  ),
   Slider: ({
     value,
     onChange,
@@ -77,6 +57,33 @@ vi.mock('@lumia-ui/components', () => ({
       max={max}
       step={step}
     />
+  ),
+}));
+
+vi.mock('../../components/Dropdown', () => ({
+  Dropdown: ({
+    label,
+    value,
+    onChange,
+    options,
+  }: {
+    label?: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string }[];
+  }) => (
+    <div data-testid="layout-select" aria-label={label} data-value={value}>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          data-testid={`layout-option-${option.value}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -107,7 +114,7 @@ describe('ImageBlockInspector', () => {
     expect(screen.getByTestId('alt-text-input')).toBeInTheDocument();
   });
 
-  it('renders layout select', () => {
+  it('renders layout dropdown', () => {
     render(<ImageBlockInspector nodeKey="image-123" />);
     expect(screen.getByTestId('layout-select')).toBeInTheDocument();
   });
@@ -120,10 +127,9 @@ describe('ImageBlockInspector', () => {
   it('renders all layout options', () => {
     render(<ImageBlockInspector nodeKey="image-123" />);
 
-    const select = screen.getByTestId('layout-select');
-    expect(select).toContainHTML('Inline');
-    expect(select).toContainHTML('Breakout');
-    expect(select).toContainHTML('Full Width');
+    expect(screen.getByText('Inline')).toBeInTheDocument();
+    expect(screen.getByText('Breakout')).toBeInTheDocument();
+    expect(screen.getByText('Full Width')).toBeInTheDocument();
   });
 
   it('registers update listener on mount', () => {
@@ -143,8 +149,7 @@ describe('ImageBlockInspector', () => {
   it('calls editor.update when layout changes', () => {
     render(<ImageBlockInspector nodeKey="image-123" />);
 
-    const select = screen.getByTestId('layout-select');
-    fireEvent.change(select, { target: { value: 'breakout' } });
+    fireEvent.click(screen.getByTestId('layout-option-breakout'));
 
     expect(mockUpdate).toHaveBeenCalled();
   });
