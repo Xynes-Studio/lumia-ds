@@ -129,4 +129,78 @@ describe('Tabs', () => {
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  describe('underline variant', () => {
+    const UnderlineTabs = () => (
+      <Tabs defaultValue="domains" variant="underline">
+        <TabsList>
+          <TabsTrigger value="domains" count={3}>
+            Domains
+          </TabsTrigger>
+          <TabsTrigger value="apikeys" count={0}>
+            API Keys
+          </TabsTrigger>
+          <TabsTrigger value="webhooks" disabled>
+            Webhooks
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="domains">Domains content</TabsContent>
+        <TabsContent value="apikeys">API keys content</TabsContent>
+      </Tabs>
+    );
+
+    it('renders the underline strip with a bottom border and keeps tab semantics', async () => {
+      const { root, host } = createTestRoot();
+
+      await act(async () => {
+        root.render(<UnderlineTabs />);
+      });
+
+      const list = host.querySelector('[role="tablist"]');
+      const triggers = host.querySelectorAll('[role="tab"]');
+      const panels = host.querySelectorAll('[role="tabpanel"]');
+
+      // underline list is border-led, not the segmented muted box
+      expect(list?.className).toContain('border-b');
+      expect(list?.className).not.toContain('bg-muted/60');
+
+      expect(triggers).toHaveLength(3);
+      expect(triggers[0]?.getAttribute('aria-selected')).toBe('true');
+      expect(triggers[2]?.hasAttribute('disabled')).toBe(true);
+
+      // underline panel renders flush (no card border / shadow)
+      expect(panels[0]?.className).not.toContain('shadow-sm');
+      expect(panels[0]?.hasAttribute('hidden')).toBe(false);
+      expect(panels[1]?.hasAttribute('hidden')).toBe(true);
+
+      await act(async () => root.unmount());
+      document.body.removeChild(host);
+    });
+
+    it('renders active-aware count badges', async () => {
+      const { root, host } = createTestRoot();
+
+      await act(async () => {
+        root.render(<UnderlineTabs />);
+      });
+
+      const triggers = host.querySelectorAll('[role="tab"]');
+      const activeBadge = triggers[0]?.querySelector(
+        'span[aria-hidden="true"]',
+      );
+      const inactiveBadge = triggers[1]?.querySelector(
+        'span[aria-hidden="true"]',
+      );
+
+      expect(activeBadge?.textContent).toBe('3');
+      expect(activeBadge?.className).toContain('bg-foreground');
+
+      // a zero count still renders (so empty sections show "0"), but muted
+      expect(inactiveBadge?.textContent).toBe('0');
+      expect(inactiveBadge?.className).toContain('bg-muted');
+
+      await act(async () => root.unmount());
+      document.body.removeChild(host);
+    });
+  });
 });

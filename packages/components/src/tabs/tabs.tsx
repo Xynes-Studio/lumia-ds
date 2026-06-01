@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import {
   createContext,
   forwardRef,
@@ -16,10 +16,19 @@ import { interactiveCursor } from '../lib/interactive-styles';
 
 type TabsValue = string;
 
+/**
+ * Visual style of the tab strip.
+ * - `segmented` (default): pill triggers inside a bordered, muted container.
+ * - `underline`: flush triggers with an active underline, sitting on a single
+ *   bottom border — used for in-content settings sections that grow over time.
+ */
+export type TabsVariant = 'segmented' | 'underline';
+
 type TabsContextValue = {
   value?: TabsValue;
   baseId: string;
   orientation: 'horizontal' | 'vertical';
+  variant: TabsVariant;
   registerTrigger: (
     value: TabsValue,
     ref: HTMLButtonElement | null,
@@ -46,6 +55,8 @@ export type TabsProps = HTMLAttributes<HTMLDivElement> & {
   defaultValue?: TabsValue;
   onValueChange?: (value: TabsValue) => void;
   orientation?: 'horizontal' | 'vertical';
+  /** Visual style of the tab strip. Defaults to `segmented`. */
+  variant?: TabsVariant;
 };
 
 export const Tabs = ({
@@ -53,6 +64,7 @@ export const Tabs = ({
   defaultValue,
   onValueChange,
   orientation = 'horizontal',
+  variant = 'segmented',
   className,
   children,
   ...props
@@ -169,6 +181,7 @@ export const Tabs = ({
       value: currentValue,
       baseId,
       orientation,
+      variant,
       registerTrigger,
       unregisterTrigger,
       onSelect: (nextValue: TabsValue) => {
@@ -186,6 +199,7 @@ export const Tabs = ({
       baseId,
       currentValue,
       orientation,
+      variant,
       registerTrigger,
       unregisterTrigger,
       isControlled,
@@ -209,7 +223,7 @@ export type TabsListProps = HTMLAttributes<HTMLDivElement>;
 
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
   function TabsList({ className, ...props }, ref) {
-    const { orientation } = useTabsContext('TabsList');
+    const { orientation, variant } = useTabsContext('TabsList');
 
     return (
       <div
@@ -217,7 +231,9 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
         role="tablist"
         aria-orientation={orientation}
         className={cn(
-          'inline-flex items-center gap-2 rounded-lg border border-border bg-muted/60 p-1',
+          variant === 'underline'
+            ? 'flex items-stretch gap-1 border-b border-border'
+            : 'inline-flex items-center gap-2 rounded-lg border border-border bg-muted/60 p-1',
           className,
         )}
         {...props}
@@ -228,16 +244,32 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
 
 export type TabsTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   value: TabsValue;
+  /**
+   * Optional count rendered as a small badge after the label. The badge is
+   * active-aware: it inverts (solid) on the selected tab and stays muted on
+   * inactive tabs.
+   */
+  count?: ReactNode;
 };
 
 export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
   function TabsTrigger(
-    { className, value, disabled = false, onClick, onKeyDown, ...props },
+    {
+      className,
+      value,
+      count,
+      disabled = false,
+      onClick,
+      onKeyDown,
+      children,
+      ...props
+    },
     ref,
   ) {
     const {
       value: activeValue,
       baseId,
+      variant,
       registerTrigger,
       unregisterTrigger,
       onSelect,
@@ -298,6 +330,27 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
       }
     };
 
+    const baseClassName =
+      variant === 'underline'
+        ? `relative -mb-px inline-flex items-center justify-center gap-2 whitespace-nowrap border-b-2 px-3.5 py-3 text-sm font-semibold text-muted-foreground transition-[color,border-color] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${interactiveCursor} disabled:opacity-50`
+        : `relative inline-flex min-w-24 items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-muted-foreground  transition-[color,background,border,box-shadow] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${interactiveCursor} disabled:opacity-60`;
+
+    const stateClassName =
+      variant === 'underline'
+        ? isActive
+          ? 'border-foreground text-foreground'
+          : 'border-transparent hover:text-foreground'
+        : isActive
+          ? 'border border-border bg-background text-foreground shadow-sm'
+          : 'border border-transparent hover:bg-muted/70 hover:text-foreground';
+
+    const countBadgeClassName = cn(
+      'inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-semibold leading-none',
+      isActive
+        ? 'bg-foreground text-background'
+        : 'bg-muted text-muted-foreground',
+    );
+
     return (
       <button
         {...props}
@@ -310,16 +363,17 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         tabIndex={isActive ? 0 : -1}
         data-state={isActive ? 'active' : 'inactive'}
         disabled={disabled}
-        className={cn(
-          `relative inline-flex min-w-24 items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-muted-foreground  transition-[color,background,border,box-shadow] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${interactiveCursor} disabled:opacity-60`,
-          isActive
-            ? 'border border-border bg-background text-foreground shadow-sm'
-            : 'border border-transparent hover:bg-muted/70 hover:text-foreground',
-          className,
-        )}
+        className={cn(baseClassName, stateClassName, className)}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-      />
+      >
+        {children}
+        {count !== undefined && count !== null ? (
+          <span className={countBadgeClassName} aria-hidden="true">
+            {count}
+          </span>
+        ) : null}
+      </button>
     );
   },
 );
@@ -330,7 +384,11 @@ export type TabsContentProps = HTMLAttributes<HTMLDivElement> & {
 
 export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
   function TabsContent({ className, value, children, ...props }, ref) {
-    const { value: activeValue, baseId } = useTabsContext('TabsContent');
+    const {
+      value: activeValue,
+      baseId,
+      variant,
+    } = useTabsContext('TabsContent');
     const isActive = activeValue === value;
     const triggerId = `${baseId}-tab-${value}`;
     const panelId = `${baseId}-panel-${value}`;
@@ -346,7 +404,11 @@ export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
         hidden={!isActive}
         data-state={isActive ? 'active' : 'inactive'}
         className={cn(
-          'rounded-lg border border-border bg-background p-4 text-sm leading-6 text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
+          // Underline tabs render flush (no card wrapper) so sections don't
+          // become card-in-card; segmented tabs keep the bordered panel.
+          variant === 'underline'
+            ? 'pt-4 text-sm leading-6 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background'
+            : 'rounded-lg border border-border bg-background p-4 text-sm leading-6 text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background',
           !isActive && 'hidden',
           className,
         )}

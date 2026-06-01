@@ -29,7 +29,7 @@ describe('Input component', () => {
     expect(input?.getAttribute('placeholder')).toBe('Name');
     expect(input?.getAttribute('aria-invalid')).toBeNull();
     expect(input?.className).toContain('border-border');
-    expect(input?.className).toContain('rounded-none');
+    expect(input?.className).toContain('rounded-md');
     expect(input?.className).toContain('focus-visible:ring-primary-500');
     expect(input?.getAttribute('aria-describedby')).toBe(hint?.id);
     expect(hint?.textContent).toBe('Helper text');
@@ -139,7 +139,7 @@ describe('Textarea component', () => {
     expect(textarea?.nodeName).toBe('TEXTAREA');
     expect(textarea?.className).toContain('resize-y');
     expect(textarea?.className).toContain('border-destructive');
-    expect(textarea?.className).toContain('rounded-none');
+    expect(textarea?.className).toContain('rounded-md');
     expect(textarea?.getAttribute('aria-invalid')).toBe('true');
     expect(hint?.textContent).toBe('Fix the issue');
     expect(hint?.className).toContain('text-destructive');
