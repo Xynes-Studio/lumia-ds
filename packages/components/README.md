@@ -130,6 +130,29 @@ export function Example() {
         </TabsContent>
       </Tabs>
 
+      {/*
+        `Tabs` supports two visual variants. The default `segmented` style
+        (above) renders pill triggers in a bordered container. Use
+        `variant="underline"` for in-content settings sections that grow over
+        time — flush triggers on a single bottom border, with an optional
+        active-aware `count` badge per trigger and flush (non-card) panels.
+      */}
+      <Tabs defaultValue="domains" variant="underline">
+        <TabsList>
+          <TabsTrigger value="domains" count={3}>
+            Domains
+          </TabsTrigger>
+          <TabsTrigger value="api-keys" count={0}>
+            API Keys
+          </TabsTrigger>
+          <TabsTrigger value="webhooks" disabled>
+            Webhooks
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="domains">Verified domains live here.</TabsContent>
+        <TabsContent value="api-keys">Workspace API keys live here.</TabsContent>
+      </Tabs>
+
       <Dialog>
         <DialogTrigger asChild>
           <Button>Open dialog</Button>
