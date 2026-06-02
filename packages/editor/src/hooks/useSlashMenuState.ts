@@ -47,6 +47,11 @@ export function useSlashMenuState(): UseSlashMenuStateReturn {
         triggerNodeKey: nodeKey,
         triggerOffset: offset,
       });
+      // BUG-LDS-5 / Bug B: opening a new slash menu must tear down any stale
+      // modal left over from a previous slash-menu session. A modal belongs to
+      // the slash-menu instance that opened it; a new instance owns its own
+      // lifecycle.
+      setModalState(initialModalState);
     },
     [],
   );

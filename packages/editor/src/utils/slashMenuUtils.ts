@@ -378,6 +378,17 @@ export interface QueryUpdateInput {
   selectionIsTextNode: boolean;
   /** Current cursor offset */
   cursorOffset: number;
+  /**
+   * Whether we have ever observed a text child since the menu opened.
+   * For element nodes: when the menu first opens on an empty element, the `/`
+   * has not yet been committed by Lexical, so `hasTextChild` is briefly false
+   * and we keep the menu open (the existing "waiting for text" path).
+   * Once a text child has been observed at least once, a subsequent absence
+   * means the user deleted the `/` trigger (e.g. via Backspace), so the menu
+   * must close. (BUG-LDS-5 / Bug C — trigger deletion on empty elements.)
+   * Defaults to `false` for backward compatibility with existing callers.
+   */
+  hasObservedTextChild?: boolean;
 }
 
 /**
@@ -418,6 +429,18 @@ export function processQueryUpdate(input: QueryUpdateInput): QueryUpdateResult {
 
   if (input.isElementNode) {
     if (!input.hasTextChild) {
+      // BUG-LDS-5 / Bug C: distinguish "waiting for / to land" vs "/ was deleted".
+      // If we have NEVER observed a text child since the menu opened, the `/`
+      // is still in flight — keep the menu open. If we have observed one and
+      // now it is gone, the user deleted the trigger; close the menu.
+      if (input.hasObservedTextChild) {
+        return {
+          shouldUpdate: false,
+          shouldClose: true,
+          query: '',
+          closeReason: 'slash_removed',
+        };
+      }
       // No text child yet, menu should stay open waiting for text
       return { shouldUpdate: false, shouldClose: false, query: '' };
     }

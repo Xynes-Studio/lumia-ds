@@ -5,7 +5,7 @@
  * This hook uses the pure processQueryUpdate function from slashMenuUtils
  * to keep business logic testable.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { LexicalEditor, NodeKey } from 'lexical';
 import {
   $getSelection,
@@ -37,8 +37,14 @@ export function useSlashMenuQuery({
   onUpdateQuery,
   onClose,
 }: SlashMenuQueryOptions): void {
+  // BUG-LDS-5 / Bug C: once we have observed a text child after the menu opened,
+  // any subsequent absence means the user deleted the `/` trigger and we must
+  // close. The ref is keyed by the trigger node and resets on close/re-open.
+  const hasObservedTextChildRef = useRef(false);
+
   useEffect(() => {
     if (!isOpen) {
+      hasObservedTextChildRef.current = false;
       return;
     }
 
@@ -64,6 +70,7 @@ export function useSlashMenuQuery({
             textNodeKey: null,
             selectionIsTextNode: false,
             cursorOffset: 0,
+            hasObservedTextChild: hasObservedTextChildRef.current,
           };
 
           // Get text node and content if node exists
@@ -80,6 +87,12 @@ export function useSlashMenuQuery({
               input.textNodeKey = node.getKey();
               input.hasTextChild = true;
             }
+          }
+
+          // Latch the "observed once" flag for BUG-LDS-5 / Bug C.
+          if (input.hasTextChild) {
+            hasObservedTextChildRef.current = true;
+            input.hasObservedTextChild = true;
           }
 
           // Get selection info

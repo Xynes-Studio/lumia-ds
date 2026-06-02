@@ -542,6 +542,38 @@ The editor supports a slash menu for quick block insertion.
   - `/panel` - Insert an info panel
   - `/status` - Insert a status pill
 
+#### Slash menu lifecycle (BUG-LDS-5)
+
+The slash menu is governed by three lifecycle contracts that consumers can
+rely on without configuration:
+
+1. **Viewport-aware positioning.** The menu always renders fully inside the
+   viewport. When the natural-below position would overflow, the menu flips
+   above the caret. When even the flipped position cannot fit the full menu,
+   it caps its `max-height` to the available room and the existing
+   `.slash-menu { overflow-y: auto }` rule provides internal scroll. The
+   keyboard-selected item is always brought into view via
+   `scrollIntoView({ block: 'nearest' })`. The pure
+   `resolveSlashMenuPlacement` helper (re-exported from
+   `@lumia-ui/editor/components/SlashMenu` for tests) is the single source
+   of truth for this logic.
+2. **Modal lifecycle is tied to the slash-menu instance.** When a slash
+   command spawns a modal (Image, Video, File) and the user opens a NEW
+   slash menu instead of finishing the modal, the stale modal is torn down
+   automatically. The `SlashMenuModal` itself also responds to `Escape` and
+   outside-click dismissal so the user always has an escape hatch beyond
+   the in-form Cancel button. The modal carries `role="dialog"` +
+   `aria-modal="true"` for assistive tech.
+3. **Trigger-deletion closes the menu.** Pressing `Backspace`/`Delete` to
+   remove the `/` trigger character closes the menu immediately, both on
+   text nodes (`Hello /` → `Hello `) and on empty elements (paragraph with
+   `/` only → empty paragraph). Multi-character selections that span the
+   trigger also close the menu. This matches the lifecycle in Notion,
+   Linear, and Slack.
+
+These contracts are internal to the editor package. Consumers see no
+public-API change — passing `<LumiaEditor />` with the existing media
+configuration picks up the fix on the next dist build.
 
 ### Table
 The editor supports tables via the `@lexical/table` integration.
@@ -840,3 +872,4 @@ For components depending on Lexical context:
 1. **Unit Tests**: Mock `useLexicalComposerContext` and other hooks to return minimal stubbed editor instances.
 2. **Integration Tests**: Use `LexicalComposer` wrapper effectively but be mindful of JSDOM limitations with complex event dispatching.
 3. **Registry**: Mock `BlockRegistry` lookups (`getInsertableBlocks`, `getBlockDefinition`) to isolate component rendering logic.
+```
