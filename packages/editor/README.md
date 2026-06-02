@@ -62,6 +62,32 @@ Every choice control inside the editor (toolbar block-type picker, block inspect
 
 The content-editable surface itself does **not** render an active-state ring on focus. Focus is conveyed by the caret. The surrounding toolbar buttons, form inputs, and dropdown triggers keep their own `focus-visible` rings so keyboard users still get clear focus targets where they need them.
 
+### Block-panel variants (BUG-LDS-6)
+
+The editor's block-panel surface (callout blocks: `info` / `warning` / `success` / `note`) follows two contracts:
+
+1. **Icons come from `@lumia-ui/icons` only.** Every panel-block surface (`PanelToolbarButton`, `PanelInsertItem` inside `InsertBlockMenu`, the panel action menu, and the variant indicator at the panel header) consumes icons via `<Icon name="..." />` from `@lumia-ui/icons`. Direct `lucide-react` icon imports are forbidden inside panel-block source files. A drift-detection script enforces this:
+
+   ```bash
+   pnpm --filter @lumia-ui/editor audit:icons
+   # OK — every panel-block surface consumes icons from @lumia-ui/icons.
+   ```
+
+   The script (`packages/editor/scripts/audit-icon-sources.ts`) reads a closed list of guarded files and fails on any `from 'lucide-react'` import, with a per-file diff. Add new panel files to that list when extending the surface.
+
+   The canonical Lumia icon IDs are listed in `packages/editor/src/utils/panelActionUtils.ts` (`PANEL_VARIANTS[].iconName`) and resolve to entries seeded in `packages/icons/src/default-icons.ts`: `info` → `info`, `warning` → `alert`, `success` → `circle-check`, `note` → `file-text`.
+
+2. **Insert with default + change in place.** All entry points (toolbar **Insert Panel** button, `/panel` slash command, drag-from-block-handle) insert a default `info` panel directly — no "which type?" modal. The author flips the variant in place via a Radix Popover anchored to the variant icon at the panel header (rendered by `PanelActionMenuPlugin`).
+
+   Variant change mutates `__variant` on the existing `PanelBlockNode` via `setVariant(variant)`. **No node replacement**, no content loss, no selection jump. Selecting a different variant inside the popover is keyboard-accessible — ArrowDown / ArrowRight advances, ArrowUp / ArrowLeft reverses (both wrap), Esc closes. The grid carries `role="radiogroup"` with `aria-label="Panel variant"`; each option is a `role="radio"` button with `aria-checked` reflecting the active state.
+
+   The `setVariant(variant: PanelVariant)` mutator on `PanelBlockNode` goes through Lexical's `getWritable()` API so the diff/undo system tracks it.
+
+   Constants:
+   - `DEFAULT_PANEL_VARIANT = 'info'`
+   - `DEFAULT_PANEL_TITLE = 'Info Panel'`
+   - Both exported from `packages/editor/src/utils/panelActionUtils.ts`.
+
 ### Font Configuration
 
 Control which fonts are available in your editor using the `fonts` prop:

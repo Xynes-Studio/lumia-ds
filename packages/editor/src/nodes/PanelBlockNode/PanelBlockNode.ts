@@ -110,44 +110,23 @@ export class PanelBlockNode extends ElementNode {
     const div = document.createElement('div');
     const className = config.theme.panel || 'panel-node';
     div.className = `${className} ${this.__variant}`;
-
-    // Icon - always create for variant-based CSS styling
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'panel-icon';
-    iconDiv.contentEditable = 'false';
-    iconDiv.dataset.icon = this.__icon || this.__variant;
-    div.appendChild(iconDiv);
-
-    // Title - static display, edit via Panel Inspector or Action Menu
-    if (this.__title) {
-      const titleDiv = document.createElement('div');
-      titleDiv.className = 'panel-title';
-      titleDiv.contentEditable = 'false';
-      titleDiv.textContent = this.__title;
-      div.appendChild(titleDiv);
-    }
-
+    // BUG-LDS-6 (Path 2): the panel DOM is intentionally minimal — no
+    // chrome / icon / title children inside. The variant icon trigger
+    // is rendered by `PanelActionMenuPlugin` as an absolutely-positioned
+    // SIBLING overlay (outside the contenteditable), so Lexical's
+    // reconciler never sees it and cannot wipe it. The title text lives
+    // inside the popover only (not in the canvas).
     return div;
   }
 
   updateDOM(prevNode: PanelBlockNode, dom: HTMLElement): boolean {
-    // Update variant class
+    // BUG-LDS-6 (Path 2): only the variant class affects the panel DOM.
+    // The variant icon + title are React-managed in the sibling overlay
+    // layer, so updateDOM has nothing to do for icon / title changes.
     if (prevNode.__variant !== this.__variant) {
       dom.classList.remove(prevNode.__variant);
       dom.classList.add(this.__variant);
     }
-
-    // Update icon
-    const iconDiv = dom.querySelector('.panel-icon') as HTMLElement | null;
-    if (iconDiv) {
-      iconDiv.dataset.icon = this.__icon || this.__variant;
-    }
-
-    // For title changes, force re-render to avoid complex DOM manipulation
-    if (prevNode.__title !== this.__title) {
-      return true;
-    }
-
     return false;
   }
 
@@ -185,17 +164,38 @@ export class PanelBlockNode extends ElementNode {
 
   /**
    * Called when backspace is pressed at the start of the first child.
-   * Allows the panel to be converted or have its content extracted.
+   *
+   * BUG-LDS-6: A panel that contains only an empty paragraph is the most
+   * common "stale" state (just inserted, never typed in, or all content
+   * deleted). Previously `this.isEmpty()` returned `false` in that case
+   * because the panel still wrapped a paragraph child, so backspace had no
+   * effect — the panel was un-removable. We now also treat the
+   * "single empty paragraph child" shape as effectively empty and convert
+   * the whole panel to a plain paragraph (preserving the user's caret).
    */
   collapseAtStart(): boolean {
-    // If the panel is empty, convert it to a paragraph
-    if (this.isEmpty()) {
+    if (this.isEmpty() || this.hasOnlyEmptyParagraph()) {
       const paragraph = $createParagraphNode();
       this.replace(paragraph);
       paragraph.select();
       return true;
     }
     return false;
+  }
+
+  /**
+   * Returns true when the panel's only child is an empty paragraph node.
+   * Used by `collapseAtStart` so authors can backspace away a freshly
+   * inserted (and never edited) panel without manually selecting it.
+   */
+  private hasOnlyEmptyParagraph(): boolean {
+    const children = this.getChildren();
+    if (children.length !== 1) return false;
+    const only = children[0];
+    if (!only) return false;
+    if (only.getType() !== 'paragraph') return false;
+    // `getTextContentSize` includes all descendant text; zero means empty.
+    return only.getTextContentSize() === 0;
   }
 }
 

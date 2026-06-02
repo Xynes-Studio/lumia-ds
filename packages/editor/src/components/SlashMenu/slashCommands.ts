@@ -9,6 +9,10 @@ import {
   BlockType,
 } from '../../blocks';
 import { $toggleTableHeaderRow } from '../../plugins/TableActionMenuPlugin/tableUtils';
+import {
+  DEFAULT_PANEL_TITLE,
+  DEFAULT_PANEL_VARIANT,
+} from '../../utils/panelActionUtils';
 
 /**
  * Type of modal UI to show when a slash command is selected.
@@ -64,9 +68,12 @@ const slashCommandExecutors: Record<string, SlashCommandExecutorConfig> = {
   },
   panel: {
     execute: (editor: LexicalEditor) => {
+      // BUG-LDS-6: unified insert — default `info` panel with the canonical
+      // title. Author flips the variant in place via the per-panel popover
+      // (PanelActionMenuPlugin).
       editor.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant: 'info',
-        title: 'Info Panel',
+        variant: DEFAULT_PANEL_VARIANT,
+        title: DEFAULT_PANEL_TITLE,
       });
     },
   },

@@ -13,10 +13,13 @@ import {
 } from '../../nodes/PanelBlockNode/PanelBlockNode';
 import {
   PANEL_VARIANTS,
+  DEFAULT_PANEL_VARIANT,
+  DEFAULT_PANEL_TITLE,
   getVariantConfig,
   getVariantTypes,
   getVariantLabel,
   getVariantColor,
+  getVariantIconName,
   isValidVariant,
   $getPanelNodeFromLexicalNode,
   calculateMenuPosition,
@@ -232,6 +235,73 @@ describe('panelActionUtils', () => {
 
     test('ignores whitespace differences', () => {
       expect(hasTitleChanged('  Title  ', 'Title')).toBe(false);
+    });
+  });
+});
+
+describe('panelActionUtils — BUG-LDS-6 additions', () => {
+  describe('DEFAULT_PANEL_VARIANT / DEFAULT_PANEL_TITLE', () => {
+    test('default variant is "info"', () => {
+      expect(DEFAULT_PANEL_VARIANT).toBe('info');
+    });
+
+    test('default title is "Info Panel"', () => {
+      expect(DEFAULT_PANEL_TITLE).toBe('Info Panel');
+    });
+
+    test('default variant is one of the registered variants', () => {
+      expect(getVariantTypes()).toContain(DEFAULT_PANEL_VARIANT);
+    });
+  });
+
+  describe('PANEL_VARIANTS.iconName (Lumia icon IDs)', () => {
+    test('every variant declares a Lumia icon ID', () => {
+      PANEL_VARIANTS.forEach((variant) => {
+        expect(variant.iconName).toBeDefined();
+        expect(typeof variant.iconName).toBe('string');
+        expect(variant.iconName.length).toBeGreaterThan(0);
+      });
+    });
+
+    test('no variant carries a React component reference for its icon', () => {
+      // The pre-BUG-LDS-6 shape carried `icon: React.ElementType` from
+      // lucide-react. The new contract uses the string `iconName` field only.
+      PANEL_VARIANTS.forEach((variant) => {
+        expect(typeof variant.iconName).toBe('string');
+        // Defense-in-depth: the variant object MUST NOT carry a function-typed
+        // `icon` field that a future caller could accidentally render via
+        // `<v.icon />` (which would bypass the Lumia icon registry).
+        expect((variant as unknown as { icon?: unknown }).icon).toBeUndefined();
+      });
+    });
+
+    test('canonical icon IDs match the @lumia-ui/icons registry', () => {
+      // These IDs MUST exist in the Lumia icon registry's default seed.
+      // If you rename them in `@lumia-ui/icons` default-icons.ts, update here.
+      const expected: Record<string, string> = {
+        info: 'info',
+        warning: 'alert',
+        success: 'circle-check',
+        note: 'file-text',
+      };
+
+      PANEL_VARIANTS.forEach((variant) => {
+        expect(variant.iconName).toBe(expected[variant.variant]);
+      });
+    });
+  });
+
+  describe('getVariantIconName', () => {
+    test('returns Lumia icon ID for known variants', () => {
+      expect(getVariantIconName('info')).toBe('info');
+      expect(getVariantIconName('warning')).toBe('alert');
+      expect(getVariantIconName('success')).toBe('circle-check');
+      expect(getVariantIconName('note')).toBe('file-text');
+    });
+
+    test('returns "info" fallback for an unknown variant (fail-safe)', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(getVariantIconName('mystery' as any)).toBe('info');
     });
   });
 });
