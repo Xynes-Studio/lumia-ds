@@ -14,6 +14,17 @@ vi.mock('lucide-react', async (importOriginal) => {
   return await importOriginal();
 });
 
+// BUG-LDS-6: Lumia icon mock
+vi.mock('@lumia-ui/icons', () => ({
+  Icon: ({ name, ...props }: { name: string; [k: string]: unknown }) => (
+    <span
+      data-lumia-icon={name}
+      data-testid={`lumia-icon-${name}`}
+      {...props}
+    />
+  ),
+}));
+
 // Mock UI components to simplify testing structure
 vi.mock('@lumia-ui/components', () => ({
   Button: ({
@@ -80,8 +91,17 @@ vi.mock('@lumia-ui/components', () => ({
       {children}
     </div>
   ),
-  PopoverContent: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="popover-content">{children}</div>
+  PopoverContent: ({
+    children,
+    onKeyDown,
+  }: {
+    children: React.ReactNode;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onKeyDown?: (e: any) => void;
+  }) => (
+    <div data-testid="popover-content" onKeyDown={onKeyDown}>
+      {children}
+    </div>
   ),
 }));
 
@@ -132,7 +152,7 @@ describe('PanelActionMenuPlugin Integration', () => {
     });
   });
 
-  it('hides menu when selection moves outside panel', async () => {
+  it('hides menu when the panel is removed from the document (BUG-LDS-6: trigger persists with panel, not with caret)', async () => {
     const { editor } = renderWithEditor(
       <PanelActionMenuPlugin anchorElem={container} />,
     );
@@ -146,8 +166,7 @@ describe('PanelActionMenuPlugin Integration', () => {
       });
       panel.append($createParagraphNode());
       root.append(panel);
-
-      // Select inside panel
+      // Select inside panel so the panel mounts.
       panel.selectStart();
     });
 
@@ -155,12 +174,28 @@ describe('PanelActionMenuPlugin Integration', () => {
       expect(screen.getByTestId('title-input')).toBeInTheDocument();
     });
 
-    // Move selection outside
+    // BUG-LDS-6: moving the caret OUT of the panel must NOT hide the trigger.
+    // The trigger lives at the panel header and stays visible as long as the
+    // panel is in the document. This is the Notion / Linear / Coda pattern
+    // (the variant icon at the header is always visible and clickable).
     await editor.update(() => {
       const root = $getRoot();
       const paragraph = $createParagraphNode();
       root.append(paragraph);
       paragraph.select();
+    });
+
+    // Still present — caret moved but panel still exists.
+    await waitFor(() => {
+      expect(screen.getByTestId('title-input')).toBeInTheDocument();
+    });
+
+    // Now REMOVE the panel — the trigger should disappear.
+    await editor.update(() => {
+      const root = $getRoot();
+      const children = root.getChildren();
+      const panel = children.find((n) => n.getType() === 'panel-block');
+      if (panel) panel.remove();
     });
 
     await waitFor(
@@ -268,5 +303,338 @@ describe('PanelActionMenuPlugin Integration', () => {
         (screen.getByTestId('title-input') as HTMLInputElement).value,
       ).toBe('Updated External');
     });
+  });
+});
+
+describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
+  let container: HTMLElement;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+  });
+
+  it('trigger renders the CURRENT variant as a Lumia icon', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'warning',
+        title: 'Warning Panel',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      const trigger = document.querySelector(
+        '[data-lumia-component="panel-variant-trigger"]',
+      );
+      expect(trigger).not.toBeNull();
+      expect(trigger?.getAttribute('data-current-variant')).toBe('warning');
+      // BUG-LDS-6: trigger must render the Lumia icon mapped to "warning"
+      // (registry ID `alert`), NOT a lucide-react component. The popover
+      // content also renders an `alert` icon for the variant grid, so
+      // getAllByTestId returns at least one match.
+      expect(screen.getAllByTestId('lumia-icon-alert').length).toBeGreaterThan(
+        0,
+      );
+    });
+  });
+
+  it('trigger flips icon when variant changes externally', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    let panelKey = '';
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Info Panel',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+      panelKey = panel.getKey();
+    });
+
+    await waitFor(() => {
+      // Both the trigger AND the popover content show the info icon.
+      expect(screen.getAllByTestId('lumia-icon-info').length).toBeGreaterThan(
+        0,
+      );
+    });
+
+    // External variant flip — simulates the per-panel popover updating the
+    // existing node in place (no replacement).
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find(
+          (n) => n.getType() === 'panel-block' && n.getKey() === panelKey,
+        ) as PanelBlockNode | undefined;
+      if (panel) {
+        panel.setVariant('success');
+      }
+    });
+
+    await waitFor(() => {
+      // Lumia icon ID for "success" is `circle-check`.
+      expect(
+        screen.getAllByTestId('lumia-icon-circle-check').length,
+      ).toBeGreaterThan(0);
+      // The trigger's data-current-variant attribute must flip too.
+      const trigger = document.querySelector(
+        '[data-lumia-component="panel-variant-trigger"]',
+      );
+      expect(trigger?.getAttribute('data-current-variant')).toBe('success');
+    });
+
+    // Verify the SAME node was mutated, NOT replaced.
+    let stillSameKey = false;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find((n) => n.getType() === 'panel-block') as
+        | PanelBlockNode
+        | undefined;
+      stillSameKey = !!panel && panel.getKey() === panelKey;
+    });
+    expect(stillSameKey).toBe(true);
+  });
+
+  it('variant popover renders a radio-group with all 4 Lumia icons', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Test',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      // The radiogroup label is required for accessibility.
+      const radiogroup = document.querySelector('[role="radiogroup"]');
+      expect(radiogroup).not.toBeNull();
+      expect(radiogroup?.getAttribute('aria-label')).toBe('Panel type');
+
+      // Four variant rendering surfaces, each rendering a Lumia icon by name.
+      // (Trigger may also render an icon, so getAllByTestId.)
+      expect(screen.getAllByTestId('lumia-icon-info').length).toBeGreaterThan(
+        0,
+      );
+      expect(screen.getAllByTestId('lumia-icon-alert').length).toBeGreaterThan(
+        0,
+      );
+      expect(
+        screen.getAllByTestId('lumia-icon-circle-check').length,
+      ).toBeGreaterThan(0);
+      expect(
+        screen.getAllByTestId('lumia-icon-file-text').length,
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  it('variant radio buttons mark the active variant with aria-checked', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'success',
+        title: 'Test',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      const successRadio = document.querySelector('[data-variant="success"]');
+      expect(successRadio?.getAttribute('aria-checked')).toBe('true');
+      const infoRadio = document.querySelector('[data-variant="info"]');
+      expect(infoRadio?.getAttribute('aria-checked')).toBe('false');
+    });
+  });
+
+  it('clicking a variant button updates the existing node (no replace, no scroll jump)', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    let originalKey = '';
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Original',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+      originalKey = panel.getKey();
+    });
+
+    await waitFor(() => {
+      expect(document.querySelector('[data-variant="warning"]')).not.toBeNull();
+    });
+
+    const warningButton = document.querySelector(
+      '[data-variant="warning"]',
+    ) as HTMLElement;
+    fireEvent.click(warningButton);
+
+    // BUG-LDS-6 contract: existing node is mutated in place, never replaced.
+    let finalVariant: string | undefined;
+    let finalKey: string | undefined;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find((n) => n.getType() === 'panel-block') as
+        | PanelBlockNode
+        | undefined;
+      finalVariant = panel?.getVariant();
+      finalKey = panel?.getKey();
+    });
+
+    expect(finalVariant).toBe('warning');
+    expect(finalKey).toBe(originalKey); // same node, not replaced
+  });
+
+  it('arrow-down on popover cycles to the next variant', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Test',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('popover-content')).toBeInTheDocument();
+    });
+
+    const popoverContent = screen.getByTestId('popover-content');
+    fireEvent.keyDown(popoverContent, { key: 'ArrowDown' });
+
+    let nextVariant: string | undefined;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find((n) => n.getType() === 'panel-block') as
+        | PanelBlockNode
+        | undefined;
+      nextVariant = panel?.getVariant();
+    });
+
+    // info → warning (next in PANEL_VARIANTS order)
+    expect(nextVariant).toBe('warning');
+  });
+
+  it('arrow-up on popover cycles to the previous variant (wraps around)', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Test',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('popover-content')).toBeInTheDocument();
+    });
+
+    const popoverContent = screen.getByTestId('popover-content');
+    fireEvent.keyDown(popoverContent, { key: 'ArrowUp' });
+
+    let prevVariant: string | undefined;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find((n) => n.getType() === 'panel-block') as
+        | PanelBlockNode
+        | undefined;
+      prevVariant = panel?.getVariant();
+    });
+
+    // info → wraps to last (note)
+    expect(prevVariant).toBe('note');
+  });
+
+  it('arrow keys other than the four navigation keys are ignored', async () => {
+    const { editor } = renderWithEditor(
+      <PanelActionMenuPlugin anchorElem={container} />,
+    );
+
+    await editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Test',
+      });
+      panel.append($createParagraphNode());
+      root.append(panel);
+      panel.selectStart();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('popover-content')).toBeInTheDocument();
+    });
+
+    const popoverContent = screen.getByTestId('popover-content');
+    fireEvent.keyDown(popoverContent, { key: 'a' });
+    fireEvent.keyDown(popoverContent, { key: 'Enter' });
+
+    let unchanged: string | undefined;
+    editor.getEditorState().read(() => {
+      const root = $getRoot();
+      const panel = root
+        .getChildren()
+        .find((n) => n.getType() === 'panel-block') as
+        | PanelBlockNode
+        | undefined;
+      unchanged = panel?.getVariant();
+    });
+
+    expect(unchanged).toBe('info');
   });
 });

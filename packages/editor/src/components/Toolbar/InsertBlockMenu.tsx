@@ -25,7 +25,10 @@ import { INSERT_VIDEO_BLOCK_COMMAND } from '../../plugins/InsertVideoPlugin';
 import { INSERT_FILE_BLOCK_COMMAND } from '../../plugins/InsertFilePlugin';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
 import { INSERT_STATUS_COMMAND } from '../../plugins/InsertStatusPlugin';
-import { PanelVariant } from '../../nodes/PanelBlockNode/PanelBlockNode';
+import {
+  DEFAULT_PANEL_TITLE,
+  DEFAULT_PANEL_VARIANT,
+} from '../../utils/panelActionUtils';
 import { MediaInsertTabs } from '../MediaInsert';
 import { useMediaContext } from '../../EditorProvider';
 import { $createImageBlockNode } from '../../nodes/ImageBlockNode/ImageBlockNode';
@@ -503,66 +506,34 @@ interface PanelInsertItemProps {
   onClose: () => void;
 }
 
-const PANEL_VARIANTS: {
-  variant: PanelVariant;
-  label: string;
-  color: string;
-}[] = [
-  { variant: 'info', label: 'Info', color: 'text-blue-500' },
-  { variant: 'warning', label: 'Warning', color: 'text-yellow-500' },
-  { variant: 'success', label: 'Success', color: 'text-green-500' },
-  { variant: 'note', label: 'Note', color: 'text-gray-500' },
-];
-
+/**
+ * BUG-LDS-6: Insert Panel menu item.
+ *
+ * Inserts a default `info` panel directly (no nested popover, no modal).
+ * Author flips the variant in place via the per-panel popover anchored to the
+ * variant icon at the panel header (rendered by `PanelActionMenuPlugin`).
+ */
 function PanelInsertItem({
   icon: Icon,
   label,
   editor,
   onClose,
 }: PanelInsertItemProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleInsert = useCallback(
-    (variant: PanelVariant, variantLabel: string) => {
-      editor.dispatchCommand(INSERT_PANEL_COMMAND, {
-        variant,
-        title: variantLabel,
-      });
-      setIsOpen(false);
-      onClose();
-    },
-    [editor, onClose],
-  );
+  const handleInsert = useCallback(() => {
+    editor.dispatchCommand(INSERT_PANEL_COMMAND, {
+      variant: DEFAULT_PANEL_VARIANT,
+      title: DEFAULT_PANEL_TITLE,
+    });
+    onClose();
+  }, [editor, onClose]);
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <button
-          className="relative flex w-full cursor-default select-none items-center gap-3 rounded-md px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-muted focus:bg-muted"
-          onClick={() => setIsOpen(true)}
-        >
-          <Icon className="h-4 w-4 text-muted-foreground" />
-          <span className="flex-1 truncate">{label}</span>
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-48 p-1" align="start" side="right">
-        <div className="flex flex-col gap-1">
-          {PANEL_VARIANTS.map(({ variant, label: variantLabel, color }) => (
-            <Button
-              key={variant}
-              variant="ghost"
-              size="sm"
-              className="justify-start"
-              onClick={() => handleInsert(variant, variantLabel)}
-            >
-              <span
-                className={`mr-2 h-2 w-2 rounded-full ${color} bg-current`}
-              />
-              {variantLabel}
-            </Button>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+    <button
+      className="relative flex w-full cursor-default select-none items-center gap-3 rounded-md px-3 py-2 text-sm font-medium outline-none transition-colors hover:bg-muted focus:bg-muted"
+      onClick={handleInsert}
+    >
+      <Icon className="h-4 w-4 text-muted-foreground" />
+      <span className="flex-1 truncate">{label}</span>
+    </button>
   );
 }

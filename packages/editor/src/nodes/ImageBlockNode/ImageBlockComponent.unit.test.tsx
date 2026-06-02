@@ -575,3 +575,90 @@ describe('ImageBlockComponent unit', () => {
     });
   });
 });
+
+describe('empty src handling (BUG-LDS-6 follow-up — no <img src="">)', () => {
+  it('does NOT render an <img> element when src is empty AND no uploader is wired', () => {
+    // Reproduces the React-19 / Next-16 console warning that fires when a
+    // persisted image-block carries only __objectId and the host page has
+    // no uploadAdapter (e.g. BUG-CMS-5 storage feature flag OFF). Without
+    // the fix, the component renders <img src="">; with it, a placeholder
+    // <div role="img"> renders instead.
+    (useMediaContext as Mock).mockReturnValue({
+      // No uploadAdapter — so the showUpload Card branch does NOT cover us.
+      uploadAdapter: undefined,
+      callbacks: {},
+      resolveDownloadUrl: undefined,
+    });
+
+    const { container } = render(
+      <ImageBlockComponent
+        nodeKey="image-node"
+        src=""
+        status="uploaded"
+        objectId="obj_no_url_yet"
+      />,
+    );
+
+    // The placeholder div is present.
+    const placeholder = container.querySelector(
+      '[data-testid="image-block-placeholder"]',
+    );
+    expect(placeholder).not.toBeNull();
+    expect(placeholder?.getAttribute('role')).toBe('img');
+
+    // No real <img> element is mounted at all (the React-19 warning trigger).
+    const img = container.querySelector('img');
+    expect(img).toBeNull();
+  });
+
+  it('marks the placeholder as aria-busy when an objectId resolver is in flight', () => {
+    const resolveDownloadUrl = vi.fn(async () => 'https://fresh.example/url');
+    (useMediaContext as Mock).mockReturnValue({
+      uploadAdapter: undefined,
+      callbacks: {},
+      resolveDownloadUrl,
+    });
+
+    const { container } = render(
+      <ImageBlockComponent
+        nodeKey="image-node"
+        src=""
+        status="uploaded"
+        objectId="obj_being_resolved"
+      />,
+    );
+
+    const placeholder = container.querySelector(
+      '[data-testid="image-block-placeholder"]',
+    );
+    expect(placeholder?.getAttribute('aria-busy')).toBe('true');
+    expect(placeholder?.getAttribute('data-resolving')).toBe('true');
+  });
+
+  it('renders the real <img> as soon as src is non-empty', () => {
+    (useMediaContext as Mock).mockReturnValue({
+      uploadAdapter: undefined,
+      callbacks: {},
+      resolveDownloadUrl: undefined,
+    });
+
+    const { container } = render(
+      <ImageBlockComponent
+        nodeKey="image-node"
+        src="https://cdn.example/image.png"
+        alt="Example"
+        status="uploaded"
+      />,
+    );
+
+    // No placeholder — the real image takes over.
+    expect(
+      container.querySelector('[data-testid="image-block-placeholder"]'),
+    ).toBeNull();
+
+    const img = container.querySelector('img');
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute('src')).toBe('https://cdn.example/image.png');
+    expect(img?.getAttribute('alt')).toBe('Example');
+  });
+});

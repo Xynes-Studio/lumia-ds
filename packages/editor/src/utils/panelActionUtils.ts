@@ -4,37 +4,64 @@
  */
 
 import { LexicalNode } from 'lexical';
-import React from 'react';
 import {
   $isPanelBlockNode,
   PanelBlockNode,
   PanelVariant,
 } from '../nodes/PanelBlockNode/PanelBlockNode';
-import { Info, AlertTriangle, CheckCircle, StickyNote } from 'lucide-react';
 
 /**
- * Panel variant configuration with labels, icons, and colors.
+ * Default variant for new panels.
+ * Used by toolbar Insert Panel button and `/panel` slash command per BUG-LDS-6
+ * (insert with default + change inline via the per-panel popover).
+ */
+export const DEFAULT_PANEL_VARIANT: PanelVariant = 'info';
+
+/**
+ * Default title for new panels (matches the default variant).
+ */
+export const DEFAULT_PANEL_TITLE = 'Info Panel';
+
+/**
+ * Panel variant configuration with labels, Lumia icon IDs, and colors.
+ *
+ * BUG-LDS-6: `iconName` is the canonical Lumia icon ID consumed by
+ * `<Icon name={iconName} />` from `@lumia-ui/icons`. The editor surface MUST
+ * NOT import icon components from `lucide-react` directly — see
+ * `scripts/audit-icon-sources.ts`.
  */
 export const PANEL_VARIANTS: {
   variant: PanelVariant;
   label: string;
-  icon: React.ElementType;
+  /** Lumia icon registry ID (see `@lumia-ui/icons` default-icons). */
+  iconName: string;
+  /** Tailwind text-color class applied to the icon. */
   color: string;
 }[] = [
-  { variant: 'info', label: 'Info', icon: Info, color: 'text-blue-500' },
+  {
+    variant: 'info',
+    label: 'Info',
+    iconName: 'info',
+    color: 'text-blue-500',
+  },
   {
     variant: 'warning',
     label: 'Warning',
-    icon: AlertTriangle,
+    iconName: 'alert',
     color: 'text-yellow-500',
   },
   {
     variant: 'success',
     label: 'Success',
-    icon: CheckCircle,
+    iconName: 'circle-check',
     color: 'text-green-500',
   },
-  { variant: 'note', label: 'Note', icon: StickyNote, color: 'text-gray-500' },
+  {
+    variant: 'note',
+    label: 'Note',
+    iconName: 'file-text',
+    color: 'text-gray-500',
+  },
 ];
 
 /**
@@ -72,6 +99,15 @@ export function getVariantLabel(variant: PanelVariant): string {
 export function getVariantColor(variant: PanelVariant): string {
   const config = getVariantConfig(variant);
   return config?.color ?? '';
+}
+
+/**
+ * Get the Lumia icon ID for a variant.
+ * Returns `'info'` for unknown variants (fail-safe default — never throws).
+ */
+export function getVariantIconName(variant: PanelVariant): string {
+  const config = getVariantConfig(variant);
+  return config?.iconName ?? 'info';
 }
 
 /**

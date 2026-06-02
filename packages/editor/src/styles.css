@@ -517,17 +517,20 @@
   border-radius: 0.5rem;
   /* rounded-lg */
   border-width: 1px;
-  padding: 0.75rem 1rem;
-  /* py-3 px-4 */
+  /* BUG-LDS-6 (Path 2): the top padding reserves vertical space for
+   * the chrome row (icon trigger + title label) that the overlay layer
+   * positions ~10px from the panel's top edge. Body content (paragraphs)
+   * starts BELOW the chrome row. Horizontal padding-left keeps the
+   * legacy left-icon column behaviour so existing entries reflow without
+   * the body text crashing into the icon. */
+  padding: 2.5rem 1rem 0.75rem;
   padding-left: 3.5rem;
-  /* space for icon */
   font-size: 0.875rem;
   /* text-sm */
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   /* shadow-sm */
   display: flex;
   flex-direction: column;
-  /* To stack title and content */
   gap: 0.25rem;
   margin-bottom: 0.5rem;
 }
@@ -568,68 +571,78 @@
   /* text-gray-900 */
 }
 
-.panel-icon {
-  position: absolute;
-  top: 0.75rem;
-  left: 1rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-/* 
- * Map data-icon attributes to SVGs using pseudo-elements with background-image.
- * Note: SVGs must be URL encoded. 
- * Alternatively, we can assume standard icons.
+/*
+ * BUG-LDS-6 (Path 2): sibling overlay layer.
+ *
+ * `PanelActionMenuPlugin` injects a single fixed-position layer as a
+ * sibling of the editor's contenteditable root and renders one
+ * `.panel-chrome-trigger` button inside it per live PanelBlockNode.
+ * The layer is positioned absolutely relative to the editor's
+ * positioned ancestor; each trigger is positioned via inline
+ * `top`/`left` computed from `panel.getBoundingClientRect()` relative
+ * to the layer.
+ *
+ * Living OUTSIDE the contenteditable means Lexical's reconciler never
+ * touches these nodes — the React subtree is stable across panel
+ * mutations. There are no CSS pseudo-element badges to coordinate
+ * with; the React-rendered Lumia icon is the only icon source.
  */
-.panel-node.info .panel-icon::before {
-  /* Info icon (blue) */
-  content: '';
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.panel-node.success .panel-icon::before {
-  /* Check icon (green) */
-  content: '';
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.panel-node.warning .panel-icon::before {
-  /* Alert Triangle icon (amber) */
-  content: '';
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.panel-node.note .panel-icon::before {
-  /* File/Note icon (gray) */
-  content: '';
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.panel-title {
-  font-weight: 600;
-  line-height: 1.5rem;
-  margin-bottom: 0.25rem;
+.panel-chrome-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Layer itself does not interact; only its child triggers do. */
   pointer-events: none;
+  /* The layer is sized by its triggers; this keeps it out of the way. */
+  width: 0;
+  height: 0;
+  /* Above the editor's body text, below modals/popovers. */
+  z-index: 1;
+}
+
+.panel-chrome-trigger {
+  position: absolute;
+  /* `top` / `left` set inline by the plugin. */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+/*
+ * BUG-LDS-6 (Path 2): the panel title rendered next to the variant
+ * icon inside the chrome trigger row. Title is non-interactive on the
+ * canvas — editing happens inside the popover's title input. Inherits
+ * the variant text color from the panel below it via per-variant
+ * `[data-current-variant]` selectors so warning / success / info /
+ * note titles stay readable against their tinted backgrounds.
+ */
+.panel-chrome-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 24rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-chrome-title[data-current-variant='info'] {
+  color: #1e3a8a;
+}
+
+.panel-chrome-title[data-current-variant='warning'] {
+  color: #78350f;
+}
+
+.panel-chrome-title[data-current-variant='success'] {
+  color: #064e3b;
+}
+
+.panel-chrome-title[data-current-variant='note'] {
+  color: #1f2937;
 }
 
 /* Status Node Popover Styles */

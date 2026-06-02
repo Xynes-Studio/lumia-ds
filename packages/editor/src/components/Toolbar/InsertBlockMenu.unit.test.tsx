@@ -418,7 +418,10 @@ describe('InsertBlockMenu unit', () => {
         ],
       },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Success' }));
+    // BUG-LDS-6: Clicking the Panel menu item now inserts a default `info`
+    // panel directly (no nested popover, no modal). Author flips the variant
+    // in place via the per-panel popover.
+    fireEvent.click(screen.getByRole('button', { name: /panel/i }));
 
     expect(dispatchCommand).toHaveBeenCalledWith(INSERT_FILE_BLOCK_COMMAND, {
       url: '',
@@ -428,8 +431,8 @@ describe('InsertBlockMenu unit', () => {
       file: expect.any(File),
     });
     expect(dispatchCommand).toHaveBeenCalledWith(INSERT_PANEL_COMMAND, {
-      variant: 'success',
-      title: 'Success',
+      variant: 'info',
+      title: 'Info Panel',
     });
   });
 

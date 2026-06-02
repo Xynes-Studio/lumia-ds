@@ -25,7 +25,8 @@
         "dev": "tsup --watch",
         "prepublishOnly": "pnpm build",
         "test": "vitest run --coverage",
-        "lint": "eslint \"src/**/*.{ts,tsx}\""
+        "lint": "eslint \"src/**/*.{ts,tsx}\"",
+        "audit:icons": "bun scripts/audit-icon-sources.ts"
     },
     "peerDependencies": {
         "react": "^18.3.1 || ^19.0.0",

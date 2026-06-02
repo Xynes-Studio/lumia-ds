@@ -4,6 +4,10 @@ import { PanelToolbarButton } from './PanelToolbarButton';
 import { vi, describe, beforeEach, it, expect, Mock } from 'vitest';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { INSERT_PANEL_COMMAND } from '../../plugins/InsertPanelPlugin';
+import {
+  DEFAULT_PANEL_TITLE,
+  DEFAULT_PANEL_VARIANT,
+} from '../../utils/panelActionUtils';
 
 // Mock dependencies
 vi.mock('@lexical/react/LexicalComposerContext', () => ({
@@ -24,30 +28,19 @@ vi.mock('@lumia-ui/components', () => ({
       {children}
     </button>
   ),
-  Popover: ({
-    children,
-    open,
-  }: {
-    children: React.ReactNode;
-    open?: boolean;
-  }) => (
-    <div data-testid="popover" data-open={open}>
-      {children}
-    </div>
-  ),
-  PopoverTrigger: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="popover-trigger">{children}</div>
-  ),
-  PopoverContent: ({
-    children,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    align?: string;
-  }) => <div data-testid="popover-content">{children}</div>,
 }));
 
-describe('PanelToolbarButton', () => {
+vi.mock('@lumia-ui/icons', () => ({
+  Icon: ({ name, ...props }: { name: string; [key: string]: unknown }) => (
+    <span
+      data-lumia-icon={name}
+      data-testid={`lumia-icon-${name}`}
+      {...props}
+    />
+  ),
+}));
+
+describe('PanelToolbarButton (BUG-LDS-6 unified insert)', () => {
   const mockDispatchCommand = vi.fn();
   const mockEditor = {
     dispatchCommand: mockDispatchCommand,
@@ -58,63 +51,40 @@ describe('PanelToolbarButton', () => {
     (useLexicalComposerContext as Mock).mockReturnValue([mockEditor]);
   });
 
-  it('renders the panel button', () => {
+  it('renders the Insert Panel button with the Lumia layout-grid icon', () => {
     render(<PanelToolbarButton />);
-    expect(
-      screen.getByRole('button', { name: 'Insert Panel' }),
-    ).toBeInTheDocument();
+
+    const button = screen.getByRole('button', { name: 'Insert Panel' });
+    expect(button).toBeInTheDocument();
+    // BUG-LDS-6 §3.1: editor icons MUST come from @lumia-ui/icons.
+    expect(screen.getByTestId('lumia-icon-layout-grid')).toBeInTheDocument();
   });
 
-  it('renders all panel variant options', () => {
+  it('does NOT open a popover or modal asking which variant to use', () => {
     render(<PanelToolbarButton />);
 
-    expect(screen.getByText('Info')).toBeInTheDocument();
-    expect(screen.getByText('Warning')).toBeInTheDocument();
-    expect(screen.getByText('Success')).toBeInTheDocument();
-    expect(screen.getByText('Note')).toBeInTheDocument();
+    // No nested variant options should be visible at any point — the click
+    // commits a default panel directly (see plan §3.2).
+    expect(screen.queryByText('Info')).not.toBeInTheDocument();
+    expect(screen.queryByText('Warning')).not.toBeInTheDocument();
+    expect(screen.queryByText('Success')).not.toBeInTheDocument();
+    expect(screen.queryByText('Note')).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('dispatches INSERT_PANEL_COMMAND when Info variant is clicked', () => {
+  it('inserts a default info panel directly on click (no modal)', () => {
     render(<PanelToolbarButton />);
 
-    fireEvent.click(screen.getByText('Info'));
+    fireEvent.click(screen.getByRole('button', { name: 'Insert Panel' }));
 
+    expect(mockDispatchCommand).toHaveBeenCalledTimes(1);
     expect(mockDispatchCommand).toHaveBeenCalledWith(INSERT_PANEL_COMMAND, {
-      variant: 'info',
-      title: 'Info',
+      variant: DEFAULT_PANEL_VARIANT,
+      title: DEFAULT_PANEL_TITLE,
     });
   });
 
-  it('dispatches INSERT_PANEL_COMMAND when Warning variant is clicked', () => {
-    render(<PanelToolbarButton />);
-
-    fireEvent.click(screen.getByText('Warning'));
-
-    expect(mockDispatchCommand).toHaveBeenCalledWith(INSERT_PANEL_COMMAND, {
-      variant: 'warning',
-      title: 'Warning',
-    });
-  });
-
-  it('dispatches INSERT_PANEL_COMMAND when Success variant is clicked', () => {
-    render(<PanelToolbarButton />);
-
-    fireEvent.click(screen.getByText('Success'));
-
-    expect(mockDispatchCommand).toHaveBeenCalledWith(INSERT_PANEL_COMMAND, {
-      variant: 'success',
-      title: 'Success',
-    });
-  });
-
-  it('dispatches INSERT_PANEL_COMMAND when Note variant is clicked', () => {
-    render(<PanelToolbarButton />);
-
-    fireEvent.click(screen.getByText('Note'));
-
-    expect(mockDispatchCommand).toHaveBeenCalledWith(INSERT_PANEL_COMMAND, {
-      variant: 'note',
-      title: 'Note',
-    });
+  it('the default variant is "info" (matches the canonical constant)', () => {
+    expect(DEFAULT_PANEL_VARIANT).toBe('info');
   });
 });

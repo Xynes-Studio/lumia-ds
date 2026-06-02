@@ -103,14 +103,36 @@ export function SlashMenuPlugin(): React.ReactElement | null {
               const afterQuery = textContent.substring(
                 offset + 1 + menuState.query.length,
               );
-              textNode.setTextContent(beforeSlash + afterQuery);
+              const trimmed = beforeSlash + afterQuery;
+              textNode.setTextContent(trimmed);
 
-              if (beforeSlash + afterQuery === '') {
+              // BUG-LDS-6 follow-up: re-anchor the selection AFTER the
+              // text mutation, regardless of whether the trimmed text is
+              // empty. The previous behavior only reset selection for
+              // the empty case, leaving the old caret offset (which
+              // pointed into the now-deleted `/<query>` slice) pointing
+              // past the end of the shrunk text node.
+              //
+              // Symptom of the old behavior: any slash command run on a
+              // line that already had non-empty text BEFORE the `/`
+              // (e.g. "hello /panel") would crash the downstream insert
+              // with `$getTextNodeOffset: invalid offset N for size M`
+              // because `$insertNodeToNearestRoot` → `$caretFromPoint`
+              // → `$getTextPointCaret` reads the stale offset.
+              //
+              // We now collapse the caret to `beforeSlash.length`
+              // (i.e. the position where the `/` used to be) whenever
+              // the text node still has content, and fall back to
+              // selecting the parent element for the empty case.
+              if (trimmed === '') {
                 if ($isElementNode(node)) {
                   node.select();
                 } else {
                   textNode.select();
                 }
+              } else {
+                const caret = beforeSlash.length;
+                textNode.select(caret, caret);
               }
             }
           }

@@ -128,7 +128,7 @@ describe('PanelBlockNode', () => {
     });
   });
 
-  test('should build DOM with icon and optional title', () => {
+  test('should build a minimal DOM (no icon/title children) — BUG-LDS-6 Path 2', () => {
     const editor = createHeadlessEditor(editorConfig);
     editor.update(() => {
       const node = $createPanelBlockNode({
@@ -140,14 +140,17 @@ describe('PanelBlockNode', () => {
 
       expect(dom.className).toContain('panel-node');
       expect(dom.className).toContain('warning');
-      expect(
-        (dom.querySelector('.panel-icon') as HTMLElement | null)?.dataset.icon,
-      ).toBe('alert');
-      expect(dom.querySelector('.panel-title')?.textContent).toBe('Heads up');
+      // BUG-LDS-6 Path 2: panel DOM is intentionally minimal. The
+      // variant icon + title are rendered by PanelActionMenuPlugin in
+      // an absolutely-positioned sibling overlay layer outside the
+      // contenteditable — Lexical's reconciler never touches them.
+      expect(dom.querySelector('.panel-icon')).toBeNull();
+      expect(dom.querySelector('.panel-title')).toBeNull();
+      expect(dom.children.length).toBe(0);
     });
   });
 
-  test('should update DOM classes, icon data, and force rerender when title changes', () => {
+  test('updateDOM only toggles the variant class — never returns true (Path 2)', () => {
     const editor = createHeadlessEditor(editorConfig);
     editor.update(() => {
       const previous = $createPanelBlockNode({ variant: 'info', title: 'Old' });
@@ -160,10 +163,11 @@ describe('PanelBlockNode', () => {
       const shouldRerender = current.updateDOM(previous, dom);
 
       expect(dom.classList.contains('success')).toBe(true);
-      expect(
-        (dom.querySelector('.panel-icon') as HTMLElement | null)?.dataset.icon,
-      ).toBe('check');
-      expect(shouldRerender).toBe(true);
+      expect(dom.classList.contains('info')).toBe(false);
+      // BUG-LDS-6 Path 2: variant / title / icon changes flow through
+      // the React subtree (sibling overlay), so updateDOM never asks
+      // Lexical to recreate the panel DOM.
+      expect(shouldRerender).toBe(false);
     });
   });
 
@@ -205,6 +209,88 @@ describe('PanelBlockNode', () => {
       node.append(paragraph);
       root.append(node);
       expect(node.collapseAtStart()).toBe(false);
+    });
+  });
+
+  test('collapseAtStart converts a panel containing only an empty paragraph to a paragraph (BUG-LDS-6)', () => {
+    // Reproduces the "stale panel" lifecycle bug: a freshly inserted panel
+    // (or one whose content the user fully deleted) wraps an empty paragraph
+    // child. Previously `isEmpty()` returned false here so backspace had no
+    // effect. Now `collapseAtStart` should remove the panel cleanly.
+    const editor = createHeadlessEditor({
+      namespace: 'test',
+      nodes: [PanelBlockNode],
+      onError: (error: Error) => {
+        throw error;
+      },
+    });
+
+    editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({
+        variant: 'info',
+        title: 'Stale',
+      });
+      const emptyParagraph = $createParagraphNode();
+      panel.append(emptyParagraph);
+      root.append(panel);
+
+      // Confirm `isEmpty()` returns false (the legacy contract that left
+      // the panel un-collapsible) — but collapseAtStart now treats this
+      // shape as effectively empty and returns true.
+      expect(panel.isEmpty()).toBe(false);
+      expect(panel.collapseAtStart()).toBe(true);
+
+      // The panel should be replaced by a single paragraph at the root.
+      const after = root.getChildren();
+      expect(after.length).toBe(1);
+      expect(after[0]?.getType()).toBe('paragraph');
+    });
+  });
+
+  test('collapseAtStart leaves a panel with non-empty paragraph child alone', () => {
+    const editor = createHeadlessEditor({
+      namespace: 'test',
+      nodes: [PanelBlockNode],
+      onError: (error: Error) => {
+        throw error;
+      },
+    });
+
+    editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({ variant: 'info' });
+      const para = $createParagraphNode();
+      para.append($createTextNode('Hello'));
+      panel.append(para);
+      root.append(panel);
+
+      expect(panel.collapseAtStart()).toBe(false);
+      // Panel still present.
+      expect(root.getChildren()[0]?.getType()).toBe('panel-block');
+    });
+  });
+
+  test('collapseAtStart leaves a panel with multiple children alone', () => {
+    const editor = createHeadlessEditor({
+      namespace: 'test',
+      nodes: [PanelBlockNode],
+      onError: (error: Error) => {
+        throw error;
+      },
+    });
+
+    editor.update(() => {
+      const root = $getRoot();
+      const panel = $createPanelBlockNode({ variant: 'info' });
+      const p1 = $createParagraphNode();
+      const p2 = $createParagraphNode();
+      panel.append(p1);
+      panel.append(p2);
+      root.append(panel);
+
+      expect(panel.collapseAtStart()).toBe(false);
+      expect(root.getChildren()[0]?.getType()).toBe('panel-block');
     });
   });
 });

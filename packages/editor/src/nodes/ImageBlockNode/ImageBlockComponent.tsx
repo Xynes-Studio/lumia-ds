@@ -293,6 +293,23 @@ export function ImageBlockComponent({
   const isUploading = status === 'uploading';
   const isError = status === 'error';
 
+  // STORAGE-11 / BUG-LDS-6 follow-up: avoid React-19 / Next-16 warning
+  // "An empty string ("") was passed to the src attribute" — happens when a
+  // persisted image-block carries only `__objectId` (the signed URL was
+  // stripped before save by `stripTransientImageUrls`) and the
+  // `resolveDownloadUrl` resolver hasn't returned a fresh URL yet, OR no
+  // resolver was wired (e.g. consumer with the storage feature off).
+  //
+  // We render a quiet placeholder instead of <img src="">. The placeholder
+  // is replaced atomically by the real image on the next render once
+  // `__src` is populated (no layout jump because the placeholder is sized
+  // the same way as the <img>).
+  const hasEmptySrc = !src;
+  const isResolvingObjectId =
+    hasEmptySrc &&
+    !!objectId &&
+    typeof mediaConfig?.resolveDownloadUrl === 'function';
+
   if (showUpload) {
     return (
       <Card className="p-4 w-full max-w-md mx-auto flex flex-col items-center gap-4 border-dashed">
@@ -387,27 +404,59 @@ export function ImageBlockComponent({
           </>
         )}
 
-        <img
-          ref={imageRef}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={`max-w-full h-auto block select-none ${
-            isUploading ? 'opacity-50' : ''
-          }`}
-          draggable="false"
-          style={{
-            width:
-              layout === 'fullWidth' || layout === 'breakout'
-                ? '100%'
-                : width
-                  ? `${width}px`
-                  : '100%',
-            maxWidth: '100%',
-          }}
-        />
-
+        {hasEmptySrc ? (
+          // STORAGE-11 follow-up: render a quiet placeholder instead of
+          // `<img src="">` (which trips a React-19 / Next-16 warning AND
+          // forces the browser to refetch the host document).
+          // When `isResolvingObjectId` is true we expect the resolver to
+          // populate `__src` shortly — the placeholder is replaced on the
+          // next render without layout jump. We deliberately do NOT attach
+          // `imageRef` here so `MediaResizer` (which only renders for the
+          // resolved `<img>` while selected) never measures the placeholder.
+          <div
+            role="img"
+            aria-label={alt || 'Image loading'}
+            aria-busy={isResolvingObjectId || undefined}
+            data-testid="image-block-placeholder"
+            data-resolving={isResolvingObjectId ? 'true' : 'false'}
+            className={`max-w-full block select-none bg-muted/40 rounded-md ${
+              isUploading ? 'opacity-50' : ''
+            }`}
+            style={{
+              width:
+                layout === 'fullWidth' || layout === 'breakout'
+                  ? '100%'
+                  : width
+                    ? `${width}px`
+                    : '100%',
+              maxWidth: '100%',
+              // Reserve vertical space so the swap-in doesn't jump the layout.
+              height: height ? `${height}px` : '12rem',
+              minHeight: '4rem',
+            }}
+          />
+        ) : (
+          <img
+            ref={imageRef}
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            className={`max-w-full h-auto block select-none ${
+              isUploading ? 'opacity-50' : ''
+            }`}
+            draggable="false"
+            style={{
+              width:
+                layout === 'fullWidth' || layout === 'breakout'
+                  ? '100%'
+                  : width
+                    ? `${width}px`
+                    : '100%',
+              maxWidth: '100%',
+            }}
+          />
+        )}
         {isUploading && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
