@@ -6,11 +6,12 @@ React/Next.js-first design system for admin and internal tools, published as ind
 
 - `@lumia-ui/tokens` – typed theme tokens and helpers
 - `@lumia-ui/theme` – `ThemeProvider` and Tailwind preset
-- `@lumia-ui/components` – React primitives (buttons, inputs, overlays, tabs, layout helpers)
+- `@lumia-ui/components` – React primitives (buttons, inputs, overlays, tabs, layout helpers, brand mark)
 - `@lumia-ui/forms` – validation rules and React Hook Form wiring
 - `@lumia-ui/layout` – admin shells, stack layout, drawer layout
 - `@lumia-ui/runtime` – schemas and renderer for resource-driven pages
 - `@lumia-ui/icons` – icon registry and generated SVG React components
+- `@lumia-ui/marketing` – landing-page primitives (`MarketingNav`, `MarketingHero`, `MarketingFeatureGrid`, `MarketingTrustStrip`, `MarketingFigureCard`, `MarketingFAQ`, `MarketingFooter`, `CookieDisclosure`). LP-DS — see `packages/marketing/README.md`.
 
 ## Quick start (consumer app)
 

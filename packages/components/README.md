@@ -295,6 +295,25 @@ The flat-config block in `eslint.config.js` bans bare `onClick` on lowercase HTM
 
 `src/lib/interactive-cursor-inventory.test.tsx` is the single source of truth for which primitives honour the contract. When you add a new action-triggering primitive, register it in `INTERACTIVE_PRIMITIVES`; the registry-exhaustiveness test (the explicit count assertion) trips when a primitive is added or removed, forcing a deliberate review.
 
+## Brand mark (LP-DS)
+
+`<Brand>` renders the Xynes wordmark or icon as an inline SVG. It ships in `@lumia-ui/components` because the brand appears in dashboard shells as well as marketing surfaces.
+
+```tsx
+import { Brand } from '@lumia-ui/components';
+
+<Brand variant="wordmark" aria-label="xynes" />
+<Brand variant="icon" size="lg" aria-hidden />
+```
+
+- **Mandatory accessibility.** Either `aria-label` (labelled) or `aria-hidden` (decorative) must be supplied. The TypeScript discriminated union surfaces a compile-time error when both are omitted.
+- **Sizes:** `xs` (`h-4`) | `sm` (`h-6`) | `md` (`h-8`) | `lg` (`h-12`) | `xl` (`h-16`). Width follows the SVG aspect ratio.
+- **Recoloring.** Wordmark paths use `fill="currentColor"`; set `color: …` on a parent or pass `className="text-…"` to recolour.
+- **SVG bytes ship inline** — no follow-up network round trip; under 2 KiB per variant after the SVGO + foreignObject-flatten pass documented in the LP-DS plan §3.
+- **Lint rule.** `no-inline-xynes-brand` (`eslint.config.js` LP-DS block) forbids importing or referencing any `xynes-(icon|wordmark)` SVG outside this directory. Always use `<Brand />`.
+
+The full marketing landing-page surface (nav, hero, feature grid, trust strip, figure card, FAQ, footer, cookie disclosure) lives in the sibling `@lumia-ui/marketing` package — see `packages/marketing/README.md`.
+
 ## Storybook
 
 `HOME=$(pwd) STORYBOOK_DISABLE_TELEMETRY=1 pnpm --filter @lumia-ui/components storybook -- -p 6006`
