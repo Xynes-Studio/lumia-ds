@@ -10,6 +10,7 @@
  * @see LP-DS plan §4 (API contract) at
  *   `xynes-front-end/infra/docs/plans/2026-06-04-landing-page-template/01-lumia-ds-marketing-primitives.md`.
  */
+import './styles.css';
 
 // Marketing primitives.
 export { MarketingNav } from './nav/marketing-nav';
