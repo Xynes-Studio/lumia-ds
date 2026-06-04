@@ -139,3 +139,16 @@ export {
   interactiveCursor,
   interactiveCursorStateful,
 } from './lib/interactive-styles';
+
+// LP-DS: brand mark for landing pages, marketing surfaces, and dashboard
+// shells. The SVG bytes ship inline so the brand renders on first paint with
+// no follow-up network round trip. Inlining the SVG outside this module is
+// forbidden — use `<Brand variant="wordmark" | "icon" />` instead.
+export { Brand, brandStyles } from './brand/brand';
+export type {
+  BrandProps,
+  BrandVariant,
+  BrandSize,
+  BrandLabelledProps,
+  BrandDecorativeProps,
+} from './brand/brand';

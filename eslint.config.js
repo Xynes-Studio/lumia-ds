@@ -144,4 +144,44 @@ module.exports = [
       ],
     },
   },
+  /**
+   * LP-DS — `no-inline-xynes-brand`: forbid importing or inlining any SVG
+   * matching `xynes-(icon|wordmark)` outside `@lumia-ui/components/src/brand`.
+   * Use `<Brand variant="wordmark" | "icon" />` instead.
+   *
+   * The rule is implemented as two `no-restricted-syntax` selectors:
+   *   1. Imports — any `import … from '...xynes-(icon|wordmark)...'`.
+   *   2. Inline literals — any string literal mentioning the brand asset
+   *      filename (catches `require('xynes-icon.svg')`, fetch URLs, etc.).
+   *
+   * Scope: every package in the workspace EXCEPT
+   * `packages/components/src/brand/` (the only sanctioned home for the SVG)
+   * AND test/stories files (consumers may render the asset directly in test
+   * fixtures or storybook composition).
+   */
+  {
+    files: ['packages/**/*.{ts,tsx}'],
+    ignores: [
+      'packages/components/src/brand/**',
+      '**/*.test.{ts,tsx}',
+      '**/*.stories.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "ImportDeclaration[source.value=/xynes-(icon|wordmark)\\.svg$/]",
+          message:
+            "Importing the Xynes brand SVG directly is forbidden (LP-DS no-inline-xynes-brand). Use <Brand variant='wordmark' | 'icon' /> from @lumia-ui/components instead.",
+        },
+        {
+          selector:
+            "Literal[value=/xynes-(icon|wordmark)\\.svg/]",
+          message:
+            "Inlining the Xynes brand asset filename is forbidden (LP-DS no-inline-xynes-brand). Use <Brand /> from @lumia-ui/components instead.",
+        },
+      ],
+    },
+  },
 ];
