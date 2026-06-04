@@ -71,19 +71,38 @@ export const MarketingFooter = forwardRef<HTMLElement, MarketingFooterProps>(
       >
         {brand ? (
           <div className="mb-8">
-            {brand.label ? (
-              <Brand
-                variant={brand.variant}
-                size={brand.size ?? 'md'}
-                aria-label={brand.label}
-              />
-            ) : (
-              <Brand
-                variant={brand.variant}
-                size={brand.size ?? 'md'}
-                aria-hidden
-              />
-            )}
+            {/*
+              PR #229 Codex P2 #2 — `MarketingBrand.href` is a required field
+              on the shared contract; the nav primitive wraps its `<Brand>` in
+              an `<a>` and the README example treats clicking the footer
+              brand as the canonical "go home" affordance. Mirror the nav
+              treatment here so the footer surface honours the same contract:
+              safe-URL guard, `<a>` wrapper, focus-visible ring, decorative-
+              vs-labelled split on the inner `<Brand>`.
+            */}
+            <a
+              href={isSafeMarketingHref(brand.href) ? brand.href : '/'}
+              className={cn(
+                'inline-flex items-center gap-2 rounded-md',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+              )}
+              aria-label={brand.label ?? 'xynes home'}
+              data-marketing-footer-brand=""
+            >
+              {brand.label ? (
+                <Brand
+                  variant={brand.variant}
+                  size={brand.size ?? 'md'}
+                  aria-label={brand.label}
+                />
+              ) : (
+                <Brand
+                  variant={brand.variant}
+                  size={brand.size ?? 'md'}
+                  aria-hidden
+                />
+              )}
+            </a>
           </div>
         ) : null}
         <div

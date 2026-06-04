@@ -115,7 +115,9 @@ const iconLetterPath =
  * tree-shakeable and emits zero network requests on mount — the SVG bytes
  * ship inside the component bundle so the brand renders on first paint.
  *
- * Accessibility:
+ * Accessibility (enforced at the TypeScript level via the
+ * {@link BrandLabelledProps} | {@link BrandDecorativeProps} discriminated
+ * union — see Codex review on PR #229):
  *   - `<Brand variant="wordmark" aria-label="xynes" />` — labelled (default).
  *   - `<Brand variant="icon" aria-hidden />` — decorative (e.g. paired with a
  *     visible "xynes" text label nearby).
@@ -123,7 +125,10 @@ const iconLetterPath =
  * @see LP-DS plan §3 (asset preparation) and §4 (API contract) at
  *   `xynes-front-end/infra/docs/plans/2026-06-04-landing-page-template/01-lumia-ds-marketing-primitives.md`.
  */
-export const Brand = forwardRef<SVGSVGElement, BrandProps>(function Brand(
+export const Brand = forwardRef<
+  SVGSVGElement,
+  BrandLabelledProps | BrandDecorativeProps
+>(function Brand(
   {
     variant,
     size = 'md',

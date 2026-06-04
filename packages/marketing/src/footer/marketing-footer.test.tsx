@@ -160,6 +160,78 @@ describe('<MarketingFooter>', () => {
     await teardown(ctx);
   });
 
+  describe('PR #229 Codex P2 #2 — footer brand href is honoured', () => {
+    it('wraps the brand mark in a safe-href anchor pointing at brand.href', async () => {
+      const ctx = createTestRoot();
+      await render(
+        ctx.root,
+        <MarketingFooter
+          columns={columns}
+          brand={{
+            variant: 'wordmark',
+            href: 'https://xynes.com',
+            label: 'xynes',
+          }}
+        />,
+      );
+      const anchor = ctx.host.querySelector(
+        'footer [data-marketing-footer-brand]',
+      ) as HTMLAnchorElement | null;
+      expect(anchor).toBeTruthy();
+      expect(anchor?.tagName).toBe('A');
+      expect(anchor?.getAttribute('href')).toBe('https://xynes.com');
+      expect(anchor?.getAttribute('aria-label')).toBe('xynes');
+      // The Brand mark renders inside the anchor.
+      expect(
+        anchor?.querySelector('[data-lumia-brand="wordmark"]'),
+      ).toBeTruthy();
+      await teardown(ctx);
+    });
+
+    it('falls back to / when brand.href fails the safe-URL guard', async () => {
+      const ctx = createTestRoot();
+      await render(
+        ctx.root,
+        <MarketingFooter
+          columns={columns}
+          brand={{
+            variant: 'icon',
+            href: 'javascript:alert(1)',
+            label: 'xynes',
+          }}
+        />,
+      );
+      const anchor = ctx.host.querySelector(
+        'footer [data-marketing-footer-brand]',
+      ) as HTMLAnchorElement | null;
+      expect(anchor?.getAttribute('href')).toBe('/');
+      await teardown(ctx);
+    });
+
+    it('renders the brand decoratively when no label is supplied', async () => {
+      const ctx = createTestRoot();
+      await render(
+        ctx.root,
+        <MarketingFooter
+          columns={columns}
+          brand={{ variant: 'icon', href: '/' }}
+        />,
+      );
+      const anchor = ctx.host.querySelector(
+        'footer [data-marketing-footer-brand]',
+      ) as HTMLAnchorElement | null;
+      // Even without a brand.label, the anchor still has a meaningful
+      // aria-label so screen readers can announce the navigation target.
+      expect(anchor?.getAttribute('aria-label')).toBe('xynes home');
+      expect(
+        anchor
+          ?.querySelector('[data-lumia-brand="icon"] svg')
+          ?.getAttribute('aria-hidden'),
+      ).toBe('true');
+      await teardown(ctx);
+    });
+  });
+
   it('uses footer landmark with default aria-label', async () => {
     const ctx = createTestRoot();
     await render(ctx.root, <MarketingFooter columns={columns} />);

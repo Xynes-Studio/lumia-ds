@@ -86,6 +86,25 @@ describe('<MarketingFigureCard>', () => {
     await teardown(ctx);
   });
 
+  it('rejects protocol-relative src even when the host appears allowlisted (PR #229 Codex P2 #1)', async () => {
+    // `//attacker.example.com/x.svg` resolves to the page protocol + the
+    // attacker host. Even with an `allowedOrigins` allowlist that names the
+    // host, the figure card must refuse to render so a hostile copy cannot
+    // exfiltrate a request to an unapproved origin.
+    const ctx = createTestRoot();
+    await render(
+      ctx.root,
+      <MarketingFigureCard
+        src="//attacker.example.com/x.svg"
+        allowedOrigins={['attacker.example.com']}
+        alt="x"
+      />,
+    );
+    expect(ctx.host.querySelector('figure')).toBeNull();
+    expect(ctx.host.querySelector('img')).toBeNull();
+    await teardown(ctx);
+  });
+
   it('preserves layout-stability hints when supplied', async () => {
     const ctx = createTestRoot();
     await render(

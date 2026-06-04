@@ -155,13 +155,32 @@ describe('<Brand>', () => {
   it('omits <title> when no aria-label and no aria-hidden are supplied (worst case still renders)', async () => {
     const ctx = createTestRoot();
     await act(async () => {
-      // Intentionally omitting aria-label — the runtime should not crash, but
-      // the discriminated union at the call-site will surface a TS error in
-      // strict mode. This guards the runtime fallback only.
+      // Intentionally omitting aria-label — after the PR #229 Codex fix the
+      // discriminated `BrandLabelledProps | BrandDecorativeProps` union makes
+      // this a TS compile error at the call-site; `@ts-expect-error` confirms
+      // the type-level guarantee is in force while preserving the runtime
+      // smoke (renders without throwing, no <title> emitted).
+      // @ts-expect-error — discriminated-union guard rejects unlabelled non-decorative usage
       ctx.root.render(<Brand variant="icon" />);
     });
     expect(ctx.host.querySelector('svg')).toBeTruthy();
     expect(ctx.host.querySelector('svg title')).toBeNull();
+    await teardown(ctx);
+  });
+
+  it('accepts labelled + decorative variants at the type level (PR #229 Codex regression guard)', async () => {
+    // The two call shapes the discriminated union must accept. If either of
+    // these starts surfacing a TS error, the public API contract is broken.
+    const ctx = createTestRoot();
+    await act(async () => {
+      ctx.root.render(
+        <>
+          <Brand variant="wordmark" aria-label="xynes" />
+          <Brand variant="icon" aria-hidden />
+        </>,
+      );
+    });
+    expect(ctx.host.querySelectorAll('svg').length).toBe(2);
     await teardown(ctx);
   });
 

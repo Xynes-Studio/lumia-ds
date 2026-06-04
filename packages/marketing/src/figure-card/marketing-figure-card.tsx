@@ -40,9 +40,16 @@ const isSafeImageSrc = (
   allowedOrigins: ReadonlyArray<string>,
 ): boolean => {
   if (!isSafeMarketingHref(src)) return false;
-  if (src.startsWith('/') || src.startsWith('#')) return true;
+  // PR #229 Codex P2 #1 defense in depth — `isSafeMarketingHref` already
+  // rejects protocol-relative URLs, but a future refactor of that helper
+  // could reopen the bypass. Re-check the trimmed source here so a
+  // `//attacker.com/x.svg` input cannot reach the `startsWith('/')`
+  // same-origin short-circuit below.
+  const trimmed = src.trim();
+  if (trimmed.startsWith('//')) return false;
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) return true;
   try {
-    const parsed = new URL(src);
+    const parsed = new URL(trimmed);
     return allowedOrigins.some(
       (origin) => parsed.host.toLowerCase() === origin.toLowerCase(),
     );

@@ -52,6 +52,23 @@ describe('isSafeMarketingHref', () => {
   it('trims whitespace before validating', () => {
     expect(isSafeMarketingHref('   /dashboard   ')).toBe(true);
   });
+
+  describe('PR #229 Codex P2 #1 — protocol-relative URL rejection', () => {
+    it.each([
+      '//attacker.com/x.svg',
+      '//evil.example/path',
+      '   //attacker.com/x  ',
+      '//attacker.com',
+    ])('rejects protocol-relative URL %s', (input) => {
+      expect(isSafeMarketingHref(input)).toBe(false);
+    });
+
+    it('continues to accept single-leading-slash same-origin paths', () => {
+      expect(isSafeMarketingHref('/dashboard')).toBe(true);
+      expect(isSafeMarketingHref('/legal/privacy')).toBe(true);
+      expect(isSafeMarketingHref('/')).toBe(true);
+    });
+  });
 });
 
 describe('isAllowedOssRepoUrl', () => {
@@ -84,5 +101,34 @@ describe('isAllowedOssRepoUrl', () => {
   it('exports a frozen allowlist for downstream consumers', () => {
     expect(MARKETING_OSS_HOST_ALLOWLIST).toContain('github.com');
     expect(MARKETING_OSS_HOST_ALLOWLIST).toContain('gitlab.com');
+  });
+
+  describe('PR #229 Codex P2 #4 — runtime-frozen allowlist', () => {
+    it('the exported allowlist is Object.freeze-d (runtime mutation throws or no-ops)', () => {
+      expect(Object.isFrozen(MARKETING_OSS_HOST_ALLOWLIST)).toBe(true);
+    });
+
+    it('a hostile mutation attempt cannot extend the allowlist', () => {
+      // Cast away readonly to simulate a JavaScript consumer reaching for
+      // `.push` despite the documented contract; strict mode (used by ESM
+      // modules + happy-dom) throws, otherwise the call silently no-ops.
+      // Either way, the allowlist must NOT carry `attacker.com` afterwards.
+      try {
+        (MARKETING_OSS_HOST_ALLOWLIST as unknown as string[]).push(
+          'attacker.com',
+        );
+      } catch {
+        // Expected in strict mode.
+      }
+      expect(MARKETING_OSS_HOST_ALLOWLIST).not.toContain('attacker.com');
+      expect(isAllowedOssRepoUrl('https://attacker.com/x/y')).toBe(false);
+    });
+
+    it('the frozen allowlist still resolves a valid github URL', () => {
+      // Sanity check that the freeze did not break the lookup path.
+      expect(
+        isAllowedOssRepoUrl('https://github.com/Xynes-Studio/lumia-ds'),
+      ).toBe(true);
+    });
   });
 });
