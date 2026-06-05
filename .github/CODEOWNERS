@@ -1,0 +1,15 @@
+# Default reviewers for everything
+*                                          @archan96
+
+# Specific paths (uncomment what applies)
+# /packages/components/src/brand/              @archan96
+# /packages/layout/src/dashboard-shell/        @archan96
+# /packages/editor/                            @archan96
+# /packages/marketing/                         @archan96
+# /packages/layout/                            @archan96
+# /packages/components/                        @archan96
+# /packages/icons/                             @archan96
+# /packages/tokens/                            @archan96
+# /packages/theme/                             @archan96
+# /.github/                                    @archan96
+# /.github/workflows/                          @archan96
