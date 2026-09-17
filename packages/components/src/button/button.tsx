@@ -6,12 +6,7 @@ import { interactiveCursor } from '../lib/interactive-styles';
 import { Spinner } from '../spinner/spinner';
 
 type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'outline'
-  | 'ghost'
-  | 'destructive'
-  | 'link';
+  'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 const baseButtonClasses = `inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ring-offset-background ${interactiveCursor} disabled:opacity-50`;

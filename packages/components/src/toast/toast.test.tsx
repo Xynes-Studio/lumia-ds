@@ -103,8 +103,7 @@ describe('ToastProvider and useToast', () => {
     await act(async () => {
       (
         toasts[0]?.querySelector('[aria-label="Dismiss notification"]') as
-          | HTMLButtonElement
-          | undefined
+          HTMLButtonElement | undefined
       )?.click();
     });
 

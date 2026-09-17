@@ -14,8 +14,7 @@ type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
 type FlexGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type FlexSize = '1' | 'auto' | 'initial' | 'none';
 type ResponsiveProp<T extends string | number> =
-  | T
-  | ({ base?: T } & Partial<Record<Breakpoint, T>>);
+  T | ({ base?: T } & Partial<Record<Breakpoint, T>>);
 
 const directionClasses: Record<FlexDirection, string> = {
   row: 'flex-row',

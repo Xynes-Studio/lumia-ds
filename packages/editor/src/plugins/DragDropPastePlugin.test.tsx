@@ -538,9 +538,8 @@ describe('DragDropPastePlugin', () => {
 
       // Make the mocked $isImageBlockNode return true so the success branch
       // walks into the ImageBlock writable assignment path.
-      const { $isImageBlockNode } = await import(
-        '../nodes/ImageBlockNode/ImageBlockNode'
-      );
+      const { $isImageBlockNode } =
+        await import('../nodes/ImageBlockNode/ImageBlockNode');
       ($isImageBlockNode as unknown as Mock).mockReturnValue(true);
 
       // Capture the writable target so we can assert __objectId was set.
@@ -576,9 +575,8 @@ describe('DragDropPastePlugin', () => {
         uploadResult,
       );
 
-      const { $isImageBlockNode } = await import(
-        '../nodes/ImageBlockNode/ImageBlockNode'
-      );
+      const { $isImageBlockNode } =
+        await import('../nodes/ImageBlockNode/ImageBlockNode');
       ($isImageBlockNode as unknown as Mock).mockReturnValue(true);
 
       const writableTarget: Record<string, unknown> = {};

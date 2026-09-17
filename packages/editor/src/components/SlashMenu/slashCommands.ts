@@ -21,10 +21,7 @@ import {
  * - 'media-video': Show MediaInsertTabs for video
  */
 export type SlashCommandModalType =
-  | 'none'
-  | 'media-image'
-  | 'media-video'
-  | 'media-file';
+  'none' | 'media-image' | 'media-video' | 'media-file';
 
 export interface SlashCommand {
   /** Name of the command (without leading slash) */

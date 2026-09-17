@@ -57,9 +57,8 @@ function $isCursorAtStartOfEmptyPanel(): PanelBlockNode | null {
   const anchorNode = anchor.getNode();
   // Walk up looking for a PanelBlockNode ancestor.
   let current:
-    | ReturnType<typeof anchorNode.getParent>
-    | typeof anchorNode
-    | null = anchorNode;
+    ReturnType<typeof anchorNode.getParent> | typeof anchorNode | null =
+    anchorNode;
   while (current) {
     if ($isPanelBlockNode(current)) {
       // Use the node's own predicate via the public `collapseAtStart`
