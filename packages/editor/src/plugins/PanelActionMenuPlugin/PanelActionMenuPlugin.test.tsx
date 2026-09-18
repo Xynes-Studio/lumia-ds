@@ -409,8 +409,7 @@ describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
       const panel = root
         .getChildren()
         .find((n) => n.getType() === 'panel-block') as
-        | PanelBlockNode
-        | undefined;
+        PanelBlockNode | undefined;
       stillSameKey = !!panel && panel.getKey() === panelKey;
     });
     expect(stillSameKey).toBe(true);
@@ -514,8 +513,7 @@ describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
       const panel = root
         .getChildren()
         .find((n) => n.getType() === 'panel-block') as
-        | PanelBlockNode
-        | undefined;
+        PanelBlockNode | undefined;
       finalVariant = panel?.getVariant();
       finalKey = panel?.getKey();
     });
@@ -553,8 +551,7 @@ describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
       const panel = root
         .getChildren()
         .find((n) => n.getType() === 'panel-block') as
-        | PanelBlockNode
-        | undefined;
+        PanelBlockNode | undefined;
       nextVariant = panel?.getVariant();
     });
 
@@ -591,8 +588,7 @@ describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
       const panel = root
         .getChildren()
         .find((n) => n.getType() === 'panel-block') as
-        | PanelBlockNode
-        | undefined;
+        PanelBlockNode | undefined;
       prevVariant = panel?.getVariant();
     });
 
@@ -630,8 +626,7 @@ describe('PanelActionMenuPlugin — BUG-LDS-6 variant picker', () => {
       const panel = root
         .getChildren()
         .find((n) => n.getType() === 'panel-block') as
-        | PanelBlockNode
-        | undefined;
+        PanelBlockNode | undefined;
       unchanged = panel?.getVariant();
     });
 

@@ -9,7 +9,8 @@ jobs:
     name: Visual Regression
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.50.1-noble
+      image: mcr.microsoft.com/playwright:v1.57.0-noble
+      options: --user 1001:1001
     steps:
       - uses: actions/checkout@v4
       
@@ -24,9 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
 
       - name: Build Storybook prerequisites (tokens + theme)
         # Storybook resolves @lumia-ui/theme/dist/tailwind/tailwind.js via

@@ -46,9 +46,7 @@ export type DataSourceError = {
  * Union type of all config validation errors.
  */
 export type ConfigError =
-  | PageConfigError
-  | ResourceConfigError
-  | DataSourceError;
+  PageConfigError | ResourceConfigError | DataSourceError;
 
 /**
  * Formats validation issues into a human-readable string for dev logs.

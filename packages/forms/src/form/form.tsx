@@ -9,8 +9,7 @@ import type {
 } from 'react-hook-form';
 
 type LumiaFormChildren<TFieldValues extends FieldValues> =
-  | ReactNode
-  | ((methods: UseFormReturn<TFieldValues>) => ReactNode);
+  ReactNode | ((methods: UseFormReturn<TFieldValues>) => ReactNode);
 
 export type LumiaFormProps<TFieldValues extends FieldValues = FieldValues> = {
   children: LumiaFormChildren<TFieldValues>;
