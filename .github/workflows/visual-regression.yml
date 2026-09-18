@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-
       - name: Build Storybook prerequisites (tokens + theme)
         # Storybook resolves @lumia-ui/theme/dist/tailwind/tailwind.js via
         # PostCSS, and aliases @lumia-ui/tokens/dist via Vite, so both packages
