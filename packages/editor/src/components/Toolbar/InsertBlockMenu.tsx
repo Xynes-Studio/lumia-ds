@@ -273,6 +273,16 @@ function ImageInsertItem({
                 (writable as any).__src = result.url;
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (writable as any).__status = 'uploaded';
+                if (
+                  typeof result.objectId === 'string' &&
+                  result.objectId.length > 0
+                ) {
+                  // STORAGE-11: keep the stable storage reference on the
+                  // node so CMS persistence can strip the transient signed
+                  // delivery URL before saving.
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (writable as any).__objectId = result.objectId;
+                }
               }
             });
           })
