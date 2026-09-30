@@ -278,7 +278,11 @@ describe('InsertBlockMenu unit', () => {
   });
 
   it('uploads an image file and updates the inserted node on success', async () => {
-    const writable = { __src: '', __status: '' };
+    const writable = {
+      __src: '',
+      __status: '',
+      __objectId: undefined as string | undefined,
+    };
     editorStateNodeMap.set('image-key', {
       __type: 'image-block',
       getWritable: () => writable,
@@ -293,6 +297,7 @@ describe('InsertBlockMenu unit', () => {
     ]);
     (mediaConfig.uploadAdapter.uploadFile as Mock).mockResolvedValue({
       url: 'https://cdn.example/final-image.png',
+      objectId: 'object-id-123',
     });
     ($createImageBlockNode as Mock).mockReturnValue({
       getParentOrThrow: () => ({ type: 'root' }),
@@ -312,7 +317,52 @@ describe('InsertBlockMenu unit', () => {
     expect($wrapNodeInElement).toHaveBeenCalled();
     expect(writable.__src).toBe('https://cdn.example/final-image.png');
     expect(writable.__status).toBe('uploaded');
+    expect(writable.__objectId).toBe('object-id-123');
   });
+
+  it.each([undefined, ''])(
+    'does not persist a missing or empty image object id (%s)',
+    async (objectId) => {
+      const writable = {
+        __src: '',
+        __status: '',
+        __objectId: undefined as string | undefined,
+      };
+      editorStateNodeMap.set('image-key', {
+        __type: 'image-block',
+        getWritable: () => writable,
+      });
+      (getInsertableBlocks as Mock).mockReturnValue([
+        {
+          type: 'image',
+          label: 'Image',
+          icon: () => null,
+          insertAction: 'custom',
+        },
+      ]);
+      (mediaConfig.uploadAdapter.uploadFile as Mock).mockResolvedValue({
+        url: 'https://cdn.example/final-image.png',
+        objectId,
+      });
+      ($createImageBlockNode as Mock).mockReturnValue({
+        getParentOrThrow: () => ({ type: 'root' }),
+        getKey: () => 'image-key',
+      });
+
+      render(<InsertBlockMenu />);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Insert image file' }),
+      );
+
+      await waitFor(() => {
+        expect(onUploadComplete).toHaveBeenCalled();
+      });
+
+      expect(writable.__src).toBe('https://cdn.example/final-image.png');
+      expect(writable.__status).toBe('uploaded');
+      expect(writable.__objectId).toBeUndefined();
+    },
+  );
 
   it('marks an image node as errored when upload fails', async () => {
     const writable = { __src: '', __status: '' };
