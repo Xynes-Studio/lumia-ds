@@ -29,8 +29,8 @@ Built with [Commander.js](https://github.com/tj/commander.js).
 ## Testing
 
 ```bash
-pnpm test
-pnpm test -- --coverage
+pnpm --filter @lumia-ui/cli test # includes coverage
+pnpm --filter @lumia-ui/cli type-check
 ```
 
 ## Safe SVG import (XYN-SEC-004)
@@ -79,6 +79,8 @@ No environment variables or database migration are needed. Re-import previously
 generated CLI assets using the hardened command and rebuild the consuming package.
 A source rollback restores the vulnerable importer; retain the rejection policy
 and fix unsupported assets rather than restoring unsafe generation.
+
+The root `pnpm type-check` command also invokes the strict CLI/importer check.
 
 Security checks:
 

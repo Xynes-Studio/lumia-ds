@@ -4,6 +4,7 @@ import {
   mkdtempSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync,
   renameSync,
@@ -214,6 +215,25 @@ describe('batch import and executable contract', () => {
     expect(
       readFileSync(path.join(output, 'src/generated/index.ts'), 'utf8'),
     ).toContain('ChatBubbleIcon');
+    const generated = path.join(output, 'src/generated/icons');
+    const componentFiles = readdirSync(generated).map((file) =>
+      path.join(generated, file),
+    );
+    const program = ts.createProgram(componentFiles, {
+      strict: true,
+      noEmit: true,
+      jsx: ts.JsxEmit.ReactJSX,
+      module: ts.ModuleKind.CommonJS,
+      moduleResolution: ts.ModuleResolutionKind.Node10,
+      target: ts.ScriptTarget.ES2020,
+      types: [],
+      baseUrl: process.cwd(),
+      paths: {
+        react: ['node_modules/@types/react'],
+        'react/*': ['node_modules/@types/react/*'],
+      },
+    });
+    expect(ts.getPreEmitDiagnostics(program)).toEqual([]);
   });
 
   it('prevalidates every file and name before deleting any output', () => {
