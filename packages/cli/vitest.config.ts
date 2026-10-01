@@ -7,13 +7,17 @@ export default defineConfig({
     testTimeout: 30_000,
     coverage: {
       provider: 'v8',
-      include: ['src/**/*.ts'],
+      include: [
+        'src/**/*.ts',
+        'bin/lumia-icon-import.js',
+        'bin/lib/svg-import.js',
+      ],
       exclude: ['src/**/*.test.ts', 'src/__tests__/**'],
       thresholds: {
-        statements: 75,
-        branches: 70,
-        functions: 75,
-        lines: 75,
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
       },
     },
   },

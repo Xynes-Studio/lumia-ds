@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "composite": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "bin/lumia-icon-import.js",
+    "bin/lib/svg-import.js",
+    "src/__tests__/icon-import.test.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
