@@ -146,14 +146,15 @@ program
 
 ## Testing
 
-We follow TDD principles with a strict **75% coverage requirement**.
+We follow TDD principles with a strict **80% coverage requirement** for statements,
+branches, functions and lines, including the SVG importer JavaScript.
 
 Run tests:
 ```bash
 pnpm --filter @lumia-ui/cli test
 ```
 
-Check coverage:
+The test command collects coverage and enforces these thresholds. Check types:
 ```bash
-pnpm --filter @lumia-ui/cli test -- --coverage
+pnpm --filter @lumia-ui/cli type-check
 ```

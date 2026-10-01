@@ -2,12 +2,25 @@
 
 Convert raw SVG files into React components and register them in `@lumia-ui/icons`.
 
+## Security boundary
+
+XYN-SEC-004 hardens the standalone `lumia-icon-import` CLI. It parses a strict,
+bounded static SVG subset, rejects active/unsupported input and emits escaped JSX.
+See [CLI usage and restrictions](../packages/cli/README.md#safe-svg-import-xyn-sec-004).
+The CLI output uses `src/generated/icons/`; it validates the whole batch before
+replacing prior output.
+
+The SVGR workflow below is a separate pipeline and is **not** covered by that
+validator. Its source SVGs must remain reviewed, trusted assets. Applying the same
+policy there is tracked as XYN-SEC-004-FU-1. Running the icons build regenerates the
+SVGR index/registry, so it is not a validation step for standalone CLI output.
+
 ## Steps
 
 1. Add SVGs to `packages/icons/svg/`. File names become component names (`icon-check.svg` → `IconCheck`).
 2. Run the generator:
    ```bash
-   pnpm build:icons
+   pnpm --filter @lumia-ui/icons build:icons
    ```
    This runs SVGR to generate React components under `packages/icons/src/generated/`.
 3. Generated exports live in `packages/icons/src/generated/index.ts`, and registration happens in `packages/icons/src/generated/registry.ts`. These files are auto-written—do not edit by hand.
