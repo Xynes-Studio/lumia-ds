@@ -190,6 +190,15 @@ Add SVG files to `packages/icons/svg/` and run:
 pnpm build:icons
 ```
 
+The build validates a bounded static SVG batch using the shared CLI policy before
+SVGR/SVGO consumes it. It stages all generated modules, exports and registrations
+before replacing output; invalid input preserves the previous batch. Direct SVGR
+config use also validates each input. Active elements, event/URL attributes,
+DTDs/entities, unsupported namespaces and interpolation are rejected. The legacy
+`node scripts/generate-index.js` entry point runs the full validated build.
+
+Run from the complete Lumia monorepo and use its pinned pnpm version. See
+[the import workflow](../../docs/icon-import.md) for limits and recovery behavior.
 Generated components are exported from `@lumia-ui/icons` and auto-registered.
 
 ## Direct Import (Tree-Shakable)
