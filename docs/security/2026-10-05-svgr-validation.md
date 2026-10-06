@@ -1,6 +1,10 @@
 # SEC-004-FU-1 — SVG pipeline implementation and review, 2026-10-05
 
-Verdict: implementation and local pre-PR review passed on `feature/security-audit-remaining-high-medium`. Not published or merged.
+Verdict: implementation and local pre-PR review passed on `feature/security-audit-remaining-high-medium`. Published for review in [PR #234](https://github.com/Xynes-Studio/lumia-ds/pull/234); not merged. A subsequent PR review identified an export-name collision; its fix and regression test are pending publication.
+
+## PR review follow-up — 2026-10-06
+
+Valid `add.svg` and `icon-add.svg` inputs generated duplicate `IconAdd` exports and replaced previous valid output. The local fix validates final public names before output replacement. Its real CLI regression failed before the fix and now confirms rejection with previous output intact. All 96 icons tests pass; coverage is 92.71% lines/statements, 92.59% functions and 92.07% branches. Changed `scripts/build-icons.js` has 100% lines/statements/functions and 87.23% branches. Root lint/type-check and icons build pass. No dependencies or existing exports changed. This fix is locally checkpointed and unpushed; hosted checks still cover the earlier published head.
 
 ## Implementation and acceptance
 

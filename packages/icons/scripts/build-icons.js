@@ -12,6 +12,8 @@ function indexes(files) {
     name: file.startsWith('Icon') ? file : `Icon${file}`,
     id: file.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(),
   }));
+  if (new Set(names.map(({ name }) => name)).size !== names.length)
+    throw new Error('SVG filenames produce duplicate public icon names');
   return {
     index:
       names

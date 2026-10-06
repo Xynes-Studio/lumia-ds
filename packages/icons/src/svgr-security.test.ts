@@ -124,6 +124,36 @@ it('accepts committed static corpus and preserves public exports and registratio
   }
 });
 
+it('preserves previous output when rendered filenames collide after the Icon prefix', () => {
+  const fixture = mkdtempSync(join(tmpdir(), 'svgr-export-collision-'));
+  try {
+    const input = join(fixture, 'svg');
+    const output = join(fixture, 'generated');
+    mkdirSync(input);
+    mkdirSync(output);
+    writeFileSync(join(output, 'previous.ts'), 'previous valid output');
+    for (const name of ['add', 'icon-add']) {
+      writeFileSync(
+        join(input, `${name}.svg`),
+        '<svg viewBox="0 0 24 24"><path d="M0 0h1" /></svg>',
+      );
+    }
+    const result = spawnSync(
+      process.execPath,
+      [join(root, 'scripts/build-icons.js'), input, output],
+      { cwd: root, encoding: 'utf8' },
+    );
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('duplicate public icon names');
+    expect(readdirSync(output)).toEqual(['previous.ts']);
+    expect(readFileSync(join(output, 'previous.ts'), 'utf8')).toBe(
+      'previous valid output',
+    );
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
 it('direct index generator cannot bypass source validation', () => {
   const fixture = mkdtempSync(join(tmpdir(), 'svgr-index-'));
   try {
