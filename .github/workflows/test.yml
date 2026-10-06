@@ -32,5 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build linked packages before tests
+        run: pnpm --filter './packages/*' build
+
       - name: Run tests with coverage thresholds
         run: pnpm test
