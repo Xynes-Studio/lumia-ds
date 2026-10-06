@@ -10,10 +10,29 @@ See [CLI usage and restrictions](../packages/cli/README.md#safe-svg-import-xyn-s
 The CLI output uses `src/generated/icons/`; it validates the whole batch before
 replacing prior output.
 
-The SVGR workflow below is a separate pipeline and is **not** covered by that
-validator. Its source SVGs must remain reviewed, trusted assets. Applying the same
-policy there is tracked as XYN-SEC-004-FU-1. Running the icons build regenerates the
-SVGR index/registry, so it is not a validation step for standalone CLI output.
+XYN-SEC-004-FU-1 applies the same parser to the SVGR workflow below. The build
+snapshots and validates all source files before generation, runs SVGR in a
+temporary directory and replaces output only after components, exports and
+registrations are complete. Invalid batches preserve all prior output. The
+SVGR config also validates each input before SVGO/JSX; direct config use cannot
+skip the policy. `scripts/generate-index.js` remains a compatibility entry point
+and runs the complete validated build.
+
+Use the complete monorepo checkout to build icons: the policy lives in the CLI
+package, and consumer runtime bundles do not depend on it. The limits are 1 MiB
+per regular UTF-8 SVG, 256 files /16 MiB per batch, 4096 nodes and depth 32.
+Active elements, event/URL attributes, entities/DTDs, unsupported namespaces and
+interpolation are rejected. Filename collisions and source/output aliasing are rejected before output changes.
+A custom output directory must have an existing parent; source/output paths must
+remain separate even through symlinked ancestors.
+The five committed components and public export/registry names remain supported.
+
+Direct SVGR config use requires an explicit `--out-dir`; the documented batch
+command owns replacement and whole-batch preservation. Both generation pipelines
+write the generated index/registry; the SVGR build is not a validation command
+for standalone CLI output. If filesystem replacement and rollback both fail,
+the previous batch remains in the adjacent `.svgr-build-*/previous` directory
+for recovery; inspect the failure before retrying.
 
 ## Steps
 

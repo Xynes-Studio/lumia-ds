@@ -10,7 +10,7 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "lint": "eslint \"packages/**/*.{ts,tsx,js,jsx}\" --cache",
-    "type-check": "tsc --build && pnpm --filter @lumia-ui/cli type-check",
+    "type-check": "tsc --build && pnpm --filter @lumia-ui/cli type-check && pnpm --filter @lumia-ui/icons type-check",
     "build": "pnpm -r build",
     "icons:import": "node packages/cli/bin/lumia-icon-import.js packages/icons/raw packages/icons",
     "coverage:all": "pnpm --filter @lumia-ui/components test && pnpm --filter @lumia-ui/editor test && pnpm --filter @lumia-ui/runtime exec vitest run --coverage && pnpm --filter @lumia-ui/forms exec vitest run --coverage && pnpm --filter @lumia-ui/layout exec vitest run --coverage && pnpm --filter @lumia-ui/theme test && pnpm --filter @lumia-ui/tokens test && pnpm --filter @lumia-ui/icons test",

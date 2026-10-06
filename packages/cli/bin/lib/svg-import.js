@@ -295,7 +295,7 @@ function readSvgDirectory(directory) {
     if (totalBytes > 16 * MAX_BYTES)
       throw new Error('SVG batch exceeds 16 MiB');
     const source = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-    return { file, baseName, svg: parseSvg(source) };
+    return { file, baseName, svg: parseSvg(source), source };
   });
 }
 

@@ -22,9 +22,10 @@
     },
     "scripts": {
         "build": "pnpm build:icons && tsup",
-        "build:icons": "svgr --config-file svgr.config.js svg && node scripts/generate-index.js",
+        "build:icons": "node scripts/build-icons.js",
         "dev": "tsup --watch",
-        "test": "vitest run --coverage"
+        "test": "vitest run --coverage",
+        "type-check": "tsc --noEmit && tsc -p tsconfig.svgr.json"
     },
     "dependencies": {
         "lucide-react": "^0.474.0"
