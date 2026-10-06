@@ -2,29 +2,35 @@ name: Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop, "release/*"]
   pull_request:
-    branches: [main]
+    branches: [main, develop, "release/*"]
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # verified upstream actions/checkout
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # verified upstream actions/setup-node
         with:
-          node-version: 20
+          node-version: 22.22.0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # verified upstream pnpm/action-setup
         with:
           version: 10.23.0
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests with coverage thresholds
         run: pnpm test
