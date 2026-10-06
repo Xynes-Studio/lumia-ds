@@ -370,3 +370,11 @@ More details: see `docs/storybook.md`.
 
 - Build: `pnpm --filter @lumia-ui/components build`
 - Test (happy-dom): `pnpm --filter @lumia-ui/components test`
+
+### Localized dialog close control
+
+`DialogContent` accepts optional `closeLabel`, used for the built-in close button's
+accessible name and screen-reader text. The default remains `Close dialog` for
+existing consumers. Product apps supply their translated label; no catalog or
+product-specific text belongs in Lumia. CMS-INT-B2 exercises both the translated
+control and the unchanged default.
