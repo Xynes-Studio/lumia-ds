@@ -378,3 +378,25 @@ accessible name and screen-reader text. The default remains `Close dialog` for
 existing consumers. Product apps supply their translated label; no catalog or
 product-specific text belongs in Lumia. CMS-INT-B2 exercises both the translated
 control and the unchanged default.
+
+
+### Drawer localization (CMS-INT-B4)
+
+`Drawer` accepts optional `closeLabel` and `ariaLabel` strings. Consumers translate
+these using their own catalogs; Lumia does not load product messages. `closeLabel`
+sets both the button's accessible name and screen-reader text (default remains
+`Close drawer`). `ariaLabel` names the dialog; omitting it preserves existing
+behavior. Supply a meaningful name for new dialogs. Escape, Tab containment,
+overlay policy, placement, transition and focus-restoration contracts are unchanged.
+
+```tsx
+<Drawer open={open} onOpenChange={setOpen} closeLabel={t('closeMetadata')} ariaLabel={t('contentPanels')}>
+  <MetadataPanel />
+</Drawer>
+```
+
+Tests reproduce the former hard-coded English close/name gap and verify translated
+labels, default behavior, keyboard containment, overlay policy, focus restoration
+and placement. This additive API is required by CMS-INT-B4's contextual integration
+metadata drawer. Publish/review it independently, then pin the consuming app's CI
+dependency revision; do not copy the primitive into the app.

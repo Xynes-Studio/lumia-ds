@@ -14,6 +14,10 @@ export type DrawerProps = {
   open: boolean;
   onOpenChange: (nextOpen: boolean) => void;
   side?: DrawerSide;
+  /** Translated accessible name for the close button; defaults to English. */
+  closeLabel?: string;
+  /** Accessible name for the drawer dialog, supplied by its consumer. */
+  ariaLabel?: string;
   closeOnOverlayClick?: boolean;
   restoreFocusElement?: HTMLElement | null;
   contentClassName?: string;
@@ -25,6 +29,8 @@ export const Drawer = ({
   open,
   onOpenChange,
   side = 'right',
+  closeLabel = 'Close drawer',
+  ariaLabel,
   closeOnOverlayClick = true,
   restoreFocusElement,
   contentClassName,
@@ -239,6 +245,7 @@ export const Drawer = ({
       <aside
         ref={contentRef}
         role="dialog"
+        aria-label={ariaLabel}
         aria-modal="true"
         tabIndex={-1}
         className={cn(
@@ -258,7 +265,7 @@ export const Drawer = ({
         <button
           type="button"
           className={`absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${interactiveCursor}`}
-          aria-label="Close drawer"
+          aria-label={closeLabel}
           onClick={() => onOpenChange(false)}
         >
           <span aria-hidden className="relative h-4 w-4">
@@ -275,7 +282,7 @@ export const Drawer = ({
               )}
             />
           </span>
-          <span className="sr-only">Close drawer</span>
+          <span className="sr-only">{closeLabel}</span>
         </button>
 
         <div className="h-full min-h-0 overflow-y-auto pr-1">{children}</div>
