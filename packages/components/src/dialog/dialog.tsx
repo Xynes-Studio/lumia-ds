@@ -134,12 +134,18 @@ const DialogOverlay = forwardRef<
   );
 });
 
-export type DialogContentProps = DialogPrimitive.DialogContentProps;
+export type DialogContentProps = DialogPrimitive.DialogContentProps & {
+  /** Translated accessible name for the built-in close control. */
+  closeLabel?: string;
+};
 
 export const DialogContent = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(function DialogContent({ className, children, ...props }, ref) {
+>(function DialogContent(
+  { className, children, closeLabel = 'Close dialog', ...props },
+  ref,
+) {
   useDialogInternalContext('DialogContent');
 
   return (
@@ -159,10 +165,10 @@ export const DialogContent = forwardRef<
         {children}
         <DialogPrimitive.Close
           className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          aria-label="Close dialog"
+          aria-label={closeLabel}
         >
           <span aria-hidden>X</span>
-          <span className="sr-only">Close dialog</span>
+          <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
