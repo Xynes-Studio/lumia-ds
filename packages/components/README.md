@@ -337,6 +337,14 @@ More details: see `docs/storybook.md`.
 - Same Radix foundation as Dialog but positioned as a drawer from any edge (`side="right" | "left" | "top" | "bottom"`).
 - Overlay uses DS overlay tokens; sheet width uses token-friendly constraints (`min(90vw, 26rem)` on sides, responsive widths on top/bottom).
 - `closeOnOverlayClick` (default `true`) controls whether overlay click dismisses; ESC and the close button always close and return focus to the trigger.
+- `SheetContent closeLabel` accepts translated close text for both the accessible
+  name and screen-reader text; omitted values retain `Close sheet`.
+- Dialog, Sheet, and Drawer use the shared overlay layer above full-screen z-50
+  application shells: scrims/Drawer wrappers at 200 and modal content at 210.
+  Nested Dialog content retains its layer and follows its parent Sheet in portal
+  order. Consumers must not patch stacking locally.
+- Under reduced-motion preferences, Sheet content fades without sliding; its
+  closed state stays hidden on every side.
 
 ### Flex notes
 

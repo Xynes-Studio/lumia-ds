@@ -1,7 +1,15 @@
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Button } from '../button/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '../dialog/dialog';
 import {
   Sheet,
   SheetContent,
@@ -57,6 +65,149 @@ const SheetFixture = ({
 );
 
 describe('Sheet', () => {
+  it('rejects content and triggers used without their Sheet context', () => {
+    expect(() => renderToString(<SheetContent>Body</SheetContent>)).toThrow(
+      'SheetContent must be used within Sheet',
+    );
+    expect(() => renderToString(<SheetTrigger>Open</SheetTrigger>)).toThrow(
+      'SheetTrigger must be used within Sheet',
+    );
+  });
+
+  it('places its scrim and content above a full-screen editor layer', async () => {
+    const { root, host } = createTestRoot();
+    try {
+      await act(async () => {
+        root.render(
+          <>
+            <div className="fixed inset-0 z-50">Editor</div>
+            <Sheet defaultOpen>
+              <SheetContent>
+                <SheetTitle>API panel</SheetTitle>
+                <SheetDescription>Read-only API access</SheetDescription>
+              </SheetContent>
+            </Sheet>
+          </>,
+        );
+      });
+      expect(
+        document
+          .querySelector('[data-lumia-sheet-overlay]')
+          ?.classList.contains('z-[200]'),
+      ).toBe(true);
+      expect(
+        document
+          .querySelector('[data-lumia-sheet-content]')
+          ?.classList.contains('z-[210]'),
+      ).toBe(true);
+    } finally {
+      await act(async () => root.unmount());
+      host.remove();
+    }
+  });
+
+  it('keeps a nested dialog on the content layer after the sheet portal', async () => {
+    const { root, host } = createTestRoot();
+    try {
+      await act(async () => {
+        root.render(
+          <Sheet defaultOpen>
+            <SheetContent>
+              <SheetTitle>Parent sheet</SheetTitle>
+              <SheetDescription>Sheet description</SheetDescription>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button type="button">Open nested dialog</button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Nested dialog</DialogTitle>
+                  <DialogDescription>Dialog description</DialogDescription>
+                </DialogContent>
+              </Dialog>
+            </SheetContent>
+          </Sheet>,
+        );
+      });
+      const trigger = Array.from(document.querySelectorAll('button')).find(
+        (button) => button.textContent === 'Open nested dialog',
+      );
+      await act(async () => trigger?.click());
+      const sheet = document.querySelector('[data-lumia-sheet-content]');
+      const dialog = document.querySelector('[data-lumia-dialog-content]');
+      expect(sheet?.classList.contains('z-[210]')).toBe(true);
+      expect(dialog?.classList.contains('z-[210]')).toBe(true);
+      expect(
+        sheet &&
+          dialog &&
+          Boolean(
+            sheet.compareDocumentPosition(dialog) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+          ),
+      ).toBe(true);
+    } finally {
+      await act(async () => root.unmount());
+      host.remove();
+    }
+  });
+
+  it('uses an optional translated close label without leaking it onto content', async () => {
+    const { root, host } = createTestRoot();
+    try {
+      await act(async () => {
+        root.render(
+          <Sheet defaultOpen>
+            <SheetContent closeLabel="Fermer">
+              <SheetTitle>API panel</SheetTitle>
+              <SheetDescription>Description</SheetDescription>
+            </SheetContent>
+          </Sheet>,
+        );
+      });
+      expect(
+        document
+          .querySelector('button[aria-label="Fermer"]')
+          ?.getAttribute('aria-label'),
+      ).toBe('Fermer');
+      expect(
+        document
+          .querySelector('[data-lumia-sheet-content]')
+          ?.hasAttribute('closelabel'),
+      ).toBe(false);
+    } finally {
+      await act(async () => root.unmount());
+      host.remove();
+    }
+  });
+
+  it.each(['left', 'right', 'top', 'bottom'] as const)(
+    'uses a fade without sliding in reduced motion on the %s side',
+    async (side) => {
+      const { root, host } = createTestRoot();
+      try {
+        await act(async () => root.render(<SheetFixture side={side} />));
+        await act(async () => host.querySelector('button')?.click());
+        const content = document.querySelector('[data-lumia-sheet-content]');
+        expect(
+          content?.classList.contains('motion-reduce:transition-opacity'),
+        ).toBe(true);
+        expect(
+          content?.classList.contains(
+            'motion-reduce:data-[state=closed]:opacity-0',
+          ),
+        ).toBe(true);
+        const axis = side === 'left' || side === 'right' ? 'x' : 'y';
+        expect(
+          content?.classList.contains(
+            `motion-reduce:data-[state=closed]:translate-${axis}-0`,
+          ),
+        ).toBe(true);
+      } finally {
+        await act(async () => root.unmount());
+        host.remove();
+      }
+    },
+  );
+
   it('opens from trigger and closes with close button', async () => {
     const { root, host } = createTestRoot();
 

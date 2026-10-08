@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/utils';
+import { OVERLAY_Z_CLASS } from '../lib/overlay-layers';
 import { interactiveCursor } from '../lib/interactive-styles';
 
 const TRANSITION_MS = 300;
@@ -229,7 +230,11 @@ export const Drawer = ({
 
   return createPortal(
     <div
-      className={cn('fixed inset-0 z-40', !isVisible && 'pointer-events-none')}
+      className={cn(
+        'fixed inset-0',
+        OVERLAY_Z_CLASS,
+        !isVisible && 'pointer-events-none',
+      )}
       data-lumia-drawer-root
       data-state={isVisible ? 'open' : 'closed'}
     >

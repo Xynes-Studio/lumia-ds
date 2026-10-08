@@ -6,6 +6,10 @@ import type {
 import { createContext, forwardRef, useContext, useRef } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '../lib/utils';
+import {
+  OVERLAY_CONTENT_Z_CLASS,
+  OVERLAY_Z_CLASS,
+} from '../lib/overlay-layers';
 
 type SheetInternalContextValue = {
   triggerRef: MutableRefObject<HTMLElement | null>;
@@ -91,7 +95,8 @@ const SheetOverlay = forwardRef<
       ref={ref}
       data-lumia-sheet-overlay
       className={cn(
-        'fixed inset-0 z-40 bg-foreground/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0',
+        'fixed inset-0 bg-foreground/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0',
+        OVERLAY_Z_CLASS,
         className,
       )}
       {...props}
@@ -109,22 +114,24 @@ type SheetSide = 'top' | 'right' | 'bottom' | 'left';
 
 export type SheetContentProps = DialogPrimitive.DialogContentProps & {
   side?: SheetSide;
+  /** Accessible close button label; consumers can supply their locale copy. */
+  closeLabel?: string;
 };
 
 const sideClasses: Record<SheetSide, string> = {
   right:
-    'right-0 top-0 h-full w-[min(90vw,26rem)] rounded-l-lg data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full',
-  left: 'left-0 top-0 h-full w-[min(90vw,26rem)] rounded-r-lg data-[state=open]:translate-x-0 data-[state=closed]:-translate-x-full',
-  top: 'left-1/2 top-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-b-lg data-[state=open]:translate-y-0 data-[state=closed]:-translate-y-full',
+    'right-0 top-0 h-full w-[min(90vw,26rem)] rounded-l-lg data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full motion-reduce:data-[state=closed]:translate-x-0',
+  left: 'left-0 top-0 h-full w-[min(90vw,26rem)] rounded-r-lg data-[state=open]:translate-x-0 data-[state=closed]:-translate-x-full motion-reduce:data-[state=closed]:translate-x-0',
+  top: 'left-1/2 top-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-b-lg data-[state=open]:translate-y-0 data-[state=closed]:-translate-y-full motion-reduce:data-[state=closed]:translate-y-0',
   bottom:
-    'left-1/2 bottom-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-t-lg data-[state=open]:translate-y-0 data-[state=closed]:translate-y-full',
+    'left-1/2 bottom-0 w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 rounded-t-lg data-[state=open]:translate-y-0 data-[state=closed]:translate-y-full motion-reduce:data-[state=closed]:translate-y-0',
 };
 
 export const SheetContent = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
   SheetContentProps
 >(function SheetContent(
-  { className, children, side = 'right', ...props },
+  { className, children, side = 'right', closeLabel = 'Close sheet', ...props },
   ref,
 ) {
   useSheetInternalContext('SheetContent');
@@ -137,7 +144,8 @@ export const SheetContent = forwardRef<
         data-lumia-sheet-content
         data-lumia-sheet-side={side}
         className={cn(
-          'group fixed z-50 grid gap-5 border border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] data-[state=closed]:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          'group fixed grid gap-5 border border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] data-[state=closed]:pointer-events-none motion-reduce:transition-opacity motion-reduce:data-[state=closed]:opacity-0 motion-reduce:data-[state=open]:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          OVERLAY_CONTENT_Z_CLASS,
           sideClasses[side],
           className,
         )}
@@ -147,13 +155,13 @@ export const SheetContent = forwardRef<
         {children}
         <DialogPrimitive.Close
           className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          aria-label="Close sheet"
+          aria-label={closeLabel}
         >
           <span aria-hidden className="relative h-4 w-4">
             <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:rotate-45 group-data-[state=closed]:rotate-0" />
             <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]:-rotate-45 group-data-[state=closed]:rotate-0" />
           </span>
-          <span className="sr-only">Close sheet</span>
+          <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>

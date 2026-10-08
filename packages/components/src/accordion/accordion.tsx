@@ -8,6 +8,8 @@ export type AccordionProps = Omit<
   'type'
 > & {
   type?: 'single' | 'multiple';
+  /** Allow the open single item to collapse, matching the Radix root API. */
+  collapsible?: boolean;
 };
 
 export const Accordion = ({

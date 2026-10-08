@@ -15,6 +15,30 @@ const createTestRoot = () => {
 };
 
 describe('Drawer', () => {
+  it('places its wrapper above a sibling full-screen editor layer', async () => {
+    const { root, host } = createTestRoot();
+    try {
+      await act(async () => {
+        root.render(
+          <>
+            <div className="fixed inset-0 z-50">Editor</div>
+            <Drawer open onOpenChange={() => {}} ariaLabel="Metadata">
+              <button type="button">Edit details</button>
+            </Drawer>
+          </>,
+        );
+      });
+      expect(
+        document
+          .querySelector('[data-lumia-drawer-root]')
+          ?.classList.contains('z-[200]'),
+      ).toBe(true);
+    } finally {
+      await act(async () => root.unmount());
+      host.remove();
+    }
+  });
+
   const flushAnimationFrames = async () => {
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
