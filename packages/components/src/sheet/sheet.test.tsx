@@ -74,6 +74,41 @@ describe('Sheet', () => {
     );
   });
 
+  it.each([true, false])(
+    'retains scrim paint order when overlay dismissal changes from %s',
+    async (initial) => {
+      const { root, host } = createTestRoot();
+      const fixture = (dismiss: boolean) => (
+        <Sheet defaultOpen closeOnOverlayClick={dismiss}>
+          <SheetContent>
+            <SheetTitle>Responsive panel</SheetTitle>
+            <SheetDescription>Description</SheetDescription>
+          </SheetContent>
+        </Sheet>
+      );
+      try {
+        await act(async () => root.render(fixture(initial)));
+        const overlay = document.querySelector('[data-lumia-sheet-overlay]');
+        await act(async () => root.render(fixture(!initial)));
+        expect(document.querySelector('[data-lumia-sheet-overlay]')).toBe(
+          overlay,
+        );
+        const content = document.querySelector('[data-lumia-sheet-content]');
+        expect(
+          overlay &&
+            content &&
+            Boolean(
+              overlay.compareDocumentPosition(content) &
+              Node.DOCUMENT_POSITION_FOLLOWING,
+            ),
+        ).toBe(true);
+      } finally {
+        await act(async () => root.unmount());
+        host.remove();
+      }
+    },
+  );
+
   it('places its scrim and content above a full-screen editor layer', async () => {
     const { root, host } = createTestRoot();
     try {

@@ -1,0 +1,108 @@
+/* Shared semantic surfaces for Lumia consumers; import once in the app root. */
+:root {
+  --colors-background: #ffffff;
+  --colors-foreground: #171717;
+  --colors-muted: #f4f4f5;
+  --colors-mutedForeground: #52525b;
+  --colors-border: #d4d4d8;
+  --colors-secondary: #f4f4f5;
+  --colors-ring: #4f46e5;
+  --colors-primary: #0f172a;
+  --colors-on-primary: #ffffff;
+  --color-on-primary: var(--colors-on-primary);
+  --colors-highlight: #fef3c7;
+  --colors-highlightForeground: #78350f;
+  --colors-status-info-surface: #eff6ff;
+  --colors-status-info-foreground: #1e40af;
+  --colors-status-info-border: #93c5fd;
+  --colors-status-success-surface: #ecfdf5;
+  --colors-status-success-foreground: #065f46;
+  --colors-status-success-border: #6ee7b7;
+  --colors-status-warning-surface: #fffbeb;
+  --colors-status-warning-foreground: #92400e;
+  --colors-status-warning-border: #fcd34d;
+  --colors-status-error-surface: #fef2f2;
+  --colors-status-error-foreground: #991b1b;
+  --colors-status-error-border: #fca5a5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --colors-background: #111318;
+    --colors-foreground: #f4f4f5;
+    --colors-muted: #1d222b;
+    --colors-mutedForeground: #b7beca;
+    --colors-border: #596273;
+    --colors-secondary: #252c38;
+    --colors-ring: #a5b4fc;
+    --colors-primary: #e2e8f0;
+    --colors-on-primary: #0f172a;
+    --color-on-primary: var(--colors-on-primary);
+    --colors-highlight: #483510;
+    --colors-highlightForeground: #fde68a;
+    --colors-status-info-surface: #182b45;
+    --colors-status-info-foreground: #bfdbfe;
+    --colors-status-info-border: #4874a8;
+    --colors-status-success-surface: #16392e;
+    --colors-status-success-foreground: #a7f3d0;
+    --colors-status-success-border: #44856c;
+    --colors-status-warning-surface: #3b2d17;
+    --colors-status-warning-foreground: #fde68a;
+    --colors-status-warning-border: #927438;
+    --colors-status-error-surface: #401e25;
+    --colors-status-error-foreground: #fecaca;
+    --colors-status-error-border: #a7616e;
+  }
+}
+[data-theme='light'] {
+  --colors-background: #ffffff;
+  --colors-foreground: #171717;
+  --colors-muted: #f4f4f5;
+  --colors-mutedForeground: #52525b;
+  --colors-border: #d4d4d8;
+  --colors-secondary: #f4f4f5;
+  --colors-ring: #4f46e5;
+  --colors-primary: #0f172a;
+  --colors-on-primary: #ffffff;
+  --color-on-primary: var(--colors-on-primary);
+  --colors-highlight: #fef3c7;
+  --colors-highlightForeground: #78350f;
+  --colors-status-info-surface: #eff6ff;
+  --colors-status-info-foreground: #1e40af;
+  --colors-status-info-border: #93c5fd;
+  --colors-status-success-surface: #ecfdf5;
+  --colors-status-success-foreground: #065f46;
+  --colors-status-success-border: #6ee7b7;
+  --colors-status-warning-surface: #fffbeb;
+  --colors-status-warning-foreground: #92400e;
+  --colors-status-warning-border: #fcd34d;
+  --colors-status-error-surface: #fef2f2;
+  --colors-status-error-foreground: #991b1b;
+  --colors-status-error-border: #fca5a5;
+}
+[data-theme='dark'] {
+  --colors-background: #111318;
+  --colors-foreground: #f4f4f5;
+  --colors-muted: #1d222b;
+  --colors-mutedForeground: #b7beca;
+  --colors-border: #596273;
+  --colors-secondary: #252c38;
+  --colors-ring: #a5b4fc;
+  --colors-primary: #e2e8f0;
+  --colors-on-primary: #0f172a;
+  --color-on-primary: var(--colors-on-primary);
+  --colors-highlight: #483510;
+  --colors-highlightForeground: #fde68a;
+  --colors-status-info-surface: #182b45;
+  --colors-status-info-foreground: #bfdbfe;
+  --colors-status-info-border: #4874a8;
+  --colors-status-success-surface: #16392e;
+  --colors-status-success-foreground: #a7f3d0;
+  --colors-status-success-border: #44856c;
+  --colors-status-warning-surface: #3b2d17;
+  --colors-status-warning-foreground: #fde68a;
+  --colors-status-warning-border: #927438;
+  --colors-status-error-surface: #401e25;
+  --colors-status-error-foreground: #fecaca;
+  --colors-status-error-border: #a7616e;
+}
