@@ -197,3 +197,9 @@ Alert icons inherit their variant's foreground explicitly. Action icons whose
 foreground belongs to the containing button should use `color="currentColor"`;
 the Icon default remains unchanged for other consumers. Alert consumers that
 have not imported the shared stylesheet retain their standalone light fallback.
+
+The stylesheet also defines `--color-on-primary` as an alias of
+`--colors-on-primary` in every theme scope. This matches Button and
+`buttonStyles` in Tailwind preset consumers, including nested appearance
+overrides, without requiring an app-specific alias. Inline foreground overrides
+and the standalone white fallback remain supported.
