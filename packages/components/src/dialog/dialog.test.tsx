@@ -260,7 +260,7 @@ describe('Dialog', () => {
     ) as HTMLElement | null;
 
     expect(overlay?.className).toContain('z-[200]');
-    expect(content?.className).toContain('z-[210]');
+    expect(content?.className).toContain('z-[200]');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);

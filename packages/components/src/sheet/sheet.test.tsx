@@ -98,7 +98,7 @@ describe('Sheet', () => {
       expect(
         document
           .querySelector('[data-lumia-sheet-content]')
-          ?.classList.contains('z-[210]'),
+          ?.classList.contains('z-[200]'),
       ).toBe(true);
     } finally {
       await act(async () => root.unmount());
@@ -106,7 +106,7 @@ describe('Sheet', () => {
     }
   });
 
-  it('keeps a nested dialog on the content layer after the sheet portal', async () => {
+  it('keeps a nested dialog scrim and content above the parent sheet', async () => {
     const { root, host } = createTestRoot();
     try {
       await act(async () => {
@@ -133,14 +133,25 @@ describe('Sheet', () => {
       );
       await act(async () => trigger?.click());
       const sheet = document.querySelector('[data-lumia-sheet-content]');
+      const overlay = document.querySelector('[data-lumia-dialog-overlay]');
       const dialog = document.querySelector('[data-lumia-dialog-content]');
-      expect(sheet?.classList.contains('z-[210]')).toBe(true);
-      expect(dialog?.classList.contains('z-[210]')).toBe(true);
+      const layer = (element: Element | null) =>
+        Number(element?.className.match(/z-\[(\d+)\]/)?.[1]);
+      expect(layer(overlay)).toBeGreaterThanOrEqual(layer(sheet));
+      expect(layer(dialog)).toBeGreaterThanOrEqual(layer(overlay));
       expect(
         sheet &&
+          overlay &&
+          Boolean(
+            sheet.compareDocumentPosition(overlay) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+          ),
+      ).toBe(true);
+      expect(
+        overlay &&
           dialog &&
           Boolean(
-            sheet.compareDocumentPosition(dialog) &
+            overlay.compareDocumentPosition(dialog) &
             Node.DOCUMENT_POSITION_FOLLOWING,
           ),
       ).toBe(true);

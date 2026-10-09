@@ -340,9 +340,9 @@ More details: see `docs/storybook.md`.
 - `SheetContent closeLabel` accepts translated close text for both the accessible
   name and screen-reader text; omitted values retain `Close sheet`.
 - Dialog, Sheet, and Drawer use the shared overlay layer above full-screen z-50
-  application shells: scrims/Drawer wrappers at 200 and modal content at 210.
-  Nested Dialog content retains its layer and follows its parent Sheet in portal
-  order. Consumers must not patch stacking locally.
+  application shells: scrims, modal content, and Drawer wrappers share layer 200.
+  Each modal portal renders its scrim before its content; a later nested portal
+  can therefore dim the parent content. Consumers must not patch stacking locally.
 - Under reduced-motion preferences, Sheet content fades without sliding; its
   closed state stays hidden on every side.
 
