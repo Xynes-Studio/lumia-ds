@@ -14,6 +14,10 @@ import {
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '../lib/utils';
 import {
+  OVERLAY_CONTENT_Z_CLASS,
+  OVERLAY_Z_CLASS,
+} from '../lib/overlay-layers';
+import {
   getDialogOverlayBackdrop,
   resolveDialogTheme,
   type DialogTheme,
@@ -21,9 +25,6 @@ import {
 
 export type DialogProps = DialogPrimitive.DialogProps;
 export type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
-
-const DIALOG_OVERLAY_Z_CLASS = 'z-[200]';
-const DIALOG_CONTENT_Z_CLASS = 'z-[210]';
 
 const DialogInternalContext =
   createContext<MutableRefObject<HTMLElement | null> | null>(null);
@@ -126,7 +127,7 @@ const DialogOverlay = forwardRef<
       style={{ backgroundColor: overlayBackdrop }}
       className={cn(
         'fixed inset-0 backdrop-blur-sm',
-        DIALOG_OVERLAY_Z_CLASS,
+        OVERLAY_Z_CLASS,
         className,
       )}
       {...props}
@@ -156,7 +157,7 @@ export const DialogContent = forwardRef<
         data-lumia-dialog-content
         className={cn(
           'fixed left-1/2 top-1/2 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-5 rounded-lg border border-border bg-background p-6 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-          DIALOG_CONTENT_Z_CLASS,
+          OVERLAY_CONTENT_Z_CLASS,
           className,
         )}
         aria-modal="true"
