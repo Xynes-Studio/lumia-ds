@@ -86,7 +86,7 @@ type SheetOverlayProps = DialogPrimitive.DialogOverlayProps;
 const SheetOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   SheetOverlayProps
->(function SheetOverlay({ className, ...props }, ref) {
+>(function SheetOverlay({ className, onClick, ...props }, ref) {
   const { closeOnOverlayClick } = useSheetInternalContext('SheetOverlay');
 
   const overlay = (
@@ -100,13 +100,15 @@ const SheetOverlay = forwardRef<
         className,
       )}
       {...props}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!closeOnOverlayClick) event.preventDefault();
+      }}
     />
   );
 
-  if (!closeOnOverlayClick) {
-    return overlay;
-  }
-
+  // Keep this tree stable when responsive consumers change dismissal policy.
+  // Remounting the portal's scrim appends it after the existing content.
   return <DialogPrimitive.Close asChild>{overlay}</DialogPrimitive.Close>;
 });
 

@@ -31,11 +31,29 @@ describe('Alert component', () => {
 
     const alert = host.querySelector('[role="status"]');
     expect(alert?.textContent).toContain('Notice');
-    expect(alert?.className).toContain('bg-blue-50');
+    expect(alert?.className).toContain('--colors-status-info-surface');
 
     await act(async () => root.unmount());
     document.body.removeChild(host);
   });
+
+  it.each(['info', 'success', 'warning', 'error'] as const)(
+    'lets the %s semantic foreground own its icon color',
+    async (variant) => {
+      const { root, host } = createTestRoot();
+      await act(async () =>
+        root.render(<Alert variant={variant} title="Status" />),
+      );
+      const icon = host.querySelector('svg');
+      expect(icon?.style.color).toBe('currentcolor');
+      expect(icon?.getAttribute('class')).not.toContain('text-foreground');
+      expect(
+        host.querySelector('[data-lumia-alert]')?.getAttribute('class'),
+      ).toContain(`--colors-status-${variant}-surface`);
+      await act(async () => root.unmount());
+      host.remove();
+    },
+  );
 
   it('can be dismissed in uncontrolled mode', async () => {
     const { root, host } = createTestRoot();

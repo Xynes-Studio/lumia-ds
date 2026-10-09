@@ -172,3 +172,28 @@ export default function UsersPage() {
 - The app is wrapped in `ThemeProvider` so DS components and layouts render correctly.
 - `defineResource` plus `PageSchema` describe the resource and screens.
 - `ResourcePageRenderer` stitches together list/form blocks with mocked data.
+
+
+## Semantic light/dark surfaces in Tailwind v4 consumers
+
+Import `@lumia-ui/components/semantic.css` once in the app's root stylesheet.
+It provides the shared `--colors-*` semantic surfaces, primary/secondary text,
+dividers, focus ring, primary action foreground, highlights, and all four Alert
+variants. System appearance applies by default; `data-theme="light"` or
+`data-theme="dark"` overrides it. Legacy ThemeProvider inline custom variables
+retain their precedence.
+
+Map Tailwind v4 names to these variables in `@theme inline`, including
+`--color-primary: var(--colors-primary)`,
+`--color-on-primary: var(--colors-on-primary)`,
+`--color-highlight: var(--colors-highlight)` and
+`--color-highlight-foreground: var(--colors-highlightForeground)`.
+Existing background/foreground/muted/border mappings use the same contract.
+Normal primary/secondary text and semantic highlights must be checked against
+actual compiled CSS in both appearances. Highlights need both surface and text;
+never use an undefined warning color or rely on browser-default mark styling.
+
+Alert icons inherit their variant's foreground explicitly. Action icons whose
+foreground belongs to the containing button should use `color="currentColor"`;
+the Icon default remains unchanged for other consumers. Alert consumers that
+have not imported the shared stylesheet retain their standalone light fallback.

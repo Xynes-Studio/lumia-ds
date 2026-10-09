@@ -9,42 +9,41 @@ type AlertVariant = 'info' | 'success' | 'warning' | 'error';
 type VariantStyles = {
   container: string;
   iconWrapper: string;
-  icon: string;
   title: string;
   description: string;
 };
 
 const baseClasses =
-  'relative w-full rounded-lg border px-4 py-3 text-sm shadow-sm flex items-start gap-3';
+  'relative w-full rounded-lg border px-4 py-3 text-sm flex items-start gap-3';
 
 const variantStyles: Record<AlertVariant, VariantStyles> = {
   info: {
-    container: 'border-blue-200/80 bg-blue-50 text-blue-900',
-    iconWrapper: 'bg-blue-100 text-blue-700',
-    icon: 'text-blue-700',
-    title: 'text-blue-900',
-    description: 'text-blue-800',
+    container:
+      'border-[color:var(--colors-status-info-border,#93c5fd)] bg-[color:var(--colors-status-info-surface,#eff6ff)] text-[color:var(--colors-status-info-foreground,#1e40af)]',
+    iconWrapper: 'text-current',
+    title: 'text-current',
+    description: 'text-current',
   },
   success: {
-    container: 'border-emerald-200/80 bg-emerald-50 text-emerald-900',
-    iconWrapper: 'bg-emerald-100 text-emerald-700',
-    icon: 'text-emerald-700',
-    title: 'text-emerald-900',
-    description: 'text-emerald-800',
+    container:
+      'border-[color:var(--colors-status-success-border,#6ee7b7)] bg-[color:var(--colors-status-success-surface,#ecfdf5)] text-[color:var(--colors-status-success-foreground,#065f46)]',
+    iconWrapper: 'text-current',
+    title: 'text-current',
+    description: 'text-current',
   },
   warning: {
-    container: 'border-amber-200/80 bg-amber-50 text-amber-900',
-    iconWrapper: 'bg-amber-100 text-amber-700',
-    icon: 'text-amber-700',
-    title: 'text-amber-900',
-    description: 'text-amber-800',
+    container:
+      'border-[color:var(--colors-status-warning-border,#fcd34d)] bg-[color:var(--colors-status-warning-surface,#fffbeb)] text-[color:var(--colors-status-warning-foreground,#92400e)]',
+    iconWrapper: 'text-current',
+    title: 'text-current',
+    description: 'text-current',
   },
   error: {
-    container: 'border-red-200/80 bg-red-50 text-red-900',
-    iconWrapper: 'bg-red-100 text-red-700',
-    icon: 'text-red-700',
-    title: 'text-red-900',
-    description: 'text-red-800',
+    container:
+      'border-[color:var(--colors-status-error-border,#fca5a5)] bg-[color:var(--colors-status-error-surface,#fef2f2)] text-[color:var(--colors-status-error-foreground,#991b1b)]',
+    iconWrapper: 'text-current',
+    title: 'text-current',
+    description: 'text-current',
   },
 };
 
@@ -122,7 +121,6 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   const {
     container,
     iconWrapper,
-    icon: iconClass,
     title: titleClass,
     description: descriptionClass,
   } = variantStyles[variant];
@@ -141,7 +139,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
       {showIcon && resolvedIcon ? (
         <span
           className={cn(
-            'mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-white/70',
+            'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center',
             iconWrapper,
           )}
         >
@@ -149,7 +147,8 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
             name={resolvedIcon}
             size={20}
             aria-hidden="true"
-            className={cn('fill-none', iconClass)}
+            color="currentColor"
+            className="fill-none"
           />
         </span>
       ) : null}
@@ -173,7 +172,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           type="button"
           onClick={handleClose}
           aria-label={closeButtonLabel}
-          className={`absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-current/80 transition-colors hover:bg-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${interactiveCursor}`}
+          className={`absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-current transition-colors hover:bg-current/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${interactiveCursor}`}
         >
           <span aria-hidden="true" className="text-lg leading-none">
             ×
